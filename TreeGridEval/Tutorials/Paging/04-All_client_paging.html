@@ -1,0 +1,95 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <script>
+
+// -------------------------------------------------------------------------------
+// --- Creates cell content to better see the spanned cells ---
+Grids.OnLoaded = function(G){
+function update(row){
+   for(var r=row.firstChild,i=1;r;r=r.nextSibling,i++) {
+      r.id = (i<10?"0":"")+i;
+      if(r.parentNode.id) r.id = r.parentNode.id+"-"+r.id;
+      for(var c in G.Cols) if(c!="Panel"&&c!="id") { r[c] = r.id+" "+c; }
+      if(r.firstChild) update(r);
+      }
+   }
+update(G.Body);
+}
+// -------------------------------------------------------------------------------
+   </script>
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>4. All client paging</h1>
+   <h2>All client paging types - Paging, ColPaging, ChildPaging, ChildParts</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='04-All_client_paging.xml'>04-All_client_paging.xml</a></div>
+      <div class="Main" style='width:100%; height:550px;'>
+         <bdo Debug='problem' Data_Url='04-All_client_paging.xml'></bdo>
+         <!-- Here is not used Debug='check' because for the column count is slow, but you can set it, the grid is still usable except in IE6/IE7 -->
+      </div>
+   </center>
+
+   <ul>
+      <li>
+         This example just demonstrates all the paging types described in previous tutorials.
+         All the attributes set to <b>2</b> for rendering on demand and to <b>1</b> for rendering on start with progress dialog.
+         <br />
+      </li>
+      <li>
+         Cfg attribute <h3>Paging</h3> creates <b>root</b> row pages. Supports also various <b>pagers</b>. Possible also server paging (value <b>3</b>).<br />
+      </li>
+      <li>
+         Cfg attribute <h3>ChildPaging</h3> controls rendering children of <b>collapsed</b> rows. Possible also server paging (value <b>3</b>).<br />
+      </li>
+      <li>
+         Cfg attribute <h3>ChildParts</h3> controls rendering children of <b>expanded</b> rows.<br />
+      </li>
+      <li>
+         Cfg attribute <h3>ColPaging</h3> creates <b>column</b> pages.<br />
+      </li>
+      <li>
+         See especially the second button on toolbar (the <b>Repaint</b> 
+         <span class='TSToolRepaint' style='background-size:18px 18px; background-repeat:no-repeat; padding-left:18px;display:inline-block;height:18px;'>&nbsp;</span> /
+         <span class='TSToolRepaint1' style='background-size:18px 18px; background-repeat:no-repeat; padding-left:18px;display:inline-block;height:18px;'>&nbsp;</span>
+         )
+         to switch between rendering pages on start and rendering pages on demand / scroll (the attribute values <b>1</b> / <b>2</b>).<br />
+         Remember, this grid has more than 100,000 cells, so rendering all rows on start will take some time.
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialPaging\s*=\s*(\d+)/), TGIndex = 8;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridPaging4", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialPaging="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Column tree</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Column tree</h1>
+<p>TreeGrid documentation</p>
+
+<i>Since 7.0</i> version TreeGrid supports tree also in columns, it means hiding and showing individual columns on click to expand / collapse button in some cell (usually header cell).<br />
+Similarly it supports also showing and hiding individual rows (usually, but not required, fixed rows) on click to Expand button.<br />
+The collapsed / expanded columns or rows do <u>not</u> need to be adjacent!<br /> 
+The tree level count is not limited!<br />
+
+<!-- Visible -->
+<a name="CVisible"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>bool</i>
+   <h4>Visible</h4> <s>[1] <i>Saved to cookies, avoid it by <tt>&lt;C VisibleLap='1'/></tt></i></s>
+</div>
+If the column is displayed in grid. Set <tt>&lt;C Visible='0' Hidden='1'/></tt> for collapsed columns on start.<br /> 
+
+<!-- Hidden -->
+<a name="CHidden"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>Hidden</h4> <s>[0]</s>
+</div>
+<tt>Hidden='<b>1</b>'</tt> can be set only for <tt><a href="#CVisible">Visible</a>='<b>0</b>'</tt> and <tt>&lt;Cfg <a href="ColVisibility.htm#CfgFastColumns">FastColumns</a> ='<b>1</b>'/></tt>. This column will be rendered as hidden (width 0px).<br /> 
+It slows down rendering grid (the column is rendered) but speeds up showing / expanding the column (it is just resized).<br /> 
+Set <tt>&lt;C Visible='0' Hidden='1'/></tt> for collapsed columns on start.<br />
+
+<!-- FastColumns -->
+<a name="CfgFastColumns"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>FastColumns</h4> <s>[1]</s>
+</div>
+If column hiding is done by setting its width to 0px. This action is faster than removing the cells and speeds up also showing the column.<br />
+For expanding / collapsing columns is strongly recommended to use default setting <tt>FastColumns='1'</tt>.<br /> 
+
+<!-- Visible -->
+<a name="IVisible"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>bool</i>
+   <h4>Visible</h4> <s>[1] <i>Saved to cookies, avoid it by <tt>&lt;Cfg ExpandedLap='1'/></tt></i></s>
+</div>
+If the row is displayed in grid. Set to 0 for collapsed rows on start.<br /> 
+
+<!-- Button -->
+<a name="CButton"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Button</h4> <s><tt>Button = "<b>Expand</b>"</tt></s>
+</div>
+To show <b>right</b> side Expand button set <tt><a href="CellSideButton.htm#CButton">Button</a>="Expand"</tt>.<br />
+It is shown usually in &lt;Header> cell to show / hide columns, but can be shown in any cell, in variable, fixed or space cell.<br />
+
+<!-- Icon -->
+<a name="CIcon"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Icon</h4> <s><tt>Icon = "<b>Expand</b>"</tt></s>
+</div>
+To show <b>left</b> side Expand button set <tt><a href="CellSideButton.htm#CIcon">Icon</a>="Expand"</tt>.<br />
+It is shown usually in &lt;Header> cell to show / hide columns, but can be shown in any cell, in variable, fixed or space cell.<br />
+
+<!-- ExpandCols -->
+<a name="CIcon"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>ExpandCols</h4> <s></s>
+</div>
+A list of column names to show / hide them on click to <tt>Button='Expand'</tt>.<br />
+If you want to have deep tree of expanding columns (more nested levels) you must list here only immediate children, not the whole tree. And set appropriate <a href="#CExpandLevel">ExpandLevel</a> to the columns.<br />
+
+<!-- ExpandRows -->
+<a name="CExpandRows"></a>
+<div class="XML">
+   <u>new <b>7.0</b> <i>upd <b>9.3</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>ExpandRows</h4> <s></s>
+</div>
+A list of row ids to show / hide them on click to <tt>Button='Expand'</tt><br />
+<i>Since 9.3</i> the item can be also a Name of default row to represent all rows with this default.<br />
+
+<!-- Expanded -->
+<a name="CExpanded"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>Expanded</h4> <s>[ ] <i>Saved to cookies, avoid it by <tt>&lt;Cfg ExpandedLap='1'/></tt></i></s>
+</div>
+Initial state of the <tt>Button='Expand'</tt>.<br />
+If not set, the state is 1 if any column in the ExpandCols is visible. If ExpandCols is not defined it tests ExpandRows.<br />
+If neither ExpandCols nor ExpandRows defined returns state of row Expanded attribute.<br />
+Set it for more complex tree where the Expanded state is computed incorrectly.<br />
+
+<!-- ExpandLevel -->
+<a name="CExpandLevel"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;I></b> <i>int</i>
+   <h4>ExpandLevel</h4> <s>[ ] <i>Saved to cookies, avoid it by <tt>&lt;C VisibleLap='1'/></tt> or <tt>&lt;Cfg ExpandedLap='1'/></tt>  for rows</i></s>
+</div>
+The row / column is shown on click to Expand Button when its ExpandLevel is positive (>=1). It is hidden if its ExpandLevel is zero or negative (<=0).<br />
+Use it when more Expand Buttons show / hide one row / column.<br />
+If not set, every Expand Button shows / hides the row / column on its click.<br />
+If set, click to Expand Button will increase (when expanding) / decrease (when collapsing) this value and only if the value changes from 0 to 1 (shows the column / row) or from 1 to 0 (hides the column / row).<br />
+The <b>ExpandLevel</b> must be set accordingly to the row / column <b>Visible</b> attribute and also <b>Expanded</b> state of the Expand Buttons that control the row.<br /> 
+<i>
+Let's say there are three <b>collapsed</b> buttons that control the row. Setting <tt>ExpandLevel='<b>-2</b>'</tt> means that all three buttons must be expanded to show the row. Setting <tt>ExpandLevel='<b>0</b>'</tt> means that every button shows the row and all three buttons must be collapsed to hide it. The row attribute Visible must be set to '<b>0</b>'.<br />
+Let's say there are three <b>expanded</b> buttons that control the row. Setting <tt>ExpandLevel='<b>1</b>'</tt> means that all three buttons must be expanded to show the row. Setting <tt>ExpandLevel='<b>3</b>'</tt> means that every button shows the row and all three buttons must be collapsed to hide it. The row attribute Visible must be set to '<b>1</b>'.<br />
+</i>
+
+<!-- CollapseOther -->
+<a name="ICollapseOther"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;I></b> <i>bool</i>
+   <h4>CollapseOther</h4> <s>[0]</s>
+</div>
+If set to 1, it collapses all other cells in this row when some cells is being expanded.<br />
+
+<!-- HideParentCol -->
+<a name="CHideParentCol"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>HideParentCol</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, it hides parent column when expanding it  = shows the children instead of the parent column and vice versa.<br />
+In this case the cell with expand button should be spanned through the child columns to be still visible after the parent column hides.<br />
+If used more column levels, they should have set ExpandLevel to correctly hide / collapse the columns.<br />
+
+<!-- ShowHiddenBorder -->
+<a name="CellShowHiddenBorder"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;cell></b> <i>bool</i>
+   <h4>ShowHiddenBorder</h4> <s>[1]</s>
+</div>
+Set to <b>1</b> in the spanned expand / collapse cell when set <tt><b>HideParentCol</b>=1</tt> and <tt><b>FastColumns</b>=1</tt> to not hide the cell border when the column is hidden.<br />
+
+<!-- IsCellExpanded -->
+<a name="IsCellExpanded"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>IsCellExpanded</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Returns true if the cell side Button Expand is expanded.<br />
+
+<!-- ExpandCell -->
+<a name="ExpandCell"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ExpandCell</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Expands or collapses the rows / columns defined by ExpandCols / ExpandRows in the cell.<br />
+
+<!-- Action ExpandCell -->
+<a name="ActionsExpandCell"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ExpandCell <i>...F</i></h4>
+   <s>Assigned to event <b>OnClickSideExpand</b></s>
+</div>
+Expands or collapses the rows / columns defined by ExpandCols / ExpandRows in actual or focused cell.<br />
+
+<!-- Action ExpandCol -->
+<a name="ActionsExpandCol"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ExpandCol <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Expands columns defined by ExpandCols in actual or focused cell.<br />
+
+<!-- Action CollapseCol -->
+<a name="ActionsCollapseCol"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CollapseCol <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Collapses columns defined by ExpandCols in actual or focused cell.<br />
+
+<!-- Action ExpandRow -->
+<a name="ActionsExpandRow"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ExpandRow <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Expands rows defined by ExpandRows in actual or focused cell.<br />
+
+<!-- Action CollapseRow -->
+<a name="ActionsCollapseRow"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CollapseRow <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Collapses rowss defined by ExpandRows in actual or focused cell.<br />
+
+<!-- Action ExpandAllCells -->
+<a name="ActionsExpandAllCells"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ExpandAllCells</h4>
+   <s>not assigned to any event</s>
+</div>
+Expands all cells in all Header rows in grid.<br />
+To expand cells in other rows use API IsCellExpanded / ExpandCell in loop instead.<br />
+
+<!-- Action CollapseAllCells -->
+<a name="ActionsCollapseRowCells"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CollapseAllCells</h4>
+   <s>not assigned to any event</s>
+</div>
+Collapsed all cells in all Header rows in grid.<br />
+To collapse cells in other rows use API IsCellExpanded / ExpandCell in loop instead.<br />
+
+<!-- Action ExpandRowCells -->
+<a name="ActionsExpandRowCells"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ExpandRowCells</h4>
+   <s>not assigned to any event</s>
+</div>
+Expands all cells in actual Header row.<br />
+
+<!-- Action CollapseRowCells -->
+<a name="ActionsExpandRowCells"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CollapseRowCells</h4>
+   <s>not assigned to any event</s>
+</div>
+Collapsed all cells in actual Header row.<br />
+
+</div>
+</body>	
+</html>

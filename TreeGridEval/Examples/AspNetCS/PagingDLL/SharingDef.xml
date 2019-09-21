@@ -1,0 +1,103 @@
+<Grid>
+   <!-- Cfg tag is splitted by attributes just for comments, you should merge them in your standard applications -->
+   <Cfg IgnoreFocused='1'/> <!-- Ignores focused cell when loading -->
+   <Cfg PrintLoad="1" PrintCols="2" PrintLocation="3" PrintPageBreaks="1" PrintRows="50"/> <!-- Printing options, download all rows for printing -->
+   <Cfg ExportLoad="1"/> <!-- Uses client export, downloads all data for export -->
+   <Cfg Paging='3' ChildPaging='3'/> <!-- Both paging set to server -->
+   <Cfg SaveSession='1'/> <!-- Stores IO Session to cookies to identify the client on server and access appropriate grid instance -->
+   <Cfg Prepared='1'/> <!-- DLL sends data prepared, so you can set this attribute to speed up loading -->
+   <Cfg ShowDeleted='0'/> <!-- This example hides deleted row instead of coloring them red -->
+   <Cfg MaxHeight='1'/> <!-- Grid maximizes height of the main tag on page -->
+   <Cfg MinTagHeight='250' /> <!-- To not shrink the grid too much -->
+   <Cfg Sort='P,M'/> <!-- To sort grid according to partner and Month for first time (when no configuration saved) -->
+   <Cfg FilterEmpty='1'/> <!-- When filtering, hides group rows that have all children hidden, see the Group row have set CanFilter='2' -->
+   <Cfg IndexEnum='1'/> <!-- All enums are set by index -->
+   <Cfg NameCol='P'/> <!-- Row will be identifies by Partner name in messages (e.g. in deleting rows) -->
+   <Cfg Size='Small'/> <!-- Reduces style size because of two large data sets -->
+   <Cfg LimitScroll='1' MinLeftWidth='250' MinMidWidth='300'/> <!-- Responsive design, for small windows sets NoHScroll -->
+   <Cfg ChangesUpdate='257'/> <!-- Animates changes came from server due synchronization -->
+   <Def>
+      <D Name='R' CalcOrder='G,D,F'/>
+   </Def>
+   <LeftCols>
+      <!-- Partner, main column for other groupings, width 130px, when grouped 200px 
+         Shows value as tooltip
+         Is in one group with Month because of spanned fixed row - cannot be moved outside the group -->
+      <C Name='P' Width='130' GroupWidth='210' Type='Text' ToolTip='1' Group='1'/>
+
+      <!-- Month, main column for grouping by partner, width 80px, when grouped 200px -->
+      <C Name='M' Width='80' GroupWidth='210' Type='Enum' Group='1'
+         Enum='|01/2004|02/2004|03/2004|04/2004|05/2004|06/2004|07/2004|08/2004|09/2004|10/2004|11/2004|12/2004'
+         />
+
+   </LeftCols>
+   <Cols>
+
+      <!-- Region -->
+      <C Name='R' Width='185' Type='Enum' Refresh='C,S' Group='1'
+         Enum='|Central &amp; South Asia|East Asia &amp; the Pacific|East Europe|Middle East &amp; North Africa|North &amp; Central America|South America|Sub-Saharan Africa|West Europe'/>
+
+      <!-- Country 
+         The 'C' column is related to 'R' column, it contains only countries from selected region -->
+      <C Name='C' Width='140' Type='Enum' Related='R' Refresh='S' Group='1' IntFormat='(unknown)'
+         Enum0="|ARMENIA|AZERBAIJAN|BANGLADESH|INDIA|KAZAKSTAN|PAKISTAN|SRI LANKA"
+         Enum1="|AUSTRALIA|BRUNEI|CHINA|HONG KONG|INDONESIA|JAPAN|KOREA, DPR|MALAYSIA|MONGOLIA|MYANMAR|NEW ZEALAND|PAPUA NEW GUINEA|PHILIPPINES|SINGAPORE|SOUTH KOREA|TAIWAN|THAILAND|VIETNAM"
+         Enum2="|ALBANIA|BELARUS|BULGARIA|CROATIA|CZECH REPUBLIC|ESTONIA|HUNGARY|LATVIA|LITHUANIA|MOLDOVA|POLAND|ROMANIA|RUSSIA|SERBIA-MONTENEGRO|SLOVAK REPUBLIC|SLOVENIA|UKRAINE"
+         Enum3="|ALGERIA|BAHRAIN|EGYPT|IRAN|IRAQ|ISRAEL|JORDAN|KUWAIT|LEBANON|LIBYA|MOROCCO|OMAN|QATAR|SAUDI ARABIA|SYRIA|TUNISIA|UAE|YEMEN"
+         Enum4="|BAHAMAS|CANADA|COSTA RICA|CUBA|DOMINICAN REPUBLIC|EL SALVADOR|GUATEMALA|HAITI|HONDURAS|JAMAICA|MEXICO|NICARAGUA|PANAMA|TRINIDAD &amp; TOBAGO|UNITED STATES"
+         Enum5="|ARGENTINA|BOLIVIA|BRAZIL|CHILE|COLOMBIA|ECUADOR|GUYANA|PARAGUAY|PERU|SURINAME|URUGUAY|VENEZUELA"
+         Enum6="|ANGOLA|BOTSWANA|BURKINA FASO|CAMEROON|CONGO|CONGO DR|COTE D'IVOIRE|ETHIOPIA|GABON|GAMBIA|GHANA|GUINEA|GUINEA-BISSAU|KENYA|LIBERIA|MADAGASCAR|MALAWI|MALI|MOZAMBIQUE|NAMIBIA|NIGER|NIGERIA|SENEGAL|SIERRA LEONE|SOMALIA|SOUTH AFRICA|SUDAN|TANZANIA|TOGO|UGANDA|ZAMBIA|ZIMBABWE"
+         Enum7="|AUSTRIA|BELGIUM|CYPRUS|DENMARK|FINLAND|FRANCE|GERMANY|GREECE|ICELAND|IRELAND|ITALY|LUXEMBOURG|MALTA|NETHERLANDS|NORWAY|PORTUGAL|SPAIN|SWEDEN|SWITZERLAND|TURKEY|UNITED KINGDOM"
+         />
+
+      <!-- State 
+         The 'S' column is related to 'C' column, it contains only states from selected country 
+         If the country is not divided to states, it is empty and read-only 
+         This column has set GroupType=16 - when grouping by State, it does not create groups for empty states -->
+      <C Name='S' Width='110' Type='Enum' Related='R,C' Group='1' GroupEmpty='0' IntFormat='(unknown)'
+         Enum4_14="|Alabama|Alaska|Arizona|Arkansas|California|Colorado|Connecticut|Delaware|Florida|Georgia|Hawaii|Idaho|Illinois|Indiana|Iowa|Kansas|Kentucky|Louisiana|Maine|Maryland|Massachusetts|Michigan|Minnesota|Mississippi|Missouri|Montana|Nebraska|Nevada|New Hampshire|New Jersey|New Mexico|New York|North Carolina|North Dakota|Ohio|Oklahoma|Oregon|Pennsylvania|Rhode Island|South Carolina|South Dakota|Tennessee|Texas|Utah|Vermont|Virginia|Washington|West Virginia|Wisconsin|Wyoming"
+         /> 
+      <C Name='X' Width='105' Type='Bool' Format='||x'/> <!-- Registered -->
+      <C Name='N' Width='105' Type='Date' Format='d'/> <!-- Since -->
+      <C Name='A' Width='90' Type='Enum' Enum='|week|month|quarter|half year|year'/> <!-- Calls per -->
+      <C Name='B' Width='70' Type='Int'/> <!-- Rabat -->
+
+      <C Name='O' Width='75' Type='Int'/> <!-- Orders -->
+      <C Name='I' Width='95' Type='Float' Format=',0.00'/> <!-- Income -->
+      <C Name='E' Width='95' Type='Float' Format=',0.00'/> <!-- Expenses -->
+      <C Name='G' Width='110' Type='Float' Format=',0.00' Formula='I-E'/> <!-- Gross profit -->
+      <C Name='D' Width='90' Type='Float' Format=',0.00' Formula='G>0?B*G/100:0'/> <!-- Discount -->
+   </Cols>
+   <RightCols>
+      <C Name='F' Width='90' Type='Float' Format=',0.00' Formula='G-D'/> <!-- Profit -->
+   </RightCols>
+
+   <!-- Column captions -->
+   <Header
+      R='Region' C='Country' S='State' P='Partner' M='Month' 
+      X='Registered' N='Since' A='Calls per'  O='Orders' 
+      I='Income' E='Expenses' G='Gross profit' B='Rabat' D='Discount'
+      F='Profit' 
+      /> 
+   <Head>
+      <!-- Filter row - to let user choose filter, changes filtering of area enums by selection only -->
+      <Filter CanEdit='1'
+         RFilterOff='(all)' RCanEmpty='1' RShowMenu='0'
+         CFilterOff='(all)' CCanEmpty='1' CShowMenu='0'
+         SFilterOff='(all)' SCanEmpty='1' SShowMenu='0'
+         />
+   </Head>
+   <Foot>
+      <!-- Bottom row with the summary results -->
+      <I id='$Results' CanDelete='0' CanEdit='0' Calculated='1' 			
+         Spanned='1' P='Total results' PSpan='2' 
+         RVisible='0' CVisible='0' SVisible='0'
+         XVisible='0' AVisible='0' 
+         CalcOrder='O,I,E,G,D,F,B'
+         BType='Float' BFormat='0.00"%"' BFormula='G?D/G*100:0'
+         OFormula='sum()' IFormula='sum()' EFormula='sum()' GFormula='sum()' DFormula='sum()' FFormula='sum()'
+         OCanEdit='0' ICanEdit='0' ECanEdit='0'
+         /> 
+   </Foot>
+   <Pager Width='160' MinWidth='130'/> <!-- Right side pager -->
+</Grid>

@@ -1,0 +1,553 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Events</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Events and actions</h1>
+<p>TreeGrid documentation</p>
+
+TreeGrid contains fully customizable Key and Mouse schema, all key and mouse actions (JavaScript callbacks, event handlers) are set in Defaults.xml in &lt;Actions> tag and can be changed by a user.<br />
+
+<!-----------------------------------------------------  JavaScript callbacks / event handlers in TreeGrid ------------------------------------------------->
+<a name="Events"></a>
+<h2>JavaScript callbacks / event handlers in TreeGrid</h2>
+
+<h6>a) TreeGrid mouse events</h6>
+Every part (row, cell, button, etc.) in grid has its own name and you can attach an action for it:<br />
+<div class="L1">click, double click, right click, mouse down, mouse up, mouse over, mouse out, mouse move, start drag, drag over (over when dragging).</div>
+To the action name is attached key prefix when some control key is held down: "Shift", "Ctrl", "Alt", "Meta" (on Mac) and their combinations.<br />
+The actions can be defined in global &lt;Actions> tag, attached in global Grids array by JavaScript, defined for specific &lt;C>, &lt;I> or cell.<br />
+The JavaScript action has always this definition: function (TGrid Grid, TRow Row, TCol Col, TEvent Event), where Row, Col is cell under mouse.<br />
+
+<h6>b) TreeGrid key events</h6>
+There are three different key actions called when a user presses key in Focused grid: regular, edit, edit multiline.<br />
+The action name is the key name defined in &lt;Actions> tag.<br />
+To the action name is attached key prefix when some control key is held down: "Shift", "Ctrl", "Alt", "Meta" (on Mac) and their combinations.<br />
+The actions can be defined in global &lt;Actions> tag, attached in global Grids array by JavaScript, defined for specific &lt;C>, &lt;I> or cell.<br />
+The JavaScript action has always this definition: function (TGrid Grid, TRow Row, TCol Col, TEvent Event), where Row, Col is focused cell.<br />
+
+<h6>c) TreeGrid API events</h6>
+TreeGrid provides many JavaScript callbacks for many actions done in grid, like OnSelect, OnRenderFinish, OnClick and so on.<br />
+The actions are attached to global Grids array by JavaScript.<br />
+The JavaScript actions have various definitions.<br />
+
+<h6>d) TreeGrid calculations and formulas</h6>
+Every row or cell attribute can be calculated, so it can have attached JavaScript formula to calculate the value. Basically the formulas are used to calculate cell values, but also other attributes can be calculated.<br />
+
+<h6>e) Standard JavaScript events</h6>
+You can attach any JavaScript event handler like onclick to any tag on HTML page and provide some action with TreeGrid using its API. The grid is accessible by global Grids array.<br /> 
+You can attach JavaScript events also to HTML code inside grid cells, but if there are many such cells, it can remarkably slow down the grid, so you should reconsider it and use another event option.<br />
+
+<!-----------------------------------------------------  TreeGrid mouse events  ------------------------------------------------->
+<a name="Mouse"></a>
+<h2>TreeGrid mouse events</h2>
+
+The event name consists from: On + key_prefix + event_name + target.<br />
+For example OnMouseOverTree, OnShiftClickRow, OnCtrlShiftRightClickCell<br />
+
+<!-- Mouse event names -->
+<a name="Names"></a>
+<h5>Mouse event names</h5>
+<div class="L1">
+<b>OnClick</b> - when the target is clicked (any mouse button is pressed and released). Called after OnMouseUp. Called only if mouse did not move between button press and release.<br />
+<b>OnDblClick</b> - when the target is double clicked (left mouse button is pressed, released, pressed and released). Called after OnMouseUp. Called only if mouse did not move between button press and release.<br />
+<b>OnRightClick</b> - when the target is clicked by right mouse button, similar to OnClick. <i>Since 7.0 it is just OnClick event with "Right" mouse button prefix.</i><br />
+<b>OnLongClick</b> - <i>(new 12.1)</i> when the target is clicked for time longer than 500ms (set by <a href="Mouse.htm#CfgLongClick">LongClick</a>), (any mouse button is pressed and released). Called after OnMouseUp and before OnClick. Called only if mouse did not move between button press and release. Useful especially for touch events.<br />
+<b>OnRightLongClick</b> - <i>(new 12.1)</i> when the target is clicked by right mouse button for long time, similar to OnLongClick. <i>it is just OnLongClick event with "Right" mouse button prefix.</i><br />
+<b>OnMouseDown</b> - when any mouse button is pressed on the target<br />
+<b>OnMouseUp</b> - when any mouse button is released on the target<br />
+<b>OnMouseOver</b> - when mouse is moved to the target. For every target is the event run only once (opposite to standard JavaScript onmouseover event). See also OnDragOver.<br />
+<b>OnMouseOut</b> - when mouse leaves the target. For every target is the event run only once (opposite to standard JavaScript onmouseout event).<br />
+<b>OnMouseMove</b> - whenever mouse moves above the target. It is called many times, so the handler should be very simple and fast.<br />
+<b>OnDrag</b> - when dragging should be started on the target - when user holds down any mouse button and slightly moves mouse<br />
+<b>OnDrop</b> - <i>(new 7.0)</i> when dragging successfully finished on the target. Called only if the dragging successfully started and OnDrag returned true.<br />
+<b>OnDragOver</b> - called instead of OnMouseOver when dragging is active<br />
+</div>
+
+<!-- Key and mouse button prefixes -->
+<a name="Prefixes"></a>
+<h5>Key and mouse button prefixes</h5>
+<div class="L1">
+<b>Shift</b>, <b>Ctrl</b>, <b>Alt</b>, <b>Meta</b>, <b>ShiftCtrl</b>, <b>ShiftAlt</b>, <b>CtrlAlt</b>, <b>ShiftCtrlAlt</b><br />
+<i>(since 7.0)</i> <b>Right</b>, <b>ShiftRight</b>, <b>CtrlRight</b>, <b>AltRight</b>, <b>ShiftCtrlRight</b>, <b>ShiftAltRight</b>, <b>CtrlAltRight</b>, <b>ShiftCtrlAltRight</b>. <i>The <b>Right</b> prefix cannot be used for <b>DblClick</b> event.</i><br />
+<i>(since 7.0)</i> <b>Middle</b>, <b>ShiftMiddle</b>, <b>CtrlMiddle</b>, <b>AltMiddle</b>, <b>ShiftCtrlMiddle</b>, <b>ShiftAltMiddle</b>, <b>CtrlAltMiddle</b>, <b>ShiftCtrlAltMiddle</b>. <i>The <b>Middle</b> prefix cannot be used for <b>Click</b> and <b>DblClick</b> events.</i><br />
+Remember, not all key prefixes are possible in all browsers. Some browsers use some prefixes for built-in functions.<br />
+<i><b>If there is <u>no</u> action defined for the actual key prefix, it is called an action without prefix, if it exists.</b></i><br />
+	For example there is called OnCtrlShiftRightClick event, if there is <u>no</u> action defined for this event, it is called OnClick.<br />
+</div>
+
+<!-- Touch event names (for iPad) -->
+<a name="IPAD"></a>
+<h5>Touch event names (for tablets and mobiles) <i style="font-size:78%;font-weight:normal;">(new 7.0)</i></h5>
+There are available events for one or more fingers touching down the pad.<br />
+If defined more handlers for the same event with different fingers, it is called only one (even if it returns false) for the specified count of fingers.<br />
+For example if defined <i>Click</i>, <i>Click1</i> and <i>Click3</i> events, for 1 finger is called <i>Click1</i>, for 2 fingers also <i>Click1</i>, for 3 or more fingers is called <i>Click3</i>. The <i>Click</i> is never called if defined <i>Click1</i>.<br />
+<i>All the affected fingers must be on the grid, not outside on the pad!</i><br />
+<i><u>No</u> key or button prefixes for the touch events available!</i><br /><br />
+
+<div class="L1">
+<b>OnClick</b> - when the target is clicked (touch down and up, without move), it is the same as standard mouse click and is shared with mouse events.<br />
+<b>OnLongClick</b> - <i>(new 12.1)</i> when the target is clicked for time longer than 500ms (set by <a href="Mouse.htm#CfgLongClick">LongClick</a>), (touch down and up, without move), it is the same as standard mouse long click and is shared with mouse events.<br />
+<b>OnClick1</b> - when the target is clicked by one finger<br />
+<b>OnClick2</b> - when the target is clicked by two fingers (called when two fingers are down on touch pad and one of them releases the pad). For the other finger release or move is not called any other touch event.<br />
+<b>OnClick3</b> - when the target is clicked by three fingers (called when three fingers are down on touch pad and one of them releases the pad). For the other two fingers release or move is not called any other touch event.<br />
+<b>OnLongClick1</b> - <i>(new 12.1)</i> when the target is clicked by one finger for long time<br />
+<b>OnLongClick2</b> - <i>(new 12.1)</i> when the target is clicked by two fingers for long time (called when two fingers are down on touch pad and one of them releases the pad). For the other finger release or move is not called any other touch event.<br />
+<b>OnLongClick3</b> - <i>(new 12.1)</i> when the target is clicked by three fingers for long time (called when three fingers are down on touch pad and one of them releases the pad). For the other two fingers release or move is not called any other touch event.<br />
+<b>OnMouseDown</b> - when the target is touched down by some finger, called for every finger, it is the same as standard mouse down and is shared with mouse events.<br />
+<b>OnMouseDown1</b> - when the target is touched down by some finger, called for every finger.<br />
+<b>OnMouseDown2</b> - when the target is touched down by some finger and there is already another finger on the pad, called for every finger, except the first one.<br />
+<b>OnMouseDown3</b> - when the target is touched down by some finger and there are already other two fingers on the pad, called for every finger, except the first two.<br />
+<b>OnMouseUp</b> - when the target is released by some finger, called for every finger, it is the same as standard mouse down and is shared with mouse events.<br />
+<b>OnMouseUp1</b> - when the target is released by some finger, called for every finger<br />
+<b>OnMouseUp2</b> - when the target is released by some finger and there is still another finger on the pad, called for every finger, except the last one.<br />
+<b>OnMouseUp3</b> - when the target is released by some finger and there are still other two fingers on the pad, called for every finger, except the last two.<br />
+<b>OnDrag</b> - when dragging should be started on the target - when user touches down the pad and slightly moves the finger, it is the same as standard mouse drag and is shared with mouse events.<br />
+<b>OnDrag1</b> - when the target is dragged by one finger<br />
+<b>OnDrag2</b> - when the target is dragged by one finger while there is down another finger on the pad. The dragging is done only by one finger, moving of the other finger is ignored.<br /> 
+<div class="L1">Moving is done by the finger that first moved enough to start dragging.</div>
+<b>OnDrag3</b> - when the target is dragged by one finger while there are down other two fingers on the pad. The dragging is done only by one finger, moving of the other fingers is ignored.<br />
+<b>OnDrop</b> - when dragging successfully finished on the target. Called only if the dragging successfully started and OnDrag returned true. It is the same as standard mouse drop and is shared with mouse events.<br />
+<b>OnDrop1</b> - when dragging by one finger successfully finished on the target.<br />
+<b>OnDrop2</b> - when dragging by two fingers successfully finished on the target, the finger count is got in time of start dragging, by the OnDrag.<br />
+<b>OnDrop3</b> - when dragging by three fingers successfully finished on the target, the finger count is got in time of start dragging, by the OnDrag.<br />
+<b>OnDragOver</b> - called during dragging for every target the moving fingers visit. It is the same as standard mouse drag over and is shared with mouse events.<br />
+<b>OnDragOver1</b> - called during dragging for every target when dragging by one finger.<br />
+<b>OnDragOver2</b> - called during dragging for every target when dragging by two fingers, the finger count is got in time of start dragging, by the OnDrag.<br />
+<b>OnDragOver3</b> - called during dragging for every target when dragging by three fingers, the finger count is got in time of start dragging, by the OnDrag.<br />
+</div>
+<br />
+<i>
+<b>Touch events do <u>not</u> work in MS IE in any version.</b><br />
+Touch events work in all other browsers on tablets and mobiles and in Chrome and Safari on desktop by default.<br />
+Touch events in MS Edge on desktop you have to permit in <a href="about:flags">about:flags</a>, option Touch - Touch events - Enable touch events.<br />
+Touch events in Firefox on desktop you have to permit in <a href="about:config">about:config</a>, option dom.w3c_touch_events.enabled = 1.<br />
+</i>
+
+<!-- Event targets -->
+<a name="Targets"></a>
+<h5>Event targets</h5>
+Every point in grid belongs to one or more targets. For one point in grid can be run more events, for different targets.<br /> 
+The targets are classified into 12 groups, every point in grid can have only one target per group.<br />
+<i>To see what targets are assigned to grid points, set &lt;treegrid>/&lt;bdo> <b>Debug</b> attribute to "<b>event</b>" and hover the grid.</i><br />
+<i><b>The assigned action are called in the order 0 - 11, if any of the actions succeeds, the next actions are not called.</b></i><br />
+<br />
+
+0) <u><i><b>Edge</b></i></u> - the edge of the cell, now implemented only for header cells and focused cell.<br />
+<b>Inside</b> (default value for no edge)<br />
+<b>Resize</b> (bottom right edge in grid, for resize grid) / 
+<b>HeaderLeft</b> / <b>HeaderRight</b> (resizing columns, set for cell with <tt><a href="ColWidth.htm#CResizing">Resizing</a>=<b>2</b></tt>)<br />
+<b>PagerHeaderLeft</b> / <b>PagerHeaderRight</b> (resizing pager)<br />
+<b>HeaderTop</b> / <b>HeaderBottom</b> (<i>since 11.0</i>, resizing rows, set for cell with <tt><a href="ColWidth.htm#CResizing">Resizing</a>=<b>1</b></tt>)<br /> 
+<b>HScrollLeft</b>  (edge between left and middle scrollbar) / <b>HScrollRight</b> (edge between middle and right scrollbar)<br />
+<b>LeftEdge</b> / <b>RightEdge</b> / <b>TopEdge</b> / <b>BottomEdge</b> (<i>since 11.0</i>, border edge of the focused cell, shown when defined <tt><a href="Cursor.htm#IFocusCell">FocusCell</a>="Border,..."</tt>)<br />
+<b>Corner</b> (<i>since 11.0</i>, right bottom corner of focused cell, shown when defined <tt><a href="Cursor.htm#IFocusCell">FocusCell</a>="Corner,...</tt>")<br />
+<i>Note, mouse cursor for the LeftEdge, RightEdge, TopEdge, BottomEdge and Corner cannot be set by action in OnMouseOver, it must be set in TreeGrid CSS style.</i><br />
+<br />
+
+1) <u><i><b>Special</b></i></u><br />
+<b>Sort</b> / <b>SortUp</b> / <b>SortDown</b> (sorting icon or the whole header cell depending on &lt;Cfg SortIcons/> setting)<br />
+<b>Radio1</b> / <b>Radio2</b> / <b>Radio...</b> (individual Radio type buttons)<br />
+<b>DropCol1</b> / <b>DropCol2</b> / <b>DropCol...</b> (individual columns in DropCols type, the empty space is the last DropCol)<br />
+<b>PagerPage1</b> / <b>PagerPage2</b> / <b>PagerPager...</b> (individual pages in right side pager, without empty space)<br />
+<b>Left</b> / <b>Mid</b> / <b>Right</b> (horizontal scrollbar)<br />
+<b>Levels1</b> / <b>Levels2</b> / <b>Levels...</b> (individual tree Level buttons in header, <i>since 10.0</i>)<br />
+<b>Popup</b> (popup icon of Button type with List attribute)<br />
+<b>Close</b> (close icon of Button type with CanDelete = 2, <i>since 13.0</i>)<br />
+<br />
+
+2) <u><i><b>PartType</b></i></u><br />
+<b>Edit</b> + <i><b>cell Type</b></i> (e.g EditText, EditInt, ..., only editable cells, for Bool and Radio is returned for the icon only, otherwise returns Nothing)<br />
+/ <b>DropCol</b> / <b>DropEmpty</b> (cell <tt>Type="DropCols"</tt>, DropEmpty is the empty space without columns)<br />
+/ <b>Link</b> (cell <tt>Type="Img"</tt>,<tt>"Link"</tt>, only the link or image, otherwise Nothing)<br />
+/ <b>Gantt</b> (cell <tt>Type="Gantt"</tt>) / <b>GanttHeader</b> (header of Gantt type column)<br />
+/ <b>Expand</b> (expand or collapse button in tree)<br />
+/ <b>Levels</b> (tree level buttons in header, <i>since 10.0</i>)<br />
+/ <b>ButtonSave</b> / <b>ButtonAdd</b> / ... / <b>ButtonXXX</b> (all standard and custom toolbar buttons - cell <tt>Type="Button"</tt>, <b>XXX</b> is column name)<br />
+/ <b>PanelFiltered</b> / <b>PanelGrouped</b> / <b>PanelSorted</b> / <b>SpaceOff</b> / <b>Space...</b> (all custom panel buttons in Space row, <tt>Type="Panel"</tt>)<br />
+/ <b>PanelDelete</b> / <b>PanelSelect</b> / <b>PanelMove</b> / <b>PanelCopy</b> / <b>PanelOff</b> / <b>Panel...</b> (all custom panel buttons in standard row, <tt>Type="Panel"</tt>)<br />
+/ <b>HeaderDelete</b> / <b>HeaderSelect</b> / <b>HeaderMove</b> / <b>HeaderCopy</b> / <b>HeaderOff</b> / <b>Header...</b> (all custom panel buttons in Header row, <tt>Type="Panel"</tt>)<br />
+/ <b>SideSort</b> / <b>SideDate</b> / <b>SideDefaults</b> / <b>SideFilter</b><br /> 
+/ <b>SideButton</b> (custom right side Button)<br />
+/ <b>SideIcon</b> (custom left / right side Icon)<br />
+/ <b>Nothing</b> (other types when <tt>CanEdit='0'</tt>; Bool and Radio also outside the icon, Bool,Radio,Enum also in ReadOnly mode)<br />
+<br />
+
+3) <u><i><b>Part</b></i></u><br />
+<b>Content</b> (standard cell content) / <b>Caption</b> (header cell content) / <b>Side</b> (right/left cell button) / <b>Tree</b> (tree button or lines) / <b>Panel</b> (cell <tt>Type="Panel"</tt>) / <b>Button</b> (cell <tt>Type="Button"</tt>, <i>since 10.0</i> also for side Icon)<br />
+<br />
+
+4) <u><i><b>CellState</b></i></u><br />
+<b>Edited</b> (focused cell in edit mode) / <b>Viewed</b> (focused cell in read only edit mode) / <b>Focused</b> (focused cell) / <b>Regular</b> (not focused cell)<br />
+<br />
+
+5) <u><i><b>CellEdit</b></i></u><br />
+<b>Editable</b> / <b>ReadOnly</b> (<tt>CanEdit='0'</tt>) / <b>NoFocus</b> (<tt>CanFocus='0'</tt>)<br />
+<br /> 
+
+6) <u><i><b>CellKind</b></i></u><br />
+<b>Kind</b> + <i><b>row Kind attribute</b></i> (KindData, KindHeader, KindSpace, KindFilter, KindGroup, KindSearch, KindToolbar, KindPager, ...)<br />
+/ <b>KindUser</b> (standard row without cells, specified by xxxHtml attribute)<br />
+<br />
+
+7) <u><i><b>CellSection</b></i></u><br />
+<b>Header</b> (<tt>Kind="Header"</tt>) / <b>Body</b> (body row) / <b>Fixed</b> (head and foot row except header) / <b>Space</b> (space row )<br /> 
+/ <b>PagerHeader</b> (right side pager header) / <b>PagerBody</b> (right side pager except header, including empty space)<br />
+<br />
+
+8) <u><i><b>Cell</b></i></u><br />
+<b>Cell</b> (any cell) / <b>PagerPage</b> (right side page, no empty space) / <b>Empty</b> (any other place without cells)<br />
+<br />
+
+9) <u><i><b>Section</b></i></u><br />
+<b>Left</b> / <b>Mid</b> / <b>Right</b> / <b>All</b> (space row)<br />
+<br />
+
+10) <u><i><b>RowKind</b></i></u><br />
+<b>HeaderRow</b> / <b>BodyRow</b> / <b>FixedRow</b> / <b>SpaceRow</b> / <b>NoRow</b><br />
+<br />
+
+11) <u><i><b>RowSection</b></i></u><br />
+<b>Row</b> (any row) / <b>Pager</b> (right side pager) / <b>VScroll</b> (vertical scrollbar) / <b>HScroll</b> (horizontal scrollbar) / <b>Other</b><br />
+<br />
+
+12) <u><i><b>Grid</b></i></u><br />
+<b>Grid</b> (anything inside grid) / <b>Outside</b> (anything outside the grid, including other grids)<br />
+
+<!-- Assigning event actions/callbacks -->
+<a name="Assigning"></a>
+<h5>Assigning event actions/callbacks</h5>
+The event actions can be assigned in TreeGrid XML/JSON or by JavaScript in global Grids array.<br />
+In XML/JSON the event can be assigned to cell, whole row, whole column or whole grid in &lt;Actions> tag.<br /> 
+For example: <tt>&lt;I Col1OnClickCell='Focus'/></tt> (cell), <tt>&lt;I OnClickCell ='Focus'/></tt> (row), <tt>&lt;C OnClickCell ='Focus'/></tt> (column), <tt>&lt;Actions OnClickCell ='Focus'/></tt> (grid).<br />
+If more events are assigned for one cell, they are called in this order: 1) Grids array, 2) one from cell or row or column, 3) &lt;Actions>. If any action returns true, the next are not called.<br /><br />
+
+<u><b>Dynamical assignment by JavaScript</b></u><br />
+Every action can be replaced dynamically by JavaScript, by simple assignment, for example:<br />
+<tt>
+Grids.OnClickCell = function(Grid,Row,Col,Event) { ... }<br />
+row[col+"OnClickCell"] = "alert('click')";<br />
+row.OnClickCell = "..."<br />
+grid.Cols[col].OnClickCell = "..."<br />
+grid.Actions.OnClickCell = "..."<br />
+</tt><br />
+
+The action code assigned to XML/JSON can be <u>exact JavaScript</u> code or <u>simplified notation</u>. The action in global Grids array must be JavaScript function.<br /><br />
+
+<u><b>Simplified notation for assigning actions in XML/JSON</b></u><br />
+<table>
+<tr><td colspan=3>- One action is assigned just by name</td><td></td><td></td></tr>
+<tr><td style="width:50px;"></td><td style="width:150px;">[A]</td><td><tt>&lt;Actions OnClickCell='Focus'/></tt> - do Focus</td></tr>
+<tr><td colspan=3>- Constant action. 1 or 0, useful with other operators to return 0 or 1 independently on result of actions</td><td></td><td></td></tr>
+<tr><td></td><td>[<b style="color:blue;">1</b>] or [<b style="color:blue;">0</b>]</td><td><tt>&lt;Actions OnUp='GoUp,1'/></tt> - do GoUp and always return success to suppress default behavior for OnUp key event</td></tr>
+<tr><td colspan=3>- Two action are always executed. Separate by plus. The return value is true if at least one action succeeded.</td><td></td><td></td></tr>
+<tr><td></td><td>[A <b style="color:blue;">+</b> B]</td><td><tt>&lt;Actions OnClickCell='Focus+ShowDetail'/></tt> - do Focus and next ShowDetail</td></tr>
+<tr><td colspan=3>- The second action is executed only if the first action <u>succeeds</u>. The return value is true if both actions succeeded. Separate by AND or &amp;&amp;. <i>Attention, when you use only "&amp;" instead of "&amp;&amp;", both action are always called!</i></td><td></td><td></td></tr>
+<tr><td></td><td>[A <b style="color:blue;">&amp;&amp;</b> B] or [A <b style="color:blue;">AND</b> B]</td><td><tt>&lt;Action OnClickCell='Focus AND StartEdit'/></tt> - do Focus and if succeeds, do StartEdit</td></tr>
+<tr><td colspan=3>- The second action is executed only if the first action <u>fails</u>. The return value is true if at least one action succeeded. Separate by OR or ||. <i>Attention, when you use only "|" instead of "||", both action are always called!</i></td><td></td><td></td></tr>
+<tr><td></td><td>[A <b style="color:blue;">||</b> B] or [A <b style="color:blue;">OR</b> B]</td><td><tt>&lt;Action OnClickSort='SortAsc OR SortDesc'/></tt> - do SortAsc or, if not possible, do SortDesc</td></tr>
+<tr><td colspan=3>- Action <u>B</u> is executed only when Action <u>A</u> succeeded, Action <u>C</u> is executed only when Action <u>A</u> failed. <i>The colon must not be missing.</i></td><td></td><td></td></tr>
+<tr><td></td><td>[A <b style="color:blue;">?</b> B <b style="color:blue;">:</b> C]</td><td><tt>&lt;Actions OnClickCell='Focus ? StartEdit : ShowDetail'/></tt> - do Focus and if succeeds do StartEdit otherwise do ShowDetail</td></tr>
+<tr><td colspan=3>- Both actions are always executed. The return value is the result of the second action and the first action result is ignored</td><td></td><td></td></tr>
+<tr><td></td><td>[A , B]</td><td><tt>&lt;Action OnMouseOverBody='ColorHover,HoverRowCell'/></tt> - do ColorHover and next HoverRowCell, return value of HoverRowCell.</td></tr>
+<tr><td>&nbsp;</td><td></td><td></td></tr>
+<tr><td colspan=3>The operators can be combined together, the operator priority is according to they are listed here, the plus has the highest priority. You can use parenthesis ( ) to change the priority.</td><td></td><td></td></tr>
+<tr><td></td><td></td><td><tt>&lt;Actions OnClickCell="Focus AND StartEdit+ShowDetail"/></tt> - do Focus and, if it succeeds, do both StartEdit and ShowDetail</td></tr>
+</table><br />
+
+<u><b>Exact JavaScript notation for assigning actions in XML/JSON</b></u><br />
+You can use any JavaScript code here, for long code is better to define custom JavaScript function and call it here.<br />
+Example: <tt>&lt;Actions OnClickCell="alert('clicked ['+Grid.ARow.id+','+Event.Col+']');"/></tt><br /><br />
+
+<u><b>Assigning function to global Grids array</b></u><br />
+You can assign the JavaScript function in script in HTML page or in external script. The assignment must be placed after including TreeGrid script GridE.js.<br />
+Example: <tt>Grids.OnClickCell = function(Grid,Row,Col,Event)&#123; alert('clicked ['+Row.id+','+Col+']'); }</tt><br />
+
+<!-- Event action (function callback) parameters -->
+<a name="Parameters"></a>
+<h5>Event action (function callback) parameters</h5>
+The event handler is called with parameters <i>TGrid</i> <b>Grid</b>, <i>TRow</i> <b>Row</b>, <i>string</i> <b>Col</b>, <i>TEvent</i> <b>Event</b>.<br />
+These parameters can be accessible from the event handler code, for example: <tt>OnClickRow = "Grid.SelectRow(Row)"</tt>.<br />
+The <b>Row</b> and <b>Col</b> parameters can be null if there is click outside cells.<br />
+The event assigned to global Grids array is called as global function with these parameters - function (Grid, Row, Col, Event).<br />
+The event code should return 1 or true for success, 0, false or null for failure.<br /><br />
+
+<u><b>TEvent properties</b></u> <i>(the cell properties are related always to <b>mouse</b> position!)</i>
+<table>
+<tr><td style="width:180px;">string <b>Name</b></td><td>Name of event without On, for example MouseMove or Click.</td></tr>
+<tr><td>TRow <b>Row</b>, string <b>Col</b></td><td>Cell under mouse cursor</td></tr>
+<tr><td>string <b>Type</b></td><td>Type of the cell, like Int or Text</td></tr>
+<tr><td>bool <b>CanEdit</b>, <b>CanFocus</b></td><td>Permissions of the cell</td></tr>
+<tr><td>int <b>X</b>, <b>Y</b></td><td>Position of mouse click relative to the cell</td></tr>
+<tr><td>int <b>Width</b>, <b>Height</b></td><td>Size of the cell</td></tr>
+<tr><td>int <b>ClientX</b>, <b>ClientY</b></td><td>Absolute position of mouse click, the event.clientX, event.clientY</td></tr>
+<tr><td>int <b>AbsX</b>, <b>AbsY</b></td><td>Absolute position of mouse click. It is not the same as event.clientX, event.clientY. It is position where will be placed tag with position:absolute.</td></tr>
+<tr><td>string <b>Level</b></td><td>Target group (0-11), for example PartType or CellSection</td></tr>
+<tr><td>string <b>Target</b></td><td>Target name from the group, for example ButtonSave or PagerBody</td></tr>
+<tr><td>string <b>Prefix</b></td><td>Key prefix, for example Shift or CtrlAlt</td></tr>
+<tr><td>int <b>Button</b></td><td>Button pressed in OnMouseDown, 1 left, 2 middle, 3 right</td></tr>
+</table>
+<i>...and many other internal properties that must <u>not</u> be changed ...</i><br />
+
+<!-- Calling predefined actions from JavaScript -->
+<a name="CallingEvents"></a>
+<h5>Calling predefined actions from JavaScript</h5>
+
+<!-- ActionXXX -->
+<a name="Action"></a> <a name="ActionXXX"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>bool</i>
+   <h4>ActionXXX</h4>
+   <s>(<i>bool</i> <b>focused</b>, <i>bool</i> <b>test</b>)</s>
+</div>
+Every action can be also called from JavaScript by grid["Action"+name], for example <tt>grid.ActionSave();</tt><br />
+<br />
+To use <b>...F</b> (focused) version of action, you need to call it with the first parameter as 1, for example <tt>grid.ActionSelectRow(1);</tt> => There is no method named ActionSelectRowF.<br />
+Some actions are related to focused row or cell (often but not always with the ...F). The focused cell can be changed by <a href="Focus.htm#Focus">Focus</a> method.<br />
+Some actions are related to actual row or cell (often but not always without the ...F). This cannot be changed, it is always cell under mouse cursor.<br />
+<br />
+(<i>New 12.0</i>) All actions except <s>dragging</s> and <s>mouse cursor</s> actions can be called just to test if the action will succeed for actual state. 
+Call it with the second parameter as 1, like <tt>grid.ActionSave(null,1);</tt><br />
+<br />
+<i>Calling actions from JavaScript is intended just to extend the global mouse or key schema. To provide specific actions for individual cells, use standard API methods like SelectRow or AddRow.</i><br />
+
+<!-- Creating custom actions -->
+<a name="Custom"></a>
+<h5>Creating custom actions</h5>
+<i>Since 12.0</i> it is possible to create custom actions.<br />
+The custom action is created as function assigned to some <b>Grids</b> property.<br />
+The function takes three arguments as (TGrid <b>grid</b>, bool <b>focus</b>, bool <b>test</b>).<br />
+<b>grid</b> is the grid object calling the action.<br />
+<b>focus</b> is set, if the function name was used with ...<b>F</b> suffix.<br />
+<b>test</b> is set, if the function is called to test, if the action will succeed. In this case it must not do any action, just return true or false.<br />
+The function must return true for success or false for failure.<br />
+If set <b>test</b>, the action can also return integer for success as count of affected items, that will replaced the %1 in menu item text.<br />
+<br />
+The action text for cell <a href="CellBasics.htm#CMenu">Menu</a> can be defined in &lt;Lang>&lt;MenuCell name="text"/>&lt;/Lang>.<br />
+The custom action can be assigned like any standard TreeGrid action to any TreeGrid event or cell <a href="CellBasics.htm#CMenu">Menu</a>.<br />
+The custom action cannot be assigned to <s>dragging</s> events.<br />
+<br />
+For example the next code hides or shows cell content on double click or from right click popup menu:<br />
+<tt>
+&lt;script><br />
+Grids.HideCell = function(grid,focus,test,show) {<br />
+var row = focus ? grid.FRow : grid.ARow, col = focus ? grid.FCol : grid.ACol;<br />
+if(!row||!col||(show?row[col+"Visible"]!=-1:row[col+"Visible"]==-1)) return false;<br />
+if(test) return true;<br />
+row[col+"Visible"] = (show?1:-1); grid.RefreshCell(row,col);<br />
+return true;<br />
+}<br />
+Grids.ShowCell = function(grid,focus,test) { return Grids.HideCell(grid,focus,test,1); }<br />
+&lt;/script><br />
+&lt;Cfg Menu="|HideCell|ShowCell"/><br />
+&lt;Actions OnDblClickCell="HideCell OR ShowCell"/><br />
+&lt;Lang>&lt;MenuCell HideCell="Hide the cell content" ShowCell="Show the cell content"/>&lt;/Lang><br />
+</tt>
+<!-- Focused vs. actual cell -->
+<a name="FocusedActual"></a>
+<h5>Focused vs. actual cell</h5>
+Predefined actions are done usually for focused or actual cell, row or column. It is <u>not</u> the same.<br /> 
+<b>Actual</b> cell, row or column is under mouse cursor and <b>focused</b> cell or cell range is TreeGrid cursor (blue by default).<br />
+Also <b>focused</b> cell or cell range is <u>not</u> the same as <b>selected</b> cells, rows or columns. 
+There can be more selected cell areas, rows and columns and is possible to delete, move or copy them, whereas focused cell or cell area is only one and it is a grid cursor.<br />
+When action says that works with <b>actual or focused row / column / cell</b>, it exists in two versions, one without postfix works with actual and the second with postfix <b>F</b> works with focused.<br /> 
+For example <i><b>DeleteRow </b><b style="color:red;">...F</b></i> has <i><b>DeleteRow</b></i> for actual row and <i><b>DeleteRowF</b></i> for focused row.<br />
+
+<!-----------------------------------------------------  TreeGrid key events  ------------------------------------------------->
+<a name="Key"></a>
+<h2>TreeGrid key events</h2>
+
+The event name consists from: On + key_prefix + key_name [+ target].<br />
+For example OnUp, OnShiftTab, OnUpEdit<br /><br />
+
+The key actions are called in JavaScript <b>onkeydown</b> event and are called only for <b>focused</b> grid. There can be only one focused grid at a time. The focused grid is set by <b>Grids.Focused</b> property automatically when some cell in grid is focused.<br />
+<i>The build-in TreeGrid action should be used with ...<b>F</b> suffix when assigned to key events, to handle focused cell and not active (under mouse) cell.</i><br />
+
+<!-- Key event names -->
+<a name="KeyEventNames"></a>
+<h5>Key event names</h5>
+Key names for all possible keys on keyboard.<br /> 
+Key names are defined by <b>KeyNames...</b> attributes for key scan codes. The KeyNames should not be changed, if there is not real reason to do it.<br /><br />
+
+<a name="BaseKeys"></a>
+<i><b>Base keys</b></i><br />
+<div class="L1">
+<b>A</b> - <b>Z</b>   <b>D0</b> - <b>D9</b> (keys 0 to 9) <b>Space Tab Backspace Enter Esc</b><br />
+<u>Maxthon</u> browser has disabled Esc key for JavaScript<br />
+</div><br />
+
+<a name="ControlKeys"></a>
+<i><b>Control keys</b></i><br />
+<div class="L1">
+<b>F1 - F12 Ins Del Home End PageUp PageDown Up Down Left Right Pause</b><br />
+In <u>IE</u> have function keys F1 - F12 predefined action that cannot be suppressed (for example F5 always reloads page)<br />
+Some function keys F1 - F12 are reserved for system use and cannot be handled by browser on some systems<br />
+<u>Safari</u> and <u>Konqueror</u> have disabled Ins key for JavaScript<br />
+</div><br />
+
+<a name="StandardKeys"></a>
+<i><b>Other std. keys</b></i><br />
+<div class="L1">
+<b>Tilde</b> '~' <b>Minus</b> '-' <b>Equal</b> '=' <b>LeftBracket</b> '[' <b>RightBracket</b> ']' <b>Backslash</b> '\' <b>Semicolon</b> ';' <b>Apostrophe</b> ''' <b>Comma</b> ',' <b>Point</b> '.' <b>Slash</b> '/'<br />
+<u>Firefox</u> returns for Minus the code for NumMinus and for Equal unknown code 61<br />
+<u>Opera</u> has completely different codes for these keys and often conflicts with control keys, for example Apostrophe returns code for Right arrow.<br />
+</div><br />
+
+<a name="NumericKeys"></a>
+<i><b>Numeric keys</b></i><br />
+<div class="L1">
+<b>Num0</b> - <b>Num9 NumDivide NumStar NumMinus NumPlus NumPoint</b><br />   
+Num0 - Num9 keys are identified only when NumLock is ON, otherwise the return code as control key.<br />
+The numeric Enter is always the same as Enter, so there is no NumEnter.<br />
+<u>Firefox</u> returns NumMinus also for Minus key<br />
+<u>Konqueror</u> has problems with identification of NumDivide, NumStar, NumMinus, NumPlus, NumPoint<br />
+</div><br />
+
+<a name="LockKeys"></a>
+<i><b>Lock keys</b></i><br />
+<div class="L1">
+<b>CapsLock NumLock ScrollLock</b><br />
+ScrollLock on some systems does not work.<br />
+</div><br />
+
+<b>Character keys</b><br />
+<div class="L1">
+<b>Key</b> - the <b>OnKey</b> event is called for all character keys.
+</div><br />
+
+<!-- Key event targets -->
+<a name="KeyEventTargets"></a>
+<h5>Key event targets</h5>
+By default has key event no target that is used for standard controlling when <a href="CellEdit.htm#EditMode">EditMode</a> is off - no cell is being edited.<br />
+If the EditMode is on, there are called events for target <b>Edit</b>. If the edited cell is multiline, there is called two actions for targets <b>EditMultiline</b> and <b>Edit</b> - if the EditMultiline action returns true, the Edit action is not called.<br /><br />
+
+<i><b>Assigning actions for events and function parameters are the same as for <a href="#Assigning">mouse events</a>.</b></i><br />
+
+<!-----------------------------------------------------  TreeGrid API events  ------------------------------------------------->
+<a name="API"></a>
+<h2>TreeGrid API events</h2>
+
+The API event handlers can be assigned by two ways: 1) by direct assignment or 2) by <a href="#SetEvent">TGSetEvent</a> or <a href="#AddEvent">TGAddEvent</a> function.<br /> 
+<strong>These ways cannot be mixed for the same event!</strong><br />
+<i>Note, the event handler is your function that is called from TreeGrid code. If you want to call the event handler from your code, just call your function directly with appropriate parameters.</i><br />
+<i>Since 11.0</i> if any event handler returns <b>null</b> (or undefined), it is ignored like it would not be defined at all. Except <a href="GanttCompute.htm#OnCorrectDependencies">OnCorrectDependencies</a> event, here the null (but not undefined) has its own meaning.<br />
+
+<h5>Direct assignment</h5>
+<tt>Grids.<i>EventName</i> = function(grid, param1, param2, ...) &#123; ... }</tt><br />
+or<br /> 
+<tt>
+function MyFunc(grid, param1, param2, ...) &#123; ... }<br />
+Grids.<i>EventName</i> = MyFunc;<br />
+</tt><br />
+
+For example:<br />
+<tt>Grids.OnClick = function(grid,row,col,x,y) { alert("clicked cell "+(row?row.id:null)+ ","+col+" at "+x+","+y); }</tt><br />
+This global event is called for all grids on page, with different first parameter <b>grid</b>.<br />
+
+<h5>Assignment by TGSetEvent or TGAddEvent</h5>
+You can set one event handler per grid by <a href="#SetEvent">TGSetEvent</a>.<br /> 
+Or you can set more event handlers per event and grid by <a href="#AddEvent">TGAddEvent</a>.<br /> 
+And remove assigned handlers them by <a href="#DelEvent">TGDelEvent</a>.<br />
+
+<!-- TGSetEvent -->
+<a name="SetEvent"></a> <a name="TGSetEvent"></a>
+<div class="API">
+   <u style="width:135px;">renamed <b>11.0</b> chg <b>11.0</b></u> <b>global func.</b> <i>bool</i>
+   <h4>TGSetEvent</h4> <s>(<i>string</i> <b>name</b>, <i>string</i> <b>id</b>, <i>function</i> <b>func</b>, <i>string</i> <b>ident</b> = null)</s>
+</div>
+Sets TreeGrid event <b>name</b> handler for grid with given <b>id</b>.<br /> 
+Clears all other handlers set for this event <b>name</b> and grid <b>id</b> by <b>TGAddEvent</b> or <b>TGSetEvent</b>.<br />
+Use it, if you have more grids and want to call different function for every grid.<br />
+<table>
+<tr><td style="width:50px;"><b>name</b></td><td>event name like "OnClick". If the <b>name</b> is null, the TGSetEvent call is ignored.</td></tr>
+<tr><td><b>id</b></td><td>id of the grid to attach the event handler to. This grid need not exist yet in time of call the <b>TGSetEvent</b> / <b>TGAddEvent</b>.</td></tr>
+<tr><td></td><td><i>(new 11.0)</i> If <b>id</b> is <b>empty string</b>, the function will be called for all other grids than for those having attached some this event handler by <b>TGSetEvent</b> / <b>TGAddEvent</b>.</td></tr>
+<tr><td></td><td><i>(chg 11.0)</i> If <b>id</b> is <b>null</b>, the function will be called for all grids. Always after the handlers attached to exact grid or other grids.</td></tr>
+<tr><td><b>func</b></td><td>any JavaScript function to be called for event raised. It should have the same parameters as the event handler expects.</td></tr>
+<tr><td></td><td>If the <b>func</b> is null, it only deletes all the event <b>name</b> handlers.</td></tr>
+<tr><td><b>ident</b></td><td><i>(new 11.0)</i> identifier for the <b>func</b>, by it the <b>func</b> can be deleted by <b>TGDelEvent</b> or read by <b>TGGetEvent</b>.</td></tr>
+</table>
+<i>Since 11.0</i> it returns <b>0</b> for error, <b>1</b> for event set.<br />
+<i>Since 14.1</i> if used <a href="Files.htm#GridEDJs">GridED.js</a> on demand script instead of GridE.js static script, the function downloads the <b>GridE.js</b> asynchronously and next sets the event handler.<br />
+<br />
+
+Example: <i>(both the ways do the same thing)</i><br />
+<table>
+<tr><td style="width:150px;">Standard way:</td><td><tt>Grids.OnClick = function(G)&#123; if(G.id=="G1") alert("G1 clicked"); if(G.id=="G2") alert("G2 clicked"); }</tt></td></tr>
+<tr><td>TGSetEvent way:</td><td><tt>TGSetEvent("OnClick","G1",function()&#123; alert("G1 clicked");} );</tt></td></tr>
+<tr><td></td><td><tt>TGSetEvent("OnClick","G2",function()&#123; alert("G2 clicked");} );</tt></td></tr>
+</table><br />
+
+Do <u>not</u> use both ways together; if you set <tt>Grids.OnClick</tt>, you cannot set it also by <b>TGSetEvent</b> / <b>TGAddEvent</b> and vice versa.<br />
+TGSetEvent is useful also when using automatic merging web pages like by Java portal - <a href="http://jcp.org/aboutJava/communityprocess/final/jsr168/">JSR-000168 Portlet</a>.<br />
+<i>Since 11.0 it can be used for all events. Since 11.0 it can be used with TGAddEvent / TGDelEvent. This function slightly slows event execution.</i><br />
+<i>Note, calling TDSetEvent marks the event defined always for all grids, it can cause slightly different behavior for <a href="Filter.htm#OnRowFilter">OnRowFilter</a>, <a href="CellSideButton.htm#OnButtonClick">OnButtonClick</a>, <a href="CellSideButton.htm#OnIconClick">OnIconClick</a>, <a href="CellBasics.htm#OnContextMenu">OnContextMenu</a>, <a href="GanttMenu.htm#OnGanttMenuClick">OnGanttMenuClick</a>, <a href="GanttRun.htm#OnGanttRunBoxChanged">OnGanttRunBoxChanged</a></i><br />
+
+<!-- TGAddEvent -->
+<a name="AddEvent"></a> <a name="TGAddEvent"></a>
+<div class="API">
+   <u style="width:135px;">renamed <b>11.0</b> chg <b>11.0</b></u> <b>global func.</b> <i>int</i>
+   <h4>TGAddEvent</h4> <s>(<i>string</i> <b>name</b>, <i>string</i> <b>id</b>, <i>function</i> <b>func</b>, <i>string</i> <b>ident</b> = null)</s>
+</div>
+Adds TreeGrid event <b>name</b> handler for grid with given <b>id</b>.<br /> 
+It preserves all other attached events. All attached handlers will be called when the event happens.<br />
+With this function you can have more handlers for one event and one grid and you can add and delete them dynamically.<br />
+Must <u>not</u> be used with standard event assignment by Grids[name].<br />
+<i>Since 11.0</i> the calling order of attached events is in the order they were attached. First are called handlers for exact grid id (<b>id</b> was set) or the other events (<b>id</b> was "") and finally the events attached to all grids (<b>id</b> was null).<br />
+The return value for event is the first non null return value from some handler.<br />
+<table>
+<tr><td style="width:50px;"><b>name</b></td><td>event name like "OnClick". If the <b>name</b> is null, the TGAddEvent call is ignored.</td></tr>
+<tr><td><b>id</b></td><td>id of the grid to attach the event handler to. This grid need not exist in time of call the <b>TGSetEvent</b> / <b>TGAddEvent</b>.</td></tr>
+<tr><td></td><td><i>(chg 11.0)</i> If <b>id</b> is <b>empty string</b>, the function will be called for all other grids than for those having attached some this event handler by <b>TGSetEvent</b> / <b>TGAddEvent</b>.</td></tr>
+<tr><td></td><td><i>(new 11.0)</i> If <b>id</b> is <b>null</b>, the function will be called for all grids. Always after the handlers attached to exact grid or other grids.</td></tr>
+<tr><td><b>func</b></td><td>any JavaScript function to be called for event raised. It should have the same parameters as the event handler expects.</td></tr>
+<tr><td></td><td>If the <b>func</b> is null, the TGAddEvent is ignored.</td></tr>
+<tr><td><b>ident</b></td><td><i>(new 11.0)</i> identifier for the <b>func</b>, by it the <b>func</b> can be deleted by <b>TGDelEvent</b> or read by <b>TGGetEvent</b>.</td></tr>
+<tr><td></td><td>It must be unique for given <b>name</b> and <b>id</b>. If it already exists, the <b>func</b> is replaced instead of adding new handler.</td></tr>
+</table>
+<i>Since 11.0</i> it returns <b>0</b> for error, <b>1</b> for event added, <b>2</b> for event replaced.<br />
+<i>Since 14.1</i> if used <a href="Files.htm#GridEDJs">GridED.js</a> on demand script instead of GridE.js static script, the function downloads the <b>GridE.js</b> asynchronously and next adds the event handler.<br />
+<i>Since 11.0 it can be used for all events. Since 11.0 it can be used with TGSetEvent / TGDelEvent. This function slightly slows event execution.</i><br />
+<i>Note, calling AddEvent marks the event defined always for all grids, it can cause slightly different behavior for <a href="Filter.htm#OnRowFilter">OnRowFilter</a>, <a href="CellSideButton.htm#OnButtonClick">OnButtonClick</a>, <a href="CellSideButton.htm#OnIconClick">OnIconClick</a>, <a href="CellBasics.htm#OnContextMenu">OnContextMenu</a>, <a href="GanttMenu.htm#OnGanttMenuClick">OnGanttMenuClick</a>, <a href="GanttRun.htm#OnGanttRunBoxChanged">OnGanttRunBoxChanged</a></i><br />
+
+<!-- TGDelEvent -->
+<a name="DelEvent"></a> <a name="TGDelEvent"></a>
+<div class="API">
+   <u style="width:135px;">renamed <b>11.0</b> chg <b>11.0</b></u> <b>global func.</b> <i>bool</i>
+   <h4>TGDelEvent</h4> <s>(<i>string</i> <b>name</b>, <i>string</i> <b>id</b>, <i>type</i> <b>ident</b>)</s>
+</div>
+Removes TreeGrid event handler added by <a href="#AddEvent">TGAddEvent</a> or <i>(since 11.0)</i> <a href="#SetEvent">TGSetEvent</a> functions.<br />
+<table>
+<tr><td style="width:50px;"><b>name</b></td><td>event name like "OnClick".</td></tr>
+<tr><td></td><td>If the <b>name</b> is <b>null</b>, it deletes all event handlers attached to given grid <b>id</b>. In this case the <b>func</b> is ignored.</td></tr>
+<tr><td><b>id</b></td><td>id of the grid to delete the event handler(s) from. This grid need not exist in time of call the <b>TGDelEvent</b>.</td></tr>
+<tr><td></td><td><i>(new 11.0)</i> If <b>id</b> is <b>empty string</b>, it deletes all other grids handler(s) added by <b>TGSetEvent</b> / <b>TGAddEvent</b> with <b>id</b> as empty string.</td></tr>
+<tr><td></td><td><i>(new 11.0)</i> If <b>id</b> is <b>null</b>, it deletes all grids handler(s) added by <b>TGSetEvent</b> / <b>TGAddEvent</b> with <b>id</b> as null.</td></tr>
+<tr><td><b>ident</b></td><td>It can be the JavaScript function attached to the event. <i>It must be the same function object you passed to <b>TGAddEvent</b> / <b>TGSetEvent</b>, <u>not</u> newly defined function with the same code!</i></td></tr>
+<tr><td></td><td>Or <i>since 11.0</i> it can be the identifier under it the handler was added (the <b>ident</b> parameter in <b>TGSetEvent</b> / <b>TGAddEvent</b>).</td></tr>
+<tr><td></td><td>If the <b>ident</b> is <b>null</b>, it deletes all handlers attached to event <b>name</b> and grid <b>id</b>.</td></tr>
+</table>
+<i>Since 11.0</i> returns true if the handler is deleted otherwise it returns false.<br />
+
+<!-- TGGetEvent -->
+<a name="GetEvent"></a> <a name="TGGetEvent"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>global func.</b> <i>function</i>
+   <h4>TGGetEvent</h4> <s>(<i>string</i> <b>name</b>, <i>string</i> <b>id</b>, <i>string</i> <b>ident</b>)</s>
+</div>
+Returns TreeGrid event handler added by <a href="#AddEvent">TGAddEvent</a> or <a href="#SetEvent">TGSetEvent</a> functions.<br />
+<table>
+<tr><td style="width:50px;"><b>name</b></td><td>event name like "OnClick".</td></tr>
+<tr><td><b>id</b></td><td>id of the grid to get the event handler(s) from. This grid need not exist in time of call the <b>TGGetEvent</b>.</td></tr>
+<tr><td></td><td>It can be also <b>empty string</b> or <b>null</b>. To get appropriate attached handler.</td></tr>
+<tr><td><b>ident</b></td><td>the identifier under it the handler was added (the <b>ident</b> parameter in <b>TGSetEvent</b> / <b>TGAddEvent</b>).</td></tr>
+</table>
+returns the attached function object or null for error.<br />
+
+</div>
+</body>	
+</html>

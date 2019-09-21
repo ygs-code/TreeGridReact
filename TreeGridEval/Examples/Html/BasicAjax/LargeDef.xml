@@ -1,0 +1,137 @@
+<Grid>
+   <!-- Cfg tag is splitted by attributes just for comments, you should merge them in your standard applications -->
+   <Cfg id="LargeFile" SuppressCfg="1" RowIndex="Pos"/> <!-- Grid identification for saving configuration to cookies -->
+   <Cfg Prepared='1'/> <!-- The XML data are prepared, so you can set this attribute to speed up loading -->
+   <Cfg Paging='1' PageLength='100'/> <!-- All pages rendered on start -->
+   <Cfg ShowDeleted='0'/> <!-- This example hides deleted row instead of coloring them red -->
+   <Cfg MaxHeight='1'/> <!-- Grid maximizes height of the main tag on page -->
+   <Cfg Sort='P'/> <!-- To sort grid according to partner and Month for first time (when no configuration saved) -->
+   <Cfg MaxGroupLength='0'/> <!-- Suppresses dividing rows to more groups when grouping because it is controlled by MaxChildren of all rows -->
+   <Cfg GroupSortMain='1'/> <!-- When grouping always sorts according to main column ascending -->
+   <Cfg GroupRestoreSort='1' /> <!-- Restores sorting state after grouping that was before grouping -->
+   <Cfg FilterEmpty='1'/> <!-- When filtering, hides group rows that have all children hidden, see the Group row have set CanFilter='2' -->
+   <Cfg IndexEnum='1'/> <!-- All the Enum items are set by their index -->
+   <Cfg ChildParts='0'/> <!-- No background paging here -->
+   <Cfg SaveAttrs=',Paging,,ChildParts,,PageLength'/> <!-- Saves paging settings to cookies -->
+   <Cfg ExactSize='0'/> <!-- Speeds up large grid by not precise measurement of the main tag -->
+   <Cfg LimitScroll="23" MinBodyRows="6" MinMidWidth="300" MinLeftWidth="300" MinRightWidth="200"/> <!-- Responsive design, for small windows sets NoVScroll and NoHScroll -->
+   <Actions OnUngroup='Grid.Adding=1;'/> <!-- Permits adding new rows into plain table -->
+
+   <Def>
+
+      <!-- Base row settings 
+         AcceptDef='' means that no rows can be added or moved to children of the row
+         MaxChildren set maximum children that row can contain. If the child count exceeds this limit, there are created group of children -->
+      <D Name='R' AcceptDef='' CalcOrder='G,D,F'/>
+
+      <!-- Base group setting - for group row created when grouping
+         It also inherits attributes from group row defined in Defaults.xml 
+         CanFilter='2' means that this row will be hidden when it does not have any visible children when filtering, see Cfg FilterEmpty 
+         Action suppresses adding new rows when grid is grouped by another column than Partner
+         -->
+      <D Name='Group' CanFilter='2' Calculated='1' CalcOrder='O,I,E,G,D,F,B' OCanEdit='0' ICanEdit='0' ECanEdit='0'
+         OFormula='sum()' IFormula='sum()' EFormula='sum()' GFormula='sum()' DFormula='sum()' FFormula='sum()'
+         OnGroup='Grid.Adding=0;' Expanded='0'
+         RVisible='0' CVisible='0' SVisible='0' XVisible='0' NVisible='0' AVisible='0' BVisible='0'
+         />
+
+      <!-- Group row created when grouping by Region or Country or State 
+         GroupCols tells that this default row is used only when grid is grouped by Region, Country, State, Partner in that order
+         EditCols and .CopyTo attributes controls editing and bubbling changes to children. -->
+      <D Name='GroupLoc' Def='Group' GroupCol='R,C,S' GroupCols='|R|C|S|R,C|R,S|C,S|R,C,S' GroupMain='P'
+         EditCols='Main' RCopyTo='Children,R' CCopyTo='Children,C' SCopyTo='Children,S'
+         />
+
+   </Def>
+   <Panel Simple='7' Overflow='1'/>
+   <LeftCols>
+      <!-- Partner, main column for other groupings, width 130px, when grouped 200px -->
+      <C Name='P' Simple='3' Width='150' GroupWidth='200' Type='Text' ToolTip='1' Group='1' Overflow='130'/>
+   </LeftCols>
+   <Cols>
+      <!-- Region column -->
+      <C Name='R' Simple='3' Width='180' Type='Enum' Clear='C,S' Group='1'
+         Enum='|Central &amp; South Asia|East Asia &amp; the Pacific|East Europe|Middle East &amp; North Africa|North &amp; Central America|South America|Sub-Saharan Africa|West Europe'/>
+
+      <!-- The 'C' column is related to 'R' column, it contains only countries from selected region -->
+      <C Name='C' Simple='3' Width='135' Type='Enum' Related='R' Clear='S' Group='1'
+         Enum0="|ARMENIA|AZERBAIJAN|BANGLADESH|INDIA|KAZAKSTAN|PAKISTAN|SRI LANKA"
+         Enum1="|AUSTRALIA|BRUNEI|CHINA|HONG KONG|INDONESIA|JAPAN|KOREA, DPR|MALAYSIA|MONGOLIA|MYANMAR|NEW ZEALAND|PAPUA NEW GUINEA|PHILIPPINES|SINGAPORE|SOUTH KOREA|TAIWAN|THAILAND|VIETNAM"
+         Enum2="|ALBANIA|BELARUS|BULGARIA|CROATIA|CZECH REPUBLIC|ESTONIA|HUNGARY|LATVIA|LITHUANIA|MOLDOVA|POLAND|ROMANIA|RUSSIA|SERBIA-MONTENEGRO|SLOVAK REPUBLIC|SLOVENIA|UKRAINE"
+         Enum3="|ALGERIA|BAHRAIN|EGYPT|IRAN|IRAQ|ISRAEL|JORDAN|KUWAIT|LEBANON|LIBYA|MOROCCO|OMAN|QATAR|SAUDI ARABIA|SYRIA|TUNISIA|UAE|YEMEN"
+         Enum4="|BAHAMAS|CANADA|COSTA RICA|CUBA|DOMINICAN REPUBLIC|EL SALVADOR|GUATEMALA|HAITI|HONDURAS|JAMAICA|MEXICO|NICARAGUA|PANAMA|TRINIDAD &amp; TOBAGO|UNITED STATES"
+         Enum5="|ARGENTINA|BOLIVIA|BRAZIL|CHILE|COLOMBIA|ECUADOR|GUYANA|PARAGUAY|PERU|SURINAME|URUGUAY|VENEZUELA"
+         Enum6="|ANGOLA|BOTSWANA|BURKINA FASO|CAMEROON|CONGO|CONGO DR|COTE D'IVOIRE|ETHIOPIA|GABON|GAMBIA|GHANA|GUINEA|GUINEA-BISSAU|KENYA|LIBERIA|MADAGASCAR|MALAWI|MALI|MOZAMBIQUE|NAMIBIA|NIGER|NIGERIA|SENEGAL|SIERRA LEONE|SOMALIA|SOUTH AFRICA|SUDAN|TANZANIA|TOGO|UGANDA|ZAMBIA|ZIMBABWE"
+         Enum7="|AUSTRIA|BELGIUM|CYPRUS|DENMARK|FINLAND|FRANCE|GERMANY|GREECE|ICELAND|IRELAND|ITALY|LUXEMBOURG|MALTA|NETHERLANDS|NORWAY|PORTUGAL|SPAIN|SWEDEN|SWITZERLAND|TURKEY|UNITED KINGDOM"
+         />
+
+      <!-- The 'S' column is related to 'C' column, it contains only states from selected country 
+         If the country is not divided to states, it is empty and read-only 
+         This column has set GroupType=16 - when grouping by State, it does not create groups for empty states -->
+      <C Name='S' Simple='3' Width='100' Type='Enum' Related='R,C' Group='1' GroupEmpty='0'
+         Enum4_14="|Alabama|Alaska|Arizona|Arkansas|California|Colorado|Connecticut|Delaware|Florida|Georgia|Hawaii|Idaho|Illinois|Indiana|Iowa|Kansas|Kentucky|Louisiana|Maine|Maryland|Massachusetts|Michigan|Minnesota|Mississippi|Missouri|Montana|Nebraska|Nevada|New Hampshire|New Jersey|New Mexico|New York|North Carolina|North Dakota|Ohio|Oklahoma|Oregon|Pennsylvania|Rhode Island|South Carolina|South Dakota|Tennessee|Texas|Utah|Vermont|Virginia|Washington|West Virginia|Wisconsin|Wyoming"
+         /> 
+      <C Name='X' Simple='7' Width='100' Type='Bool' Format='||x' Overflow='30'/> <!-- Registered -->
+      <C Name='N' Simple='3' Width='105' Type='Date' Format='d' Overflow='90'/> <!-- Since -->
+      <C Name='A' Simple='3' Width='90' Type='Enum' Enum='|week|month|quarter|half year|year' Overflow='70'/> <!-- Calls per -->
+      <C Name='B' Simple='15' Width='70' Type='Int' Overflow='30'/> <!-- Rabat -->
+
+      <C Name='O' Simple='15' Width='75' Type='Int' Overflow='30'/> <!-- Orders -->
+      <C Name='I' Simple='7' Width='90' Type='Float' Format=',0.00' Overflow='60'/> <!-- Income -->
+      <C Name='E' Simple='7' Width='95' Type='Float' Format=',0.00' Overflow='60'/> <!-- Expenses -->
+      <C Name='G' Simple='5' Width='105' Type='Float' Format=',0.00' Formula='I-E' Overflow='60'/> <!-- Gross profit -->
+      <C Name='D' Simple='5' Width='90' Type='Float' Format=',0.00' Formula='G>0?B*G/100:0' Overflow='60'/> <!-- Discount -->
+   </Cols>
+   <RightCols>
+      <C Name='F' Simple='5' Width='90' Type='Float' Format=',0.00' Formula='G-D' Overflow='60'/> <!-- Profit -->
+   </RightCols>
+
+   <!-- Column captions -->
+   <Header
+      R='Region' C='Country' S='State' P='Partner' 
+      X='Registered' N='Since' A='Calls per'  O='Orders' 
+      I='Income' E='Expenses' G='Gross profit' B='Rabat' D='Discount'
+      F='Profit' 
+      /> 
+   <Head>
+      <!-- Group row - to let user choose or build grouping -->
+      <Group id='Controls' Cells='Win,Paging,List,Custom' Space='0' Panel='0'
+         PagingLabel='Choose&amp;#160;paging:'
+         PagingType='Select'
+         PagingHtmlPrefix='&lt;b>' PagingHtmlPostfix='&lt;/b>' PagingWidth='100' 
+         PagingDefaults='|No paging|Client paging'
+         Paging='No paging' PagingFormula='Grid.Paging==2?"Client paging":"No paging"'
+         PagingOnChange='if(Value=="No paging"){Grid.Paging=1;Grid.PageLength=100;Grid.ChildParts=0;}else{Grid.Paging=2;Grid.PageLength=20;Grid.ChildParts=1;}Grid.SaveCfg();Grid.ReloadBody();'
+         ListLeft='10'
+         ListLabel='Choose&amp;#160;view:'
+         ListHtmlPrefix='&lt;b>' ListHtmlPostfix='&lt;/b>' ListWidth='120' 
+         List='|Plain table|Group by Location|Group by Calls per'
+         Cols='||R,C,S|A'
+         ListCustom='Custom grouping'
+         WinType="Bool" WinLabelRight="Window scroll" WinCanEdit="1" WinFormula="Grid.NoVScroll?1:0" WinTip="Disable grid scrollbars and use page scrollbars"
+         WinOnChange="Grid.NoVScroll = Value; Grid.NoHScroll = Value; if(!Value) { Grid.MainTag.style.width='100%'; Grid.MainTag.style.height='500px'; } Grid.SetMaxHeight(!Value); Grid.Update();"
+         />
+
+      <!-- Filter row - to let user choose filter, changes filtering of area enums by selection only -->
+      <Filter CanEdit='1' RIcon='Enum' CIcon='Enum' SIcon='Enum' cIcon='Enum' sButton='Date' PCaseSensitive='0'
+         />
+   </Head>
+   <Foot>
+      <!-- Bottom row with the summary results -->
+      <I id='Results' CanDelete='0' CanEdit='0' Calculated='1' 			
+         P='Total results' PSpan='2'
+         RVisible='0' CVisible='0' SVisible='0'
+         XVisible='0' AVisible='0' 
+         CalcOrder='O,I,E,G,D,F,B'
+         BType='Float' BFormat='0.00"%"' BFormula='G?D/G*100:0'
+         OFormula='sum()' IFormula='sum()' EFormula='sum()' GFormula='sum()' DFormula='sum()' FFormula='sum()'
+         OCanEdit='0' ICanEdit='0' ECanEdit='0'
+         /> 
+   </Foot>
+   <Pager Width='150' MinWidth='100'/> <!-- Right side pager -->
+   <Lang>
+      <Alert ErrAdd='Cannot add new partner here!'/> <!-- Changes text of adding error message -->
+   </Lang>
+   <Toolbar Formula='"Displayed rows: "+countrows(4)'/>
+   <Actions OnClickButtonAdd='AddRowF||AddRowEnd'/>
+</Grid>

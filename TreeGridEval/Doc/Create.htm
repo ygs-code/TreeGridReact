@@ -1,0 +1,564 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Creating</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Creating TreeGrid</h1>
+<p>TreeGrid documentation</p>
+
+<b>Basics</b><br />
+The simplest page with TreeGrid:<br />
+<tt>
+&lt;<b style="color:darkred;">html</b>>
+  <div class="L1">
+  &lt;<b style="color:darkred;">head</b>>
+    <div class="L1">
+    &lt;<b style="color:darkred;">script</b> <b>src</b>="GridE.js"> &lt;/<b style="color:darkred;">script</b>> <span style="color:grey;">&lt;!-- including TreeGrid script --></span>
+    </div>
+  &lt;/<b style="color:darkred;">head</b>><br />
+  &lt;<b style="color:darkred;">body</b>>
+    <div class="L1">  
+    &lt;<b style="color:darkred;">div</b> <b>style</b>="width:100%;height:500px;"> <span style="color:grey;">&lt;!-- TreeGrid main div tag --></span>
+      <div class="L1">            
+      &lt;<b style="color:darkred;">treegrid</b> <b>Data_Url</b>="Data.xml"> &lt;/<b style="color:darkred;">treegrid</b>>	<span style="color:grey;">&lt;!-- TreeGrid data source definition --></span>
+      </div>
+    &lt;/<b style="color:darkred;">div</b>>  
+    </div>  
+  &lt;/<b style="color:darkred;">body</b>>
+  </div>
+&lt;/<b style="color:darkred;">html</b>>
+</tt><br /><br />
+
+<b>Synchronous creating</b><br />
+To fully create and render TreeGrid during page loading you can use such HTML code:<br />
+<tt>
+  <div class="L2">
+  &lt;<b style="color:darkred;">div</b> id="Main" <b>style</b>="width:100%;height:500px;"> <span style="color:grey;">&lt;!-- TreeGrid main div tag with id --></span>
+    <div class="L1">
+    &lt;<b style="color:darkred;">script</b>> TreeGrid('&lt;<b style="color:darkred;">treegrid</b> <b>Sync</b>="1" <b>Data_Url</b>="Data.xml"> &lt;/<b style="color:darkred;">treegrid</b>>',"Main"); &lt;/<b style="color:darkred;">script</b>>
+    </div>
+  &lt;/<b style="color:darkred;">div</b>>
+  </div>
+</tt>
+<i>Remember, all JavaScript code, API events, support functions and so on must be defined <u>before</u> the TreeGrid call, but <u>not</u> inside the Main tag.</i><br /><br />
+
+<b>Creating by API</b><br />
+TreeGrid is created after click to button Create:<br />
+<tt>
+  <div class="L2">
+  &lt;<b style="color:darkred;">div</b> id="Main" <b>style</b>="width:100%;height:500px;"> &lt;/<b style="color:darkred;">div</b>> <span style="color:grey;">&lt;!-- TreeGrid main div tag with id --></span><br />
+  &lt;<b style="color:darkred;">button</b> <b>onclick</b>='Create()'>Create&lt;/<b style="color:darkred;">button</b>><br />              
+	&lt;<b style="color:darkred;">script</b>>
+    <div class="L1">	
+    function Create(){ TreeGrid( { Data:{ Url:"Data.xml" } },"Main" ); }
+    </div>
+  &lt;/<b style="color:darkred;">script</b>>
+  </div>
+</tt><br />
+
+<b>Version upgrade</b><br />
+When you are upgrading to new version or registered license or newly compiled script you can add some version info as query string to GridE.js to ensure using the new one and suppress caching the old one, for example:<br />
+<tt>
+<div class="L1">&lt;<b style="color:darkred;">script</b> <b>src</b>="../Grid/GridE.js?Version=6.0.24"> &lt;/<b style="color:darkred;">script</b>></div>
+</tt>
+
+<!-----------------------------------------------------------------------  Basic information  ------------------------------------------------->
+<a name="Basic"></a>
+<h2>Basic information</h2>
+
+TreeGrid can be <b>placed to HTML</b> page by tag &lt;<a href="#TagTreeGrid">treegrid</a>> or &lt;<a href="#TagBdo">bdo</a>> or can be <b>created dynamically</b> by API function <a href="#TreeGrid">TreeGrid</a>.<br />
+<strong>The &lt;treegrid> or &lt;bdo> tags must always have enclosing tag (&lt;treegrid> &lt;/treegrid> or &lt;bdo> &lt;/bdo>).</strong><br />
+In &lt;<a href="#TagTreeGrid">treegrid</a> / &lt;<a href="#TagBdo">bdo</a>> tag or <a href="#TreeGrid">TreeGrid</a> function you define data sources to download XML data from and upload data to.<br />
+TreeGrid can download data from remote server, local server, local files or from XML placed directly in the source HTML page.<br />
+TreeGrid can upload data to remote or local server or include the data to HTML page and submit it.<br /><br />
+
+TreeGrid can be fully <b>deleted</b> from page by calling <a href="#Dispose">Dispose</a> method.<br />
+TreeGrid can be <b>reloaded</b> by calling <a href="#Reload">Reload</a> method. Or you can reload only body rows by calling <a href="#ReloadBody">ReloadBody</a>.<br />
+TreeGrid can is <b>accessible by API</b> by <a href="#Grids">Grids</a> array.<br /><br />
+
+By default is the communication <b>asynchronous</b>, you can set <tt>&lt;treegrid <a href="DataCommunication.htm#Sync">Sync</a>='1'/></tt> to use <b>synchronous</b> communication.<br /> 
+The synchronous communication is faster, but disables the whole page usage during loading.<br /><br />
+
+<b>Encoding strings in XML.</b> If you want to store any string to xml, you need to encode these characters: <b style="color:blue;">&lt;</b>, <b style="color:blue;">&amp;</b> and <b style="color:blue;">"</b> or <b style="color:blue;">'</b> depending on quotations used in your xml attribute.<br />
+And if you want to store this xml data to html page in any attribute <b>as string</b> you have to make the same encoding once more (<i>you again stores string in xml/html</i>). The only exception is that HTML accepts <b style="color:blue;">&lt;</b> character in attribute values, but if you encode it, it will be better.<br />
+
+<!-----------------------------------------------------------------------  Creating  ------------------------------------------------->
+<a name="Creating"></a>
+<h2>Creating</h2>
+
+<!-- <treegrid> -->
+<a name="HTMLtagtreegrid"></a>
+<a name="TagTreeGrid"></a>
+<div class="XML">
+   <u></u> <b>&lt;HTML tag></b> <i></i>
+   <h4>&lt;treegrid></h4> <s>Basic TreeGrid definition on page</s>
+</div>
+Places one grid to HTML page and defines base grid attributes, the data sources to download XML data from and upload to.<br /><br />
+
+The &lt;treegrid> tag is placed to parent <b>div</b> tag that is called <u><b>Main tag</b></u>. The <b>Main tag</b> can be also any server control to control this tag from server script, but it always needs to be a block (not inline) tag.<br /> 
+All content of the <b>Main tag</b> will be overridden by TreeGrid content after the grid is created.<br />
+The <b>Main tag</b> is partially controlled by TreeGrid, especially its <u>size</u> and overflow (depending on <a href="GridSize.htm">size and scroll settings</a>), but all other properties can be set as to standard HTML tag.<br /><br />
+
+When the page is loaded (in body onload event), all &lt;treegrid> tags on page are processed and replaced by appropriate grid.<br />
+To process the &lt;treegrid> tags later, call <a href="#StartTreeGrid">StartTreeGrid</a> method.<br />
+To create grid dynamically by API call <a href="#TreeGrid">TreeGrid</a> method.<br />
+All the attributes are accessible by API by grid.<a href="#Source">Source</a> attribute.<br />
+<strong>The &lt;treegrid>tag must always have enclosing tag (&lt;treegrid> &lt;/treegrid> <span style="text-decoration:underline;">not</span> <s>&lt;treegrid/></s> ).</strong><br />
+
+<!-- <bdo> -->
+<a name="HTMLtagbdo"></a>
+<a name="TagBdo"></a>
+<div class="XML">
+   <u></u> <b>&lt;HTML tag></b> <i></i>
+   <h4>&lt;bdo></h4> <s>An alternative to &lt;treegrid> tag</s>
+</div>
+You can use &lt;bdo> tag instead of &lt;treegrid> to support some old browsers like Safari 3.x that don't accept non HTML tags.<br /> 
+&lt;bdo> is a standard HTML tag to setting text direction, but without its <b>dir</b> attribute has no sense and can be used as TreeGrid definition.<br />
+<strong>The &lt;bdo>tag must always have enclosing tag (&lt;bdo> &lt;/bdo> <span style="text-decoration:undeline;">not</span> <del>&lt;bdo /></del> ).</strong><br />
+
+<!-- TreeGrid -->
+<a name="TreeGrid"></a>
+<div class="API">
+   <u><i>upd <b>14.1</b></i></u> <b>global func.</b> <i>TGrid</i>
+   <h4>TreeGrid</h4>
+   <s>(<i>object</i> <b>Source</b>, <i>string</i> <b>tag</b> = "", <i>object</i> <b>param</b> = null)</s>
+</div>
+Creates and renders new grid by API according to settings in <b>Source</b>.<br />
+<b>Source</b> can be:<br />
+<div class="L1">
+  a) string with &lt;treegrid> or &lt;bdo> tag with all settings like it is included directly to HTML
+		<div class="L1">Example: <tt>TreeGrid("&lt;treegrid Data_Url='Grid2.xml'>&lt;/treegrid>","Main");</tt></div>
+	b) string with XML to create the grid from. The grid will have only Data_Data source defined.
+		<div class="L1">Example: <tt>TreeGrid("&lt;Grid>&lt;Cols>&lt;C Name='A'/>&lt;/Cols>&lt;Body>&lt;B>&lt;I A='xxx'/>&lt;/B>&lt;/Body>&lt;/Grid>","Main");</tt></div>
+	c) object with parsed &lt;treegrid> / &lt;bdo> tag. 
+    <div class="L1">
+    All multilevel attributes (data sources) containing '_' must be set as nested objects, split by the '_', 
+      <div class="L1">for example Data_Param_Test is accessed as Source.Data.Param.Test and set as <tt>{Data:{Param:{Test:'val'}}}</tt></div>
+		Eample: <tt>TreeGrid({Layout:{Url:"Grid2Def.xml"},Data:{Url:"Grid2.xml"}},"Main");</tt>
+    </div>
+</div>
+<b>tag</b> is the <b>main div tag</b> to render grid into. The <b>tag</b> can be an id of the tag or the HTMLElement itself. The html tag must exist in time of calling the function.<br />
+   <div class="L1">If the parameter is missing, the id of the tag must be set in input XML by attribute <tt>&lt;Cfg <b>Tag</b>/></tt>. See &lt;<a href="#HTMLtagtreegrid">treegrid</a>> tag description.</div>
+<b>param</b> are <i>(since 14.1)</i> the attributes that will be set to the created grid and will be preserved during reload similarly to attributes in <a href="#CfgKeepReload">KeepReload</a>.<br />
+<div class="L1">It is useful to pass here some link to the parent object that creates TreeGrid, e.g. <tt>this.Grid = TreeGrid({Data:{Url:"Test.xml"}},"Main",{id:"TestGrid",Component:this});</tt></div>
+The <b>param</b> can contain <b>id</b> attribute or the <b>param</b> can be a string to be used as the <b>id</b> attribute. 
+   <div class="L1">The <b>id</b> is the unique id of the grid, used to identify it, to access the grid object globally by Grids[id].</div>
+   <div class="L1">The <b>id</b> is also used in saving configuration to the cookies if not set <a href="Cookie.htm#CfgCfgId">CfgId</a> attribute.</div>
+   <div class="L1">If the <b>id</b> is not set in/by <b>param</b>, the id of the grid can be set in the <b>Source</b> or input XML by attribute &lt;Cfg id/> or it is autogenerated.</div> 
+The function returns created <b>TGrid</b> object as main TreeGrid object. Remember, loading and rendering is asynchronous by default, so at the moment of function return, the grid is <u>not</u> fully loaded and rendered yet. 
+You can change it by setting <a href="DataCommunication.htm#Sync">Sync</a> to 1.<br />
+<i>Since 14.1</i> if used <a href="Files.htm#GridEDJs">GridED.js</a> on demand script instead of GridE.js static script, the function downloads the <b>GridE.js</b> asynchronously and always returns before the TreeGrid is initialized and loaded - the returned grid object has set only its Source attribute.<br />
+It returns null for fatal error. It fails if the <b>Source</b> is null or cannot be used as one of the three options.<br />
+After finish will be fired <a href="#OnRenderFinish">OnRenderFinish</a> and <a href="#OnRenderPageFinish">OnRenderPageFinish</a> or <a href="DataDownload.htm#OnLoadError">OnLoadError</a> event.<br />
+The <b>Source</b> is accessible by API by grid.<a href="#Source">Source</a> attribute.<br />
+
+<!-- StartTreeGrid -->
+<a name="StartTreeGrid"></a>
+<div class="API">
+   <u><i>upd <b>14.1</b></i></u> <b>global func.</b> <i>void</i>
+   <h4>StartTreeGrid</h4>
+   <s>( )</s>
+</div>
+Creates all grids on page from all HTML tags &lt;treegrid> / &lt;bdo>.<br />  
+The grid creating is asynchronous procedure by default, so in time of function return the grids are not fully created yet.<br />
+By default it is called from window.onload event.<br /> 
+Call this function after you place new &lt;treegrid> / &lt;bdo> tag to your page.<br />
+This function creates grid in place of &lt;treegrid> / &lt;bdo> tag and destroys it, so it can be called as many times as you want.<br />
+<i>Since 14.1</i> if used <a href="Files.htm#GridEDJs">GridED.js</a> on demand script instead of GridE.js static script, the function downloads the <b>GridE.js</b> asynchronously and next processes the &lt;treegrid> / &lt;bdo> tags.<br />
+
+<!-----------------------------------------------------------------------  Deleting  ------------------------------------------------->
+<a name="Deleting"></a>
+<h2>Deleting</h2>
+
+<!-- Dispose -->
+<a name="Dispose"></a>
+<div class="API">
+   <u><i>upd <b>6.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>Dispose</h4>
+   <s>( )</s>
+</div>
+Completely removes the grid from page.<br />
+It frees memory allocation for the TreeGrid by calling <a href="#Clear">Clear</a>() and removes the Grid from <a href="#Grids">Grids</a> array.<br />
+<i>The disposed grid must not be used.</i><br />
+The indexes of disposed grids are not used again, except if was called <a href="#DisposeGrids">DisposeGrids</a> function.<br />
+
+<!-- DisposeGrids -->
+<a name="DisposeGrids"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>global func.</b> <i>void</i>
+   <h4>DisposeGrids</h4>
+   <s>( )</s>
+</div>
+Completely removes all grid from page. Calls for all grids <a href="#Dispose">Dispose</a>().<br />
+Sets also <a href="#Grids">Grids</a>.length to 0 to start indexing new grids from 0.<br />
+
+<!-- Clear -->
+<a name="Clear"></a>
+<div class="API">
+   <u><i>upd <b>6.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>Clear</h4>
+   <s>( )</s>
+</div>
+Frees memory allocation for the TreeGrid. If you delete grid from JavaScript, call this function to free browser's memory.<br />
+<i>It is used especially to avoid memory leaks in IE.</i><br />
+TreeGrid calls this function automatically when reloading or when window is closing.<br />
+The cleared can be only reloaded (called grid.Reload()).<br />
+
+<!-----------------------------------------------------------------------  Reloading  ------------------------------------------------->
+<a name="Reloading"></a>
+<h2>Reloading</h2>
+
+<!-- Reload -->
+<a name="Reload"></a>
+<div class="API">
+   <u>chg <b>14.1</b></u> <b>API method</b> <i>TGrid</i>
+   <h4>Reload</h4>
+   <s>(<i>object</i> <b>Source</b> = null, <i>string</i> <b>id</b> = null, <i>int</i> <b>type</b> = 1, <i>string</i> <b>message</b> = null)</s>
+</div>
+Reloads and re-renders the whole grid.<br /> 
+Returns the actual grid object or false if cannot reload or null for reloading error (if <b>Source</b> is corrupt).<br />
+<i>Since 14.1</i> the grid object is reused, but completely cleared, only attributes in Cfg <a href="#CfgKeepReload">KeepReload</a> are preserved.
+<i>Prior 14.1 the grid object was newly created and the old grid object was deleted and could not be used after reload.</i>.<br />
+By default it is asynchronous and returns before the loading starts (like <a href="#TreeGrid">TreeGrid</a> function). You can set <tt><a href="DataCommunication.htm#Sync">Sync</a>=1</tt> in <b>Source</b> to reload synchronously.<br />
+After finish will be fired <a href="#OnRenderFinish">OnRenderFinish</a> and <a href="#OnRenderPageFinish">OnRenderPageFinish</a> or <a href="DataDownload.htm#OnLoadError">OnLoadError</a> event.<br /><br />
+
+The <b>Source</b> is data source settings for grid, the same as in <a href="#TreeGrid">TreeGrid</a> function. If the source is null, it is used original grid data source <a href="#Source">Source</a>.<br />
+<i>This function can be called to reload data from the same source to get the newest one or to reload another data from another source.</i><br />
+The <b>id</b> is new <a href="#Cfgid">id</a> to change the grid id, under this id will be now the grid accessible in <a href="#Grids">Grids</a> array. 
+<i>(Since 7.0)</i> To preserve old grid id, set it to null, to load id from new data, set it to empty string.<br />
+
+If there are some pending changes in grid, it confirms reloading by a user. The user can cancel reloading and the method returns false.<br />
+<b>type</b> is a bit array of flags to control the reloading.<br />
+<b>type</b>, <b>1</b>. bit &amp;<b>1</b> = <b>0</b>, it never asks a user about reloading.<br />
+<b>type</b>, <b>2</b>. bit &amp;<b>2</b> = <b>2</b>, <i>(new 13.0)</i> it preserves grid configuration like style or print settings.<br />
+<b>type</b>, <b>3</b>. bit &amp;<b>4</b> = <b>4</b>, <i>(new 13.0)</i> it preserves data configuration like filter settings or column widths.<br />
+<i>(Since 13.0)</i> If set <b>message</b> (either to empty string) and <a href="GlobalSettings.htm#CfgSuppressMessage">SuppressMessage</a> >= 1, it shows the <b>message</b> and does not clear the grid html and does not show other messages during loading.
+
+<!-- OnReload -->
+<a name="OnReload"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnReload</h4>
+   <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+Called from <a href="#Reload">Reload</a> method or when user clicks to reload icon on toolbar.<br />
+Return true to suppress reloading.<br />
+
+<!-- OnCanReload -->
+<a name="OnCanReload"></a>
+<div class="API">
+   <u>chg <b>11.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnCanReload</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>changed</b>, <i>bool</i> <b>cancel</b>)</s>
+</div>
+Called when <b>reload</b> is requested - called from <a href="#Reload">Reload</a> method and when changed <b>server</b> side sorting/filtering/grouping/searching/export.<br />
+Called <u>instead</u> of confirming message to a user.<br /> 
+Return <b>false</b> to cancel action. Return <b>true</b> to confirm reloading.<br /> 
+<i>(since 11.0)</i> Return <b>null</b> to ignore the event and show the confirm message to user if changed.<br />
+<b>changed</b> = bit array, &<b>1</b> - grid contains changed rows, &<b>2</b> - grid contains selected rows.<br />
+<b>cancel</b> is <b>true</b> if changes should be canceled (called from <a href="#Reload">Reload</a> method), <b>false</b> if changes should be saved (server side request).<br /> 
+<div class="L1">To save changes call <a href="DataUpload.htm#Save">Save</a> function from this event.</div>
+
+<!-- KeepReload -->
+<a name="CfgKeepReload"></a>
+<div class="XML">
+   <u>new <b>14.1</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>KeepReload</h4> <s></s>
+</div>
+Comma separated list grid object attributes their values are preserved when reloading grid by Reload method / action.<br />
+
+<!-- Action Reload -->
+<a name="ActionsReload"></a>
+<div class="ACT">
+   <u>chg <b>14.1</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>Reload</h4>
+   <s>Attached to event <b>OnClickButtonReload</b></s>
+</div>
+Reloads the grid, cancels changes, see <a href="#Reload">Reload</a> method.<br />
+<i>Since 14.1</i> the grid object is reused, but completely cleared, none of its original attributes are preserved.
+<i>Prior 14.1 the grid object was newly created and the old grid object was deleted and could not be used after reload.</i>.<br />
+
+<!-- Action ReloadCfg -->
+<a name="ActionsReloadCfg"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ReloadCfg</h4>
+   <s>Not attached any to event</s>
+</div>
+Reloads the grid, cancels changes, but preserves the grid configuration.<br />
+
+<!-- Action ReloadSettings -->
+<a name="ActionsReloadSettings"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ReloadSettings</h4>
+   <s>Not attached any to event</s>
+</div>
+Reloads the grid, cancels changes, but preserves the grid and data configuration.<br />
+
+<!-- ReloadBody -->
+<a name="ReloadBody"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>ReloadBody</h4>
+   <s>(<i>function</i> <b>Func</b>)</s>
+</div>
+Reloads whole body (from source grid.<a href="#Source">Source</a>.<b>Data</b>), all variable rows.<br />
+By default it is asynchronous and returns before the reloading finishes. You can set <tt><a href="DataCommunication.htm#Sync">Sync</a>=1</tt> in Source.Data to reload body synchronously.<br />
+After finish, it calls function <b>Func</b>. function <b><i>Func</i></b> (<i>int</i> code).<br />
+<i>The grid.<a href="#Source">Source</a>.<b>Data</b> source can contain only variable rows (<tt>&lt;Grid>&lt;Body>... &lt;/Body>&lt;/Grid></tt>), all other definitions like columns, fixed rows and so on must be defined in <a href="#Source">Source</a>.<b>Layout</b>.</i><br />
+
+<!-- ClearBody -->
+<a name="ClearBody"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ClearBody</h4>
+   <s>( )</s>
+</div>
+Removes all body rows in the grid. The rows are removed permanently, not only deleted.<br />
+
+<!-----------------------------------------------------------------------  Rendering  ------------------------------------------------->
+<a name="RenderingGrid"></a>
+<h2>Rendering</h2>
+
+<!-- Hidden -->
+<a name="CfgHidden"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b style="margin-left:-35px;width:130px;">&lt;treegrid,bdo></b> <i>bool</i>
+   <h4>Hidden</h4> <s>[0]</s>
+</div>
+If set to <b>1</b> the grid is never rendered and can be used as invisible data source for other grids or other page components.<br />
+The hidden grid has <u>not</u> set <a href="#MainTag">MainTag</a> and cannot be shown at all.<br />
+
+<!-- OnRenderStart -->
+<a name="OnRenderStart"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnRenderStart</h4>
+   <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+Called before rendering or re-rendering of whole grid started.<br />
+It is called on create grid, from Render method, but also in various other situations where the grid is re-rendered.<br />
+Return true to cancel rendering.<br />
+
+<!-- OnRenderFinish -->
+<a name="OnRenderFinish"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+Called when rendering or re-rendering of grid is finished and grid is ready to work. Use if you need to do some post-render actions.<br />
+When used (client or server) <b>paging</b> (<tt>&lt;Cfg Paging>1</tt>), the body rows are <u>not</u> rendered yet in time of this handler call.<br /> 
+  <div class="L1">Use <a href="#OnRenderPageFinish">OnRenderPageFinish</a> that is called after specific page is rendered.</div>
+When used <b>child parts</b> (<tt>&lt;Cfg ChildParts='1'</tt>), not all rows in tree are rendered yet in time of this handler call.<br />
+	<div class="L1">Use <a href="#OnRenderChildPartFinish">OnRenderChildPartFinish</a> that is called after specific part of child page is rendered.</div>
+
+<!-- OnRenderPageStart -->
+<a name="OnRenderPageStart"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderPageStart</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>)</s>
+</div>
+Called before rendering of the root page or child page started rendering.<br />
+When used child paging (<tt>&lt;Cfg ChildPaging></tt>), this event is fired before start of rendering children when a parent row is being expanded.<br />
+
+<!-- OnRenderPageFinish -->
+<a name="OnRenderPageFinish"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderPageFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>)</s>
+</div>
+Called after the root page or child page is fully rendered and ready.<br /> 
+When used child paging (<tt>&lt;Cfg ChildPaging></tt>), this event is fired after children are rendered when a parent row is being expanded.<br />
+
+<!-- OnRenderChildPartStart -->
+<a name="OnRenderChildPartStart"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderChildPartStart</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>int</i> <b>index</b>)</s>
+</div>
+Called before rendering of a part of children is started rendering.<br />
+The <b>index</b> is an index of the part from 0.<br />
+
+<!-- OnRenderChildPartFinish -->
+<a name="OnRenderChildPartFinish"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderChildPartFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>int</i> <b>index</b>)</s>
+</div>
+Called after the part of children is rendered and ready.<br />
+The <b>index</b> is an index of the part from 0.<br />
+
+<!-- OnRenderColPageStart -->
+<a name="OnRenderColPageStart"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderColPageStart</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>sec</b>)</s>
+</div>
+Called before rendering of the column page.<br />
+The sec is the section index to <b>ColNames</b>.<br />
+
+<!-- OnRenderColPageFinish -->
+<a name="OnRenderColPageFinish"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderColPageFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>sec</b>)</s>
+</div>
+Called the column page is fully rendered and ready.<br />
+The sec is the section index to <b>ColNames</b>.<br />
+
+<!-- Rendering -->
+<a name="Rendering"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>bool</i>
+   <h4>Rendering</h4>
+   <s></s>
+</div>
+It is set during render or other function that updates grid HTML.<br />
+It is set to not update grid layout by <b>Update</b> method during such function.<br />
+Set it if you manipulate more rows or columns to not to update grid layout to speed up the action. After that you must call the <a href="GridSize.htm#Update">Update</a>() method.<br />
+
+<!-- Rerender -->
+<a name="Rerender"></a>
+<div class="API">
+   <u>new <b>6.0</b> <i>upd 13.1</i></u> <b>API method</b> <i>void</i>
+   <h4>Rerender</h4>
+   <s>(<i>bool</i> <b>scroll</b>, <i>bool</i> <b>sync</b>)</s>
+</div>
+Asynchronously renders the whole grid into main tag's innerHTML. Or it renders synchronously if set <tt>&lt;treegrid Sync='1'/></tt>.<br />
+Calls <a href="#Render">Render</a> asynchronously or synchronously.<br />
+<i>Since 13.1</i> if set <b>scroll</b>, it preserves actual scroll position.<br />
+<i>Since 13.1</i> if set <b>sync</b> to 0 or 1, it renders synchronously or asynchronously regardless on Sync attribute value.<br />
+
+<!-- Render -->
+<a name="Render"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>Render</h4>
+   <s>( )</s>
+</div>
+Synchronously renders whole grid into main tag's innerHTML.<br /> 
+The previous grid HTML is cleared, it takes care about memory leaks.<br />
+This function may be slow, if many rows are present.<br />
+If used paging, the pages are rendered asynchronously.<br />
+Call it if you want to do many changes in grid to speed up the action - do not show the changes and after finish render the grid.<br />
+
+<!-- RenderBody -->
+<a name="RenderBody"></a>
+<div class="API">
+   <u>renamed <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>RenderBody</h4>
+   <s>( )</s>
+</div>
+Re-renders the whole body.<br />
+In paging, call it to clear all already rendered pages and render them again.<br />
+Call it if you want to do many changes in body rows to speed up the action - do not show the changes and after finish render the body.<br />
+
+<!-----------------------------------------------------------------------  Accessing by API  ------------------------------------------------->
+<a name="API"></a>
+<h2>Accessing by API</h2>
+
+<!-- Grids -->
+<a name="Grids"></a>
+<div class="API">
+   <u></u> <b style="margin-left:-25px;width:120px;">global variable</b> <i>TGrid[ ]</i>
+   <h4>Grids</h4>
+   <s><span style="color:red;">read only</span></s>
+</div>
+This is global array of all created grids on page.<br /> 
+The individual grid can be accessed by Grids["id"] where the <a href="#Id">id</a> is an &lt;treegrid id> or &lt;Cfg id> attribute.<br />
+The individual grid can be also accessed by Grids[Index], where the Index is grid index that got assigned in creating process.<br />
+Accessing individual grids by index is not recommended if more grids are on page.<br />
+To iterate all grids on page use such loop: <tt>for(var i=0;i&lt;Grids.length;i++) { var G = Grids[i]; if(G){ ... } }</tt>, remember some indexes can be missing.<br />
+The grids are added to the array by creating grids on start or by function <a href="#TreeGrid">TreeGrid</a> ( ) or <a href="#StartTreeGrid">StartTreeGrid</a> ( ).<br />
+Existing grid can be removed by <a href="#Dispose">Dispose</a> ( ).<br />
+
+<!-- GetGrids -->
+<a name="GetGrids"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>global func.</b> <i>TGrid[ ]</i>
+   <h4>GetGrids</h4>
+   <s>( )</s>
+</div>
+Returns all grids on page.<br />
+
+<!-- id -->
+<a name="treegridid"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-25px;width:120px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>id</h4> <s></s>
+</div>
+An <b>id</b> of the grid. By this id the grid can be accessed from JavaScript as <a href="#Grids">Grids</a>[id]. This parameter can be also set in data, in &lt;Cfg <b>id</b> /> attribute.<br />
+If the <b>id</b> is set neither in &lt;treegrid <b>id</b>> nor in &lt;Cfg <b>id</b> />, it is created default as "Table"+grid_index.<br />
+If the <b>id</b> is set in both &lt;treegrid <b>id</b>> and &lt;Cfg <b>id</b> /&gt;, the &lt;treegrid <b>id</b> /> is used.<br />
+By this <b>id</b> the grid saves configuration to cookies, if two grids have the same <b>id</b>, they share their configuration in cookies.<br />
+
+<!-- id -->
+<a name="Cfgid"></a>
+<a name="CfgId"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>id</h4> <s></s>
+</div>
+An id of the grid, see the &lt;<a href="#Id">treegrid id</a>> attribute description.<br />
+
+<!-- id -->
+<a name="id"></a>
+<a name="Id"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>string</i>
+   <h4>id</h4>
+   <s><span style="color:red;">read only</span></s>
+</div>
+An id of the grid set by &lt;<a href="#Id">treegrid id</a>> or &lt;<a href="#CfgId">Cfg id</a>> or created as "Table"+<a href="#Index">Index</a>.<br /> 
+
+<!-- Index -->
+<a name="Index"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>int</i>
+   <h4>Index</h4>
+   <s><span style="color:red;">read only</span></s>
+</div>
+Unique index of the grid in global array <a href="#Grids">Grids</a>. Newly created grid gets the first available index (from 0).<br />
+By this index you can access the grid, but you should rather use its <a href="#Id">id</a>.<br /> 
+The indexes of disposed grids are not used again, except if was called <a href="#DisposeGrids">DisposeGrids</a> function.<br />
+
+<!-- Source -->
+<a name="Source"></a>
+<div class="API">
+   <u>renamed <b>6.0</b></u> <b>API variable</b> <i>object</i>
+   <h4>Source</h4>
+   <s></s>
+</div>
+The actual data sources settings. It is the parsed &lt;<a href="#HTMLtagtreegrid">treegrid</a>> attribute or the source set in TreeGrid function.<br />
+You can change the individual settings to download or upload data from different location.<br />
+For example: <tt>grid.Source.Data.Url = "new.xml"; grid.ReloadBody();</tt><br /> 
+For example: <tt>grid.Source.Upload.Sync = 1; grid.Source.Upload.Url = "save.jsp"; grid.Save();</tt><br />
+
+<!-- MainTag -->
+<a name="MainTag"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>object</i>
+   <h4>MainTag</h4>
+   <s><span style="color:red;">read only</span></s>
+</div>
+The main tag where the grid is rendered inside.<br />
+It is set during creating. It is the HTMLElement object itself.<br />
+
+</div>
+</body>	
+</html>
+
+
+

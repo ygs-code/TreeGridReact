@@ -1,0 +1,41 @@
+<Grid>
+   <Cfg id="Index" SuppressCfg="1" Sorting="0"/> <!-- Suppresses configuration and sorting -->
+
+   <!-- Creates index of rows -->
+   <Cfg RowIndex="Index"/> <!-- Places the row index to column named "Index", if the column does not exist, it is created as the first left column -->
+   <Cfg RowIndexType="6"/> <!-- The RowIndex is set for all variable rows except deleted -->
+   <Cfg RowIndexStart="27"/> <!-- The RowIndex starts from "AA" (as 26+1) instead of "A" (as 0+1) -->
+   <Cfg RowIndexChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ"/> <!-- Characters to build the RowIndex from -->
+
+   <!-- Creates index of columns -->
+   <Cfg ColIndex="Header"/> <!-- Places to column index to row with id="Header", it is default Header row -->
+   <Cfg ColIndexType="6"/> <!-- The ColIndex is set for all middle columns except deleted -->
+   <Cfg ColIndexStart="112"/> <!-- Starts from "001" (as 100+10+2) instead of "0" (as 0+0+1) -->
+   <Cfg ColIndexChars="0123456789"/> <!-- Characters to build the ColIndex from -->
+
+   <!-- Automatically creates the empty sheet with 50x20 rows and columns -->
+   <Cfg AutoCols="20"/> <!-- Automatically adds new 20 middle columns of Def="Auto" -->
+   <Cfg AutoRows="50"/> <!-- Automatically adds new 50 variable rows -->
+
+   <!-- Defines the top Panel and places the column index in Header below -->
+   <Header Index=" " Align="Center"/> <!-- Centers all cells in header -->
+   <Head> 
+      <Panel/> <!-- Adds panel for columns -->
+      <Header id="Header"/> <!-- Places the standard Header below the Panel row -->
+   </Head>
+
+   <!-- Defines the order of the left panel and row index -->
+   <Panel Copy="1"/> <!-- Show add button in row panel -->
+   <LeftCols>
+      <Panel Name="Panel"/> <!-- Places the default panel left side of the row index -->
+      <C Name="Index" Def="Index"/> <!-- Places the RowIndex column right to the Panel -->
+   </LeftCols>
+
+   <!-- Other settings often set in the sheets -->
+   <Cfg ColAdding="1" ColDeleting="1" SelectingCols="1"/> <!-- Permits column manipulating; shows the buttons on column panel -->
+   <Cfg Undo="15"/> <!-- Permits undoing all actions -->
+   <Cfg EnterMode="1"/> <!-- Enter moves cursor down -->
+   <Cfg FocusRect="5"/> <!-- Permits focusing cell range and hides focused cursor for the whole row. Does not show the corner and does not move and copy the focused range by dragging. -->
+   <Cfg CopyCols="0" PasteCols="5" PasteFocused="11" ExcludeClear="1"/> <!-- Copy & paste focused cells instead of rows -->
+
+</Grid>

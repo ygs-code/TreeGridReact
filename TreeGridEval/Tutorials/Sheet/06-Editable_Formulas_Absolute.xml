@@ -1,0 +1,47 @@
+<Grid>
+   <Cfg id='EditFormulasAbsolute' NumberId='1' IdChars='0123456789' NoVScroll="1" NoHScroll="1" SuppressCfg="1" Sorting="0"/>
+   <Cfg FormulaEditing="1"/> <!-- Permits formula editing -->
+   <Cfg FormulaType="0"/> <!-- Does not calculated deleted and filtered rows and hidden columns -->
+   <Cfg DragEdit="2" /> <!-- Permits dragging during editing to choose cell ranges in formula -->
+   <Lang>
+      <FormulaFunctions datetostring="string" reversestring="reverse"/><!-- datetostring is TreeGrid global API function, reversestring is custom function defined in HTML -->
+      <Format DecimalSeparator = "," InputDecimalSeparators = ".," GroupSeparator = " " DateSeparator="." FormulaValueSeparator=";" FormulaRangeSeparator="~"/>
+   </Lang>
+   <Def>
+      <D Name="C" FormulaSuggest="6"/> <!-- For every column generates suggest list of all available formula functions to use in formula editing -->
+      <D Name="R" CDef="" AcceptDef=""/>  <!-- Cannot drag or add into rows children -->
+   </Def>
+   <LeftCols>
+      <C Name="id" Type="Int" OnDrag="ChooseRowsReplaceAll" OnCtrlDrag="ChooseRowsInsert" FormulaCanUse="0" Width="35"/> <!-- not editable id column, dragging it during formula edit will choose the rows to the range -->
+   </LeftCols>
+   <Actions OnDragHeader="ChooseColsReplaceAll OR ColMove" OnCtrlDragHeader="ChooseColsInsert"/> <!-- Dragging header during formula edit will choose the columns to the range -->
+   <Cols>
+      <C Name='A' Type='Float' CanEmpty='1' Width='110' Format='0.####'/>
+      <C Name='B' Type='Float' CanEmpty='0' Width='110' Format='0.####'/>
+      <C Name='C' Type='Float' CanEmpty='1' Width='110' Format='0.####'/>
+      <C Name='D' Type='Date' Width='170' SearchNames='D,DATE'/>
+      <C Name='T' Type='Text' Width='170' SearchNames='T,TEXT'/>
+   </Cols>
+   <Header id='id' D='D / Date' T='T / Text'/>
+   <Panel Copy='1'/>
+   <Body>
+      <B>
+         <I id='1' A='1.2' B='4' C='7' D='1/10/2015' T='ABC'/>
+         <I id='2' A='=ROUND(1.7,0)' B='5' C='8' D='5/20/2015' T='DEF'/>
+         <I id='3' A='3' B='6' C='9' D='3/30/2015' T='AAA'/>
+         <I id='4' A='=SUM(A1:A3)' B='=SUM(B1:B3)' C='=SUM(C1:C3)' D='=TODAY()' T='=T1+";"+T2+";"+T3'/>
+         <I id='5' A='=MAX(A1:A3)' B='=MAX(B1:B3)' C='=MAX(C1:C3)' D='=MAX(DATE1:DATE3)' T='=REVERSESTRING(TEXT4)'/>
+         <I id='6' C='=-MIN(C1,C2,C3)' T='=DATETOSTRING(MAX(D1:D3)-MIN(D1:D3),"DDDD")+" days"' D='=NOW()'/>
+         <I id='7' FormulaCanEdit='0' T='No formulas' Color='#F5E5FF'/>
+         <I id='8'/>
+         <I id='9' A='=SUM(A1:A3,B1:B2,B5,C:C)' B='=YEAR(D1)' C='=SUM(A1:C8)' D='=TIME(C1,C2,C3)' T='=A1>B1?"A1 > B1":A1&lt;B1?"A1 &lt; B1":"A1 = B1"'/>
+      </B>
+   </Body>
+   <Media>
+      <M Style='TB'>
+         <Rows>
+            <I id='7' Color='#312'/>
+         </Rows>
+      </M>
+   </Media>
+</Grid>

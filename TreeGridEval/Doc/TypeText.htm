@@ -1,0 +1,134 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Text types</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Text, Lines and Pass types</h1>
+<p>TreeGrid documentation</p>
+
+The <b>Text</b> and <b>Lines</b> types are basic cell types to display editable texts.<br />
+They cannot contains HTML tags to display - the &lt; and &amp; characters are automatically escaped.<br />
+
+<h5>Text type</h5>
+<b>Text</b> type is default cell type and shows a text in the cell in one line.<br /> 
+It is edited in &lt;input> tag.<br />
+When it is longer than cell width, it is <u>not</u> wrapped to more lines, but it is overflowed.<br />
+It is <u>not</u> possible to set or input CR/LF (Enter) characters into the text.<br />
+
+<h5>Lines type</h5>
+<b>Lines</b> type shows a text in the cell in one or <b>more lines</b>.<br /> 
+It is edited in &lt;textarea> tag.<br />
+It is automatically wrapped if the text is longer than cell width, but only if it contains white spaces or other characters to wrap on.<br />
+It is possible enter CR/LF (Enter) characters into the text if set <tt><a href="#CfgAcceptEnters">AcceptEnters</a>='1'</tt>.<br />
+To put CR/LF into XML into cell value, use <strong>&#x0a;</strong> XML entity.<br />
+
+<h5>Pass type</h5>
+Special type without any formatting to input password.<br />
+It does <u>not</u> show the entered value.<br />
+<i>To server are passwords sent <u>not</u> coded!</i><br />
+
+<!-- Type -->
+<a name="CType"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"] <tt>Type="Text"</tt> or <tt>"Lines"</tt></s>
+</div>
+To define Text type, set column or cell attribute Type to "<b>Text</b>", for Lines type set Type to "<b>Lines</b>".<br />
+
+<!-- AcceptEnters -->
+<a name="CfgAcceptEnters"></a>
+<div class="XML">
+   <u><i>upd <b>11.0</b></i></u> <b style="margin-left:-30px;margin-right:30px;">&lt;Cfg>&lt;C>&lt;cell></b> <i>int</i>
+   <h4>AcceptEnters</h4> <s>[0]</s>     
+</div>
+How the Enter key will be handled in <b>Lines</b> type and optionally in other type cells. Bit array.<br />
+For <b>0</b> the Enter key accepts changes and finishes editing.<br />
+For <b>1</b> the Enter key inputs LF character (&amp;#x0A). To finish editing is possible by Ctrl / Alt / Shift + Enter or Tab or click outside the cell.<br />
+For <b>2</b> <i>(new 11.0)</i> the Ctrl / Alt / Shift + Enter key inputs LF character (&amp;#x0A). To finish editing is possible by Enter or Tab or click outside the cell.<br />
+For <b>3</b> <i>(new 11.0)</i> the Enter and Ctrl / Alt / Shift + Enter key inputs LF character (&amp;#x0A). To finish editing is possible by Tab or click outside the cell.<br />
+For <b>4</b>, <b>5</b>, <b>6</b>, <b>7</b> <i>(new 11.0)</i> is the same as 0, 1, 2, 3, but it is used also for other types than Lines. If the entered value contains LF, the cell Type is set to Lines.
+
+<!-- EmptyValue -->
+<a name="CEmptyValue"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EmptyValue</h4> <s>[""]</s>
+</div>
+The string displayed when the text empty.<br />
+It is shown only for display, not for edit.<br />
+It is <u>not</u> escaped, it can contain HTML code.<br />
+
+<!-- Format -->
+<a name="CFormat"></a>
+<div class="XML">
+   <u>chg <b>9.2</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Format</h4> <s></s>
+</div>
+Specifies text format - how the text will be modified for display.<br /><br />
+
+<i>Since 9.2</i> it can be JSON named array of display values for particular cell values. Format must start by '<span style="color:red;">{</span>'. All other cell values are displayed unchanged. The items can contain HTML code. The names are case sensitive.<br />
+For example if <tt>&lt;C Type="Text" Format = '{One:"Red", Two:"Green", Three:"&lt;b>blue&lt;/b>"}'/></tt> and the cell value is Two, it displays Green, if the cell value is Four, it displays Four.<br />
+JSON Format + EditFormat can be used to define name / key pairs for Text and Lines type, especially when used Suggest or Defaults dialog.<br /><br />
+
+Syntax: |LetterType|Prefix|Postfix|Search|Flags|Replace<br />
+<div class="L1">
+'|' is any character not contained in any section to separate section values. Remember, it must be the first character in the format.<br />
+'<b>LetterType</b>' is number specifies case conversion: <b>0</b> - none, <b>1</b> - lowercase, <b>2</b> - uppercase, <b>3</b> - locale lowercase, <b>4</b> - locale uppercase<br />
+'<b>Prefix</b>' is string added before value<br />
+'<b>Postfix</b>' is string added after value<br />
+'<b>Search</b>' is RegExp string to replace it for '<b>Replace</b>' string. This runs before LetterType conversion. '<b>Flags</b>' are flags for RegExp, any of 'g', 'i', 'm'.<br />
+</div>
+<i>Since 6.4 the Replace string is not escaped when <tt>NoFormatEscape='1'</tt>.</i><br />
+In <b>Prefix</b> and <b>Postix</b> is <u>not</u> possible to use HTML tags except <a href="#CfgNoFormatEscape">NoFormarEscape</a> is set. To format the value by HTML tags rather use cell attributes <a href="CellBasics.htm#CellHtmlPrefix">HtmlPrefix</a> and <a href="CellBasics.htm#CellHtmlPrefix">HtmlPostfix</a> instead.<br /> 
+<i>Remember, the <b>Format</b> is applied also when sorting, grouping, filtering or searching.</i><br />
+
+<!-- EditFormat -->
+<a name="CEditFormat"></a>
+<div class="XML">
+   <u>new <b>9.2</b> chg <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EditFormat</h4> <s></s>
+</div>
+Specifies format for editing - how the text will be modified for edit and the edited value back to data.<br />
+JSON named array of input values for particular cell values. Format must start by '<span style="color:red;">{</span>'. All other cell values are edited unchanged. The items must not contain HTML code. The names are case sensitive.<br />
+For example if <tt>&lt;C Type="Text" EditFormat = '{1:"one", 2:"two", 3:"three"}'/></tt> and cell has value 2, the value for input will be two. If entered 'three', the cell value will be 3, if entered 'four', the cell value will be 'four'.<br />
+<i>Since 10.0 it is compared case insensitive.</i><br />
+
+<!-- EditFormatType -->
+<a name="CEditFormatType"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>EditFormatType</h4> <s></s>
+</div>
+Various settings for the EditFormat. Comma separated list of keywords, case insensitive.<br />
+<b>Case</b> - if set, preserves case sensitivity, shows only items that contains the text in the same case.<br /> 
+<b>WhiteChars</b> - uses <a href="Sort.htm#CWhiteChars">WhiteChars</a> cell attribute value for comparing.<br />
+<b>CharCodes</b> - uses <a href="Sort.htm#CCharCodes">CharCodes</a> cell attribute value for comparing.<br />
+
+<!-- NoFormatEscape -->
+<a name="CfgNoFormatEscape"></a>
+<div class="XML">
+   <u>chg <b>12.1</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>NoFormatEscape</h4> <s>[&quot;&quot;]</s>
+</div>
+If set to "" (default), it means <b>0</b> for text and <b>1</b> for lines, number and date.<br />
+If set to <b>0</b>, the Format <b>Prefix</b> and <b>Postfix</b> is escaped, so the characters &amp; and &lt; are displayed as they are.<br />
+If set to <b>1</b>, you can use HTML tags in columns <a href="#CFormat">Format</a> string, in prefix and postfix for text and anywhere for numbers.<br />
+<i>Since 12.1</i> it is applied also for Lines type.<br />
+
+<!-- VarHeight -->
+<a name="CVarHeight"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>VarHeight</h4> <s>[0]</s>
+</div>
+Set to columns containing wrap able cells, to shrink row height when the column is resized by a user and cells values occupy less height.<br />
+For <b>1</b> the rows are resized after column resizing finishes.<br />
+For <b>2</b> it resizes the rows during column resizing, it can be slow and should be used only for small grids.<br />
+
+</div>
+</body>
+</html>

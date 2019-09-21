@@ -1,0 +1,406 @@
+<Grid>
+   <Cfg id="RunJoin" NoVScroll="1" IdChars="0123456789" NumberId="1" Undo="1" SuppressCfg="1" Size="Low" StyleDependencyModifier="0" Style="TS"/> <!-- Basic example definition -->
+   <Cfg FastGantt="0"/> <!-- Normal (not fast) bars, set by bottom combo -->
+
+   <Actions OnRightDragGantt="MoveGanttRun" OnShiftDragGantt="SelectGanttRunRect"/> <!-- Changes some mouse dragging actions -->
+   <LeftCols>
+      <C Name="id" Type="Int" CanEdit="0" CanSort="0"/> <!-- column with row ids -->
+   </LeftCols>
+   <Cols>
+      <C Name="RUN" Type="Text" Width="500" ShowHint="2"/> <!-- Run definition column -->
+   </Cols>
+   <RightCols>
+      <C Name="GANTT" Type="Gantt"/> <!-- Gantt column definition -->
+      <C Name="GANTT" GanttDataUnits="d" GanttUnits="d" GanttWidth="24" GanttLeft="1" GanttRight="1" GanttHeader6="d#%d"/> <!-- Basic simple definition of zoom and header -->
+      <C Name="GANTT" GanttExclude="w#1/3/2015~1/5/2015" GanttHideExclude="0"/> <!-- Sample exclude definition -->
+
+      <C Name="GANTT" GanttRun="RUN" GanttRunShowHtml="2" GanttRunDragObject="3" GanttTask="Box"/> <!-- Basic run definition, not changeable in the example controls -->
+
+      <!-- Definition for right side GanttMenu, the custom items for changing boxes and their groups -->
+      <C Name="GANTT" GanttRunTypes="{Include:0,Menu:1,Items:[
+            {Name:'Select',TextGroup:'Select all %d boxes in row group',TextGroupAll:'Select all %d boxes in group',Box:{State:'4+4'}},
+            {Name:'Clear',TextGroup:'Clear selection of all %d boxes in row group',TextGroupAll:'Clear selection of all %d boxes in group',Box:{State:'0+4'}},
+            {Name:'Disable',TextSelected:'Disable all %d selected boxes',Box:{State:'1+3'}},
+            {Name:'Lock',TextSelected:'Lock all %d selected boxes',Box:{State:'2+3'}},
+            {Name:'Enable',TextSelected:'Enable all %d selected boxes',Box:{State:'0+3'}},
+            {Name:'Type',TextBox:'Change the box type', TextRow:'Change type in all %d boxes in row',TextSelected:'Change type in %d selected boxes',TextGroup:'Change row group type (%d boxes)',TextGroupAll:'Change whole group type (%d boxes)',Menu:1,Items:[
+               {Name:'Box',Box:{Type:'Box'}},{Name:'Solid',Box:{Type:'Solid'}},{Name:'Fixed',Box:{Type:'Fixed'}},{Name:'Left',Box:{Type:'Left'}},{Name:'Right',Box:{Type:'Right'}},{Name:'Milestone',Box:{Type:'Milestone'}},{Name:'Stop',Box:{Type:'Stop'}} 
+               ]},
+            {Name:'Group',TextBox:'Change the box group',TextRow:'Change group in all %d boxes in row',TextSelected:'Change group in %d selected boxes',TextGroup:'Change row group name (%d boxes)',TextGroupAll:'Change whole group name (%d boxes)',Menu:1,Items:[
+               {Name:'None',Box:{Group:''}},{Name:'Group X',Box:{Group:'X'}},{Name:'Group Y',Box:{Group:'Y'}},{Name:'Group Z',Box:{Group:'Z'}} 
+               ]}
+            ]}"
+         /> 
+
+      <!-- Dragging inside row -->
+      <C Name="GANTT"
+         GanttRunResize="resize"
+         GanttResizeDelete="1"
+         GanttRunNew="0.0001,Box"
+         GanttRunNewStart="0.0001,Box"
+         GanttRunMove="slide"
+         GanttRunAdjust="shrink,nbsp"
+         GanttDragLine="3"
+         />
+
+      <!-- Dragging outside row -->
+      <C Name="GANTT"
+         GanttRunMoveRight="move,selected,group"
+         GanttRunAdjustMove="shrink,appendnbsp,nbsp"
+         />
+
+      <!-- Other settings, the first row -->
+      <C Name="GANTT"
+         GanttHover="1"
+         GanttRunNbspHover="3"
+         GanttRunJoinedHover="2"
+         GanttRunGroupHover="2"
+         GanttRunSelect="5"
+         GanttRunClearSelected="0"
+         GanttRunJoined="255"
+         GanttRunJoinedNbsp="255"
+         />
+
+      <!-- Other settings, the second row -->
+      <C Name="GANTT"
+         GanttEdit="runmove,runresize,runnew,runtext,runstate"
+         GanttEditDisabled="0"
+         GanttRunMilestones="3"
+         GanttRunErrors="1"
+         GanttRunErrorsShift="-2"
+         GanttRunError="Sort"
+         />
+
+      <!-- Bottom toolbar settings (see also <Cfg FastGantt/> defined in header of this XML) -->
+      <C Name="GANTT" 
+         GanttAdjacentBars="0"
+         GanttRunHeight=""
+         />
+   </RightCols>
+
+   <!-- Definition of the individual rows and their Gantt chart -->
+   <Body>
+      <B>
+         <I id="0"/>
+         <I id="1" RUN="1/2/2015,4,,1A single boxes;1/12/2015,4,,1B;1/16/2015,4,solid,1C;1/25/2015,1,,1D;2/2/2015,3,,1E"/>
+         <I id="2" RUN="1/2/2015,4,,2A joined by nbsp;2,nbsp;4,,2B;2,;4,solid,2C;2,nbsp,NBSP text;1,,2D;1,nbsp;3,,2E"/>
+         <I id="3" RUN="1/2/2015,7,,3A joined by zero width nbsp;0,nbsp;3,,3B;2,;4,,3C;0,nbsp;1,,3D;0,nbsp;3,,3E"/>
+         <I id="4" RUN="1/2/2015,4,,4A joined directly;5,,4B;3,;4,solid,4C;1,,4D;4,solid,4E"/>
+         <I id="5" RUN="1/2/2015,7,,5A joined mixed direct / nbsp;3,,5B;2,nbsp;4,,5C;1,,5D;0,nbsp;3,,5E"/>
+         <I id="6" RUN="1/2/2015,5,Bound,6A single fixed boxes;1/15/2015,2,,6B;1/19/2015,2,Fixed,6C;1/25/2015,2,,6D;1/29/2015,2,Bound,6E"/>
+         <I id="7" RUN="1/2/2015,6,Bound,7A fixed joined by nbsp;3,nbsp;2,,7B;0,nbsp;2,Fixed,7C;3,nbsp;2,,7D;1,nbsp;2,Fixed,7E"/>
+         <I id="8" RUN="1/2/2015,7,Fixed,8A fixed joined mixed direct / nbsp;3,,8B;2,nbsp;4,Fixed,8C;1,,8D;0,nbsp;3,Bound,8E"/>
+         <I id="9" RUN="1/2/2015,4,End,9A start / end boxes;;3,solid,9B;2,;3,,9C;2,nbsp;3,,9D;1,,9E;;2,End,9F"/>
+         <I id="10" RUN="12/30/2014,3,end,Start;;4,bound,10A bound boxes;2,;2,,10B;1,;2,,10C;;3,bound,10D;2,;1,,10E;0,nbsp;3,bound,10F;1,;3,bound,10G;;2,end,End"/>
+         <I id="11" RUN="1/2/2015,7,,11A disabled and locked boxes,,,,,disabled;1,;2,,11B;1,;2,,11C,,,,,disabled;2,,11D;1,nbsp;2,,11E;1,;1,,11F;1,nbsp;3,,11G,,,,,locked"/>
+         <I id="12" RUN="1/2/2015,4,,12A Milestones;1,;0,Milestone,,,12B;1,;0,Milestone,,,12C;;0,Milestone,,,12D;;0,Milestone,,,12E;2,;0,Box,12F,,12F;2,;0,Box,12G,,12G;;0,Box,12H,,12H;;0,Box,12I,,12I;2,;0,Milestone,,,12J;2,nbsp;0,Milestone,,,12K;2,;0,Stop,,,12L;1,;0,Milestone,,,12M;1,;0,Milestone,,,12O;;0,Stop,,,12P;1,;0,Milestone,,,12Q;2,,12R;0,Milestone,,,12S;1,;0,Milestone,Green.svg,GreenHover.svg,12T;2,;0,Stop,Red.svg,RedHover.svg,12U"/>
+         <I id="13" RUN="1/2/2015,4,solid,13A error boxes;1/12/2015,4,,13B;1/14/2015,4,,13C;1/19/2015,1,,13D;1/19/2015,3,,13E;2,nbsp;3,,13F;2/2/2015,3,Bound,13G"/>
+         <I id="14" RUN="1/2/2015,5,solid,14A different heights,,,,,,,16;2,nbsp;2,,14B,,,,,,,16;2,,14C,,,,,,10;-1,;2,,14D,,,,,,10;2,nbsp;2,,14E,,,,,,10;1,;0,Milestone,,,14F,,,,10;1,nbsp;2,,14G,,,,,,,5;2,nbsp;2,,14H,,,,,,12,5"/>
+         <I id="15" RUN="1/2/2015,5,,15A selected boxes;;2,,15B;2,nbsp;2,,15C,,,,,selected;1,,15D;1,;3,solid,15E,,,,,selected;;2,,15F;1,;2,,15G;0,nbsp;2,,15H,,,,,selected"/>
+         <I id="16" RUN="1/2/2015,5,,16A selected boxes,,,,,selected;;2,,16B,,,,,selected;2,nbsp;2,,16C;0,Milestone,,,16D,,,selected;1,nbsp;3,,16E,,,,,selected;;2,,16F;1,;2,,16G,,,,,selected;0,nbsp;2,solid,16H"/>
+         <I id="17" RUN="1/2/2015,4,,17A box groups,,,,X;;3,,17B,,,,X;1,nbsp;3,,17C,,,,Y;3,,17D,,,,Z;1,;2,,17E,,,,Y;;3,,17F,,,,Z;;1.5,,17G,,,,X;0,nbsp;2.5,,17H,,,,Z"/>
+         <I id="18" RUN="1/2/2015,4,,18A box groups,,,,Y;;3,,18B,,,,Y;1,nbsp;3,solid,18C,,,,X;3,solid,18D,,,,Y;1,;2,,18E,,,,Z;1,;0,Milestone,,,18F,,Z;2,;1.5,,18G,,,,Z;0,nbsp;2.5,,18H,,,,X"/>
+      </B>
+   </Body>
+
+   <Header id="id"/>
+
+   <Solid>
+      <!-- Information about mouse actions -->
+      <Tabber Cells="Info" Height="12"
+         InfoType="Html" InfoWrap="0" InfoClass="Info" InfoCanFocus="0" InfoCanPrint="0"
+         Info="&lt;i>Mouse actions&lt;/i> &lt;span class='InfoLabel'>Left button drag&lt;/span>: drag in row - resize, move, create &lt;span class='InfoLabel'>right button drag&lt;/span>: drag between rows &lt;span class='InfoLabel'>shift + left button drag&lt;/span>: select rectangle &lt;span class='InfoLabel'>double click&lt;/span>: select / unselect box &lt;span class='InfoLabel'>ctrl + click&lt;/span>: delete box &lt;span class='InfoLabel'>right click&lt;/span>: popup menu"
+         />
+
+      <!--- Dragging inside row, 1st bar - controls -->
+      <Topbar1 Cells="TITLE,RESIZE,DELETE,SEP,CREATE,START,SEP2,LINES"
+         TITLEType="Html" TITLE="&lt;i>Drag&lt;/i>" TITLEWidth="60"
+
+         RESIZEType="Select" RESIZELabel="Resize" RESIZEWidth="60" RESIZEOnChange="SetCombo(Row,Col,'Resize',Value)" RESIZEFormula="GetCombo(Row,Col,'Resize')"
+         RESIZEDefaults="|None|Resizable|All" RESIZEKeys="||Resize|All"
+         RESIZETip="If and which boxes can be resized.&lt;br>None - resizing is restricted&lt;br>Resizable - Only Box types can be resized and Left and Right at one edge&lt;br>All - Also Solid, Fixed, Left, Right and inner Bound boxes.&lt;br>The outer Bound boxes and locked and disabled boxes can be never resized.&lt;br>Here the Solid boxes yellow, Fixed boxes are gray and Bound boxes are pink with black edges.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunResize&lt;/strong>, by &lt;b>Resize&lt;/b> and &lt;b>All&lt;/b> flags.&lt;/i>"
+
+         DELETEType="Select" DELETELabel="Delete by resize" DELETELeft="5" DELETEWidth="45" DELETEOnChange="SetCombo(Row,Col,'GanttResizeDelete',Value)" DELETEFormula="GetCombo(Row,Col,'GanttResizeDelete')"
+         DELETEDefaults="|No|Yes|Confirm" DELETEKeys="|0|1|2"
+         DELETETip="If the box can be deleted by resizing it to zero width.&lt;br>If permitted zero boxes, the box is deleted by resizing it to negative width.&lt;br>&lt;i>Set by XML/JSON attribute &lt;strong>GanttResizeDelete&lt;/strong>, value 0 / 1.&lt;/i>"
+
+         SEPType="Html" SEPCanFocus="0" SEPRelWidth="1"
+
+         CREATEType="Select" CREATELabel="Create new" CREATELeft="5" CREATEWidth="35" CREATEOnChange="SetCombo(Row,Col,'New',Value)" CREATEFormula="GetCombo(Row,Col,'New')"
+         CREATEDefaults="|None|Box|Solid|Fixed|Left|Right" CREATEKeys="||0.0001,Box|0.0001,Solid|0.0001,Fixed|0.0001,Left|0.0001,Right"
+         CREATETip="If and how the boxes can be created by dragging on empty space.&lt;br>How many and which boxes will be created.&lt;br>&lt;i>Set by XML/JSON attribute &lt;strong>GanttRunNew&lt;/strong>, list here the boxes&lt;/i>"
+
+         STARTType="Select" STARTLabel="Create first new" STARTLeft="5" STARTWidth="100" STARTOnChange="SetCombo(Row,Col,'NewStart',Value)" STARTFormula="GetCombo(Row,Col,'NewStart')"
+         STARTDefaults="|None|Box|Start + Box|Box + End|Start + Box + End|Solid|Start + Solid|Solid + End|Start + Solid + End|Fixed|Start + Fixed|Fixed + End|Start + Fixed + End|Left|Start + Left|Left + End|Start + Left + End|Right|Start + Right|Right + End|Start + Right + End"
+         STARTKeys="||0.0001,Box|2,End,Start;;0.0001,Box|0.0001,Box;;2,End,End|2,End,Start;;0.0001,Box;;2,End,End|0.0001,Solid|2,End,Start;;0.0001,Solid|0.0001,Solid;;2,End,End|2,End,Start;;0.0001,Solid;;2,End,End|0.0001,Fixed|2,End,Start;;0.0001,Fixed|0.0001,Fixed;;2,End,End|2,End,Start;;0.0001,Fixed;;2,End,End|0.0001,Left|2,End,Start;;0.0001,Left|0.0001,Left;;2,End,End|2,End,Start;;0.0001,Left;;2,End,End|0.0001,Right|2,End,Start;;0.0001,Right|0.0001,Right;;2,End,End|2,End,Start;;0.0001,Right;;2,End,End"
+         STARTTip="If and how the boxes can be created by dragging on empty space in empty cell with no boxes yet.&lt;br>How many and which boxes will be created.&lt;br>&lt;i>Set by XML/JSON attribute &lt;strong>GanttRunNewStart&lt;/strong>, list here the boxes&lt;/i>"
+
+         SEP2Type="Html" SEP2CanFocus="0" SEP2RelWidth="1"
+
+         LINESType="Select" LINESLabel="Drag lines" LINESLeft="5" LINESWidth="65" LINESOnChange="SetCombo(Row,Col,'GanttDragLine',Value)" LINESFormula="GetCombo(Row,Col,'GanttDragLine')"
+         LINESDefaults="|None|Slide only|Left edge|Both edges" LINESKeys="|0|1|2|3"
+         LINESTip="Which vertical lines will be shown od box edges during dragging.&lt;br>Slide only - only when moving inside row, on both edges.&lt;br>Left edge - Also when moving outside row, here only on left edge.&lt;br>Borh edges - Also when moving outside row, also on both edges.&lt;br>&lt;i>Set by XML/JSON attribute &lt;strong>GanttDragLine&lt;/strong>, values 0, 1, 2, 3&lt;/i>"
+         />
+
+      <!--- Dragging inside row, 2st bar - controls -->
+      <Topbar3 Cells="TITLE,MOVE,ALL,JOINED,NBSP,SEP,ADJUST,AALL,AERROR,ANBSP"
+         TITLEType="Html" TITLE="&lt;i>inside row&lt;/i>" TITLEWidth="60"
+
+         MOVEType="Select" MOVELabel="Move" MOVEWidth="45" MOVEOnChange="SetCombo(Row,Col,'Move',Value)" MOVEFormula="GetCombo(Row,Col,'Move')"
+         MOVEDefaults="|None|Slide" MOVEKeys="||Slide"
+         MOVETip="How the box can be moved.&lt;br>Slide - The box can be moved only inside its source row. The order of boxes can be changed only if set Error flag in GanttRunAdjust.&lt;br>In this example here cannot be set other flags Move, Copy, Remove - they are reserved for Drag between rows, see below.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunMove&lt;/strong>, by &lt;b>Slide&lt;/b> flag.&lt;/i>"
+
+         ALLType="Bool" ALLLabel="Move Fixed" ALLLeft="3" ALLOnChange="SetBool('Move','All',Value)" ALLFormula="GetBool('Move','All')" ALLCanEdit="1"
+         ALLTip="If can be dragged also Fixed, Left, Right, Stop and inner Bound boxes.&lt;br>The outer Bound boxes and locked and disabled boxes can be never dragged.&lt;br>Here the Fixed boxes are gray and Bound boxes are pink with black edges.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunMove&lt;/strong>, by &lt;b>All&lt;/b> flag.&lt;/i>"
+
+         JOINEDType="Select" JOINEDLabel="Move Joined" JOINEDLeft="3" JOINEDWidth="55" JOINEDOnChange="SetCombo(Row,Col,'Move',Value)" JOINEDFormula="GetCombo(Row,Col,'Move')"
+         JOINEDDefaults="|Single|Next|Previous|All joined" JOINEDKeys="|Single|Next|Prev|"
+         JOINEDTip="How the joined boxes will be dragged.&lt;br>Single - only the caugth box will be dragged.&lt;br>Next - the caught and next (right) joined boxes will be dragged.&lt;br>Previous - the caught and previous (left) joined boxes will be dragged.&lt;br>All joined - all boxes joined with the caught box will be dragged.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunMove&lt;/strong>, by &lt;b>Single&lt;/b>, &lt;b>Next&lt;/b>, &lt;b>Prev&lt;/b> flags.&lt;/i>"
+
+         NBSPType="Bool" NBSPLabel="Split NBSP" NBSPLeft="3" NBSPOnChange="SetBool('Move','Nbsp',Value)" NBSPFormula="GetBool('Move','Nbsp')" NBSPCanEdit="1"
+         NBSPTip="How the boxes joined by Nbsp (here the red dots) will be dragged.&lt;br>If set, the Single, Next, Previous and All joined options will split the boxes only on Nbsp.&lt;br>If not set, the the Single, Next, Previous and All joined options will split the boxes immediately.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunMove&lt;/strong>, by &lt;b>Nbsp&lt;/b> flag.&lt;/i>"
+
+         SEPType="Html" SEPCanFocus="0" SEPRelWidth="1"
+
+         ADJUSTType="Select" ADJUSTLabel="Adjust" ADJUSTWidth="40" ADJUSTOnChange="SetCombo(Row,Col,'Adjust',Value)" ADJUSTFormula="GetCombo(Row,Col,'Adjust')"
+         ADJUSTDefaults="|None|Shift|Shrink|Slip" ADJUSTKeys="||Shift|Shrink|Slip"
+         ADJUSTTip="How the other boxes in cell will be moved to create space for the dragged box.&lt;br>None - they will be never moved.&lt;br>Shift - they will be moved and the empty spaces between them will be preserved.&lt;br>Shrink - they will be moved and the empty spaces between them will be shrunk.&lt;br>Slip - they will be moved and the empty spaces between and around them will be preserved.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunAdjust&lt;/strong>, by &lt;b>Shift&lt;/b>, &lt;b>Shrink&lt;/b>, &lt;b>Slip&lt;/b> flags.&lt;/i>"
+
+         AALLType="Bool" AALLLabel="Adjust Fixed" AALLLeft="3" AALLOnChange="SetBool('Adjust','All',Value)" AALLFormula="GetBool('Adjust','All')" AALLCanEdit="1"
+         AALLTip="If also the Fixed, Left, Right, Stop and inner Bound boxes can be moved to create space for the dragged box.&lt;br>The outer Bound boxes and locked and disabled boxes can be never moved.&lt;br>Here the Fixed boxes are gray and Bound boxes are pink with black edges.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunAdjust&lt;/strong>, by &lt;b>All&lt;/b> flag.&lt;/i>"
+
+         AERRORType="Bool" AERRORLabel="Adjust Error" AERRORLeft="3" AERROROnChange="SetBool('Adjust','Error',Value)" AERRORFormula="GetBool('Adjust','Error')" AERRORCanEdit="1"
+         AERRORTip="If set, permits dragging the box even if there is no room for it and permits more boxes in the same place, vertically shifted.&lt;br>It is the only option that permits changing the box order when dragging inside row.&lt;br>It is still not possible to drag boxes over outer Bound box.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunAdjust&lt;/strong>, by &lt;b>Error&lt;/b> flag.&lt;/i>"
+
+         ANBSPType="Bool" ANBSPLabel="Adjust NBSP" ANBSPLeft="3" ANBSPOnChange="SetBool('Adjust','Nbsp',Value)" ANBSPFormula="GetBool('Adjust','Nbsp')" ANBSPCanEdit="1"
+         ANBSPTip="If set, the Nbsp boxes (red dotted) can be automatically resized to permit the box moving.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunAdjust&lt;/strong>, by &lt;b>Nbsp&lt;/b> flag.&lt;/i>"
+
+         />
+
+      <!--- Dragging inside row, 3rd bar - attributes -->
+      <Topbar2 Cells="RESIZE,DELETE,NEW,START,MOVE,ADJUST,LINES"
+         RESIZEType="Text" RESIZELabel="&lt;span class='Small'>GanttRun&lt;/span>Resize: " RESIZEFormula="Grid.Cols.GANTT.GanttRunResize" RESIZEWidth="-1" RESIZEClass="Result" RESIZELabelClass="ResultLabel"
+         RESIZE="GanttRunResize controls resizing permissions.&lt;br>Basic setting for resizing, used for all resizing that have not set special settings (for mouse button or control keys).&lt;br>In this example is used for all resizing - dragging the box edge."
+         DELETEType="Text" DELETELabel="GanttResizeDelete: " DELETEFormula="Grid.Cols.GANTT.GanttResizeDelete" DELETEWidth="-1" DELETEClass="Result" DELETELabelClass="ResultLabel"
+         DELETETip="GanttResizeDelete permits or restricts deleting box by resizing its width to zero on negative value."
+         NEWType="Text" NEWLabel="&lt;span class='Small'>GanttRun&lt;/span>New: " NEWFormula="Grid.Cols.GANTT.GanttRunNew" NEWWidth="-1" NEWClass="Result" NEWLabelClass="ResultLabel"
+         NEWTip="List of boxes that will be created by dragging on empty space.&lt;br>The format is the same as in standard GanttRun attribute."
+         STARTType="Text" STARTLabel="&lt;span class='Small'>GanttRun&lt;/span>NewStart: " STARTFormula="Grid.Cols.GANTT.GanttRunNewStart" STARTWidth="-1" STARTClass="Result" STARTLabelClass="ResultLabel"
+         STARTTip="List of boxes that will be created by dragging on empty space in empty row without boxes yet.&lt;br>The format is the same as in standard GanttRun attribute."
+         MOVEType="Text" MOVELabel="&lt;span class='Small'>GanttRun&lt;/span>Move: " MOVEFormula="Grid.Cols.GANTT.GanttRunMove" MOVEWidth="-1" MOVEClass="Result" MOVELabelClass="ResultLabel"
+         MOVETip="GanttRunMove controls dragging permissions and changes of the source (dragged) box.&lt;br>Basic setting for moving, used for all moving that have not set special settings (for mouse button or control keys).&lt;br>In this example is used for dragging by &lt;b>left mouse button&lt;/b>, except for resizing.&lt;br>In this example its one possible value is &lt;b>Slide&lt;/b> for &lt;b>moving inside&lt;/b> source row only."
+         ADJUSTType="Text" ADJUSTLabel="&lt;span class='Small'>GanttRun&lt;/span>Adjust: " ADJUSTFormula="Grid.Cols.GANTT.GanttRunAdjust" ADJUSTWidth="-1" ADJUSTClass="Result" ADJUSTLabelClass="ResultLabel"
+         ADJUSTTip="GanttRunAdjust controls dropping permissions and changes in the destination cell.&lt;br>Basic setting for dropping, used for all moving that have not set special settings (for mouse button or control keys).&lt;br>In this example is used for dragging by &lt;b>left mouse button&lt;/b> and also for resizing."
+         LINESType="Text" LINESLabel="GanttDragLine: " LINESFormula="Grid.Cols.GANTT.GanttDragLine" LINESWidth="-1" LINESClass="Result" LINESLabelClass="ResultLabel"
+         LINESTip="Which vertical lines will be shown od box edges during dragging.&lt;br> 0 - none, 1 - slide only, 2 - also on left edge on move, 3 - also on both edges on move"
+         />
+
+
+      <!--- Dragging outside row, 1st bar - controls -->
+      <Topbar1 Cells="TITLE,MOVE,ALL,JOINED,NBSP,SEP,ADJUST,AALL,AERROR,ANBSP"
+         TITLEType="Html" TITLE="&lt;i>Drag to&lt;/i>" TITLEWidth="60"
+
+         MOVEType="Select" MOVELabel="Move" MOVEWidth="45" MOVEOnChange="SetCombo(Row,Col,'MoveRight',Value)" MOVEFormula="GetCombo(Row,Col,'MoveRight')"
+         MOVEDefaults="|None|Move|Copy|Remove" MOVEKeys="||Move|Copy|Remove"
+         MOVETip="How the box can be moved.&lt;br>Move - The box will be moved to destination and its source space is filled by Empty box.&lt;br>Copy - The box will be copied to destination and also remains unchanged in its source location.&lt;br>Remove - The box will be moved to destination and is removed from its source, the next boxes are shifted to its original place.&lt;br>In this example here cannot be set value Slide to move inside the source row only - it is reserved for Drag inside row, see above.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunMove&lt;/strong>, by &lt;b>Move&lt;/b>, &lt;b>Copy&lt;/b> and &lt;b>Remove&lt;/b> flags.&lt;/i>"
+
+         ALLType="Bool" ALLLabel="Move Fixed" ALLLeft="3" ALLOnChange="SetBool('MoveRight','All',Value)" ALLFormula="GetBool('MoveRight','All')" ALLCanEdit="1"
+         ALLTip="If can be dragged also Fixed, Left, Right, Stop and inner Bound boxes.&lt;br>The outer Bound boxes and locked and disabled boxes can be never dragged.&lt;br>Here the Fixed boxes are gray and Bound boxes are pink with black edges.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunMove&lt;/strong>, by &lt;b>All&lt;/b> flag.&lt;/i>"
+
+         JOINEDType="Select" JOINEDLabel="Move Joined" JOINEDLeft="3" JOINEDWidth="55" JOINEDOnChange="SetCombo(Row,Col,'MoveRight',Value)" JOINEDFormula="GetCombo(Row,Col,'MoveRight')"
+         JOINEDDefaults="|Single|Next|Previous|All joined" JOINEDKeys="|Single|Next|Prev|"
+         JOINEDTip="How the joined boxes will be dragged.&lt;br>Single - only the caugth box will be dragged.&lt;br>Next - the caught and next (right) joined boxes will be dragged.&lt;br>Previous - the caught and previous (left) joined boxes will be dragged.&lt;br>All joined - all boxes joined with the caught box will be dragged.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunMove&lt;/strong>, by &lt;b>Single&lt;/b>, &lt;b>Next&lt;/b>, &lt;b>Prev&lt;/b> flags.&lt;/i>"
+
+         NBSPType="Bool" NBSPLabel="Split NBSP" NBSPLeft="3" NBSPOnChange="SetBool('MoveRight','Nbsp',Value)" NBSPFormula="GetBool('MoveRight','Nbsp')" NBSPCanEdit="1"
+         NBSPTip="How the boxes joined by Nbsp (here the red dots) will be dragged.&lt;br>If set, the Single, Next, Previous and All joined options will split the boxes only on Nbsp.&lt;br>If not set, the the Single, Next, Previous and All joined options will split the boxes immediately.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunMove&lt;/strong>, by &lt;b>Nbsp&lt;/b> flag.&lt;/i>"
+
+         SEPType="Html" SEPCanFocus="0" SEPRelWidth="1"
+
+         ADJUSTType="Select" ADJUSTLabel="Adjust" ADJUSTWidth="40" ADJUSTOnChange="SetCombo(Row,Col,'AdjustMove',Value)" ADJUSTFormula="GetCombo(Row,Col,'AdjustMove')"
+         ADJUSTDefaults="|None|Shift|Shrink|Slip" ADJUSTKeys="||Shift|Shrink|Slip"
+         ADJUSTTip="How the other boxes in cell will be moved to create space for the dragged box.&lt;br>None - they will be never moved.&lt;br>Shift - they will be moved and the empty spaces between them will be preserved.&lt;br>Shrink - they will be moved and the empty spaces between them will be shrunk.&lt;br>Slip - they will be moved and the empty spaces between and around them will be preserved.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunAdjust&lt;/strong>, by &lt;b>Shift&lt;/b>, &lt;b>Shrink&lt;/b>, &lt;b>Slip&lt;/b> flags.&lt;/i>"
+
+         AALLType="Bool" AALLLabel="Adjust Fixed" AALLLeft="3" AALLOnChange="SetBool('AdjustMove','All',Value)" AALLFormula="GetBool('AdjustMove','All')" AALLCanEdit="1"
+         AALLTip="If also the Fixed, Left, Right, Stop and inner Bound boxes can be moved to create space for the dragged box.&lt;br>The outer Bound boxes and locked and disabled boxes can be never moved.&lt;br>Here the Fixed boxes are gray and Bound boxes are pink with black edges.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunAdjust&lt;/strong>, by &lt;b>All&lt;/b> flag.&lt;/i>"
+
+         AERRORType="Bool" AERRORLabel="Adjust Error" AERRORLeft="3" AERROROnChange="SetBool('AdjustMove','Error',Value)" AERRORFormula="GetBool('AdjustMove','Error')" AERRORCanEdit="1"
+         AERRORTip="If set, permits dragging the box even if there is no room for it and permits more boxes in the same place, vertically shifted.&lt;br>It is the only option that permits changing the box order when dragging inside row.&lt;br>It is still not possible to drag boxes over outer Bound box.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunAdjust&lt;/strong>, by &lt;b>Error&lt;/b> flag.&lt;/i>"
+
+         ANBSPType="Bool" ANBSPLabel="Adjust NBSP" ANBSPLeft="3" ANBSPOnChange="SetBool('AdjustMove','Nbsp',Value)" ANBSPFormula="GetBool('AdjustMove','Nbsp')" ANBSPCanEdit="1"
+         ANBSPTip="If set, the Nbsp boxes (red dotted) can be automatically resized to permit the box moving.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunAdjust&lt;/strong>, by &lt;b>Nbsp&lt;/b> flag.&lt;/i>"
+
+         />
+
+      <!--- Dragging inside row, 2nd bar - controls -->
+      <Topbar3 Cells="TITLE,SELECT,GROUP,ENTIRE,MOUSE,VERT,SEP,SELF,APPEND,BETWEEN"
+         TITLEType="Html" TITLE="&lt;i>other row&lt;/i>" TITLEWidth="60"
+
+         SELECTType="Select" SELECTLabel="Selected" SELECTWidth="40" SELECTOnChange="SetCombo(Row,Col,'MoveRight',Value)" SELECTFormula="GetCombo(Row,Col,'MoveRight')"
+         SELECTDefaults="|No|Single|Joined" SELECTKeys="||SelectedSingle|Selected"
+         SELECTTip="If and how the Selected boxes will be moved. It affects only dragging the Selected box.&lt;br>Single - Only the Selected boxes will be moved.&lt;br>Joined - Also the boxes joined with Selected boxes will be moved, according to the Move Joined and Split NBSP settings.&lt;br>The Selected boxes are here marked by blue dashed border.&lt;br>One box can be selected by double click, more boxes by creating rectangle by shift + left mouse button dragging.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunMove&lt;/strong>, by &lt;b>SelectSingle&lt;/b> and &lt;b>Select&lt;/b> flags.&lt;/i>"
+
+         GROUPType="Select" GROUPLabel="Group" GROUPLeft="1" GROUPWidth="40" GROUPOnChange="SetCombo(Row,Col,'MoveRight',Value)" GROUPFormula="GetCombo(Row,Col,'MoveRight')"
+         GROUPDefaults="|No|Single|Joined" GROUPKeys="||GroupSingle|Group"
+         GROUPTip="If and how boxes from the same group in the same row will be moved. It affects only dragging box belonging some group.&lt;br>Single - Only the boxes from the same group as dragged box will be moved.&lt;br>Joined - Also the boxes joined with the boxes from the same group as dragged box will be moved, according to the Move Joined and Split NBSP settings.&lt;br>The box groups are in rows 13 and 14, can be changed from popup menu.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunMove&lt;/strong>, by &lt;b>GroupSingle&lt;/b> and &lt;b>Group&lt;/b> flags.&lt;/i>"
+
+         ENTIREType="Bool" ENTIRELabel="Keep spaces" ENTIRELeft="1" ENTIREOnChange="SetBool('MoveRight','Entire',Value)" ENTIREFormula="GetBool('MoveRight','Entire')" ENTIRECanEdit="1"
+         ENTIRETip="Entire (preserve spaces) has two meanings.&lt;br>If moved Selected or Group boxes, it preserves spaces between boxes.&lt;br>If not permitted moving Selected or Group boxes, it moves all movable boxes in row together, also preserves spaces between boxes.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunMove&lt;/strong>, by &lt;b>Entire&lt;/b> flag.&lt;/i>"
+
+         MOUSEType="Bool" MOUSELabel="Keep mouse" MOUSELeft="1" MOUSEOnChange="SetBool('MoveRight','Mouse',Value)" MOUSEFormula="GetBool('MoveRight','Mouse')" MOUSECanEdit="1"
+         MOUSETip="If set, preserves the position where the box was caught by mouse.&lt;br>If set, start drop position will be on the box start.&lt;br>If not set, start drop position will be on mouse position.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunMove&lt;/strong>, by &lt;b>Mouse&lt;/b> flag.&lt;/i>"
+
+         VERTType="Bool" VERTLabel="Vertical" VERTLeft="1" VERTOnChange="SetBool('MoveRight','Vert',Value)" VERTFormula="GetBool('MoveRight','Vert')" VERTCanEdit="1"
+         VERTTip="If set, permits moving boxes only in vertical direction.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunMove&lt;/strong>, by &lt;b>Vert&lt;/b> flag.&lt;/i>"
+
+         SEPType="Html" SEPCanFocus="0" SEPRelWidth="1"
+
+         SELFType="Select" SELFLabel="Adjust self" SELFWidth="45" SELFRange="1" SELFEmptyValue="Noways" SELFOnChange="SetCombo(Row,Col,'AdjustMove',Value)" SELFFormula="GetCombo(Row,Col,'AdjustMove')"
+         SELFDefaults="|Resize spaces|Resize boxes|Move left" SELFKeys="|ResizeNbsp|Resize|Move"
+         SELFTip="How the dropped boxes will be modified if there is not enough room for them.&lt;br>Resize spaces - The spaces between boxes (including Nbsp) can be shrunk.&lt;br>Resize boxes - The (resizable) boxes themselves can be shrunk.&lt;br>Move left - the drop point can be moved left.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunAdjust&lt;/strong>, by &lt;b>ResizeNbsp&lt;/b>, &lt;b>Resize&lt;/b>, &lt;b>Move&lt;/b> flags.&lt;/i>"
+
+         APPENDType="Select" APPENDLabel="Append" APPENDLeft="1" APPENDWidth="50" APPENDOnChange="SetCombo(Row,Col,'AdjustMove',Value)" APPENDFormula="GetCombo(Row,Col,'AdjustMove')"
+         APPENDDefaults="|No|By NBSP|Direct" APPENDKeys="||AppendNbsp|Append"
+         APPENDTip="If and how can be the dropped boxes joined to the destination box, if dropped on this edge.&lt;br>By NBSP - Joins the boxes by adding zero length Nbsp space between them.&lt;br>Direct - Joins the boxes directly without any empty box between them.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunAdjust&lt;/strong>, by &lt;b>AppendNbsp&lt;/b> and &lt;b>Append&lt;/b> flags.&lt;/i>"
+
+         BETWEENType="Bool" BETWEENLabel="Drop on sides" BETWEENLeft="1" BETWEENOnChange="SetBool('AdjustMove','Between',Value)" BETWEENFormula="GetBool('AdjustMove','Between')" BETWEENCanEdit="1"
+         BETWEENTip="If set and dropping on some box, it drops next to the nearest edge.&lt;br>Cannot be used with Error.&lt;br>If used with Append, it appends on the nearest edge.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunAdjust&lt;/strong>, by &lt;b>Between&lt;/b> flag.&lt;/i>"
+         />
+
+      <!--- Dragging inside row, 3rd bar - attributes -->
+      <Topbar2 Cells="MOVE,ADJUST"
+         MOVEType="Text" MOVELabel="&lt;span class='Small'>GanttRun&lt;/span>MoveRight: " MOVEFormula="Grid.Cols.GANTT.GanttRunMoveRight" MOVEWidth="-1" MOVEClass="Result" MOVELabelClass="ResultLabel"
+         MOVETip="GanttRunMoveRight controls dragging permissions and changes of the source (dragged) box.&lt;br>Setting for dragging by &lt;b>right mouse button&lt;/b>.&lt;br>In this example its permitted values are &lt;b>Move&lt;/b> / &lt;b>Copy&lt;/b> / &lt;b>Remove&lt;/b> for &lt;b>moving between&lt;/b> rows."
+         ADJUSTType="Text" ADJUSTLabel="&lt;span class='Small'>GanttRun&lt;/span>AdjustMove: " ADJUSTFormula="Grid.Cols.GANTT.GanttRunAdjustMove" ADJUSTLeft="5" ADJUSTWidth="-1" ADJUSTClass="Result" ADJUSTLabelClass="ResultLabel"
+         ADJUSTTip="GanttRunAdjustRight controls dropping permissions and changes in the destination cell.&lt;br>Setting for dragging by &lt;b>right mouse button&lt;/b>."
+         />
+
+
+      <!--- Other settings, 1st bar - controls -->
+      <Topbar1 Cells="TITLE,HOVER,NBSP,JHOVER,GHOVER,SEP,SELECT,CLEAR"
+         TITLEType="Html" TITLE="&lt;i>Other&lt;/i>" TITLEWidth="45"
+
+         HOVERType="Select" HOVERLabel="Hover" HOVERWidth="50" HOVEROnChange="SetCombo(Row,Col,'GanttHover',Value)" HOVERFormula="GetCombo(Row,Col,'GanttHover')"
+         HOVERDefaults="|None|Editable|All" HOVERKeys="|0|1|2"
+         HOVERTip="If the boxes are highlighted when they are under mouse cursor.&lt;br>Editable - only editable boxes&lt;br>All - all boxes.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttHover&lt;/strong>, values 0, 1, 2.&lt;/i>"
+
+         NBSPType="Select" NBSPLabel="Hover NBSP" NBSPLeft="1" NBSPWidth="60" NBSPOnChange="SetCombo(Row,Col,'NbspHover',Value)" NBSPFormula="GetCombo(Row,Col,'NbspHover')"
+         NBSPDefaults="|Inactive|Self NBSP|Only boxes|All joined" NBSPKeys="|0|1|2|3"
+         NBSPTip="If the NBSP type boxes will be interactive and which boxes will be higlighted if the NBSP type box is under mouse cursor.&lt;br>Inactive - The NBSP type box will not be interactive.&lt;br>Self NBSP - It will be interactive and only the NBSP box itself will be higlighted.&lt;br>Only boxes - It will be interactive and only the adjacent boxes, but not the NBSP box itself, will be highlighted.&lt;br>All joined - It will be interactive and adjacent boxes and also the NBSP box itself will be highlighted.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunNbspHover&lt;/strong>, values 0, 1, 2, 3.&lt;/i>"
+
+         JHOVERType="Select" JHOVERLabel="Hover joined" JHOVERLeft="1" JHOVERWidth="60" JHOVEROnChange="SetCombo(Row,Col,'JoinedHover',Value)" JHOVERFormula="GetCombo(Row,Col,'JoinedHover')"
+         JHOVERDefaults="|Self box|All direct|All joined" JHOVERKeys="|0|1|2"
+         JHOVERTip="Which joined boxes will be highlighted when some box is under mouse cursor.&lt;br>Self box - only the one hovered box.&lt;br>All direct - all directly (without NBSP) joined boxes.&lt;br>All joined - all joined boxes (both directly and with NBSP).&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunJoinedHover&lt;/strong>, values 0, 1, 2.&lt;/i>"
+
+         GHOVERType="Select" GHOVERLabel="Hover group" GHOVERLeft="1" GHOVERWidth="40" GHOVEROnChange="SetCombo(Row,Col,'GroupHover',Value)" GHOVERFormula="GetCombo(Row,Col,'GroupHover')"
+         GHOVERDefaults="|No|In row|All" GHOVERKeys="|0|1|2"
+         GHOVERTip="Which boxes from the same group as box under mouse cursor will be highlighted.&lt;br>No - only the one hovered box.&lt;br>In row - all boxes from the same group in the same row only.&lt;br>All - all boxes from the same group in the whole grid (can be slow in large grids).&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunGroupHover&lt;/strong>, values 0, 1, 2.&lt;/i>"
+
+         SEPType="Html" SEPCanFocus="0" SEPRelWidth="1"
+
+         SELECTType="Select" SELECTLabel="Select boxes" SELECTWidth="95" SELECTOnChange="SetCombo(Row,Col,'Select',Value)" SELECTFormula="GetCombo(Row,Col,'Select')"
+         SELECTDefaults="|None|One|One or none|More in row|In more rows, per row|In more rows, all" SELECTKeys="|0|1|2|3|4|5"
+         SELECTTip="How many boxes can be selected in grid.&lt;br>None - selecting boxes is restricted.&lt;br>One - only one box in grid can be selected, it cannot be unselected.&lt;br>One or none - maximally one box in grid can be selected, it can be also unselected.&lt;br>More in row - more boxes in one row can be selected, but all the selected boxes must be in one row.&lt;br>In more rows, per row - more boxes in grid can be selected, also in more rows, but only boxes from the same row are manipulated (e.g. moved or deleted) together.&lt;br>In more rows, all - more boxes in grid can be selected, also in more rows and all the selected boxes are manipulated (e.g. moved or deleted) together.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunSelect&lt;/strong>, values 0, 1, 2, 3, 4, 5.&lt;/i>"
+
+         CLEARType="Bool" CLEARLabel="Clear selection" CLEARLeft="1" CLEAROnChange="Grid.Cols.GANTT.GanttRunClearSelected = Value;SetBool('MoveRight','Clear',Value)" CLEARFormula="Grid.Cols.GANTT.GanttRunClearSelected" CLEARCanEdit="1"
+         CLEARTip="If the box selection is cleared after the selected boxes are manipulated (e.g. moved or changed).&lt;br> Can be used only if selecting more boxes in permitted.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunClearSelected&lt;/strong>, values 0 / 1.&lt;/i>&lt;br>&lt;i>And also in XML/JSON attribute &lt;strong>GanttRunMoveRight&lt;/strong>, flag &lt;b>Clear&lt;/b>.&lt;/i>"
+
+         />
+
+      <!--- Other settings, 2st bar - controls -->
+      <Topbar3 Cells="TITLE,JOINED,JNBSP"
+         TITLEType="Html" TITLE="&lt;i>settings&lt;/i>" TITLEWidth="45"
+
+         JOINEDType="Select" JOINEDLabel="Joined directly together" JOINEDWidth="220" JOINEDOnChange="SetCombo(Row,Col,'Joined',Value)" JOINEDFormula="GetCombo(Row,Col,'Joined',1)"
+         JOINEDDefaults="|Delete|Disable &amp; lock|Select|Change|Edit" JOINEDKeys="|1|2|4|8|16" JOINEDRange="1"
+         JOINEDTip="Which actions (except dragging) will be done for all directly (without NBSP) joined boxes together.&lt;br>Change means type and class, Edit means text and tip.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunJoined&lt;/strong>, bit array, values 0 - 31.&lt;/i>"
+
+         JNBSPType="Select" JNBSPLabel="Joined by NBSP together" JNBSPWidth="220" JNBSPLeft="5" JNBSPOnChange="SetCombo(Row,Col,'JoinedNbsp',Value)" JNBSPFormula="GetCombo(Row,Col,'JoinedNbsp',1)"
+         JNBSPDefaults="|Delete|Disable &amp; lock|Select|Change|Edit" JNBSPKeys="|1|2|4|8|16" JNBSPRange="1"
+         JNBSPTip="Which actions (except dragging) will be done for all boxes by NBSP together.&lt;br>&lt;i>Only actions set for directly joined boxes can be done together also for boxes joined by NBSP!&lt;/i>&lt;br>Change means type and class, Edit means text and tip.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunJoinedNbsp&lt;/strong>, bit array, values 0 - 31.&lt;/i>"
+
+         />
+
+      <!--- Other settings, 3rd bar - controls -->
+      <Topbar3 Cells="TITLE,PERMIT,DISABLED,MILESTONES,ZERO,SEP,ERROR,SHIFT,MERGE"
+         TITLEType="Html" TITLEWidth="45"
+
+         PERMITType="Select" PERMITLabel="Permissions" PERMITWidth="140" PERMITRange="1" PERMITEmptyValue="Nothing" PERMITOnChange="SetCombo(Row,Col,'GanttEdit',Value)" PERMITFormula="GetCombo(Row,Col,'GanttEdit')"
+         PERMITDefaults="|Move|Resize|New|Text|State" PERMITKeys="|RunMove|RunResize|RunNew|RunText|RunState"
+         PERMITTip="Editing permissions for the Gantt cell, can be set different for every row.&lt;br>In this example there are used permissions only for Run boxes.&lt;br>Move - the boxes can be moved and joined.&lt;br>Resize - the boxes can be resized and split.&lt;br>New - the boxes can be created and deleted.&lt;br>Text - the boxes can be changed (text, tip, type, ...).&lt;br>State - the box state (selected,disabled,locked) can be changed.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttEdit&lt;/strong>, flags RunMove, RunResize, RunNew, RunText, RunState .&lt;/i>"
+
+         DISABLEDType="Bool" DISABLEDLabel="Edit Disabled" DISABLEDLeft="5" DISABLEDOnChange="Grid.Cols.GANTT.GanttEditDisabled = Value;" DISABLEDFormula="Grid.Cols.GANTT.GanttEditDisabled" DISABLEDCanEdit="1"
+         DISABLEDTip="If the locked and disabled boxes can be manipulated (changed, moved, resized, deleted,...).&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttEditDisabled&lt;/strong>, values 0 / 1.&lt;/i>"
+
+         MILESTONESType="Bool" MILESTONESLabel="Milestones" MILESTONESLeft="5" MILESTONESCanEdit="1"
+         MILESTONESOnChange="if(Value) Grid.Cols.GANTT.GanttRunMilestones |= 1; else Grid.Cols.GANTT.GanttRunMilestones &amp;= ~1; Grid.RefreshGantt(511);"
+         MILESTONESFormula="Grid.Cols.GANTT.GanttRunMilestones&amp;1"
+         MILESTONESTip="If the Milestone and Stop boxes are permitted to create and show in the Gantt chart.&lt;br>If not set, all the Milestone and Stop types are shown as zero duration box types Box or Fixed&lt;br> or they are hidden if the zero duration boxes are not permitted too.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunMilestones&lt;/strong>, bit array, the first bit, values 0 / 1.&lt;/i>"
+
+         ZEROType="Bool" ZEROLabel="Zero boxes" ZEROLeft="5" ZEROCanEdit="1"
+         ZEROOnChange="if(Value) Grid.Cols.GANTT.GanttRunMilestones |= 2; else Grid.Cols.GANTT.GanttRunMilestones &amp;= ~2; Grid.RefreshGantt(511);"
+         ZEROFormula="Grid.Cols.GANTT.GanttRunMilestones&amp;2"
+         ZEROTip="If the zero duration boxes are permitted to create and show in the Gantt chart.&lt;br>If not set, all the zero duration boxes are shown as Milestone or Stop boxes&lt;br> or they are hidden if the milestones are not permitted too.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunMilestones&lt;/strong>, bit array, the second bit, values 0 / 2.&lt;/i>"
+
+         SEPType="Html" SEPCanFocus="0" SEPRelWidth="1"
+
+         ERRORType="Bool" ERRORLabel="Errors in red" ERROROnChange="SetBool('Errors',null,Value);Grid.RefreshGantt(1);" ERRORFormula="GetBool('Errors',null)" ERRORCanEdit="1"
+         ERRORTip="If the second and next boxes of two or more overlaid boxes are shown in red.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunErrors&lt;/strong>, values 0 / 1.&lt;/i>"
+
+         SHIFTType="Select" SHIFTLabel="Shift errors by" SHIFTLeft="5" SHIFTWidth="20" SHIFTDefaults="|0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|25|30|35|40|45|50"
+         SHIFTOnChange="Grid.Cols.GANTT.GanttRunErrorsShift = Value; Grid.RefreshGantt(511);" SHIFTFormula="Grid.Cols.GANTT.GanttRunErrorsShift"
+         SHIFTTip="How much will be shifted down the second and next overlaid boxes, in pixels.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunErrorsShift&lt;/strong>, integer value from 0.&lt;/i>"
+
+         MERGEType="Bool" MERGELabel="Merge Errors" MERGELeft="5" MERGEOnChange="SetBool('Error','Merge',Value);" MERGEFormula="GetBool('Error','Merge')" MERGECanEdit="1"
+         MERGETip="If the overlaid boxes will be merged to one.&lt;br>Affects only boxes overlaid after some action, not actually overlaid boxes.&lt;br>On merge the second box increases the first box duration and disappears.&lt;br>&lt;i>Set in XML/JSON attribute &lt;strong>GanttRunError&lt;/strong>, by &lt;b>Merge&lt;/b> flag.&lt;/i>"
+
+         />
+
+      <!--- Other settings, 4th bar - attributes -->
+      <Topbar3 Cells="HOVER,NBSP,JHOVER,GHOVER,SELECT,CLEAR,JOINED,JNBSP"
+         HOVERType="Text" HOVERLabel="GanttHover: " HOVERFormula="Grid.Cols.GANTT.GanttHover" HOVERWidth="-1" HOVERClass="Result" HOVERLabelClass="ResultLabel"
+         HOVERTip="GanttHover - if the boxes are highlighted when they are under mouse cursor.&lt;br> 0 - none, 1 - editable, 2 - all"
+         NBSPType="Text" NBSPLabel="&lt;span class='Small'>GanttRun&lt;/span>NbspHover: " NBSPFormula="Grid.Cols.GANTT.GanttRunNbspHover" NBSPWidth="-1" NBSPClass="Result" NBSPLabelClass="ResultLabel"
+         NBSPTip="GanttRunNbspHover - If the NBSP type boxes will be interactive and which boxes will be higlighted if the NBSP type box is under mouse cursor.&lt;br>0 - inactive, 1 - self NBSP, 2 - only boxes, 3 - all joined"
+         JHOVERType="Text" JHOVERLabel="&lt;span class='Small'>GanttRun&lt;/span>JoinedHover: " JHOVERFormula="Grid.Cols.GANTT.GanttRunJoinedHover" JHOVERWidth="-1" JHOVERClass="Result" JHOVERLabelClass="ResultLabel"
+         JHOVERTip="GanttRunJoinedHover - Which joined boxes will be highlighted when some box is under mouse cursor.&lt;br>0 - self box, 1 - all direct, 2 - all joined"
+         GHOVERType="Text" GHOVERLabel="&lt;span class='Small'>GanttRun&lt;/span>GroupHover: " GHOVERFormula="Grid.Cols.GANTT.GanttRunGroupHover" GHOVERWidth="-1" GHOVERClass="Result" GHOVERLabelClass="ResultLabel"
+         GHOVERTip="GanttRunGroupHover - Which boxes from the same group as box under mouse cursor will be highlighted.&lt;br>0 - no, 1 - in row, 2 - all"
+         SELECTType="Text" SELECTLabel="&lt;span class='Small'>GanttRun&lt;/span>Select: " SELECTFormula="Grid.Cols.GANTT.GanttRunSelect" SELECTWidth="-1" SELECTClass="Result" SELECTLabelClass="ResultLabel"
+         SELECTTip="GanttRunSelect - How many boxes can be selected in grid.&lt;br>0 - none, 1 - one, 2 - one or none, 3 - more in row, 4 - in more rows, per row, 5 - in more rows, all"
+         CLEARType="Text" CLEARLabel="&lt;span class='Small'>GanttRun&lt;/span>ClearSelected: " CLEARFormula="Grid.Cols.GANTT.GanttRunClearSelected" CLEARWidth="-1" CLEARClass="Result" CLEARLabelClass="ResultLabel"
+         CLEARTip="GanttRunClearSelected - If the box selection is cleared after the selected boxes are manipulated (e.g. moved or changed).&lt;br>Can be used only if GanttRunSelect>=3&lt;br>Does not affect dragged boxes, to clear selection after dragging use GanttRunMove(Right) flag Clear"
+         JOINEDType="Text" JOINEDLabel="&lt;span class='Small'>GanttRun&lt;/span>Joined: " JOINEDFormula="Grid.Cols.GANTT.GanttRunJoined" JOINEDWidth="-1" JOINEDClass="Result" JOINEDLabelClass="ResultLabel"
+         JOINEDTip="GanttRunJoined - Which actions (except dragging) will be done for all directly (without NBSP) joined boxes together.&lt;br>1. bit (1) - delete, 2. bit (2) - disable and lock, 3. bit (4) - select, 4. bit (8) - change type and class, 5. bit (16) - change text and tip"
+         JNBSPType="Text" JNBSPLabel="&lt;span class='Small'>GanttRun&lt;/span>JoinedNbsp: " JNBSPFormula="Grid.Cols.GANTT.GanttRunJoinedNbsp" JNBSPWidth="-1" JNBSPClass="Result" JNBSPLabelClass="ResultLabel"
+         JNBSPTip="GanttRunJoineNbsp - Which actions (except dragging) will be done for all directly (without NBSP) joined boxes together.&lt;br>&lt;i>Only bits set also in GanttRunJoined are used in GanttRunJoinedNbsp!&lt;/i>&lt;br>1. bit (1) - delete, 2. bit (2) - disable and lock, 3. bit (4) - select, 4. bit (8) - change type and class, 5. bit (16) - change text and tip"
+         />
+
+      <!--- Other settings, 5th bar - attributes -->
+      <Topbar2 Cells="PERMIT,DISABLED,MILESTONES,ERROR,SHIFT,MERGE"
+         PERMITType="Text" PERMITLabel="GanttEdit: " PERMITFormula="Grid.Cols.GANTT.GanttEdit" PERMITWidth="-1" PERMITClass="Result" PERMITLabelClass="ResultLabel"
+         PERMITTip="GanttEdit - Editing permissions for the Gantt cell, can be set different for every row.&lt;br>In this example there are used permissions only for Run boxes.&lt;br>RunMove - move and join, RunResize - resize and split, RunNew - create and delete, RunText - any change, RunState - lock, disable select&lt;br>To permit all the actions for run it is possible to use flag Run instead of all the individual flags."
+         DISABLEDType="Text" DISABLEDLabel="GanttEditDisabled: " DISABLEDLeft="5" DISABLEDFormula="Grid.Cols.GANTT.GanttEditDisabled" DISABLEDWidth="-1" DISABLEDClass="Result" DISABLEDLabelClass="ResultLabel"
+         DISABLEDTip="GanttEditDisabled - If the locked and disabled boxes can be manipulated (changed, moved, resized, deleted,...)."
+         MILESTONESType="Text" MILESTONESLabel="&lt;span class='Small'>GanttRun&lt;/span>Milestones: " MILESTONESLeft="5" MILESTONESFormula="Grid.Cols.GANTT.GanttRunMilestones" MILESTONESWidth="-1" MILESTONESClass="Result" MILESTONESLabelClass="ResultLabel"
+         MILESTONESTip="GanttMilestones - If the Milestone and Stop boxes and zero duration are permitted to create and show in the Gantt chart.&lt;br>1. bit (1) - if Milestone and Stop are permitted, 2.bit (2) - if zero duration boxes are permitted."
+         ERRORType="Text" ERRORLabel="&lt;span class='Small'>GanttRun&lt;/span>Errors: " ERRORLeft="5" ERRORFormula="Grid.Cols.GANTT.GanttRunErrors" ERRORWidth="-1" ERRORClass="Result" ERRORLabelClass="ResultLabel"
+         ERRORTip="GanttRunErrors - If the second and next boxes of two or more overlaid boxes are shown in red."
+         SHIFTType="Text" SHIFTLabel="&lt;span class='Small'>GanttRun&lt;/span>ErrorsShift: " SHIFTLeft="5" SHIFTFormula="Grid.Cols.GANTT.GanttRunErrorsShift" SHIFTWidth="-1" SHIFTClass="Result" SHIFTLabelClass="ResultLabel"
+         SHIFTTip="GanttRunErrorsShift - How much will be shifted down the second and next overlaid boxes, in pixels."
+         MERGEType="Text" MERGELabel="&lt;span class='Small'>GanttRun&lt;/span>Error: " MERGELeft="5" MERGEFormula="Grid.Cols.GANTT.GanttRunError" MERGEWidth="-1" MERGEClass="Result" MERGELabelClass="ResultLabel"
+         MERGETip="GanttRunError - How the error boxes are handled.&lt;br>Sort - the boxes in run are sorted according to their start dates.&lt;br>Merge - the overlaid boxes are merged to the first box, automatically does also the sort."
+         />
+
+   </Solid>
+
+   <!--- Bottom toolbar, adds two new controls, not the Cells are copied from Defaults.xml with the two names added -->
+   <Toolbar Cells65Custom="BOX,HEIGHT"
+
+         BOXType="Select" BOXLabel="Box look" BOXLeft="5" BOXDefaults="|Normal|Adjacent|Fast" BOXWidth="50"
+         BOXOnChange="Grid.FastGantt = Value=='Fast'; Grid.Cols.GANTT.GanttAdjacentBars = Value=='Adjacent'; Grid.SetStyle(); Grid.RefreshGantt(511);"
+         BOXFormula="Grid.FastGantt ? 'Fast' : (Grid.Cols.GANTT.GanttAdjacentBars ? 'Adjacent' : 'Normal')"
+
+         HEIGHTType="Select" HEIGHTLabel="Box height" HEIGHTLeft="5" HEIGHTWidth="30" HEIGHTDefaults="|auto|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|25|30|35|40|45|50" HEIGHTEmptyValue="auto"
+         HEIGHTOnChange="Grid.Cols.GANTT.GanttRunHeight = Value; Grid.RefreshGantt(511);" HEIGHTFormula="Grid.Cols.GANTT.GanttRunHeight?Grid.Cols.GANTT.GanttRunHeight:''"
+         />
+</Grid>

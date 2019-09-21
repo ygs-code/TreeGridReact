@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 22 22">
+<polygon fill="white" points="11,1 21,11 11,21 1,11"/>
+<polygon stroke="red" stroke-width="1" fill="none" points="11,1 21,11 11,21 1,11"/>
+</svg>

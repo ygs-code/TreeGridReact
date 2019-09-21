@@ -1,0 +1,126 @@
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+   </head>
+   <body class="Example">
+      <style>
+         /* Examples shared styles */
+         .Example h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+         .Example h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+         .Example h3,.Example h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+         .Example h3 { background:#EE9; border:1px solid #DD8; }
+         .Example h4 { background:#BDE; border:1px solid #ACD; }
+         .Example a { text-decoration:underline; }      
+         .Example li { padding-bottom:8px; }
+         .Example ul { margin:6px 0px 0px 20px; font:13px Arial; }
+         .Example .Desc { margin:0px 5px 10px 5px; padding:10px; border:1px solid #dfdfdf; }
+         .Example .Desc > ul { margin-left:0px; padding:0px 0px 0px 15px; clear:both; }
+         .Example .Desc b { color:#0585B9; }
+         .Example .Path { font:normal 12px Arial; color:#0585B9; }
+         .Example .Path b { color:#D73938; }
+         .Example .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+         .Example .Path i { color:black; font-style:normal; font-weight:bold; }
+         .Example .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+         .Example .Border { margin:0px 5px 15px 5px; }
+         .Example .Main { }
+
+         /* This example top information */
+         .Info { padding-top:1px!important; line-height:9px; font-size:9px; } /* Style for top right Info tag on tabber */
+
+          /* Custom styles for the two custom boxes */
+         .GWGanttCustom1In { background:#FDA; color:#3D7FC2; font:bold 11px Verdana; }
+         .GWGanttCustom1Out { border:1px dotted blue; margin:2px; }
+         .GWGanttCustom2In { background:white; color:gray; font:italic 11px Verdana; }
+         .GWGanttCustom2Out { margin:0px; border:2px solid pink; padding:0px; }
+
+      </style>
+
+      <script>
+var BIE5 = navigator.appName.search("Microsoft")>=0 && document.compatMode!="CSS1Compat" && document.documentMode<10; // IE5 quirks mode
+// ------------------------------------------------------------------------------------
+// Returns custom Run bar content, only for row Custom
+Grids.OnGetGanttRunText = function(G,row,col,run,idx,text,width){
+if(row.id!="Custom") return text;
+var B = G.GetGanttRunBox(row,col,idx);
+var pad = BIE5? "" : "padding:1px;"; // In IE5 quirks mode is the height of text calculated with padding, so no padding is needed here
+return "<div style='border:1px solid black;padding:1px;'><div style='background:#EAA;padding-left:2px;float:right;font-size:20px;line-height:36px;width:17px;text-align:center;border-bottom-left-radius:10px;'>"+(idx/2+1)+"</div><div>"
+   + "<div style=\"background:#396;color:white;line-height:16px;"+pad+"\">&nbsp;"+DateToString(B.Start,"dddddd")+" - "+DateToString(B.End,"dddddd")+"</div>"
+   + "<div style=\"background:#369;color:white;line-height:16px;"+pad+"\">&nbsp;"+(B.Length/24/3600/1000)+" days </div>"
+   + "<div style=\"background:#963;color:yellow;line-height:16px;"+pad+"font-weight:bold;\">&nbsp;"+(B.Text?B.Text:"")+"</div>"
+   + "</div></div>";
+
+}
+// ------------------------------------------------------------------------------------------------------------
+// Used to show tip on Gantt header row
+// For Gantt chart rows and objects use rather OnGanttTip instead
+Grids.OnTip = function(G,row,col,tip,clientx,clienty,x,y){
+if(col=="G" && row.id=="Header") { // Gantt header row
+   var A = G.GetGanttHeaderXY(row,col,x,y);
+   if(!A) return;
+   tip = "<b>"+G.Lang.GanttUnits[A.Units]+"</b><br>" + DateToString(A.Start,"'<b>'*ly*'</b>'*lts") + " - " + DateToString(A.End,"'<b>'*ly*'</b>'*lts") + "<br>" + G.Lang.Text.HeaderTip;
+   }
+return tip;
+}
+// ------------------------------------------------------------------------------------------------------------
+// Called on grid loaded, here used just for change on iPad
+Grids.OnUpdated = function(G){
+if(Grids.Tablet) G.NoVScroll = 1;                      // No vertical scroll on iPad
+}
+// ------------------------------------------------------------------------------------
+// Shows / hides the Gantt parts
+function DoHide(G,hide){
+if(hide){
+   G.HideRow(G.Rows.Header); G.HideRow(G.Rows.Toolbar);
+   G.HideCol("T"); G.HideCol("S"); G.HideCol("R"); G.HideCol("D"); G.HideCol("Panel");
+   }
+else {
+   G.ShowRow(G.Rows.Header); G.ShowRow(G.Rows.Toolbar);
+   G.ShowCol("T"); G.ShowCol("S"); G.ShowCol("R"); G.ShowCol("D"); G.ShowCol("Panel"); 
+   }
+}
+// ------------------------------------------------------------------------------------------------------------
+// Called to change style of the RunSources grid after Run style was changed
+Grids.OnAfterSetStyle = function(G,style,css,gcss,gstyle){
+if(G.id=="Run" && Grids.RunSources) Grids.RunSources.SetStyle(style,null,null,gstyle,1);
+}
+// ------------------------------------------------------------------------------------------------------------
+// Called when NoVScroll / NoHScroll is set automatically due small window size, disables the checkbox for manual change of NoVScroll / NoHScroll
+// First time it hides resource usage rows. Sets OnceLimit custom attribute to not run it again if a user shows the resource rows again
+Grids.OnLimitScroll = function(G,clr,noh,nov){ 
+G.SetAttribute(G.Rows.Controls,"Win","CanEdit",clr,1); 
+var tip = clr?"Disable grid scrollbars and use page scrollbars":"Used page scrollbars because browser window is too small to show this example with its own scrollbars";
+G.SetAttribute(G.Rows.Controls,"Win","Tip",tip,1); 
+G.SetAttribute(G.Rows.Controls,"WinLabelRight","Tip",tip,1); 
+}
+
+// ------------------------------------------------------------------------------------
+      </script>
+      <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Examples\/|\/ExamplesGantt\/)([^\/]+)\/([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+      <h1>Interactive bar chart</h1>
+      <h2>A demonstration of <b>Run</b> bar, complex and universal bar type in TreeGrid Gantt chart</h2>
+      <div class="Desc">
+         The <b>Run bar</b> supports more bars in one cell, with different features, permissions, size, color, class, text (html), tooltip. The individual bars support also <b>dependency</b> lines.<br />
+         There are many ways in <b>dragging</b> Run bars inside rows, between rows and between grids.<br />
+      </div>
+      <div class="Border" style="padding-right:110px; white-space:nowrap;">
+         <div class="Main" id='Gantt' style='width:100%; height:800px; overflow:hidden; display:inline-block;'>
+            <bdo Sync="1" Layout_Url="RunDef.xml" Data_Url="RunData.xml"></bdo>
+         </div>
+         <div class="Main" id='Sources' style='width:105px; height:400px; overflow:hidden; margin-top:97px; display:inline-block; vertical-align:top;'>
+            <bdo Sync="1" Data_Url="RunSources.xml"></bdo>
+         </div>
+      </div>
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGTrialGantt\s*=\s*(\d+)/), TGIndex = 512;
+         if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunTrialHtmlRun", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGantt="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+   </body>
+</html>

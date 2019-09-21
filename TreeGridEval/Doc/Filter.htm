@@ -1,0 +1,686 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Filtering rows</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Filtering rows</h1>
+<p>TreeGrid documentation</p>
+
+TreeGrid supports filtering rows by one or more columns by setting the value to filter and filter operator to use.<br />
+It is similar to MS Excel simple filter.<br />
+<i>TreeGrid also supports <b>advanced filtering</b> by any formula or <b>special search</b>, see <a href="Search.htm">Search</a>.</i><br />
+Strings can be filtered case sensitive or insensitive. Can be also filtered according to actual browser language or by special settings. See <a href="#Strings">comparing strings</a>.<br /><br />
+
+Filtering can be changed by a user in special <a href="#Filter">Filter</a> row by setting cell value or filter operator.<br />
+Filtering can be preset in XML in the special <a href="#Filter">Filter</a> row by setting cell value and filter operator.<br />
+Filtering can be changed by API by <a href="#ChangeFilter">ChangeFilter</a> method.<br />
+
+<!-- Filtering -->
+<a name="CfgFiltering"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Filtering</h4> <s>[1]</s>
+</div>
+If rows can be filtered.<br />
+Setting it to <b>0</b> disables all filtering functions, including <b>Search</b> and <a href="#SetFilter">SetFilter</a> filters.<br />
+
+<!-- Filtered -->
+<a name="CfgFiltered"></a>
+<div class="XML">
+   <u>chg <b>7.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Filtered</h4> <s>[1] Saved to cookies, to not load it, set <tt><b>FilteredLap</b>='1'</tt></s>
+</div>
+If basic filtering is enabled by user.<br />
+A user can enable / disable filtering by click to <a href="#Filter">Filter</a> row left panel.<br />
+<i>Since 7.0</i> it affects only filters done by &lt;Filter> rows, <u>not</u> the <b>Search</b> and <a href="#SetFilter">SetFilter</a> filters.<br />
+
+<!-- FilterEmpty -->
+<a name="CfgFilterEmpty"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FilterEmpty</h4> <s>[0]</s>
+</div>
+If and how will be hidden rows with all children filtered.<br />
+<b>0</b> - never.<br />
+<b>1</b> - always if set <a href="#ICanFilter">CanFilter</a>=2 or 3.<br />
+<b>2</b> - like <b>1</b> except leaf rows without any child.<br />
+<b>3</b> - like <b>2</b> except rows that permit and fulfill actual filter condition.<br />
+Since 7.0 the CanFilter&2 is tested always, like <tt>FilterEmpty = 1</tt><br />
+If set to <b>1</b> when filtering, hides all rows with <tt><a href="#ICanFilter">CanFilter</a>=<b>2</b></tt> (or <b>3</b>) that have all children filtered/hidden.</del><br />
+
+<!-- StandardFilter -->
+<a name="CfgStandardFilter"></a>
+<div class="XML">
+   <u><i>upd <b>9.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>StandardFilter</h4> <s>[0]</s>
+</div>
+Filter behavior in tree<br /><br />
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td><b>(Hide all not found)</b> The filter is applied to parents before children to speed up filtering. The filter is applied to children only if the parent fulfills the condition.</td></tr>
+<tr><td>&nbsp;</td><td></td></tr>
+
+<tr><td><b>1</b></td><td><b>(Hide all not found, iterate all)</b> The filter is applied to children before filtering parent.</td></tr>
+<tr><td></td><td>Use it if parent is filtered according to visibility of its children, when uses aggregate functions. It can be much slower than 0.</td></tr>
+<tr><td>&nbsp;</td><td></td></tr>
+
+<tr><td><b>2</b></td><td><b>(Show all found)</b> It shows all rows that fulfill the filter condition in tree. It shows all parent rows if some their children fulfill the condition.</td></tr>
+<tr><td></td><td>The filter is applied to children before filtering parent.</td></tr>
+<tr><td>&nbsp;</td><td></td></tr>
+
+<tr><td><b>3</b></td><td><i>(new 9.0)</i> <b>(Show all found, with all children)</b> It shows all rows that fulfill the filter condition in tree, with all their children.</td></tr>
+<tr><td></td><td>The filter is applied to parent before children. The filter is applied to children only if the parent does not fulfill the condition.</td></tr>
+</table>
+
+<!-- FilterHideParents -->
+<a name="CfgFilterHideParents"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FilterHideParents</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, the <a href="#CfgStandardFilter">StandardFilter</a> <b>1</b> and <b>3</b> hide the not found parents, but still show their found children.<br />
+To hide the parent without its children it sets the parent's <a href="Tree.htm#IExpanded">Expanded</a> value <b>2</b> or <b>3</b>.<br />
+If set to <b>2</b> it behaves like <b>0</b>, but always hides children of hidden parents (clears the Expanded value <b>2</b> and <b>3</b>). Use to switch between FilterHideParents on and off dynamically.<br />
+
+<!-- FilterHidden -->
+<a name="CfgFilterHidden"></a>
+<div class="XML">
+   <u>new <b>8.1</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>FilterHidden</h4> <s>[1]</s>
+</div>
+<b>0</b> - it will clear filter for column hidden from columns menu by users<br />
+<b>1</b> - it will preserve the filter also after the column is hidden<br />
+
+<!-- FilterIgnoreEmpty -->
+<a name="CfgFilterIgnoreEmpty"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FilterIgnoreEmpty</h4> <s>[0]</s>
+</div>
+If the empty cells will be ignored by some filter operators. Bit array.<br />
+The setting is <u>not</u> applied when comparing / searching empty string.
+<table>
+<tr><td style="width:70px;"><b>1</b>. bit <b>&1</b></td><td>Never shows empty numbers for operators &lt;, &lt;=, >, >=.</td></tr>
+<tr><td><b>2</b>. bit <b>&2</b></td><td>Never shows empty strings for operators &lt;, &lt;=, >, >=.</td></tr>
+<tr><td><b>3</b>. bit <b>&4</b></td><td>Never shows empty strings for operators not contain / not begin / not end</td></tr>
+<tr><td><b>4</b>. bit <b>&8</b></td><td>Never shows empty numbers for operator not equal </td></tr>
+<tr><td><b>5</b>. bit <b>&16</b></td><td>Never shows empty strings for operator not equal </td></tr>
+</table>
+
+<!-- ColorFilter -->
+<a name="CfgColorFilter"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ColorFilter</h4> <s>[0]</s>
+</div>
+If it colors the rows that fulfill the filter condition. 
+The other visible rows that cannot be filtered are not colored.<br />
+<b>0</b> - it does not color any row for the filter.<br />
+<b>1</b> - it colors the first row that fulfills the filter in tree. In StandardFilter=3 it does not color the children of already found row.<br />
+<b>2</b> - it colors all rows that fulfill the filter. In StandardFilter=3 it runs filter also for rows that will be shown as children. It can slow down this filter type.<br />
+
+<!-- CanFilter -->
+<a name="CCanFilter"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>int</i>
+   <h4>CanFilter</h4> <s>[1]</s>
+</div>
+Rows can be filtered by this column.<br /> 
+If set to <b>2</b>, it is also tested cell's <a href="#CellCanFilter">CanFilter</a> attribute.<br />
+
+<!-- CanFilter -->
+<a name="CellCanFilter"></a>
+<div class="XML">
+   <u></u> <b>&lt;cell></b> <i>bool</i>
+   <h4>CanFilter</h4> <s>[1]</s>
+</div>
+If the row can be filtered according to this column. Used only when the column has set <tt><a href="#CCanFilter">CanFilter</a>='2'</tt>.<br />
+See also filter cell <a href="CFilterDef">FilterDef</a> attribute.<br />
+
+<!-- CanFilter -->
+<a name="ICanFilter"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>int</i>
+   <h4>CanFilter</h4> <s>[1]</s>
+</div>
+How row can be filtered (hidden) by any filter, bit array.<br />
+&<b>1</b> - if row can be hidden by any filter<br />
+&<b>2</b> - if row is hidden if all its children are hidden<br />
+
+<!-- Visible -->
+<a name="IVisible"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>bool</i>
+   <h4>Visible</h4> <s>[1]</s>
+</div>
+If the row is displayed in grid.<br />
+The row Visible attribute can be changed also by Filter / Search and by deleting row, when deleted rows are hidden. <br />
+By API the Visible attribute can be changed by methods ShowRow / HideRow.<br />
+Collapsing / expanding children and rendering pages, child pages or child parts does <u>not</u> affect row Visible attribute.<br />
+<br />
+The Visible attribute does <u>not</u> directly affect if the row is rendered in grid.<br />
+When row has Visible='0' on start, it is <u>not</u> rendered at all and it is rendered when it is shown for the first time.<br />
+When the already rendered row is hidden by Filter / Search or by HiddenRow, it has set display='none' and next showing just clears the CSS attribute.<br />
+The visible row can be also not rendered because of collapsed parent (in child paging) or not rendered page, child page or child part.<br />
+
+<!-- Hidden -->
+<a name="IHidden"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;I></b> <i>bool</i>
+   <h4>Hidden</h4> <s>[0]</s>
+</div>
+The Hidden attribute is set by manual hiding and showing rows.<br />
+If set Hidden='1' the row is <u>not</u> shown/hidden by any filter.
+
+<!-- FilterValue -->
+<a name="CellFilterValue"></a>
+<div class="XML">
+   <u>chg <b>7.0</b></u> <b>&lt;cell></b> <i>string</i>
+   <h4>FilterValue</h4> <s></s>
+</div>
+Cell value used for <b>filtering</b> and <b>searching</b>, useful for special non editable cells like Html, Icon, Abs, Gantt, ..., see also <a href="#OnGetFilterValue">OnGetFilterValue</a> event.<br />
+<del><i>(Deleted in 7.0)</i> For searching it is <u>not</u> used for Int and Float types and also <u>not</u> for <tt><a href="Search.htm#CfgSearchMethod">SearchMethod</a> = 2</tt>.</del><br />
+It is also used by <a href="#FilterTextRange">FilterTextRange</a> and <a href="#FilterDateRange">FilterDateRange</a> methods, but not by <a href="#SetFilter">SetFilter</a> method.<br />
+
+<!-- OnGetFilterValue -->
+<a name="OnGetFilterValue"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>type</i>
+   <h4>OnGetFilterValue</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>val</b>)</s>
+</div>
+Called to get cell value for <b>filtering</b> and <b>searching</b>.<br /> 
+<b>val</b> is predefined value, returns <b>val</b> or new value.<br />
+
+<!-- FilterCount -->
+<a name="FilterCount"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API variable</b> <i>int</i>
+   <h4>FilterCount</h4>
+   <s></s>
+</div>
+Count of visible variable rows after filter is applied.<br />
+It is null if the filter was not run.<br />
+
+<!-- SaveFilters -->
+<a name="CfgSaveFilters"></a>
+<div class="XML">
+   <u>new <b>6.7</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SaveFilters</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, saves to cookies the custom filters set by <a href="#SetFilter">SetFilter</a> method.<br />
+<i>It does <u>not</u> affect the standard or search filters.</i>
+
+<!-- ClearFilterOff -->
+<a name="CfgClearFilterOff"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ClearFilterOff</h4> <s>[0]</s>
+</div>
+If set, clears the filter cell value after chosen operator off (0).
+
+<!-----------------------------------------------------------------------  Comparing strings  ------------------------------------------------->
+<a name="Strings"></a>
+<h2>Comparing strings</h2>
+
+You can also specify these settings for whole grid in default column <tt>&lt;Def>&lt;D Name='C'/>&lt;/Def></tt>.<br />
+
+<!-- LocaleCompare -->
+<a name="CLocaleCompare"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>LocaleCompare</h4> <s>[0]</s>
+</div>
+If strings are compared according to browser's locale settings. For sorting, filtering and grouping.<br />
+For Filter it affects just case sensitivity if set also <tt>CaseSensitive='0'</tt>.<br />
+<i>If set to row cell, it affects row's children for sorting and grouping. For filter it can be set only to Filter cell and affects also all values in the column.</i><br />
+
+<!-- CaseSensitive -->
+<a name="CCaseSensitive"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>CaseSensitive</h4> <s>[1]</s>
+</div>
+If strings are compared case sensitive. For sorting, filtering and grouping.<br />
+<i>If set to row cell, it affects row's children for sorting and grouping. For filter it can be set only to Filter cell and affects also all values in the column.</i><br />
+
+<!-- WhiteChars -->
+<a name="CWhiteChars"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>WhiteChars</h4> <s></s>
+</div>
+List of characters to ignore when sorting, filtering or grouping.<br /> 
+It can be set for example to " " (space) to ignore spaces (it means that for example "a b   c" and "abc" strings are the same.<br />
+<i>Setting this attribute can slow down sorting, grouping and filtering.</i><br />
+<i>If set to row cell, it affects row's children for sorting and grouping. For filter it can be set only to Filter cell and affects also all values in the column.</i><br />
+
+<!-- CharCodes -->
+<a name="CCharCodes"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>CharCodes</h4> <s></s>
+</div>
+It changes characters in comparing strings for sorting, filtering and grouping.<br />
+It is first character separated array of pair of characters to replace the first character by the second when comparing strings.<br />
+For example <tt>"|y|i|Y|I|.|,"</tt> - replaces 'y' by 'i', 'Y' by 'I' and '.' by ','<br /> 
+  <div class="L1">- it means that when comparing strings does not differ between letter 'y' and 'i', both cases and also does not differ between comma and point.</div>
+The first character must be one letter, but the second in fact can be any letter or string or even empty string, like <tt>"|a|xxx|b||c|ff"</tt><br />
+If you use <a href="DLL.htm">TreeGrid server</a> DLL/SO, there must be the second character one letter only too.<br />
+<i>Setting this attribute can slow down sorting, grouping and filtering.</i><br />
+<i>If set to row cell, it affects row's children for sorting and grouping. For filter it can be set only to Filter cell and affects also all values in the column.</i><br />
+
+<!-----------------------------------------------------------------------  User interface to choose filter  ------------------------------------------------->
+<a name="Filter"></a>
+<h2>User interface to choose filter</h2>
+
+User interface for filtering is shown by <b>fixed</b> &lt;<b style="color:red">Filter</b>> row. The &lt;Filter> can be placed to &lt;<b>Head</b>> or &lt;<b>Foot</b>> section.<br />
+The &lt;Filter> row is usually only one, but there can be also more filter rows placed to &lt;<b>Head</b>> and / or &lt;<b>Foot</b>> tags to provide more filters by one column.<br />
+<strong>The &lt;Filter> row is standard data row with cells and can have also all standard row and cell attributes.</strong><br /><br />
+
+The default filter cell differs according to the filter cell / column type.<br /> 
+<table>
+<tr><td style="width:100px;"><b>Text, Lines</b></td><td>Left filter menu shows all operators including strings. String filter is done.</td></tr>
+<tr><td><b>Int, Float</b></td><td>Left filter menu shows only basic comparing operators, not the strings. Number filter is done.</td></tr>
+<tr><td><b>Date</b></td><td>Left filter menu shows only basic comparing operators, not the strings. Number filter is done, the dates are compared as numbers. Right side calendar is shown.</td></tr>
+<tr><td><b>Enum</b></td><td>Left filter menu is hidden. User chooses one item from enum list to filter by. The first item in list is <a href="#FilterCellFilterOff">FilterOff</a>. It is possible to set <a href="#FilterCellRange">Range</a> to choose more values to filter by.</td></tr>
+<tr><td><b>Radio</b></td><td>Left filter menu is hidden. User chooses check one radio button to filter by. The last radio button is <a href="#FilterCellFilterOff">FilterOff</a>. It is possible to set <a href="#FilterCellRange">Range</a> to choose more values to filter by.</td></tr>
+<tr><td><b>Bool</b></td><td>Left filter menu is hidden. The check box has three states - on, off, filteroff.</td></tr>
+<tr><td><b>Pass</b></td><td>Filter is disabled.</td></tr>
+<tr><td><b>Panel</b></td><td>It is shown Filtered On / Off checkbox</td></tr>
+<tr><td><b>Link</b></td><td>It is shown Text type and filter provides string compare with link text or if missing with link url.</td></tr>
+<tr><td><b>Img</b></td><td>It is shown Text type and filter provides string compare with link url or if missing with image url.</td></tr>
+</table>
+<table>
+<tr><td style="width:300px;"><b>Button, Html, Icon, Abs, Gantt, List</b></td><td>It is shown Text type cell with left filter menu and the filter provides string compare for the cell values.</td></tr>
+</table>
+<i>To not show the filter cell and filter menu, set <tt>&lt;C CanFilter='0'/></tt></i><br /><br />
+
+<strong>The predefined or actual filter is set in individual cells by the cell <span style="color:blue;">value</span> and attribute <a href="#FilterCellFilter">Filter</a>.</strong><br />
+
+<!-- value -->
+<a name="Cellvalue"></a>
+<div class="XML">
+   <u></u> <b>&lt;Filter cell></b> <i>type</i>
+   <h4 style="font-style:italic";>value</h4> <s>Saved to cookies, to not load it, set <tt>&lt;Cfg <b>FilterLap</b>='1'/></tt></s>
+</div>
+Predefined or actual filter value to filter the column by.<br />
+It is used only if <a href="#FilterCellFilter">Filter</a> is set to value > 0.<br />
+
+<!-- Filter -->
+<a name="FilterCellFilter"></a>
+<div class="XML">
+   <u></u> <b>&lt;Filter cell></b> <i>int</i>
+   <h4>Filter</h4> <s>[0] Saved to cookies, to not load it, set <tt>&lt;Cfg <b>FilterLap</b>='1'/></tt></s>
+</div>
+Predefined or actual filter operator to filter the column by.<br />
+Can be one of predefined filters:<br />
+<table> 
+<tr><td style="width:120px;">Off:</td><td><b>0</b> - Off</td></tr>
+<tr><td>Number filter:</td><td><b>1</b> - Equal, <b>2</b> - Not equal, <b>3</b> - Less than, <b>4</b> - Less than or equal, <b>5</b> - Greater than, <b>6</b> - Greater than or equal</td></tr>
+<tr><td>String filter:</td><td><b>7</b> - Begins with, <b>8</b> - Does not begin with, <b>9</b> - Ends with, <b>10</b> - Does not end with, <b>11</b> - Contains, <b>12</b> - Does not contain</td></tr>
+</table>
+
+<!-- DefaultFilter -->
+<a name="FilterCellDefaultFilter"></a>
+<div class="XML">
+   <u></u> <b>&lt;Filter cell></b> <i>int</i>
+   <h4>DefaultFilter</h4> <s>[1/11]</s>
+</div>
+Predefined filter operator, it is automatically selected when filter is off and user changes filter cell value.<br />
+Default value is for <b>Text</b>, <b>Lines</b>, <b>Img</b> and <b>Link</b> types <b>11</b> and for other types <b>1</b>. See <a href="#FilterCellFilter">Filter</a> attribute.<br />
+If set to <b>0</b>, no automatic selection is done.<br />
+
+<!-- FilterOff -->
+<a name="FilterCellFilterOff"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;Filter cell></b> <i>string</i>
+   <h4>FilterOff</h4> <s>[""]</s>
+</div>
+Value entered to cell that automatically removes filter from the cell (sets <a href="#FilterCellFilter">Filter</a> to 0).<br />
+By default it is empty string for all editable types and new value for empty value for Enum and item Off for Radio.<br />
+For Enum and Radio it can be not existing item - it is added to the list, or existing item that switches off the filter.<br />
+
+<!-- FilterOffText -->
+<a name="FilterCellFilterOffText"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Filter cell></b> <i>string</i>
+   <h4>FilterOffText</h4> <s></s>
+</div>
+Menu text for <a href="#FilterCellFilterOff">FilterOff</a> item. If not set, the <a href="#FilterCellFilterOff">FilterOff</a> value is used.<br />
+
+<!-- FilterDef -->
+<a name="CFilterDef"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;C> &lt;Filter cell></b> <i>string[]</i>
+   <h4>FilterDef</h4> <s>Saved to cookies, to not load it, set <tt>&lt;Cfg <b>FilterLap</b>='1'/></tt></s>
+</div>
+Comma separated list of row default names the filter will be applied to. If not set, the filter is applied to all rows.<br />
+If set, the rows their default is not listed in the FilterDef automatically fulfill the filter condition.<br />
+It is used also for <a href="SetFilter">SetFilter</a>, it is read from the first filter row in grid.<br />
+See also cell <a href="#CellCanFilter">CanFilter</a> attribute.<br />
+
+<!-- FilterDefs -->
+<a name="CFilterDefs"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;C> &lt;Filter cell></b> <i>string[]</i>
+   <h4>FilterDefs</h4> <s></s>
+</div>
+Comma separated list with predefined row default names available for <a href="CFilterDef">FilterDef</a>.<br />
+If set, the filter operator menu will contain also this list to let users to choose the rows to be the filter applied to.<br />
+If set to only one item (any), the filter operator menu will contain the <a href="CFilterDef">FilterDef</a> values only as read only item, just show where the filter will be applied to.<br />
+Item caption can be set for individual defaults by <a href="#DFilterMenuName">FilterMenuName</a>.<br />
+
+<!-- FilterMenuName -->
+<a name="DFilterMenuName"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;D></b> <i>string</i>
+   <h4>FilterMenuName</h4> <s></s>
+</div>
+Item caption used in filter menu for given default row. If not set, the default Name is used.<br />
+
+<!-- FilterEnumKeys -->
+<a name="FilterCellFilterEnumKeys"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Filter cell></b> <i>bool</i>
+   <h4>FilterEnumKeys</h4> <s>[0]</s>
+</div>
+For Enum type cell. If set to <b>0</b> it filters by Enum string. If set to <b>1</b> it filters by Enum value, by key or index.<br />
+
+<!-- EqualFormatted -->
+<a name="FilterCellEqualFormatted"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;Filter cell></b> <i>bool</i>
+   <h4>EqualFormatted</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, it equals (<a href="#FilterCellFilter">Filter</a> = 1,2,3,4,5,6) numbers as formatted strings (according to the Format setting). To avoid problems with rounded values due format.<br />
+
+<!-- ShowMenu -->
+<a name="FilterCellShowMenu"></a>
+<div class="XML">
+   <u></u> <b>&lt;Filter cell></b> <i>bool</i>
+   <h4>ShowMenu</h4> <s>[1/0]</s>
+</div>
+If filter menu icon is visible.<br /> 
+You can hide it to use only <a href="#FilterCellDefaultFilter">DefaultFilter</a> and <a href="CellEdit.htm#CDefaults">Defaults</a> button to select one value or more value to filter the column by.<br />
+By default is <b>0</b> for <b>Bool</b>, <b>Enum</b> and <b>Radio</b> types and <b>1</b> for all other types.<br />
+
+<!-- MenuItems -->
+<a name="FilterCellMenuItems"></a>
+<div class="XML">
+   <u></u> <b>&lt;Filter cell></b> <i>int[ ]</i>
+   <h4>MenuItems</h4> <s>[...]</s>
+</div>
+Comma separated array of operators displayed in FilterMenu, can contain numbers from 0 to 12 in any order.<br /> 
+For possible values see <a href="#FilterCellFilter">Filter</a> attribute.<br />
+Default value varies according to cell type, Bool = "0,1,2", Int, Float, Date = "0,1,2,3,4,5,6", other = "0,1,2,3,4,5,6,7,8,9,10,11,12"<br />
+
+<!-- FilterMenu -->
+<a name="FilterCellFilterMenu"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;Filter cell></b> <i>string</i>
+   <h4>FilterMenu</h4> <s>[...]</s>
+</div>
+Full JSON definition of the filter menu with operators.<br />
+It can define only menu attributes without Items (e.g. MaxHeight), in this case the Items will be created for standard filter operators.<br />
+Or it can define the menu items in Items array. The items named 0 to 12 will be set as standard filter operators, other items will be custom.<br />
+It supports extended capabilities like submenus and collapsible sections.<br />
+The menu format is standard <a href="Menu.htm">TreeGrid menu</a>.<br />
+For example this filter menu for column "Col1" shows operators in two columns:<br />
+<div class="L1"><tt>&lt;Filter ... Col1FilterMenu="&#123; Items:[ &#123; Name:0 }, &#123; Columns:2,Items:[1,2,3,4,5,6,7,8,9,10,11,12] } ] }"  ... /></tt></div>
+
+<!-- Range -->
+<a name="FilterCellRange"></a>
+<div class="XML">
+   <u><i>upd <b>9.1</b></i></u> <b>&lt;Filter cell></b> <i>int</i>
+   <h4>Range</h4> <s>[0]</s>
+</div>
+If the cell accepts more values or value ranges to be filtered by.<br /><br />
+
+If set to <b>1</b> for cell of type <a href="TypeNumber.htm">Int</a>, <a href="TypeNumber.htm">Float</a> and <a href="TypeDate.htm">Date</a>, it accepts more values separated by ';' and range of values separated by '~'.
+It can be used only for filter operators 1 (Equal) and 2 (Not equal). Other operators will fail.<br />
+It will filter all values inside the range(s), including boundaries.<br />
+For example Equal 1;3~5;9~12;16 will find cells with values 1,3,4,5,9,10,11,12,16<br /><br />
+
+If set to <b>1</b> for cell of string type like <a href="TypeText.htm">Text</a> or <a href="TypeText.htm">Lines</a>, it accepts more values separated by ';'.<br />
+It can be used only for filter operators: 1 (Equal), 2 (Not equal), 7 (Begins), 8 (Not begin), 9 (Ends), 10 (Not end), 11 (Contains), 12 (Not contain)<br />
+To filter by empty value, set the filter cell value to ';'.<br />
+If set to <b>2</b> <i>(new 9.1)</i> it compares all values in range cells for operators <b>1</b> (equals at least one) and <b>2</b> (equals none).<br /><br />
+
+If set to <b>1</b> for cell of type Enum or Radio, it accepts more value to be selected and to filter by.<br />
+To filter by empty value, set the filter cell value to ';'.<br />
+If set to <b>2</b> <i>(new 9.1)</i> it compares all values in range cells for operators <b>1</b> (equals at least one) and <b>2</b> (equals none). Only for string enums, not index enums.<br /><br />
+
+If set to <b>1</b>, calendar component for selecting date supports selecting more dates or range of dates by mouse drag. The date should <u>not</u> contain time part.<br />
+If set to <b>1</b>, <a href="CellEdit.htm#CDefaults">Defaults</a> dialog supports selecting more values for any cell type (not only Int, Float, Date, Text, Lines).<br /><br />
+
+The characters ';' and '~' can be changed by <tt>&lt;Lang>&lt;Format ValueSeparator=';' RangeSeparator='~'/>&lt;/Lange></tt><br />
+
+<!-- OnFilterOperator -->
+<a name="OnFilterOperator"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnFilterOperator</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>operator</b>, <i>int</i> <b>oldoperator</b>, <i>string</i> <b>def</b>, <i>string</i> <b>olddef</b>)</s>
+</div>
+Called before change of filter operator (<a href="#FilterCellFilter">Filter</a> attribute value) and / or <a href="#FilterCellFilterDef">FilterDef</a> attribute value in given cell.<br />
+Return true to cancel the change.<br />
+
+<!-----------------------------------------------------------------------  Filter actions and API  ------------------------------------------------->
+<a name="Actions"></a>
+<h2>Filter actions and API</h2>
+
+<!-- Action FilterOn -->
+<a name="ActionsFilterOn"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>FilterOn</h4>
+   <s>Attached to event <b>OnClickPanelFiltered</b></s>
+</div>
+Enables filtering in grid and re-filters it according to actual settings. It fails if filtering already enabled.<br />
+
+<!-- Action FilterOff -->
+<a name="ActionsFilterOff"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>FilterOff</h4>
+   <s>Attached to event <b>OnClickPanelFiltered</b></s>
+</div>
+Disables filtering in grid and un-filters it. It does not clear actual filter settings. It fails if filtering already disabled.<br />
+
+<!-- Action ShowFilterMenu -->
+<a name="ActionsShowFilterMenu"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowFilterMenu ...F</h4>
+   <s>Attached to event <b>OnClickSideFilter</b></s>
+</div>
+Shows filter operator menu in actual or focused cell.<br />
+Fails if the cell has not set Icon or Button = "Filter".<br />
+
+<!-- Action ShowFilterMenuRow -->
+<a name="ActionsShowFilterMenuRow"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowFilterMenuRow ...F</h4>
+   <s>Not attached to any event</s>
+</div>
+Shows filter operator menu in actual or focused cell.<br />
+It shows the menu also if the operator icon is hidden by <a href="#FilterCellShowMenu">ShowMenu</a> = 0.<br />
+Fails if the cell is not in Filter row.<br /> 
+
+<!-- Action FilterBy -->
+<a name="ActionsFilterBy"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FilterBy ...F</h4>
+   <s>Not attached to any event</s>
+</div>
+Sets the actual or focused cell value to the filter cell in the same column and filters by it using <a href="#FilterCellDefaultFilter">DefaultFilter</a>.<br />
+
+<!-- Action FilterByMenu -->
+<a name="ActionsFilterByMenu"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FilterByMenu ...F</h4>
+   <s>Not attached to any event</s>
+</div>
+Sets the actual or focused cell value to the filter cell in the same column and shows operator menu.<br />
+
+<!-- Action FilterByMenuRow -->
+<a name="ActionsFilterByMenuRow"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FilterByMenuRow ...F</h4>
+   <s>Not attached to any event</s>
+</div>
+Sets the actual or focused cell value to the filter cell in the same column and shows operator menu.<br />
+It shows the menu also if the operator icon is hidden by <a href="#FilterCellShowMenu">ShowMenu</a> = 0.<br />
+
+<!-- Action ClearFilter -->
+<a name="ActionsClearFilter"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearFilter ...F</h4>
+   <s>Not attached to any event</s>
+</div>
+Clears the filter operator for the actual or focused column.<br />
+
+<!-- Action ClearFilters -->
+<a name="ActionsClearFilters"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearFilters</h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all the filter operators in the first filter row.<br />
+
+<!-- OnFilter -->
+<a name="OnFilter"></a>
+<div class="API">
+   <u>chg <b>7.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnFilter</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Called when grid will be re-filtered. You can provide own filtering and return true.<br /> 
+<b>type</b> when it is called (<b>0</b> on filter change, <b>1</b> on start, <b>2</b> <i>(since 7.0)</i> on grouping change).<br />
+<i>(Since 7.0)</i> It is called for every filtering in grid (&lt;Filter>, &lt;Search>, SetFilter).<br />
+
+<!-- OnFilterFinish -->
+<a name="OnFilterFinish"></a>
+<div class="API">
+   <u>chg <b>7.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnFilterFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Called after grid was re-filtered. Called only for filtering on client.<br />
+<i>(Since 7.0)</i> <b>type</b> when it is called (<b>0</b> on filter change, <b>1</b> on start, <b>2</b> on grouping change).<br />
+<i>(Since 7.0)</i> It is called for every filtering in grid (&lt;Filter>, &lt;Search>, SetFilter).<br />
+
+<!-- OnRowFilter -->
+<a name="OnRowFilter"></a>
+<div class="API">
+   <u>upd <b>14.0</b></u> <b>API event</b> <i>int</i>
+   <h4>OnRowFilter</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>int</i> <b>show</b>)</s>
+</div>
+Called for custom condition while filtering.<br />
+Called when filtering the <b>row</b>, <b>show</b> is the actual filter result. Return new or the same value <b>show</b>.<br /> 
+The <b>show</b> and the returned result can be:<br />
+<b>0</b> - the row does not fulfill the filter condition and will be hidden.<br />
+<b>1</b> - the row fulfills the filter condition and will be shown.<br />
+<b>2</b> - the row is not filtered and will be shown.<br />
+<i>Prior 14.0 the code did not distinguish between 1 and 2.</i><br />
+
+<!-- ChangeFilter -->
+<a name="ChangeFilter"></a>
+<div class="API">
+   <u><i>upd <b>7.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>ChangeFilter</h4>
+   <s>(<i>string</i> <b>cols</b>, <i>string</i> <b>values</b>, <i>string</i> <b>operators</b>, <i>bool</i> <b>nofilter</b>, <i>bool</i> <b>noclear</b>, <i>TRow</i> <b>filter</b>)</s>
+</div>
+Filters grid according to given columns.<br />
+<b>cols</b>, <b>values</b> and <b>operators</b> are comma separated values or JavaScript arrays. All must have the same length.<br />
+<b>cols</b> are column names, <b>values</b> are values for given filter cells and <b>operators</b> are filter operator numbers 0 - 12, see cell attribute <a href="#FilterCellFilter">Filter</a>.<br />
+If <b>nofilter</b> is 1, does change the filter cells but does not filter grid.<br />
+If <b>noclear</b> is 1, does <u>not</u> clear the other filter cells that are <u>not</u> listed in cols.<br />
+<i>(since 7.0)</i> <b>filter</b> can be the filter row to change the filter settings here, if the grid contains more filter rows. If not set, uses the first filter row.<br />
+
+<!-- DoFilter -->
+<a name="DoFilter"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>DoFilter</h4>
+   <s>(<i>TRow</i> <b>row</b> = null, <i>string</i> <b>col</b> = null)</s>
+</div>
+Applies all filters (in <a href="#Filter">Filter</a> rows) to the grid.<br /> 
+If set <b>row</b> and <b>col</b> updates operator for this cell in Filter row.<br />
+
+<!-- FilterTextRange -->
+<a name="FilterTextRange"></a>
+<div class="API">
+   <u><i>upd <b>6.6</b></i></u> <b>API method</b> <i>void</i>
+   <h4>FilterTextRange</h4>
+   <s>(<i>string</i> <b>col</b>, <i>string</i> <b>val</b>, <i>string</i> <b>name</b>, <i>int</i> <b>show</b> = 2)</s>
+</div>
+Creates new filter and applies it to grid. Shows all rows containing any item from range <b>val</b> in their range value in column <b>col</b>.<br />
+<b>name</b> - <i>(new 6.6)</i>, name of the filter to have more different filters, if row violates any filter, it is hidden.<br />
+<b>show</b> = <b>0</b> - set the filter only, but does not filter, <b>1</b> - filters by the filter, but does not show the changes, <b>2</b> - filter and show the changes.<br />
+
+<!-- FilterDateRange -->
+<a name="FilterDateRange"></a>
+<div class="API">
+   <u>new <b>6.6</b></u> <b>API method</b> <i>void</i>
+   <h4>FilterDateRange</h4>
+   <s>(<i>string</i> <b>col</b>, <i>string</i> <b>val</b>, <i>string</i> <b>name</b>, <i>int</i> <b>show</b> = 2)</s>
+</div>
+Creates new filter and applies it to grid. Shows all rows containing any item from date range <b>val</b> in their range value in column <b>col</b>.<br />
+The <b>val</b> can be for example <tt>"1/1/2010~12/31/2010 23:59:59"</tt> to show all dates from the year 2010.<br />
+<b>name</b> - name of the filter to have more different filters, if row violates any filter, it is hidden.<br />
+<b>show</b> = <b>0</b> - set the filter only, but does not filter, <b>1</b> - filters by the filter, but does not show the changes, <b>2</b> - filter and show the changes.<br />
+
+<!-- SetFilter -->
+<a name="SetFilter"></a>
+<div class="API">
+   <u>new <b>6.6</b> <i>upd <b>6.7</b></i></u> <b>API method</b> <i>void</i>
+   <h4>SetFilter</h4>
+   <s>(<i>string</i> <b>name</b>, <i>string</i> <b>filter</b>, <i>string</i> <b>col</b>, <i>int</i> <b>show</b> = 2)</s>
+</div>
+Creates new filter and applies it to grid.<br /> 
+<b>name</b> - name of the filter to have more different filters, if row violates any filter, it is hidden.<br />
+<b>filter</b> - filter formula string, similar to cell Formula, it can use variables <b>Grid</b> as the grid and <b>Row</b> as the filtered row and also column names as values of the filtered row cells.<br />
+The <b>filter</b> code must return <b>0</b> to hide the row and <b>1</b> to show the row.<br />
+<b>show</b> = <b>0</b> - set the filter only, but does not filter, <b>1</b> - filters by the filter, but does not show the changes, <b>2</b> - filter and show the changes.<br />
+if set <b>col</b>, it tests row's CanFilter attribute and the cell's CanFilter attribute when the column has <tt>CanFilter='2'</tt><br />
+To clear the filter pass empty <b>filter</b> parameter.<br />
+<i>(new 6.7)</i> The custom filters can be saved to cookies when set <tt><a href="#CfgSaveFilters">SaveFilters</a> = 1</tt>.<br />
+
+<!-- GetFilter -->
+<a name="GetFilter"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>type[ ][ ]</i>
+   <h4>GetFilter</h4>
+   <s>(<i>bool</i> <b>spec</b> = 0)</s>
+</div>
+For <b>spec = 0</b> returns all actual filters in all <a href="#Filter">Filter</a> rows in array [ [col1,value1,operator1], [col2,value2,operator2], ... ]<br />
+For <b>spec = 1</b> returns all custom filters set by <a href="#SetFilter">SetFilter</a> method in array [ [name1,filter1,col1, [name2,filter2,col2], ... ]<br />
+
+<!-- HasFilter -->
+<a name="HasFilter"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>int</i>
+   <h4>HasFilter</h4>
+   <s>( )</s>
+</div>
+Returns bit array with information which filter is active. Returns: <br />
+1. bit (&amp;1) for filter by <a href="#Filter">Filter</a> row. <br />
+2. bit (&amp;2) for filter by <a href="Search.htm#CfgSearchAction">SearchAction</a> "Filter".<br />
+3. bit (&amp;4) for filter by custom filter by <a href="#SetFilter">SetFilter</a>.<br />
+4. bit (&amp;8) for filter by <a href="#OnRowFilter">OnRowFilter</a> API event. <i>It returns it just when the <a href="#OnRowFilter">OnRowFilter</a> is defined!</i><br />
+
+</div>
+</body>	
+</html>

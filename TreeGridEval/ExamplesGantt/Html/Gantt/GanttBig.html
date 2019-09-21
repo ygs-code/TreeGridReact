@@ -1,0 +1,103 @@
+<html>
+   <head>
+      <script>GridEStart = new Date(); // To find out the time of GridE.js loading </script>
+      <script src="../../../Grid/GridE.js"> </script>
+   </head>
+   <body class="Example">
+      <style>
+         /* Examples shared styles */
+         .Example h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+         .Example h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+         .Example h3,.Example h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+         .Example h3 { background:#EE9; border:1px solid #DD8; }
+         .Example h4 { background:#BDE; border:1px solid #ACD; }
+         .Example a { text-decoration:underline; }      
+         .Example li { padding-bottom:8px; }
+         .Example ul { margin:6px 0px 0px 20px; font:13px Arial; }
+         .Example .Desc { margin:0px 5px 10px 5px; padding:10px; border:1px solid #dfdfdf; }
+         .Example .Desc > ul { margin-left:0px; padding:0px 0px 0px 15px; clear:both; }
+         .Example .Desc b { color:#0585B9; }
+         .Example .Path { font:normal 12px Arial; color:#0585B9; }
+         .Example .Path b { color:#D73938; }
+         .Example .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+         .Example .Path i { color:black; font-style:normal; font-weight:bold; }
+         .Example .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+         .Example .Border { margin:0px 5px 15px 5px; }
+         .Example .Main { }
+      </style>
+      <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Examples\/|\/ExamplesGantt\/)([^\/]+)\/([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+      <h1>Large Gantt chart with 1000 rows</h1>
+      <h2>Interactive Gantt chart with client paging</h2>
+      <div class="Desc">
+         This example is simplified version of <a href='Gantt.html'>Gantt chart and Network diagram example</a>, but uses client side paging and shows 1000 rows.<br />
+      </div>
+      <div class="Border">
+         <div class="Main" style="WIDTH:100%;HEIGHT:650px;">
+            <bdo Debug="info" DebugTag='debug' Layout_Url="GanttBigDef.xml" Data_Url="GanttBigData.xml"></bdo>
+         </div>
+         <div style='font:10px Arial;margin-top:5px;'>Debugging information and times</div>
+         <div id='debug' style='background:#DDD; height:150px; border:1px solid black; padding-left:5px; overflow:auto;'></div>
+      </div>
+      <script>
+// ------------------------------------------------------------------------------------------------------------
+// To specify grouping by Complete, differ only 100%, 0% and others
+Grids.OnGetSortValue = function(G,row,col,val,desc,group){
+if(group && col=='C') {
+   if(val=="100%") return 100;
+   if(val=="0%") return 0;
+   return "50";
+   }
+return val;
+}
+// ------------------------------------------------------------------------------------------------------------
+// Used to show tip on Gantt header row
+// For Gantt chart rows and objects use rather OnGanttTip instead
+Grids.OnTip = function(G,row,col,tip,clientx,clienty,x,y){
+if(col=="GANTT" && row.id=="ID") { // Gantt header row
+   var A = G.GetGanttHeaderXY(row,col,x,y);
+   if(!A) return;
+   tip = "<b>"+G.Lang.GanttUnits[A.Units]+"</b><br>" 
+       + DateToString(A.Start,"'<b>'dddddd MMMM yyyy'</b>' HH:mm:ss") + " - " + DateToString(A.End,"'<b>'dddddd MMMM yyyy'</b>' HH:mm:ss") + "<br><br>"
+       + "<i>Click to zoom to this date</i><br><i>Right click to zoom back to previous zoom level</i><br><i>Drag by mouse to zoom to selected range</i>";
+
+   }
+return tip;
+}
+// ------------------------------------------------------------------------------------------------------------
+// Called when NoVScroll / NoHScroll is set automatically due small window size, disables the checkbox for manual change of NoVScroll / NoHScroll
+// First time it hides resource usage rows. Sets OnceLimit custom attribute to not run it again if a user shows the resource rows again
+Grids.OnLimitScroll = function(G,clr,noh,nov){ 
+if(G.Def.Resource.GANTTGanttAvailability&&!clr&&!G.OnceLimit){
+   G.OnceLimit = 1;
+   G.Def.Resource.GANTTGanttAvailability = "";
+   G.SetValue(G.Rows.Resources,"Use",0,1);
+   G.SetValue(G.Rows.Resources,"Avail",0,1);
+   G.SetValue(G.Rows.Resources,"Free",0,1);
+   G.SetValue(G.Rows.Resources,"Err",0,1);
+   var F = G.GetRows(G.Foot); G.StartUpdate();
+   for(var i=0;i<F.length;i++) G.HideRow(F[i]); 
+   G.EndUpdate();
+   return -1;
+   }
+G.SetAttribute(G.Rows.Controls,"Win","CanEdit",clr,1); 
+var tip = clr?"Disable grid scrollbars and use page scrollbars":"Used page scrollbars because browser window is too small to show this example with its own scrollbars";
+G.SetAttribute(G.Rows.Controls,"Win","Tip",tip,1); 
+G.SetAttribute(G.Rows.Controls,"WinLabelRight","Tip",tip,1); 
+}
+// ------------------------------------------------------------------------------------------------------------
+
+      </script>
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGTrialGantt\s*=\s*(\d+)/), TGIndex = 2;
+         if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunTrialHtmlGanttBig", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGantt="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+   </body>
+</html>

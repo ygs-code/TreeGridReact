@@ -1,0 +1,18 @@
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+      <link href="Excel.css" rel="stylesheet">
+   </head>
+   <body>
+      <div style="WIDTH:100%;HEIGHT:90%;" id='GRID'>   
+         <script>
+
+// Url parameters: ?cfg_file&dpi&page_width_mm&page_height_mm&horizontal_margin_mm&vertical_margin_mm
+var param = location.search.slice(1).split("&");
+var bonus = param[0] ? AjaxCall(param[0]) : null; // Reads grid configuration and changes from temporary file
+PrintTreeGrid({Layout:{Url:"ExcelDef.xml",Bonus:"<Grid><Solid><Tabber id='Tabber' CanPrint='0'/></Solid></Grid>"}, Data:{Data:bonus}},"GRID",null,{Dpi:param[1],Width:param[2],Height:param[3],MarginWidth:param[4],MarginHeight:param[5]});
+
+         </script>
+      </div>
+   </body>
+</html>

@@ -1,0 +1,498 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>Languages</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Languages</h1>
+<p>TreeGrid documentation</p>
+
+
+<!---------------------------------------------------------  Language and regional settings (Text.xml)  ------------------------------------------------->
+<a name="Text"></a>
+<h2>Language and regional settings (Text.xml)</h2>
+
+All TreeGrid texts, messages, alerts and language dependent settings are stored in <b>Text.xml</b>.<br />
+You can translate this file to all languages you need and provide to visitors appropriate file according to their language settings.<br /> 
+Url to Text.xml is set by <tt>&lt;treegrid/bdo Text_Url/></tt><br />
+In <b>Text.xml</b> are the attributes marked according to TreeGrid version in which were added.<br /><br />
+
+The most of language settings is set in &lt;Lang> tag, the rest in &lt;Toolbar>, &lt;Panel> and &lt;Header>.<br /><br /> 
+
+You can define or redefine any particular or even all settings outside the Text.xml in any other input XML, in appropriate tags.<br />
+For example to change text for deleting row set <tt>&lt;Lang>&lt;Alert DelRow='Do you want to delete the row %d ?'/>&lt;/Lang></tt><br />
+
+<!-- <Alert> -->
+<a name="LangAlert"></a>
+<div class="XML">
+   <u></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;Alert></h4> <s>XML tag</s>
+</div>
+All pure text settings. Used for standard <b>alert</b> and <b>confirm</b> dialogs.<br />
+If the particular text is set to empty string, the message is <u>not</u> shown and the confirm dialog returns true or false according to particular logic.<br />
+The message can contain some variable information like row or column name, count of rows and so on. This information replaces the <b>%d</b> or <b>%1</b>, <b>%2</b>, etc. string in the message.<br />
+If there are more variable information, they replace one by one the <b>%d</b> strings in the message.<br />
+What message can contain variable information you can see from its text in <b>Text.xml</b>.<br />
+
+<!-- <Text> -->
+<a name="LangText"></a>
+<div class="XML">
+   <u></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;Text></h4> <s>XML tag</s>
+</div>
+All HTML texts in grid. Usually text of <b>status messages</b> displayed in grid.<br />
+If the particular text is set to empty string, the message is <u>not</u> shown.<br />
+The message can contain some variable information like row or column name, count of rows and so on. This information replaces the <b>%d</b> string in the message.<br />
+If there are more variable information, they replace one by one the <b>%d</b> or <b>%1</b>, <b>%2</b>, etc. strings in the message.<br />
+What message can contain variable information you can see from its text in <b>Text.xml</b>.<br />
+
+<!-- <Gantt> -->
+<a name="LangGantt"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;Gantt></h4> <s>XML tag</s>
+</div>
+Gantt chart texts, the same syntax as &lt;<a href="#LangText">Text</a>>.<br />
+
+<!-- <MenuCell> -->
+<a name="LangMenuCell"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuCell></h4> <s>XML tag</s>
+</div>
+All action texts in cell popup menu.<br />
+If the particular text is set to empty string, the item is <u>not</u> shown.<br />
+The message can contain some variable information like row or column name, count of rows and so on. This information replaces the <b>%d</b> string in the message.<br />
+If there are more variable information, they replace one by one the <b>%d</b> or <b>%1</b>, <b>%2</b>, etc. strings in the message.<br />
+What message can contain variable information you can see from its text in <b>Text.xml</b>.<br />
+
+<!-- <MenuButtons> -->
+<a name="LangMenuButtons"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuButtons></h4> <s>XML tag</s>
+</div>
+Popup dialog buttons, for menu and calendar. Pure texts.<br />
+
+<!-- <MenuCopy> -->
+<a name="CfgMenuCopy"></a>
+<div class="DEL">
+   <u>new <b>6.0</b> deleted <b>12.0</b></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuCopy></h4> <s>XML tag</s>
+</div>
+All possible items in popup Copy / Add menu.<br />
+Replaced by &lt;MenuCell>
+
+<!-- <MenuCfg> -->
+<a name="LangMenuCfg"></a>
+<div class="XML">
+   <u></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuCfg></h4> <s>XML tag</s>
+</div>
+All item names in options menu.<br />
+
+<!-- <MenuColumns> -->
+<a name="LangMenuColumns"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuColumns></h4> <s>XML tag</s>
+</div>
+All item names in columns menu.<br />
+
+<!-- <MenuPrint> -->
+<a name="LangMenuPrint"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuPrint></h4> <s>XML tag</s>
+</div>
+All item names in print menu.<br />
+
+<!-- <MenuExport> -->
+<a name="LangMenuExport"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuExport></h4> <s>XML tag</s>
+</div>
+All item names in export menu.<br />
+
+<!-- <MenuFilter> -->
+<a name="LangMenuCfg"></a>
+<div class="XML">
+   <u></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuFilter></h4> <s>XML tag</s>
+</div>
+All operator names in <b>Filter</b> operator menu.<br />
+
+<!-- <Format> -->
+<a name="LangFormat"></a>
+<div class="XML">
+   <u></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;Format></h4> <s>XML tag</s>
+</div>
+All language settings for formatting date, time and numbers.<br />
+Contains predefined formats and item names (like day or month names).<br />
+<i>Predefined formats are global for whole page, for all grids on one page.</i><br />
+For attribute description see <a href="TypeNumber.htm#Localization">Number localization</a> and <a href="TypeDate.htm#Localization">Date localization</a>.<br />
+
+<!-- TextOnly -->
+<a name="ITextOnly"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;I></b> <i>bool</i>
+   <h4>TextOnly</h4> <s></s>
+</div>
+Used for defining some fixed row attributes in Text.xml to not affect the row position.<br />
+Define the row with TextOnly in Text.xml also with Visible='0' and in data or layout redefine the row with the same id and Visible='1'.<br />
+For example in Text.xml define the row text as:<br />
+<tt>&lt;Solid>&lt;I id='MyRow' Visible='0' TextOnly='1' MyCol='MyTextToTranslate'/>&lt;/Solid></tt><br />
+And in data or layout define the row normally with all attributes, like:<br />
+<tt>&lt;Solid>&lt;I id='MyRow' Visible='1' Cells='MyCol' MyColWidth='100' ... />&lt;/Solid></tt><br />
+
+
+<!-- Tip -->
+<a name="ToolbarCellTip"></a>
+<div class="XML">
+   <u style="width:85px;">new <b>6.0</b></u> <b style="width:135px;">&lt;Toolbar cell></b> <i>string</i>
+   <h4>Tip</h4> <s></s>
+</div>
+Tooltip texts for all standard Toolbar buttons<br />
+
+<!-- PanelxxxTip -->
+<a name="PanelPanelxxxTip"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Panel></b> <i>string</i>
+   <h4>PanelxxxTip</h4> <s>xxx is name of Panel button like Select</s>
+</div>
+Tooltip texts for all standard Panel buttons<br />
+
+<!-- PanelPanelrxxxTip -->
+<a name="HeaderPanelHeaderxxxTip"></a><a name="HeaderPanelPanelxxxTip"></a>
+<div class="XML">
+   <u>new <b>6.0</b> renamed <b>12.0</b></u> <b>&lt;Header></b> <i>string</i>
+   <h4>PanelPanelxxxTip</h4> <s>xxx is name of Panel button like Select</s>
+</div>
+Tooltip texts for all standard Panel buttons in header.<br />
+<i>Since 12.0 it was renamed from PanelHeaderxxxTip.</i><br />
+
+<!-- Lang -->
+<a name="OnHint"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>object</i>
+   <h4>Lang</h4>
+   <s></s>
+</div>
+Actual language settings loaded from &lt;Lang> tags.<br />
+
+<!---------------------------------------------------------  Translate texts  ------------------------------------------------->
+<a name="Translate"></a>
+<h2>Translate texts</h2>
+
+Definitions of cell texts or text parts to be replaced by another string for given language.<br />
+<b>The text is translated only for display.</b> In data it still contains original values.<br />
+The texts are set / replaced in order they are defined and the language files loaded. 
+Only the texts defined in one tag (including nested &lt;U> tags) are replaced in order from the longest to the shortest.<br />
+
+<!-- <TextXX> -->
+<a name="Text"></a> <a name="TextXX"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Grid></b> <i></i>
+   <h4>&lt;TextXX></h4> <s>XML tag</s>
+</div>
+Defines translations for language XX, where XX is the language <a href="#LCode">Code</a>.<br />
+
+<!-- <T> -->
+<a name="T"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;TextXX></b> <i></i>
+   <h4>&lt;T></h4> <s>XML tag</s>
+</div>
+Definition of one translate action. 
+As shortcut the T can be replaced by the action name <tt>&lt;T Action="Set" ...</tt> is the same as <tt>&lt;Set ...</tt>
+
+<!-- TAction -->
+<a name="TAction"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;T></b> <i>string</i>
+   <h4>Action</h4> <s></s>
+</div>
+Action used for translation, case insensitive. It can be:<br />
+<b>Set</b> - set texts directly to the column values. The other attributes are defined as ColName="translated value". There is no Col attribute.<br />
+<b>Change</b> - replace the whole cell value by the text. The other attributes are defined as value_to_translate="translated value" or the child tag as &lt;U N="value to translate" V="translated value"/><br />
+<b>Replace</b> - replace the part of the text value by the text. Case sensitive, only the first occurrence. The other attributes are defined as value_part_to_translate="translated value part" or the child tag as &lt;U N="value part to translate" V="translated value part"/> <br />
+<b>Last</b> - the same as <b>Replace</b>, but replaces the last occurrence instead of first one.<br />
+<b>Regex</b> - replace the part of the text value by RegEx by the text. Case insensitive, all occurrences (regex &quot;gi&quot;). The child tags are defined as &lt;U N="regex to translate" V="translated value part"/><br />
+<b>Set</b> and <b>Change</b> are fast, <b>Replace</b> and <b>Regex</b> are slower and should be used only if the Set and Change cannot be used.<br />
+Action can be set also directly to the tag name: <tt>&lt;T Action="Set" ...</tt> is the same as <tt>&lt;Set ...</tt><br />
+Action can end with "Text" (<b>SetText</b>, <b>ChangeText</b>, <b>ReplaceText</b>, <b>LastText</b>, <b>RegexText</b>) to replace only text part in HTML value. Using Text suffix slows down the translation.<br />
+
+<!-- TRow -->
+<a name="TRow"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;T></b> <i>string</i>
+   <h4>Row</h4> <s></s>
+</div>
+Row id to apply the translation to. If set, the Def, Kind and Space is ignored. It can be also comma separated list of more row ids.<br />
+The Row can be set also to the keyword:<br /> 
+- "<b>MenuName</b>" to change column caption in visibility menu,<br />
+- "<b>SearchNames</b>" to change column captions for search,<br />
+- "<b>Header</b>" to change pager caption (<a href="#TCol">Col</a> is set to the pager <a href="Pager.htm#PName">Name</a>).<br />
+
+<!-- TDef -->
+<a name="TDef"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;T></b> <i>string</i>
+   <h4>Def</h4> <s></s>
+</div>
+Row default name to apply the translation to. If set, the Kind and Space is ignored. It can be also comma separated list of more row default names.
+
+<!-- TKind -->
+<a name="TKind"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;T></b> <i>string</i>
+   <h4>Kind</h4> <s></s>
+</div>
+Row kind it to apply the translation to. If set, the Space is ignored. It can be also comma separated list of more row kinds.
+
+<!-- TSpace -->
+<a name="TSpace"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;T></b> <i>bool</i>
+   <h4>Space</h4> <s></s>
+</div>
+If set, the translation is applied to solid rows, otherwise it is applied to data or fixed rows.<br />
+
+<!-- TCol -->
+<a name="TCol"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;T></b> <i>string</i>
+   <h4>Col</h4> <s></s>
+</div>
+Column name to apply the translation to. If set, the Type is ignored. It can be also comma separated list of more columns.<br />
+The Col can be set also to the keyword: <br />
+- "<b>MenuName</b>" to change row name in visibility menu,<br />
+- "<b>Gantt</b>XXX<b>Tip</b> to change Gantt item tip before it is converted. To translate converted Gantt tip use Gantt column name plus "Tip" instead.
+The XXX can be <i>empty</i> (first main bar), <i>number</i> (other plan main bars), 
+<b>Milestone</b>, <b>Milestone</b><i>number</i>, <b>Run</b>, <b>Dependency</b>, <b>Constraints</b>, <b>Points</b>, <b>Flags</b>, <b>Base</b>, <b>BaseAuto</b>, <b>Finish</b>, <b>FinishAuto</b>, <b>Line</b>X, <b>Line</b>.<br />
+- "<b>Gantt</b>XXX<b>Text</b> to change Gantt item text before it is converted. To translate converted Gantt text use Gantt column name plus "Text" instead.
+The XXX can be <i>empty</i> (first main bar inside text), <i>number</i> (other plan main bars), 
+<b>Left</b> (first main bar left side text), <b>Left</b><i>number</i> (other plan main bars),
+<b>Right</b> (first main bar right side text), <b>Right</b><i>number</i> (other plan main bars),
+<b>Run</b> (run inside text), <b>RunLeft</b> (run left side text), <b>RunRight</b> (run right side text),
+<b>Mark</b> (GanttMark text), <b>Flags</b> (GanttFlags text).<br />
+<br />
+The Col can be set also to:<br /> 
+- column or cell name plus "<b>Menu</b>" to translate anything in column popup menu for given Row or all rows. If set only as Menu, it translates it in all columns's menus.<br />
+- column or cell name plus "<b>MenuHead</b>" to translate head section in column popup menu for given Row or all rows. If set only as MenuHead, it translates it in all columns's menus.<br />
+- column or cell name plus "<b>MenuFoot</b>" to translate foot section in column popup menu for given Row or all rows. If set only as MenuFoot, it translates it in all columns's menus.<br />
+- column or cell name plus "<b>FilterMenu</b>" to translate anything in filter cell popup menu for given Row or all rows. If set only as FilterMenu, it translates it in all columns's menus.<br />
+- column or cell name plus "<b>Edit</b>" to change edited value - reversed translation from destination language to source language.<br />
+- column or cell name plus "<b>Tip</b>" to change cell tip, including all converted Tip in Gantt except drag tip, <br />
+- column or cell name plus "<b>Fix</b>" to change cell value with HtmlPrefix and HtmlPostfix, <br />
+- column name plus "<b>DragTip</b>" to change Gantt drag tip, <br />
+- column name plus "<b>Text</b>" to change any Gantt item text.<br />
+- cell name plus "<b>Label</b>" or <b>"LabelRight"</b> to change cell label in solid space row.<br />
+- pager <a href="Pager.htm#PName">Name</a> to change Pager caption, the <a href="TRow">Row</a> must be set to "Header".<br />
+
+<!-- TType -->
+<a name="TType"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;T></b> <i>string</i>
+   <h4>Type</h4> <s></s>
+</div>
+Column type to apply the translation to. It can be also comma separated list of more types. <br />
+If set neither Type nor Col, the translation Action "Set" is applied to all defined column attributes, other Actions are applied to all row cells.<br />
+
+<!-- TN -->
+<a name="TN"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;T> &lt;U></b> <i>string</i>
+   <h4>N</h4> <s></s>
+</div>
+Attribute name if it contains characters like space and cannot be used as XML attribute name.<br />
+
+<!-- TV -->
+<a name="TV"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;T> &lt;U></b> <i>string</i>
+   <h4>V</h4> <s></s>
+</div>
+Value of attribute <b>N</b>.<br />
+
+<!-- <U> -->
+<a name="U"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;T></b> <i></i>
+   <h4>&lt;U></h4> <s>XML tag</s>
+</div>
+Child tags of &lt;T> to define attributes those names contain characters like space and cannot be used as XML attribute name.<br />
+
+<!-- Translate -->
+<a name="Translate"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API method</b> <i>string</i>
+   <h4>Translate</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>text</b>, <i>string</i> <b>type</b>)</s>
+</div>
+Translates given <b>text</b> in given cell to actual language.<br />
+
+<!-- OnTranslate -->
+<a name="OnTranslate"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnTranslate</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>text</b>, <i>string</i> <b>type</b>)</s>
+</div>
+Called before the <b>text</b> is translated to the actual language. Return the translated text.<br />
+Called from <a href="#Translate">Translate</a> method.<br />
+
+<!-- OnTranslated -->
+<a name="OnTranslated"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnTranslated</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>text</b>, <i>string</i> <b>type</b>)</s>
+</div>
+Called after the <b>text</b> is translated to the actual language. Return the translated text.<br />
+Called from <a href="#Translate">Translate</a> method.<br />
+
+<!---------------------------------------------------------  Changing language  ------------------------------------------------->
+<a name="Language"></a>
+<h2>Changing language</h2>
+
+TreeGrid can change its language and translate all its texts without reloading the whole grid.<br />
+
+<!-- Cfg Language -->
+<a name="CfgLanguage"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>Language</h4> <s>Saved to cookies except if set <b>LanguageLap</b>='<b>1</b>' </s>
+</div>
+Language code actually used in TreeGrid. It is the <a href="#LCode">Code</a> of one of defined languages in &lt;Languages> tag.<br />
+
+<!-- Cfg UseLanguages -->
+<a name="CfgUseLanguages"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>UseLanguages</h4> <s></s>
+</div>
+Comma separated list of language codes to display in popup menu to select language.<br />
+Use it to specify order and / or subset of defined languages to let users to choose from.<br />
+It can contain item "-" as separator or item "-xxx-" as caption xxx.<br />
+
+<!-- Cfg LanguagesColumns -->
+<a name="CfgLanguagesColumns"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>LanguagesColumns</h4> <s>[1]</s>
+</div>
+If set, it splits large languages menu to given number of columns.<br />
+
+<!-- SyncLanguage -->
+<a name="CfgSyncLanguage"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>SyncLanguage</h4> <s>[1]</s>
+</div>
+Synchronizes Language and UseLanguages among all grids with the same value of SyncLanguage.<br />
+By default it is 1 for all grids to synchronize language among all grids.<br />
+
+<!-- <L> -->
+<a name="L"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Languages></b> <i></i>
+   <h4>&lt;L></h4> <s>XML tag</s>
+</div>
+Definition of one language. As shortcut the L can be replaced by the language code <tt>&lt;L Code="EN" ...</tt> is the same as <tt>&lt;EN ...</tt>
+
+<!-- LCode -->
+<a name="LCode"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;L></b> <i>string</i>
+   <h4>Code</h4> <s></s>
+</div>
+Standard two letter language code like "EN", "FR" or "DE". Case insensitive, for API always converted to upper case.<br />
+It is used to identify the language, to be set to the <a href="#CfgLanguage">Language</a><br />
+Can be set also directly to the tag name:  <tt>&lt;L Code="EN" ...</tt> is the same as <tt>&lt;EN ...</tt><br />
+It can be also comma separated list of language codes to set more languages at once.<br />
+It can be also "<b>*</b>" to set all already present languages.<br />
+It can be also "<b>-</b>XX" to set all already present languages except the language XX, for example Code="-EN".<br />
+
+<!-- LName -->
+<a name="LName"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;L></b> <i>string</i>
+   <h4>Name</h4> <s></s>
+</div>
+Name of the language. It is shown in popup menu to select language.
+
+<!-- LSource -->
+<a name="LSource"></a> <a name="LText"></a> <a name="LBase"></a> <a name="LLayout"></a> <a name="LData"></a> <a name="LLang"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;L></b> <i>string[]</i>
+   <h4>Source</h4> <s>["Text,Base,Layout,Data,Lang"]</s>
+</div>
+Comma separated list of data sources to load for given language.<br />
+Similar to &lt;treegrid> <a href="DataDownload.htm#Source">Source</a> attribute. But the sources here are always loaded one by one.<br />
+If the source name is the same as existing data source defined in &lt;treegrid> <a href="DataDownload.htm#Source">Source</a> attribute, 
+it uses all its attributes from the original data source and is loaded only if contains different url or other attributes than the original source.<br />
+The data source can define all standard data source attributes like xxx_Url or xxx_Param, see <a href="DataCommunication.htm">Data communication</a>.<br />
+Default data sources for language are <b>Text</b>, <b>Base</b>, <b>Layout</b>, <b>Data</b> as standard data sources except Defaults and special data source for languages <b>Lang</b>.<br />
+
+<!-- LTip -->
+<a name="LTip"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;L></b> <i>string</i>
+   <h4>Tip</h4> <s></s>
+</div>
+<i>Since 14.0.10</i>. Tip shown for the language in popup menu.<br />
+
+
+<!-- SetLanguage -->
+<a name="SetLanguage"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>SetLanguage</h4>
+   <s>(<i>string</i> <b>code</b>)</s>
+</div>
+Changes grid <a href="#CfgLanguage">Language</a> to the <b>code</b>, loads all language resources and re-renders grid.<br />
+Returns true for success, false for failed loading and null for not existing language.<br />
+
+<!-- OnSetLanguage -->
+<a name="OnSetLanguage"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnSetLanguage</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>code</b>, <i>bool</i> <b>sync</b>)</s>
+</div>
+Called before the grid language is set to given <b>code</b>. Return true to suppress changing the language.<br />
+Called from <a href="#SetLanguage">SetLanguage</a> method.<br />
+<b>sync</b> is true if called from next grids due language synchronization.<br />
+
+<!-- OnLanguageSet -->
+<a name="OnLanguageSet"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnLanguageSet</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>code</b>, <i>bool</i> <b>sync</b>)</s>
+</div>
+Called after the grid language is set to given <b>code</b> and all language resources are loaded to grid. Called before the grid is re-rendered.<br />
+Called from <a href="#SetLanguage">SetLanguage</a> method.<br />
+<b>sync</b> is true if called from next grids due language synchronization.<br />
+
+<!-- OnLanguageFinish -->
+<a name="OnLanguageFinish"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnLanguageFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>code</b>, <i>bool</i> <b>sync</b>)</s>
+</div>
+Called after the grid language is set to given <b>code</b> and all language resources are loaded to grid and the grid is re-rendered.<br />
+Called from <a href="#SetLanguage">SetLanguage</a> method.<br />
+<b>sync</b> is true if called from next grids due language synchronization.<br />
+
+
+</div>
+</body>	
+</html>

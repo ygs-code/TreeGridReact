@@ -1,0 +1,1320 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Global settings</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Animations</h1>
+<p>TreeGrid documentation</p>
+
+<i>Since 13.0</i> it is possible to define animations for various TreeGrid actions like row children expand or dialog show.<br />
+The animations are defined in root tag <b><tt>&lt;Animations></tt></b> by assigning the animation to the action.<br />
+<i>For example</i> <tt>&lt;Animations Expand="#Transparent, #Overflow, #ExpandH 100ms, 200, #Show 100ms"/></tt>.<br />
+The animation definition string can contain more animations, comma separated, that are run one by one.<br />
+The animations has the same syntax as standard CSS <b>animation</b> attribute, it must contain at least the animation-name and animation-duration.<br />
+If the animation is defined as single class without duration, it is standard CSS class that is added to the animated tag class attribute.<br />
+If the animation is defined as single number, it waits for given number of milliseconds.<br />
+If the animation-name or CSS class name contains "#", it is replaced by actual TreeGrid <a href="CellStyle.htm#CfgStyle">Style</a> prefix.<br />
+<i>For above example and Standard style it does: 1) adds TSTransparent and TSOverflow CSS classes, 2) runs @keyframe TSExpandH for 100ms, 3) waits for 200ms, 4) runs @keyframe TSShow for 100ms.</i><br />
+After the animation ends, it is always cleared from the tag, therefore it is not possible to use forwards animation-fill-mode.<br />
+The default CSS @keyframes and CSS classes used in animations are defined in Grid.css in every TreeGrid style.<br />
+It is possible to define and use any custom CSS classes and @keyframes for the animations.<br />
+<i>Remember, animation is shown only if no JavaScript code is running during the animation time.</i>
+
+<!-- SuppressAnimations -->
+<a name="CfgSuppressAnimations"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SuppressAnimations</h4> <s>[0] Saved to cookies, avoid it by &lt;Cfg SuppressAnimationsLap='1'/> </s>
+</div>
+If set to 1, no animation is run.
+
+<!-- TGAnimate -->
+<a name="TGAnimate"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>Global func.</b> <i>void</i>
+   <h4>TGAnimate</h4> <s>(<i>Element</i> <b>element</b>, <i>string</i> <b>animationcode</b>, <i>function</i> <b>func</b>, <i>bool</i> <b>noclr</b>)</s>
+</div>
+Runs given animation on the HTML <b>element</b>.<br />
+After animation finishes it calls <b>func</b>. The <b>func</b> is called always, also if the animation fails, is canceled, or does not exist.<br />
+The <b>animationcode</b> is list of animations to run like defined in &lt;Animations> tag. But it cannot contain the "#" to be replaced by TreeGrid style prefix.<br />
+If set <b>noclr</b> does not clear the element.style.animation, use for <b>forwards</b> animations.<br />
+<i>Never run TGAnimation() for TreeGrid rows or cells! Use always <a href="#AnimateRow">AnimateRow</a> and <a href="#AnimateCell">AnimateCell</a> methods instead.</i>
+
+<!-- FinishAnimations -->
+<a name="FinishAnimations"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>void</i>
+   <h4>FinishAnimations</h4> <s>( )</s>
+</div>
+Ends all row, cell and column animations in grid and calls their callbacks.<br />
+Call this method before manipulating grid data to ensure there is no pending changes due running animation.<br />
+
+<!--------------------------------------------------------- Row animations  ------------------------------------------------->
+<a name="Row"></a>
+<h2>Row animations</h2>
+
+Row is animated in up to three independent horizontal parts, placed in left, middle and right columns sections.<br />
+Row children are animated together in up to three independent horizontal parts, placed in left, middle and right columns sections.<br />
+<br />
+The most of the animations can be set for row and also to its children. To children is applied animation with suffix <b>Children</b>, e.g. ExpandChildren or DeleteChildren.<br />
+If the animation with <b>Children</b> suffix does not exist, the animation without suffix is used also for children.<br />
+<br />
+If more selected or focused rows are manipulated together, to the animation name there is added suffix <b>Rows</b>, before any other suffix, e.g. <b>DeleteRows</b> or  <b>CopyRowsToChildren</b>.<br />
+If the animation with <b>Rows</b> suffix does not exist, the animation without suffix is used also for selected or focused rows.<br />
+<br />
+If the animation code starts by "<b>@</b>", it animates also row background color and during animation are the cell backgrounds cleared.<br />
+It can slow down the animations especially if used for child rows, see <a href="#CfgAnimateRowsColorMax">AnimateRowsColorMax</a>.<br />
+
+<!-- AnimateRows -->
+<a name="CfgAnimateRows"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>AnimateRows</h4> <s>[3]</s>
+</div>
+If animations for rows actions like expand or delete are shown and its way.<br />
+<b>0</b> - no, <b>1</b> - simple in-place, does not work in IE, <b>2</b> - replace in IE and simple in-place in other browsers, 
+<b>3</b> - replace in all browsers = including height animation for single rows (slower).<br />
+<i>Animations are run only if defined in &lt;Animations> tag in data and also in used CSS style.</i>
+
+<!-- AnimateRowsMax -->
+<a name="CfgAnimateRowsMax"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>AnimateRowsMax</h4> <s>[10]</s>
+</div>
+Maximum of rows that will be animated at once (e.g. when deleting selected rows).<br />
+If the count of animated rows exceeds this maximum, no next row is animated.<br />
+If set to negative value, it is taken as positive, but if the count of animated rows exceeds this maximum, no rows are animated.<br />
+<i>Every browser has its own limit of animations, if it is exceeded, the animations are turned off automatically, usually all of them.</i><br />
+
+<!-- AnimateRowsColorMax -->
+<a name="CfgAnimateRowsColorMax"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>AnimateRowsColorMax</h4> <s>[10]</s>
+</div>
+Maximum of child rows that will be colored if animating background color by "@" in animation code.<br />
+If the count of animated rows exceeds this maximum, no next child row is colored.<br />
+If set to negative value, it is taken as positive, but if the count of colored rows exceeds this maximum, no row is colored.<br />
+A few of animations are never applied to row children (Select, Deselect).<br />
+
+<!-- AnimateRow -->
+<a name="AnimateRow"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>void</i>
+   <h4>AnimateRow</h4> <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>animation</b>, <i>string</i> <b>childrenanimation</b>, <i>function</i> <b>func</b>)</s>
+</div>
+Runs given <b>animation</b> for the <b>row</b> and <b>childrenanimation</b> for the <b>row</b> children.<br />
+After animation finishes it calls <b>func</b>. The <b>func</b> is called always, also if the animation fails, is canceled, or does not exist.<br />
+The <b>animation</b> and <b>childrenanimation</b> is the animation name like "Expand" or "CopyFrom" or any custom animation defined in &lt;Animations>.<br />
+The <b>row</b> can be also array of rows to run the animations for all of them, in this case the <b>func</b> is called once after all animations finish.<br />
+The <b>row</b> can be also array of arrays of animation parameters, e.g. AnimateRow([[row1,"anim1"],[row2,"anim2","animch2"],[rows,"anim3"],...]); In this case the other parameters are ignored.<br />
+On start it finishes all the row and cells previous animations and calls their callbacks.<br />
+If called with null for both <b>animation</b> and <b>childrenanimation</b>, it finishes all the row and cells previous animations. 
+But if one of them is set, but the animation does not exist, it does not finish the previous animations.<br />
+
+<!-- Show -->
+<a name="AnimationsShow"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Show</h4> <s>["..."]</s>
+</div>
+Animation run when the row is shown (on Action <a href="RowVisibility.htm#ActionsShow">Show</a>).<br />
+Animation <b>ShowRows</b> sets animation for showing selected or focused rows. <br />
+Animation <b>ShowFilter</b> sets animation for showing rows by <a href="Filter.htm">filter</a>. <br />
+Animations <b>ShowChildren</b>, <b>ShowRowsChildren</b>, <b>ShowFilterChildren</b> set animation for children of the row being shown.<br />
+
+<!-- Hide -->
+<a name="AnimationsHide"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Hide</h4> <s>["..."]</s>
+</div>
+Animation run when the row is hidden (on Action <a href="RowVisibility.htm#ActionsHide">Hide</a>).<br />
+Animation <b>HideRows</b> sets animation for hiding selected or focused rows. <br />
+Animation <b>HideFilter</b> sets animation for hiding rows by <a href="Filter.htm">filter</a>. <br />
+Animations <b>HideChildren</b>, <b>HideRowsChildren</b> and <b>HideFilterChildren</b> set animation for children of the row being hidden.<br />
+
+<!-- Add -->
+<a name="AnimationsAdd"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Add</h4> <s>["..."]</s>
+</div>
+Animation run when the row is added to grid (on Action <a href="RowAdd.htm#ActionsAddRow">AddRow</a>).<br />
+Animation <b>AddRows</b> sets animation for adding more rows. <br />
+Animations <b>AddChildren</b> and <b>AddRowsChildren</b> set animation for children of the row being added, if added with children.<br />
+
+<!-- CopyTo -->
+<a name="AnimationsCopyTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>CopyTo</h4> <s>["..."]</s>
+</div>
+Animation run on destination (added) row when the row is copied (on drag action like <a href="RowMove.htm#ActionsDragCopy">DragCopy</a> or copy action like <a href="RowAdd.htm#ActionsCopyRow">CopyRow</a>).<br />
+Animation <b>CopyRowsTo</b> sets animation for copying selected or focused rows.<br />
+Animations <b>CopyToChildren</b> and <b>CopyRowsToChildren</b> set animation for children of the row being copied.<br />
+Animations <b>CopyToOutside</b>, <b>CopyRowsToOutside</b>, <b>CopyToOutsideChildren</b> and <b>CopyRowsToOutsideChildren</b> set animation if the row(s) is copied from another grid.<br />
+<i>Animation <b>Copy...To...</b> is run simultaneously with animation <b>Copy...From...</b>, as both run on different rows.</i><br />
+
+<!-- CopyFrom -->
+<a name="AnimationsCopyFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>CopyFrom</h4> <s>["..."]</s>
+</div>
+Animation run on source row (unchanged) when the row is copied (on drag action like <a href="RowMove.htm#ActionsDragCopy">DragCopy</a> or copy action like <a href="RowAdd.htm#ActionsCopyRow">CopyRow</a>).<br />
+Animation <b>CopyRowsFrom</b> sets animation for copying selected or focused rows.<br />
+Animations <b>CopyFromChildren</b> and <b>CopyRowsFromChildren</b> set animation for children of the row being copied.<br />
+Animations <b>CopyFromOutside</b>, <b>CopyRowsFromOutside</b>, <b>CopyFromOutsideChildren</b> and <b>CopyRowsFromOutsideChildren</b> set animation if the row(s) is copied to another grid.<br />
+<i>Animation <b>Copy...To...</b> is run simultaneously with animation <b>Copy...From...</b>, as both run on different rows.</i><br />
+
+<!-- MoveTo -->
+<a name="AnimationsMoveTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>MoveTo</h4> <s>["..."]</s>
+</div>
+Animation run on destination (added or moved) row when the row is moved (on drag action like <a href="RowMove.htm#ActionsDragRow">DragRow</a>).<br />
+Animation <b>MoveRowsTo</b> sets animation for moving selected or focused rows.<br />
+Animations <b>MoveToChildren</b> and <b>MoveRowsToChildren</b> set animation for children of the row being moved.<br />
+Animations <b>MoveToOutside</b>, <b>MoveRowsToOutside</b>, <b>MoveToOutsideChildren</b> and <b>MoveRowsToOutsideChildren</b> set animation if the row(s) is moved from another grid.<br />
+<i>Animation <b>Move...To...</b> is run on the same row after animation <b>Move...From...</b> finishes.</i><br />
+<i>Animation <b>Move...ToOutside...</b> is run simultaneously with animation <b>Move...FromOutside...</b>, as both run on different rows.</i><br />
+
+<!-- MoveFrom -->
+<a name="AnimationsMoveFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>MoveFrom</h4> <s>["..."]</s>
+</div>
+Animation run on source (added or moved) row when the row is moved (on drag action like <a href="RowMove.htm#ActionsDragRow">DragRow</a>).<br />
+Animation <b>MoveRowsFrom</b> sets animation for moving selected or focused rows.<br />
+Animations <b>MoveFromChildren</b> and <b>MoveRowsFromChildren</b> set animation for children of the row being moved.<br />
+Animations <b>MoveFromOutside</b>, <b>MoveRowsFromOutside</b>, <b>MoveFromOutsideChildren</b> and <b>MoveRowsFromOutsideChildren</b> set animation if the row(s) is moved to another grid.<br />
+<i>Animation <b>Move...To...</b> is run on the same row after animation <b>Move...From...</b> finishes.</i><br />
+<i>Animation <b>Move...ToOutside...</b> is run simultaneously with animation <b>Move...FromOutside...</b>, as both run on different rows.</i><br />
+<strong>Animation <b>Move...From</b> delays the row moving, the row is moved after the animation finishes!</strong>
+
+<!-- Delete -->
+<a name="AnimationsDelete"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Delete</h4> <s>["..."]</s>
+</div>
+Animation run when the row is deleted from grid (on Action <a href="RowDelete.htm#ActionsDeleteRow">DeleteRow</a>).<br />
+Animation <b>DeleteVisible</b> sets animation for deleting row if set <a href="RowDelete.htm#CfgShowDeleted">ShowDeleted</a>='<b>1</b>'.<br />
+Animation <b>DeleteRows</b> and <b>DeleteVisibleRows</b> sets animation for deleting selected rows.<br />
+Animations <b>DeleteChildren</b>, <b>DeleteVisibleChildren</b>, <b>DeleteRowsChildren</b> and <b>DeleteVisibleRowsChildren</b> set animation for children of the row being deleted.<br />
+<strong>If run for removing row, the row is physically removed after the animation finishes!</strong>
+
+<!-- Undelete -->
+<a name="AnimationsUndelete"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Undelete</h4> <s>["..."]</s>
+</div>
+Animation run when the row is undeleted and shown back in grid (on Action <a href="RowDelete.htm#ActionsUndeleteRow">UndeleteRow</a>).<br />
+Animation <b>UndeleteVisible</b> sets animation for undeleting row if set <a href="RowDelete.htm#CfgShowDeleted">ShowDeleted</a>='<b>1</b>'.<br />
+Animation <b>UndeleteRows</b> and <b>UndeleteVisibleRows</b> sets animation for undeleting selected rows. <br />
+Animations <b>UndeleteChildren</b>, <b>UndeleteVisibleChildren</b>, <b>UndeleteRowsChildren</b> and <b>UndeleteVisibleRowsChildren</b> set animation for children of the row being undeleted.<br />
+
+<!-- Select -->
+<a name="AnimationsSelect"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Select</h4> <s>["..."]</s>
+</div>
+Animation run when the row is selected (on Action <a href="RowSelect.htm#ActionsSelectRow">SelectRow</a>).<br />
+
+<!-- Deselect -->
+<a name="AnimationsDeselect"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Deselect</h4> <s>["..."]</s>
+</div>
+Animation run when the row is unselected (on Action <a href="RowSelect.htm#ActionsDeselectRow">DeselectRow</a>).<br />
+
+<!-- Expand -->
+<a name="AnimationsExpand"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Expand</h4> <s>["..."]</s>
+</div>
+Animation run when single row's children are expanded (on Action <a href="Tree.htm#ActionsExpand">Expand</a>).<br />
+It is usually set only for children as animation <b>ExpandChildren</b>.<br />
+
+<!-- Collapse -->
+<a name="AnimationsCollapse"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Collapse</h4> <s>["..."]</s>
+</div>
+Animation run when single row's children are collapsed (on Action <a href="Tree.htm#ActionsCollapse">Collapse</a>).<br />
+It is usually set only for children as animation <b>CollapseChildren</b>.<br />
+
+
+<!--------------------------------------------------------- Column animations  ------------------------------------------------->
+<a name="Col"></a>
+<h2>Column animations</h2>
+Column is not animated en bloc, it animates every cell independently.<br />
+<br />
+If more selected or focused columns are manipulated together, to the animation name there is added suffix <b>Cols</b> instead of <b>Col</b>, e.g. <b>DeleteCols</b> or  <b>HideCols</b>.<br />
+If the animation with <b>Cols</b> suffix does not exist, the animation with <b>Col</b> suffix is used also for selected or focused columns.<br />
+
+<!-- AnimateCols -->
+<a name="CfgAnimateCols"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>AnimateCols</h4> <s>[1]</s>
+</div>
+If animations for columns actions like show or delete are shown.<br />
+If set to <b>2</b>, it animates also right side button and left side tree in cells. It is animated separately.<br />
+<i>Animations are run only if defined in &lt;Animations> tag in data and also in used CSS style.</i>
+
+<!-- AnimateColsMax -->
+<a name="CfgAnimateColsMax"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>AnimateColsMax</h4> <s>[10]</s>
+</div>
+Maximum of columns that will be animated at once (e.g. when deleting selected columns).<br />
+If the count of animated columns exceeds this maximum, no next column is animated.<br />
+If set to negative value, it is taken as positive, but if the count of animated columns exceeds this maximum, no columns are animated.<br />
+<i>For animating columns there is applied also limit for cell animations <a href="#CfgAnimateCellsMax">AnimateCellsMax</a>.</i><br />
+<i>Every browser has its own limit of animations, if it is exceeded, the animations are turned off automatically, usually all of them.</i><br />
+
+
+<!-- AnimateCol -->
+<a name="AnimateCol"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>void</i>
+   <h4>AnimateCol</h4> <s>(<i>string</i> <b>col</b>, <i>string</i> <b>animation</b>, <i>function</i> <b>func</b>)</s>
+</div>
+Runs given <b>animation</b> for the column <b>col</b>.<br />
+After animation finishes it calls <b>func</b>. The <b>func</b> is called always, also if the animation fails, is canceled, or does not exist.<br />
+The <b>animation</b> is the animation name like "Hide" or "Delete" or any custom animation defined in &lt;Animations>.<br />
+The <b>col</b> can be also array of column names to run the animations for all of them, in this case the <b>func</b> is called once after all animations finish.<br />
+The <b>col</b> can be also array of arrays of animation parameters, e.g. AnimateCol([[col1,"anim1"],[col2,"anim2"],[cols,"anim3"],...]); In this case the other parameters are ignored.<br />
+On start it finishes all the rows and cells previous animations and calls their callbacks.<br />
+If called with null for <b>animation</b>, it finishes all the rows and cells previous animations. 
+But if it is set, but the animation does not exist, it does not finish the previous animations.<br />
+
+<!-- ShowCol -->
+<a name="AnimationsShowCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>ShowCol</h4> <s>["..."]</s>
+</div>
+Animation run after column is shown (e.g. on Action <a href="ColVisibility.htm#ActionsShowCol">ShowCol</a>).<br />
+Animation <b>ShowCols</b> sets animation for showing selected or focused columns. <br />
+
+<!-- HideCol -->
+<a name="AnimationsHideCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>HideCol</h4> <s>["..."]</s>
+</div>
+Animation run before column is hidden (e.g. on Action <a href="ColVisibility.htm#ActionsHideCol">HideCol</a>).<br />
+Animation <b>HideCols</b> sets animation for hiding selected or focused columns. <br />
+<strong>Animation <b>HideCol</b> delays the column hiding, the column is hidden after the animation finishes!</strong>
+
+
+<!-- AddCol -->
+<a name="AnimationsAddCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>AddCol</h4> <s>["..."]</s>
+</div>
+Animation run when the column is added to grid (on Action <a href="ColAdd.htm#ActionsAddCol">AddCol</a>).<br />
+Animation <b>AddCols</b> sets animation for adding more columns. <br />
+
+<!-- CopyColTo -->
+<a name="AnimationsCopyColTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>CopyColTo</h4> <s>["..."]</s>
+</div>
+Animation run on destination (added) column when the column is copied (on drag action like <a href="ColAdd.htm#ActionsColCopy">ColCopy</a> or copy action like <a href="ColAdd.htm#ActionsCopyCol">CopyCol</a>).<br />
+Animation <b>CopyColsTo</b> sets animation for copying selected or focused columns.<br />
+<i>Animation <b>CopyColTo</b> is run simultaneously with animation <b>CopyColFrom</b>, as both run on different columns.</i><br />
+
+<!-- CopyColFrom -->
+<a name="AnimationsCopyColFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>CopyColFrom</h4> <s>["..."]</s>
+</div>
+Animation run on source (unchanged) column when the column is copied (on drag action like <a href="ColAdd.htm#ActionsColCopy">ColCopy</a> or copy action like <a href="ColAdd.htm#ActionsCopyCol">CopyCol</a>).<br />
+Animation <b>CopyColsFrom</b> sets animation for copying selected or focused columns.<br />
+<i>Animation <b>CopyColTo</b> is run simultaneously with animation <b>CopyColFrom</b>, as both run on different columns.</i><br />
+
+<!-- MoveColTo -->
+<a name="AnimationsMoveColTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>MoveColTo</h4> <s>["..."]</s>
+</div>
+Animation run on column after it is moved (on drag action like <a href="ColPosition.htm#ActionsColMove">ColMove</a>).<br />
+Animation <b>MoveColsTo</b> sets animation for moving selected or focused columns.<br />
+<i>Animation <b>MoveCol...To</b> is run on the same column after animation <b>MoveCol...From</b> finishes.</i><br />
+
+<!-- MoveColFrom -->
+<a name="AnimationsMoveColFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>MoveColFrom</h4> <s>["..."]</s>
+</div>
+Animation run on column before it is moved (on drag action like <a href="ColPosition.htm#ActionsColMove">ColMove</a>).<br />
+Animation <b>MoveColsFrom</b> sets animation for moving selected or focused columns.<br />
+<i>Animation <b>MoveCol...To</b> is run on the same column after animation <b>MoveCol...From</b> finishes.</i><br />
+<strong>Animation <b>MoveCol...From</b> delays the column moving, the column is moved after the animation finishes!</strong>
+
+
+<!-- DeleteCol -->
+<a name="AnimationsDeleteCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>DeleteCol</h4> <s>["..."]</s>
+</div>
+Animation run when the column is deleted from grid (on Action <a href="ColDelete.htm#ActionsDeleteCol">DeleteCol</a>). <br />
+Animation <b>DeleteVisible</b> sets animation for deleting column if set <a href="ColDelete.htm#CfgShowDeleted">ShowDeleted</a>='<b>1</b>'.<br />
+Animations <b>DeleteCols</b> and <b>DeleteVisibleCols</b> set animation for deleting selected columns. <br />
+<strong>Animation <b>DeleteCol</b> delays the column deleting, the column is deleted after the animation finishes!</strong>
+
+<!-- UndeleteCol -->
+<a name="AnimationsUndeleteCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndeleteCol</h4> <s>["..."]</s>
+</div>
+Animation run when the column is undeleted back in grid (on Action <a href="ColDelete.htm#ActionsUndeleteCol">UndeleteCol</a>).<br />
+Animation <b>UndeleteVisible</b> sets animation for undeleting column if set <a href="ColDelete.htm#CfgShowDeleted">ShowDeleted</a>='<b>1</b>'.<br />
+Animation <b>UndeleteCols</b> and <b>UndeleteVisibleCols</b> sets animation for undeleting selected columns.<br />
+
+<!-- SelectCol -->
+<a name="AnimationsSelectCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>SelectCol</h4> <s>["..."]</s>
+</div>
+Animation run when column is selected (on Action <a href="RowSelect.htm#ActionsSelectCol">SelectCol</a>).<br />
+
+<!-- DeselectCol -->
+<a name="AnimationsDeselectCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>DeselectCol</h4> <s>["..."]</s>
+</div>
+Animation run when column is unselected (on Action <a href="RowSelect.htm#ActionsDeselectCol">DeselectCol</a>).<br />
+
+
+
+<!--------------------------------------------------------- Cell animations  ------------------------------------------------->
+<a name="Cell"></a>
+<h2>Cell animations</h2>
+
+The cell is animated en bloc, but without left side tree and right side Button if present.<br />
+If set <a href="#CfgAnimateCells">AnimateCells</a>='2' (or <a href="#CfgAnimateCols">AnimateCols</a>='2' for column animations), 
+it animates also the left side tree and right side button, but independently. 
+The left side tree can have set specific animation by suffix "<b>Left</b>" and the right side Button by suffix "<b>Right</b>", e.g. HideColRight. 
+If animation with suffix is not defined, the animation without suffix is used.<br />
+
+<!-- AnimateCells -->
+<a name="CfgAnimateCells"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>AnimateCells</h4> <s>[1]</s>
+</div>
+If animations for cells actions like edit or clear are shown.<br />
+If set to <b>2</b>, it animates also right side button and left side tree in cells. It is animated separately.<br />
+<i>Animations are run only if defined in &lt;Animations> tag in data and also in used CSS style.</i>
+
+<!-- AnimateCellsMax -->
+<a name="CfgAnimateCellsMax"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>AnimateCellsMax</h4> <s>[200]</s>
+</div>
+Maximum of cells that will be animated at once (e.g. when clearing selected cells).<br />
+If the count of animated cells exceeds this maximum, no next cell is animated.<br />
+<i>Every browser has its own limit of animations, if it is exceeded, the animations are turned off automatically, usually all of them.</i><br />
+
+<!-- AnimateCell -->
+<a name="AnimateCell"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>void</i>
+   <h4>AnimateCell</h4> <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>animation</b>, <i>function</i> <b>func</b>)</s>
+</div>
+Runs given <b>animation</b> for the cell.<br />
+After animation finishes it calls <b>func</b>. The <b>func</b> is called always, also if the animation fails, is canceled, or does not exist.<br />
+The <b>animation</b> is the animation name like "Expand" or "CopyFrom" or any custom animation defined in &lt;Animations>.<br />
+On start it finishes all the row and cell previous animations and calls their callbacks.<br />
+If called with null for <b>animation</b>, it finishes all the row and cell previous animations. 
+But if it is set, but the animation does not exist, it does not finish the previous animations.<br />
+
+<!-- RefreshCellAnimate -->
+<a name="RefreshCellAnimate"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>void</i>
+   <h4>RefreshCellAnimate</h4> <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>animation</b> = "Change")</s>
+</div>
+Rerenders the cell and runs given animation for the change. <b>animation</b> is base animation name like "Edit", "Fill" or "Clear". <br />
+It first runs animation <b>animation</b>+"From", next renders the cell and finaly runs animation <b>animation</b>+"To".<br />
+
+<!-- Focus -->
+<a name="AnimationsFocus"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Focus</h4> <s>["..."]</s>
+</div>
+Animation run when focusing cell (on Action <a href="Focus.htm#ActionsFocus">Focus</a>).<br />
+There are special animation definitions for every cell type (like <b>Text</b> / <b>Lines</b> / <b>Bool</b> / ... ) and row Kind (<b>Data</b> / <b>Header</b> / <b>Filter</b> / <b>Space</b>). <br />
+For example for Bool type in space row are tested these animations in this order <b>FocusSpaceBool</b>, <b>FocusSpace</b>, <b>FocusBool</b>, <b>Focus</b>.<br />
+
+<!-- Find -->
+<a name="AnimationsFind"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Find</h4> <s>["..."]</s>
+</div>
+Animation run when cell is found by search (by <a href="Search.htm#SearchAction">SearchAction</a> <b>Find</b>).<br />
+There are special animation definitions for every cell type (like <b>Text</b> / <b>Lines</b> / <b>Bool</b> / ... ) and row Kind (<b>Data</b> / <b>Header</b> / <b>Filter</b> / <b>Space</b>). <br />
+For example for Bool type in space row are tested these animations in this order <b>FocusSpaceBool</b>, <b>FocusSpace</b>, <b>FocusBool</b>, <b>Focus</b>.<br />
+
+<!-- Copy -->
+<a name="AnimationsCopy"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Copy</h4> <s>["..."]</s>
+</div>
+Animation run when cell value is copied to clipboard by ctrl+C (by action <a href="CopyPaste.htm#ActionsCopy">Copy</a>).<br />
+There are special animation definitions for every cell type (like <b>Text</b> / <b>Lines</b> / <b>Bool</b> / ... ) and row Kind (<b>Data</b> / <b>Header</b> / <b>Filter</b> / <b>Space</b>). <br />
+For example for Bool type in space row are tested these animations in this order <b>FocusSpaceBool</b>, <b>FocusSpace</b>, <b>FocusBool</b>, <b>Focus</b>.<br />
+
+<!-- EditTo -->
+<a name="AnimationsEditTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>EditTo</h4> <s>["..."]</s>
+</div>
+Animation run after single cell value is changed by editing or similar user interaction, e.g. Bool click or Enum/Defaults/Date select.<br />
+There are special animation definitions for every cell type (like <b>Text</b> / <b>Lines</b> / <b>Bool</b> / ... ) and row Kind (<b>Data</b> / <b>Header</b> / <b>Filter</b> / <b>Space</b>). <br />
+For example for Bool type in space row are tested these animations in this order <b>EditSpaceBoolTo</b>, <b>EditSpaceTo</b>, <b>EditBoolTo</b>, <b>EditTo</b>.<br />
+<i><b>Edit...To</b> is run after <b>Edit...From</b>. <b>Edit...From</b> is run with old cell value and <b>Edit...To</b> with new cell value.<br /></i>
+
+<!-- EditFrom -->
+<a name="AnimationsEditFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>EditFrom</h4> <s>["..."]</s>
+</div>
+Animation run before single cell value is changed by editing or similar user interaction, e.g. Bool click or Enum/Defaults/Date select.<br />
+There are special animation definitions for every cell type (like <b>Text</b> / <b>Lines</b> / <b>Bool</b> / ... ) and row Kind (<b>Data</b> / <b>Header</b> / <b>Filter</b> / <b>Space</b>). <br />
+For example for Bool type in space row are tested these animations in this order <b>EditSpaceBoolFrom</b>, <b>EditSpaceFrom</b>, <b>EditBoolFrom</b>, <b>EditFrom</b>.<br />
+<i><b>Edit...To</b> is run after <b>Edit...From</b>. <b>Edit...From</b> is run with old cell value and <b>Edit...To</b> with new cell value.<br /></i>
+
+<!-- CalculateTo -->
+<a name="AnimationsCalculateTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>CalculateTo</h4> <s>["..."]</s>
+</div>
+Animation run after cell value is changed by calculating editable formula (<a href="CellEditFormula.htm#CellEFormula">EFormula</a>) 
+or by calculating not editable <a href="#CellFormula.htm#CFormula">Formula</a> if set <a href="CellFormula.htm#CfgCalculatedChanges">CalculatedChanges</a>. 
+Similar to <a href="#AnimationsEditTo">EditTo</a>.<br />
+
+<!-- CalculateFrom -->
+<a name="AnimationsCalculateFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>CalculateFrom</h4> <s>["..."]</s>
+</div>
+Animation run before cell value is changed by calculating editable formula (<a href="CellEditFormula.htm#CellEFormula">EFormula</a>)
+or by calculating not editable <a href="#CellFormula.htm#CFormula">Formula</a> if set <a href="CellFormula.htm#CfgCalculatedChanges">CalculatedChanges</a>. 
+Similar to <a href="#AnimationsEditFrom">EditFrom</a>.<br />
+
+<!-- ChangeTo -->
+<a name="AnimationsChangeTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>ChangeTo</h4> <s>["..."]</s>
+</div>
+Animation run after cell value is changed by another action, e.g. change in Gantt or moving or copying cell range to (actions <a href="Focus.htm#ActionsCopyFocus">CopyFocus</a> / <a href="Focus.htm#ActionsMoveFocus">MoveFocus</a>).
+Similar to <a href="#AnimationsEditTo">EditTo</a>.<br />
+
+<!-- ChangeFrom -->
+<a name="AnimationsChangeFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>ChangeFrom</h4> <s>["..."]</s>
+</div>
+Animation run before cell value is changed by another action, e.g. change in Gantt or moving or copying cell range to (actions <a href="Focus.htm#ActionsCopyFocus">CopyFocus</a> / <a href="Focus.htm#ActionsMoveFocus">MoveFocus</a>).
+Similar to <a href="#AnimationsEditFrom">EditFrom</a>.<br />
+
+<!-- FillTo -->
+<a name="AnimationsFillTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>FillTo</h4> <s>["..."]</s>
+</div>
+Animation run after cell value is changed by filling cell range to (actions like <a href="Focus.htm#ActionsFocusFillRowCol">FocusFillRowCol</a>).
+Similar to <a href="#AnimationsEditTo">EditTo</a>.<br />
+
+<!-- FillFrom -->
+<a name="AnimationsFillFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>FillFrom</h4> <s>["..."]</s>
+</div>
+Animation run before cell value is changed by filling cell range to (actions like <a href="Focus.htm#ActionsFocusFillRowCol">FocusFillRowCol</a>).
+Similar to <a href="#AnimationsEditFrom">EditFrom</a>.<br />
+
+<!-- PasteTo -->
+<a name="AnimationsPasteTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>PasteTo</h4> <s>["..."]</s>
+</div>
+Animation run after cell value is changed by pasting value(s) from clipboard (action <a href="CopyPaste.htm#ActionsPaste">Paste</a>).
+Similar to <a href="#AnimationsEditTo">EditTo</a>.<br />
+
+<!-- PasteFrom -->
+<a name="AnimationsPasteFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>PasteFrom</h4> <s>["..."]</s>
+</div>
+Animation run before cell value is changed by pasting value(s) from clipboard (action <a href="CopyPaste.htm#ActionsPaste">Paste</a>).
+Similar to <a href="#AnimationsEditFrom">EditFrom</a>.<br />
+
+<!-- MarkTo -->
+<a name="AnimationsMarkTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>MarkTo</h4> <s>["..."]</s>
+</div>
+Animation run after cell is marked by search (by <a href="Search.htm#SearchAction">SearchAction</a> <b>Mark</b>).
+Similar to <a href="#AnimationsEditTo">EditTo</a>.<br />
+
+<!-- MarkFrom -->
+<a name="AnimationsMarkFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>MarkFrom</h4> <s>["..."]</s>
+</div>
+Animation run before cell is marked by search (by <a href="Search.htm#SearchAction">SearchAction</a> <b>Mark</b>).
+Similar to <a href="#AnimationsEditFrom">EditFrom</a>.<br />
+
+<!-- ClearTo -->
+<a name="AnimationsClearTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>ClearTo</h4> <s>["..."]</s>
+</div>
+Animation run after cell value is cleared by any action like clear cell, exclude, move cell range, fill, ....
+Similar to <a href="#AnimationsEditTo">EditTo</a>. It animates empty cell.<br />
+
+<!-- ClearFrom -->
+<a name="AnimationsClearFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>ClearFrom</h4> <s>["..."]</s>
+</div>
+Animation run before cell value is cleared by any action like clear cell, exclude, move cell range, fill, ....
+Similar to <a href="#AnimationsEditFrom">EditFrom</a>.<br />
+
+<!--------------------------------------------------------- Animations for undo  ------------------------------------------------->
+<a name="Undo"></a>
+<h2>Animations for undo / redo</h2>
+See also <a href="Undo.htm">Undo & Redo</a>
+
+<!-- AnimateUndo -->
+<a name="CfgAnimateUndo"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>AnimateUndo</h4> <s>[1]</s>
+</div>
+If animations for undo and redo shown.<br />
+Undo and redo animations are affected also by <a href="#CfgAnimateRows">AnimateRows</a>, <a href="#CfgAnimateCols">AnimateCols</a> and <a href="#CfgAnimateCells">AnimateCells</a>.<br />
+<i>Animations are run only if defined in &lt;Animations> tag in data and also in used CSS style.</i>
+
+<!-- UndoShow -->
+<a name="AnimationsUndoShow"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoShow</h4> <s>["..."]</s>
+</div>
+Animation run when showing row action is undone. It means the row is hidden.<br />
+Animation <b>UndoShowChildren</b> sets animation for children of the row being hidden.<br />
+
+<!-- RedoShow -->
+<a name="AnimationsRedoShow"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoShow</h4> <s>["..."]</s>
+</div>
+Animation run when showing row undone action is done again. It means the row is shown.<br />
+Animation <b>RedoShowChildren</b> sets animation for children of the row being shown.<br />
+
+<!-- UndoHide -->
+<a name="AnimationsUndoHide"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoHide</h4> <s>["..."]</s>
+</div>
+Animation run when hiding row action is undone. It means the row is shown.<br />
+Animation <b>UndoHideChildren</b> sets animation for children of the row being shown.<br />
+
+<!-- RedoHide -->
+<a name="AnimationsRedoHide"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoHide</h4> <s>["..."]</s>
+</div>
+Animation run when hiding row undone action is done again. It means the row is hidden.<br />
+Animation <b>RedoHideChildren</b> sets animation for children of the row being hidden.<br />
+
+<!-- UndoAdd -->
+<a name="AnimationsUndoAdd"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoAdd</h4> <s>["..."]</s>
+</div>
+Animation run when adding new row or copying row action is undone. It means the added row is removed.<br />
+<i>Rows are removed one by one including children, so no action UndoAddChildren is available.</i><br />
+<strong>The row is physically removed after the animation finishes!</strong>
+
+<!-- RedoAdd -->
+<a name="AnimationsRedoAdd"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoAdd</h4> <s>["..."]</s>
+</div>
+Animation run when adding new row or copying row undone action is done again. It means the row is added.<br />
+<i>Rows are added one by one including children, so no action RedoAddChildren is available.</i>
+
+<!-- UndoMove -->
+<a name="AnimationsUndoMove"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoMove</h4> <s>["..."]</s>
+</div>
+Animation run when moving row action is undone. It means the row is moved to original position.<br />
+Animation <b>UndoMoveChildren</b> sets animation for children of the row being moved.<br />
+
+<!-- RedoMove -->
+<a name="AnimationsRedoMove"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoMove</h4> <s>["..."]</s>
+</div>
+Animation run when moving row undone action is done again. It means the row is moved to the new position.<br />
+Animation <b>RedoMoveChildren</b> sets animation for children of the row being moved.<br />
+
+<!-- UndoDelete -->
+<a name="AnimationsUndoDelete"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoDelete</h4> <s>["..."]</s>
+</div>
+Animation run when deleting row action is undone. It means the row is undeleted.<br />
+Animation <b>UndoDeleteVisible</b> sets animation for undeleting row if set <a href="RowDelete.htm#CfgShowDeleted">ShowDeleted</a>='<b>1</b>'.<br />
+<i>Rows are undeleted one by one including children, so no action UndoDeleteChildren is available.</i>
+
+<!-- RedoDelete -->
+<a name="AnimationsRedoDelete"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoDelete</h4> <s>["..."]</s>
+</div>
+Animation run when deleting row undone action is done again. It means the row is deleted.<br />
+Animation <b>RedoDeleteVisible</b> sets animation for deleting row if set <a href="RowDelete.htm#CfgShowDeleted">ShowDeleted</a>='<b>1</b>'.<br />
+<i>Rows are deleted one by one including children, so no action RedoDeleteChildren is available.</i><br />
+<strong>If run for removing row, the row is physically removed after the animation finishes!</strong>
+
+<!-- UndoUndelete -->
+<a name="AnimationsUndoUndelete"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoUndelete</h4> <s>["..."]</s>
+</div>
+Animation run when undeleting row action is undone. It means the row is deleted.<br />
+Animation <b>UndoUndeleteVisible</b> sets animation for deleting row if set <a href="RowDelete.htm#CfgShowDeleted">ShowDeleted</a>='<b>1</b>'.<br />
+<i>Rows are deleted one by one including children, so no action UndoUndeleteChildren is available.</i>
+
+<!-- RedoUndelete -->
+<a name="AnimationsRedoUndelete"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoUndelete</h4> <s>["..."]</s>
+</div>
+Animation run when undeleting row undone action is done again. It means the row is undeleted.<br />
+Animation <b>RedoUndeleteVisible</b> sets animation for undeleting row if set <a href="RowDelete.htm#CfgShowDeleted">ShowDeleted</a>='<b>1</b>'.<br />
+<i>Rows are undeleted one by one including children, so no action RedoUndeleteChildren is available.</i>
+
+<!-- UndoSelect -->
+<a name="AnimationsUndoSelect"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoSelect</h4> <s>["..."]</s>
+</div>
+Animation run when selecting row action is undone. It means the row is unselected.<br />
+
+<!-- RedoSelect -->
+<a name="AnimationsRedoSelect"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoSelect</h4> <s>["..."]</s>
+</div>
+Animation run when selecting row undone action is done again. It means the row is selected.<br />
+
+<!-- UndoDeselect -->
+<a name="AnimationsUndoDeselect"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoDeselect</h4> <s>["..."]</s>
+</div>
+Animation run when unselecting row action is undone. It means the row is selected.<br />
+
+<!-- RedoDeselect -->
+<a name="AnimationsRedoDeselect"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoDeselect</h4> <s>["..."]</s>
+</div>
+Animation run when unselecting row undone action is done again. It means the row is unselected.<br />
+
+<!-- UndoResize -->
+<a name="AnimationsUndoResize"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoResize</h4> <s>["..."]</s>
+</div>
+Animation run when resizing row action is undone. It means the row is resized to original height.<br />
+<i>It is not possible to animate the row resizing (changing the row height by animation).</i>
+
+<!-- RedoResize -->
+<a name="AnimationsRedoResize"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoResize</h4> <s>["..."]</s>
+</div>
+Animation run when resizing row undone action is done again. It means the row is resized to the new height.<br />
+<i>It is not possible to animate the row resizing (changing the row height by animation).</i>
+
+<!-- UndoShowCol -->
+<a name="AnimationsUndoShowCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoShowCol</h4> <s>["..."]</s>
+</div>
+Animation run when showing column action is undone. It means the column is hidden.<br />
+<strong>Animation is run only if <a href="ColVisibility.htm#CfgFastColumns">FastColumns</a> = '<b>1</b>'.</strong>
+
+
+<!-- RedoShowCol -->
+<a name="AnimationsRedoShowCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoShowCol</h4> <s>["..."]</s>
+</div>
+Animation run when showing column undone action is done again. It means the column is shown.<br />
+
+<!-- UndoHideCol -->
+<a name="AnimationsUndoHideCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoHideCol</h4> <s>["..."]</s>
+</div>
+Animation run when hiding column action is undone. It means the column is shown.<br />
+
+<!-- RedoHideCol -->
+<a name="AnimationsRedoHideCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoHideCol</h4> <s>["..."]</s>
+</div>
+Animation run when hiding column undone action is done again. It means the column is hidden.<br />
+<strong>Animation is run only if <a href="ColVisibility.htm#CfgFastColumns">FastColumns</a> = '<b>1</b>'.</strong>
+
+<!-- UndoAddCol -->
+<a name="AnimationsUndoAddCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoAddCol</h4> <s>["..."]</s>
+</div>
+Animation run when adding new column or copying column action is undone. It means the added column is removed.<br />
+<strong>The column is physically removed after the animation finishes!</strong>
+
+<!-- RedoAddCol -->
+<a name="AnimationsRedoAddCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoAddCol</h4> <s>["..."]</s>
+</div>
+Animation run when adding new column or copying column undone action is done again. It means the column is added.<br />
+
+<!-- UndoMoveCol -->
+<a name="AnimationsUndoMoveCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoMoveCol</h4> <s>["..."]</s>
+</div>
+Animation run when moving column action is undone. It means the column is moved to original position.<br />
+
+<!-- RedoMoveCol -->
+<a name="AnimationsRedoMoveCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoMoveCol</h4> <s>["..."]</s>
+</div>
+Animation run when moving column undone action is done again. It means the column is moved to the new position.<br />
+
+<!-- UndoDeleteCol -->
+<a name="AnimationsUndoDeleteCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoDeleteCol</h4> <s>["..."]</s>
+</div>
+Animation run when deleting column action is undone. It means the column is undeleted.<br />
+Animation <b>UndoDeleteVisible</b> sets animation for undeleting column if set <a href="ColDelete.htm#CfgShowDeleted">ShowDeleted</a>='<b>1</b>'.<br />
+
+<!-- RedoDeleteCol -->
+<a name="AnimationsRedoDeleteCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoDeleteCol</h4> <s>["..."]</s>
+</div>
+Animation run when deleting column undone action is done again. It means column column is deleted.<br />
+Animation <b>RedoDeleteVisible</b> sets animation for deleting column if set <a href="ColDelete.htm#CfgShowDeleted">ShowDeleted</a>='<b>1</b>'.<br />
+<strong>If run for removing column, the column is physically removed after the animation finishes!</strong>
+
+<!-- UndoUndeleteCol -->
+<a name="AnimationsUndoUndeleteCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoUndeleteCol</h4> <s>["..."]</s>
+</div>
+Animation run when undeleting column action is undone. It means the column is deleted.<br />
+Animation <b>UndoUndeleteVisible</b> sets animation for deleting column if set <a href="ColDelete.htm#CfgShowDeleted">ShowDeleted</a>='<b>1</b>'.<br />
+
+<!-- RedoUndeleteCol -->
+<a name="AnimationsRedoUndeleteCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoUndeleteCol</h4> <s>["..."]</s>
+</div>
+Animation run when undeleting column undone action is done again. It means the column is undeleted.<br />
+Animation <b>RedoUndeleteVisible</b> sets animation for undeleting column if set <a href="ColDelete.htm#CfgShowDeleted">ShowDeleted</a>='<b>1</b>'.<br />
+
+<!-- UndoSelectCol -->
+<a name="AnimationsUndoSelectCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoSelectCol</h4> <s>["..."]</s>
+</div>
+Animation run when selecting column action is undone. It means the column is unselected.<br />
+
+<!-- RedoSelectCol -->
+<a name="AnimationsRedoSelectCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoSelectCol</h4> <s>["..."]</s>
+</div>
+Animation run when selecting column undone action is done again. It means the column is selected.<br />
+
+<!-- UndoDeselectCol -->
+<a name="AnimationsUndoDeselectCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoDeselectCol</h4> <s>["..."]</s>
+</div>
+Animation run when unselecting column action is undone. It means the column is selected.<br />
+
+<!-- RedoDeselectCol -->
+<a name="AnimationsRedoDeselectCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoDeselectCol</h4> <s>["..."]</s>
+</div>
+Animation run when unselecting column undone action is done again. It means the column is unselected.<br />
+
+<!-- UndoResizeCol -->
+<a name="AnimationsUndoResizeCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoResizeCol</h4> <s>["..."]</s>
+</div>
+Animation run when resizing column action is undone. It means the column is resized to original width.<br />
+<i>It is not possible to animate the column resizing (changing the column width by animation).</i>
+
+<!-- RedoResizeCol -->
+<a name="AnimationsRedoResizeCol"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoResizeCol</h4> <s>["..."]</s>
+</div>
+Animation run when resizing column undone action is done again. It means the column is resized to the new width.<br />
+<i>It is not possible to animate the column resizing (changing the column width by animation).</i>
+
+<!-- UndoChangeTo -->
+<a name="AnimationsUndoChangeTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoChangeTo</h4> <s>["..."]</s>
+</div>
+Animation run after cell value change by any action is undone. It means the cell value is changed to original value.
+Similar to <a href="#AnimationsEditTo">EditTo</a>.<br />
+
+<!-- RedoChangeTo -->
+<a name="AnimationsRedoChangeTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoChangeTo</h4> <s>["..."]</s>
+</div>
+Animation run after cell value change by any undone action is done again. It means the cell value is changed to the new value.
+Similar to <a href="#AnimationsEditTo">EditTo</a>.<br />
+
+<!-- UndoChangeFrom -->
+<a name="AnimationsUndoChangeFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoChangeFrom</h4> <s>["..."]</s>
+</div>
+Animation run before cell value change by any action is undone. It means the cell value is changed to original value.
+Similar to <a href="#AnimationsEditFrom">EditFrom</a>.<br />
+
+<!-- RedoChangeFrom -->
+<a name="AnimationsRedoChangeFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoChangeFrom</h4> <s>["..."]</s>
+</div>
+Animation run before cell value change by any undone action is done again. It means the cell value is changed to the new value.
+Similar to <a href="#AnimationsEditFrom">EditFrom</a>.<br />
+
+<!-- UndoBorder -->
+<a name="AnimationsUndoBorder"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoBorder</h4> <s>["..."]</s>
+</div>
+Animation run when cell <a href="CellStyle.htm#DynamicStyle">dynamic style</a> change action is undone. It means the border attributes are changed to original value.
+
+<!-- RedoBorder -->
+<a name="AnimationsRedoBorder"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoBorder</h4> <s>["..."]</s>
+</div>
+Animation run when cell <a href="CellStyle.htm#DynamicBorder">dynamic border</a> change undone action is done again. It means the border attributes are changed to the new value.
+
+<!-- UndoStyle -->
+<a name="AnimationsUndoStyle"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>UndoStyle</h4> <s>["..."]</s>
+</div>
+Animation run when cell <a href="CellStyle.htm#DynamicBorder">dynamic border</a> change action is undone. It means the style attributes are changed to original value.
+
+<!-- RedoStyle -->
+<a name="AnimationsRedoStyle"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>RedoStyle</h4> <s>["..."]</s>
+</div>
+Animation run when cell style <a href="CellStyle.htm#DynamicStyle">dynamic style</a> undone action is done again. It means the style attributes are changed to the new value.
+
+
+
+
+
+
+<!--------------------------------------------------------- Animations from server side  ------------------------------------------------->
+<a name="Server"></a>
+<h2>Animations for server side changes</h2>
+They are disabled by default. Enable them by setting 9. bit (<b>&256</b>) in <a href="DataServerChanges.htm#ChangesUpdate">Update</a> in &lt;Changes> or <a href="DataServerChanges.htm#CfgChangesUpdate">ChangesUpdate</a> in &lt;Cfg>, for example &lt;Changes Update="257" />.<br />
+
+<!-- Added -->
+<a name="AnimationsAdded"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Added</h4> <s>["..."]</s>
+</div>
+Animation run after the row is added to grid by server side changes (&lt;<a href="DataServerChanges.htm">Changes</a>>).<br />
+
+<!-- Moved -->
+<a name="AnimationsMoved"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Moved</h4> <s>["..."]</s>
+</div>
+Animation run after the row is moved to new position in grid by server side changes (&lt;<a href="DataServerChanges.htm">Changes</a>>).<br />
+
+<!-- Deleted -->
+<a name="AnimationsDeleted"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Deleted</h4> <s>["..."]</s>
+</div>
+Animation run after the row is deleted from grid by server side changes (&lt;<a href="DataServerChanges.htm">Changes</a>>).<br />
+Animation <b>DeletedVisible</b> sets animation for deleting row if set <a href="RowDelete.htm#CfgShowDeleted">ShowDeleted</a>='<b>1</b>'.<br />
+
+<!-- Selected -->
+<a name="AnimationsSelected"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Selected</h4> <s>["..."]</s>
+</div>
+Animation run after the row is selected by server side changes (&lt;<a href="DataServerChanges.htm">Changes</a>>).<br />
+
+<!-- Deselected -->
+<a name="AnimationsDeselected"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Deselected</h4> <s>["..."]</s>
+</div>
+Animation run after the row is unselected by server side changes (&lt;<a href="DataServerChanges.htm">Changes</a>>).<br />
+
+<!-- Expanded -->
+<a name="AnimationsExpanded"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Expanded</h4> <s>["..."]</s>
+</div>
+Animation run after the row is expanded and its children are shown by server side changes (&lt;<a href="DataServerChanges.htm">Changes</a>>).<br />
+
+<!-- Collapsed -->
+<a name="AnimationsCollapsed"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>Collapsed</h4> <s>["..."]</s>
+</div>
+Animation run after the row is collapsed and its children are hidden by server side changes (&lt;<a href="DataServerChanges.htm">Changes</a>>).<br />
+
+<!-- ChangedTo -->
+<a name="AnimationsChangedTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>ChangedTo</h4> <s>["..."]</s>
+</div>
+Animation run before the cell value is changed to new value by server side changes (&lt;<a href="DataServerChanges.htm">Changes</a>>). 
+Cell animation, similar to <a href="#AnimationsEditTo">EditTo</a><br />
+
+<!-- ChangedFrom -->
+<a name="AnimationsChangedFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>ChangedFrom</h4> <s>["..."]</s>
+</div>
+Animation run after the cell value is changed to new value by server side changes (&lt;<a href="DataServerChanges.htm">Changes</a>>). 
+Cell animation, similar to <a href="#AnimationsEditFrom">EditFrom</a><br />
+
+
+<!--------------------------------------------------------- Dialog animations  ------------------------------------------------->
+<a name="Dialog"></a>
+<h2>Dialog animations</h2>
+
+<!-- AnimateDialogs -->
+<a name="CfgAnimateDialogs"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>AnimateDialogs</h4> <s>[2]</s>
+</div>
+If animations for showing and hiding dialogs like menu or calendar are shown.<br />
+For <b>2</b> it also closes dialog header when closing dialog - to let to animate cell change.<br />
+<i>Animations are run only if defined in &lt;Animations> tag in data and also in used CSS style.</i>
+
+<!-- ShowMenu -->
+<a name="AnimationsShowMenu"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>ShowMenu</h4> <s>["..."]</s>
+</div>
+Animation run when showing menu for cell combo (Enum, Select / Defaults and Button / List) and for Filter operator.<br />
+Animation <b>ShowMenuUp</b> sets animation for menu shown above the cell.<br />
+
+<!-- HideMenu -->
+<a name="AnimationsHideMenu"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>HideMenu</h4> <s>["..."]</s>
+</div>
+Animation run when closing menu shown for cell combo (Enum, Select / Defaults and Button / List) and for Filter operator.<br />
+Animation <b>HideMenuUp</b> sets animation for menu shown above the cell.<br />
+
+<!-- ShowPopup -->
+<a name="AnimationsShowPopup"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>ShowPopup</h4> <s>["..."]</s>
+</div>
+Animation run when showing popup menu on mouse position (cell or Gantt Menu).<br />
+Animation <b>ShowPopupUp</b> sets animation for menu shown above the cell.<br />
+
+<!-- HidePopup -->
+<a name="AnimationsHidePopup"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>HidePopup</h4> <s>["..."]</s>
+</div>
+Animation run when hiding popup menu shown on mouse position (cell or Gantt Menu).<br />
+Animation <b>HidePopupUp</b> sets animation for menu shown above the cell.<br />
+
+<!-- ShowCfg -->
+<a name="AnimationsShowCfg"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>ShowCfg</h4> <s>["..."]</s>
+</div>
+Animation run when showing modal configuration menu (configuration, columns/rows, export, print, print pdf).<br />
+
+<!-- HideCfg -->
+<a name="AnimationsHideCfg"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>HideCfg</h4> <s>["..."]</s>
+</div>
+Animation run when hiding modal configuration menu (configuration, columns/rows, export, print, print pdf).<br />
+
+<!-- ShowTip -->
+<a name="AnimationsShowTip"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>ShowTip</h4> <s>["..."]</s>
+</div>
+Animation run when showing <a href="CellBasics#CellTip">tip</a> for the cell or Gantt item.<br />
+
+<!-- HideTip -->
+<a name="AnimationsHideTip"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>HideTip</h4> <s>["..."]</s>
+</div>
+Animation run when hiding <a href="CellBasics#CellTip">tip</a> for the cell or Gantt item.<br />
+
+<!-- ShowHint -->
+<a name="AnimationsShowHint"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>ShowHint</h4> <s>["..."]</s>
+</div>
+Animation run when showing cell value as <a href="CellBasics#CellHint">hint</a>.<br />
+Animation <b>ShowHintVert</b> is set for hint in Lines type cell, when the cell is overflown vertically.<br />
+
+<!-- HideHint -->
+<a name="AnimationsHideHint"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>HideHint</h4> <s>["..."]</s>
+</div>
+Animation run when hiding cell value as <a href="CellBasics#CellHint">hint</a>.<br />
+Animation <b>HideHintVert</b> is set for hint in Lines type cell, when the cell is overflown vertically.<br />
+
+<!-- ShowMessage -->
+<a name="AnimationsShowMessage"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>ShowMessage</h4> <s>["..."]</s>
+</div>
+Animation run when showing grid modal message by <a href="GlobalSettings.htm#ShowMessageTime">ShowMessageTime</a>.<br />
+<i>Message is animated only if no JavaScript is running during the animation time.</i>
+
+<!-- HideMessage -->
+<a name="AnimationsHideMessage"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>HideMessage</h4> <s>["..."]</s>
+</div>
+Animation run when hiding grid modal message shown by <a href="GlobalSettings.htm#ShowMessageTime">ShowMessageTime</a>.<br />
+
+<!-- ShowCalendar -->
+<a name="AnimationsShowCalendar"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>ShowCalendar</h4> <s>["..."]</s>
+</div>
+Animation run when showing calendar for Date cell.<br />
+Animation <b>ShowCalendarUp</b> sets animation for calendar shown above the cell.<br />
+
+<!-- HideCalendar -->
+<a name="AnimationsHideCalendar"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>HideCalendar</h4> <s>["..."]</s>
+</div>
+Animation run when hiding calendar shown for Date cell.<br />
+Animation <b>HideCalendarUp</b> sets animation for calendar shown above the cell.<br />
+
+<!-- CalendarDaysFrom -->
+<a name="AnimationsCalendarDaysFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>CalendarDaysFrom</h4> <s>["..."]</s>
+</div>
+Animation run before switching to days (the first) page in calendar dialog.<br />
+
+<!-- CalendarDaysTo -->
+<a name="AnimationsCalendarDaysTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>CalendarDaysTo</h4> <s>["..."]</s>
+</div>
+Animation run after switching to days (the first) page in calendar dialog.<br />
+
+<!-- CalendarMonthsFrom -->
+<a name="AnimationsCalendarMonthsFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>CalendarMonthsFrom</h4> <s>["..."]</s>
+</div>
+Animation run before switching to months (the second) page in calendar dialog.<br />
+
+<!-- CalendarMonthsTo -->
+<a name="AnimationsCalendarMonthsTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>CalendarMonthsTo</h4> <s>["..."]</s>
+</div>
+Animation run after switching to months (the second) page in calendar dialog.<br />
+
+<!-- CalendarMonthFrom -->
+<a name="AnimationsCalendarMonthFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>CalendarMonthFrom</h4> <s>["..."]</s>
+</div>
+Animation run before switching to the next or previous month in the days (the first) page in calendar dialog.<br />
+
+<!-- CalendarMonthTo -->
+<a name="AnimationsCalendarMonthTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>CalendarMonthTo</h4> <s>["..."]</s>
+</div>
+Animation run after switching to the next or previous month in the days (the first) page in calendar dialog.<br />
+
+<!-- CalendarYearFrom -->
+<a name="AnimationsCalendarYearFrom"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>CalendarYearFrom</h4> <s>["..."]</s>
+</div>
+Animation run before switching to the next or previous years in the months (the second) page in calendar dialog. It animates the whole dialog!<br />
+
+<!-- CalendarYearTo -->
+<a name="AnimationsCalendarYearTo"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Animations></b> <i></i>
+   <h4>CalendarYearTo</h4> <s>["..."]</s>
+</div>
+Animation run after switching to the next or previous years in the months (the second) page in calendar dialog. It animates the whole dialog!<br />
+
+</div>
+</body>	
+</html>

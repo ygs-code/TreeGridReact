@@ -1,0 +1,281 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Grid size and scroll</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Media rules - responsive design</h1>
+<p>TreeGrid documentation</p>
+
+TreeGrid can apply different attributes for different screen sizes or other settings like style, like CSS @media rule.<br />
+It is possible to show / hide particular rows, columns or space cells. Change column width or height. Or change any other configuration attributes, especially for grid size.<br />
+It is <u>not</u> possible to change row or column order. It is <u>not</u> possible to add new or remove existing rows or columns.<br />
+It is possible to change default rows attributes, but it is <u>not</u> possible to change default columns attributes.<br />
+<i>The items changed by Media should <u>not</u> be saved to / loaded from cookies.</i> The loaded configuration for these items is overwritten by original values.<br />
+<br />
+<b><i>Example:</i></b>
+<pre>
+&lt;Media>
+   &lt;M MaxWidth="1024">
+      &lt;Cols>
+         &lt;C Name="A" Visible="0"/> &lt;C Name="B" Width="50"/>
+      &lt;/Cols>
+      &lt;Rows>
+         &lt;I id="Toolbar" Visible="0"/>
+      &lt;/Rows>
+      &lt;Cfg NoHScroll="1"/>
+      &lt;Lang>
+         &lt;MenuCfg Caption="Small caption"/>
+      &lt;/Lang>
+   &lt;/M>
+   &lt;M MaxHeight="800">
+      &lt;Rows>
+         &lt;I id="Filter" Visible="0"/> &lt;I id="Header" Visible="0"/>
+      &lt;/Rows>
+   &lt;/M>
+&lt;/Media>
+</pre>
+
+<!-- <M> -->
+<a name="MediaM"></a>
+<div class="XML">
+   <u>new <b>12.1</b> <i>upd <b>13.0</b></i></u> <b>&lt;Media></b> <i></i>
+   <h4>&lt;M></h4> <s></s>
+</div>
+&lt;M> tag defines individual one media settings.<br />
+It can be placed in root &lt;Media> tag.<br />
+It contains its specific attributes to determine if the rule will be applied or not like MaxWidth or MinHeight.<br />
+If there is no such attribute, the media rule is applied always.<br />
+If more media &lt;M> tags fulfill actual conditions, they are applied in the order they are defined.<br />
+<br />
+The &lt;M> tag can contain only these sub tags to set their attributes to grid:<br />
+<b>&lt;Cols></b> - contains individual columns as <b>&lt;C></b> tags with at least <b>Name</b> attribute to identify the column to change.<br />
+<b>&lt;Rows></b> - contains individual rows as <b>&lt;I></b> tags, including fixed and space rows, with at least <b>id</b> attribute to identify the row to change.<br />
+<b>&lt;Pagers></b> - <i>(since 13.0)</i>contains individual side pagers as <b>&lt;P></b> tags.<br />
+<b>&lt;Def></b> - contains default rows as <b>&lt;D></b> tags with at least <b>Name</b> attribute to identify the default row to change.<br />
+<b>&lt;Lang></b> - contains all Lang sub tags like &lt;Format> or &lt;Text> to change particular language settings.<br />
+<b>&lt;Cfg></b> - contains attribute to change in configuration.<br />
+<b>&lt;MenuCfg></b>, <b>&lt;MenuColumns></b>, <b>&lt;MenuPrint></b>, <b>&lt;MenuExport></b> - contains attributes to change in particular menu.<br />
+<b>&lt;Actions></b> - contains attributes to change in action schema.<br />
+<br />
+<i>Since 13.0</i> it is possible to change columns, defs, pagers and rows with specific attribute value.<br />
+Set the row id or column/def/pager Name as "*Attribute*Value", e.g. &lt;D Name="*Color*Red" Color="Blue" changes all default rows Color attribute from Red to Blue.<br />
+
+<!-- Tag -->
+<a name="MTag"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;M></b> <i>string</i>
+   <h4>Tag</h4> <s></s>
+</div>
+What will be tested against the MaxWidth, MinWidth, Width, MaxHeight, MinHeight, Height attributes.<br />
+If set to <i>empty string</i> (default), tests actual viewport (window.innerWidth, window.innerHeight).<br />
+If set to <b>1</b>, tests grid main tag clientWidth / clientHeight. <br />
+If set to <i>id</i> of some HTML tag on page, it tests this tag clientWidth / clientHeight. <br />
+<i>If set, the tag size must <u>not</u> be affected by grid size or the grid size must <u>not</u> be affected by the media changes.</i><br />
+
+<!-- MediaTag -->
+<a name="CfgMediaTag"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>MediaTag</h4> <s>[""]</s>
+</div>
+Default value used for all Media <a href="MTag">Tags</a>.
+
+<!-- Media -->
+<a name="MMedia"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;M></b> <i>string</i>
+   <h4>Media</h4> <s></s>
+</div>
+The &lt;M> rule will be applied only on given media device. Case insensitive keyword. If not set, the rule is used for all devices.<br />
+<b>Screen</b> - screen device, both desktop and tablets.<br />
+<b>Desktop</b> - screen device, controlled primarily, but not only, by mouse and keyboard.<br />
+<b>Tablet</b> - touchscreen device, controlled primarily by fingers.<br />
+<b>Print</b> - printer device or print to PDF. <i>Ignores all &lt;M> size attributes like MaxWidth.</i><br />
+<b>Export</b> - export to Xlsx/Xls/Csv. <i>Ignores all &lt;M> size attributes like MaxWidth.</i><br />
+
+<!-- MaxWidth -->
+<a name="MMaxWidth"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;M></b> <i>int</i>
+   <h4>MaxWidth</h4> <s></s>
+</div>
+The &lt;M> rule will be applied only if the browser window width is less or equal to given value in pixels.<br />
+
+<!-- MinWidth -->
+<a name="MMinWidth"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;M></b> <i>int</i>
+   <h4>MinWidth</h4> <s></s>
+</div>
+The &lt;M> rule will be applied only if the browser window width is greater or equal to given value in pixels.<br />
+
+<!-- Width -->
+<a name="MWidth"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;M></b> <i>int</i>
+   <h4>Width</h4> <s></s>
+</div>
+The &lt;M> rule will be applied only if the browser window width is equal to given value in pixels.<br />
+
+<!-- MaxHeight -->
+<a name="MMaxHeight"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;M></b> <i>int</i>
+   <h4>MaxHeight</h4> <s></s>
+</div>
+The &lt;M> rule will be applied only if the browser window height is less or equal to given value in pixels.<br />
+
+<!-- MinHeight -->
+<a name="MMinHeight"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;M></b> <i>int</i>
+   <h4>MinHeight</h4> <s></s>
+</div>
+The &lt;M> rule will be applied only if the browser window height is greater or equal to given value in pixels.<br />
+
+<!-- Height -->
+<a name="MHeight"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;M></b> <i>int</i>
+   <h4>Height</h4> <s></s>
+</div>
+The &lt;M> rule will be applied only if the browser window height is equal to given value in pixels.<br />
+
+<!-- Language -->
+<a name="MLanguage"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;M></b> <i>string[]</i>
+   <h4>Language</h4> <s></s>
+</div>
+The &lt;M> rule will be applied only if the grid has given language. 
+It can be comma separated list of language codes to be applied for any of them, if the &lt;Cfg Language> contains the code.<br />
+
+<!-- Style -->
+<a name="MStyle"></a>
+<div class="XML">
+   <u>new <b>12.1</b> <i>upd <b>13.0</b></i></u> <b>&lt;M></b> <i>string[]</i>
+   <h4>Style</h4> <s></s>
+</div>
+The &lt;M> rule will be applied only if the grid has given style. The Style is &lt;Cfg <a href="CellStyle.htm#CfgStyle">Style</a>> as style prefix like "TS" or "TW".<br />
+<i>Since 13.0</i> it can be comma separated list of styles to apply the media for all of them.<br />
+<i>Media are <u>not</u> applied recursively, it is not possible one media to change grid style and other media to test style and change something else.</i>
+
+<!-- GanttStyle -->
+<a name="MGanttStyle"></a>
+<div class="XML">
+   <u>new <b>13.0</b></i></u> <b>&lt;M></b> <i>string[]</i>
+   <h4>GanttStyle</h4> <s></s>
+</div>
+The &lt;M> rule will be applied only if the grid has given Gantt style. The Style is &lt;Cfg <a href="CellStyle.htm#CfgGanttStyle">GanttStyle</a>> as style prefix like "GW" or "GS".<br />
+It can be comma separated list of styles to apply the media for all of them.<br />
+<i>Media are <u>not</u> applied recursively, it is not possible one media to change grid style and other media to test style and change something else.</i>
+
+<!-- Size -->
+<a name="MSize"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;M></b> <i>string[]</i>
+   <h4>Size</h4> <s></s>
+</div>
+The &lt;M> rule will be applied only if the grid has given style size. 
+The Size is the first item / class in &lt;Cfg <a href="CellStyle.htm#CfgSize">Size</a>> like "Low" or "Small". <i>It is not the whole Size item!</i><br />
+It can be comma separated list of items / classes to be applied for all of them, if the &lt;Cfg Size> starts by any of them.<br />
+
+<!-- Rtl -->
+<a name="MRtl"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;M></b> <i>bool</i>
+   <h4>Rtl</h4> <s></s>
+</div>
+The &lt;M> rule will be applied only if the grid is in rtl mode (for Rtl=1) or is not in rtl mode (for Rtl=0).<br />
+
+<!-- Name -->
+<a name="MName"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;M></b> <i>string</i>
+   <h4>Name</h4> <s></s>
+</div>
+Name of the &lt;M> tag to be referred by other &lt;M> tag by <a href="MDef">Def</a> attribute. <br />
+If the &lt;M> tag contains only Name attribute, it is never applied directly, it is applied only via other media that refer it by Def attribute.<br />
+
+<!-- Def -->
+<a name="MDef"></a> <a name="MDefault"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;M></b> <i>string</i>
+   <h4>Def</h4> <s></s>
+</div>
+Comma separated list of <a href="MName">Name</a> attributes of other &lt;M> tags.<br />
+This &lt;M> tag reads all its not defined attributes from the referred &lt;M> tags. To simply share the same definitions among more &lt;M> tags.<br />
+In JSON definition it can be named also as <b>Default</b>, to not collide with &lt;Def> definition, if both need to be defined.<br />
+
+<!-- MediaChange -->
+<a name="CfgMediaChange"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MediaChange</h4> <s>[1]</s>
+</div>
+What action will be done if window size is changed when grid is already rendered and some media changed some attribute.<br />
+<b>0</b> - nothing will be done, media are applied only on grid load.<br />
+<b>1</b> - grid will be re-rendered after every change done by media.<br />
+<b>2</b> - grid layout will be updated after every change done by media. Use if media changes only grid size attributes like MaxHeight or NoHScroll.<br />
+<i>It is ignored if some media changed &lt;Cfg Style/>.</i><br />
+
+<!-- OnMediaInit -->
+<a name="OnMediaInit"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnMediaInit</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object</i> <b>Media</b>)</s>
+</div>
+Called before default media is created from loaded values. 
+The default media is used to restore original values after media change.<br />
+<b>Media</b> is parsed &lt;Media> tag. This event is called before OnLoaded.<br />
+
+<!-- OnMediaApply -->
+<a name="OnMediaApply"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnMediaApply</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>bool</i> <b>start</b>)</s>
+</div>
+Called before media are applied to grid. Return true to cancel the action.<br />
+<b>start</b> is true when the change is applied first time on grid load.<br />
+
+<!-- OnMediaApplied -->
+<a name="OnMediaApplied"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnMediaApplied</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>bool</i> <b>changed</b>, <i>bool</i> <b>start</b>)</s>
+</div>
+Called after media are applied to grid, but before the grid is re-rendered. Return true to not re-render the grid.<br />
+<b>changed</b> is set if some media changed some grid attribute.<br />
+<b>start</b> is true when the change is applied first time on grid load. In this case the return value is ignored.<br />
+
+<!-- ApplyMedia -->
+<a name="ApplyMedia"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>ApplyMedia</h4>
+   <s>( )</s>
+</div>
+Applies media changes for actual state. Returns true if something was changed.<br />
+It calls OnMediaApply and OnMediaApplied.<br />
+
+<!-- Media -->
+<a name="Media"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API variable</b> <i>object[]</i>
+   <h4>Media</h4>
+   <s></s>
+</div>
+Array of all media rules in grid.<br />
+The individual objects contain properties like Cols, Rows, Cfg, ... with the individual settings.<br />
+And its property <b>Attrs</b> contains the &lt;M> attributes like MaxWidth.<br />
+
+</div>
+</body>	
+</html>

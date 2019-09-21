@@ -1,0 +1,371 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Gantt icons</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Gantt icons Flag & Point</h1>
+<p>TreeGrid documentation</p>
+Movable, but not resizable Gantt objects, without dependencies.<br />
+
+<!-----------------------------------------------------------------------  Flag ------------------------------------------------->
+<a name="Flag"></a>
+<h2>Flag</h2>
+<p class="H2"><b>Information for date(s)</b> - <i>one or more different icons, text boxes or both</i></p>
+
+Defined by <a href="#CGanttFlags">GanttFlags</a> (date ranges) and <a href="#CGanttFlagTexts">GanttFlagTexts</a> (texts for individual flags, displayed as text box or tooltip).<br />
+
+<!-- GanttFlags -->
+<a name="CGanttFlags"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttFlags</h4> <s>Gantt source - column name or exact value</s>
+</div>
+A list of dates (separated by semicolon) where to display a flag with information specified by <a href="#CGanttFlagTexts">GanttFlagTexts</a>.<br />
+It can be column name, a list of date string (M/d/yyyy hh:mm:ss) or a list of counts of milliseconds.<br />
+If it is  column name, the column must be <tt><b>Type='Date' Range='1'</b></tt>.<br /> 
+
+<!-- GanttFlagsType -->
+<a name="CGanttFlagsType"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttFlagsType</h4> <s>[1]</s>
+</div>
+<b>0</b> - Reserved<br />
+<b>1</b> - The flag will be shown as icon. As default icon or icon defined in <a href="#CGanttFlagIcons">GanttFlagIcons</a>. The <a href="#CGanttFlagTexts">GanttFlagTexts</a> will be shown as tooltip on mouse over.<br />
+<b>2</b> - The flag will be shown as text defined in <a href="#CGanttFlagTexts">GanttFlagTexts</a>.<br />
+<b>3</b> - The flag will be shown as icon and text (right next to the icon) defined in <a href="#CGanttFlagTexts">GanttFlagTexts</a>.<br /> 
+
+<!-- GanttFlagTexts -->
+<a name="CGanttFlagTexts"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttFlagTexts</h4> <s>Gantt source - column name or exact value</s>
+</div>
+A list of information for the individual flags. Separated by semicolon or by <a href="#CGanttTextsSeparator">GanttTextsSeparator</a>.<br /> 
+This information is shown as text right to the icon or as hint (TITLE) for the flag, according to the <a href="#CGanttFlagsType">GanttFlagsType</a> setting.<br /> 
+It can be column name or a list of strings.<br />
+
+<!-- GanttFlagIcons -->
+<a name="CGanttFlagIcons"></a>
+<div class="XML">
+   <u>new <b>6.1</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttFlagIcons</h4> <s>Gantt source - column name or exact value</s>
+</div>
+A list of icons for the individual flags. Separated by semicolon. The icon is the exact url of the icon.<br />
+The icon can be empty to show default Flag icon.<br />
+The icon can be '-' (minus) to not show any icon, only the text (only for <tt><a href="#CGanttFlagsType">GanttFlagsType</a>=3</tt>).<br />
+Hover icons can be set by <a href="GanttObjects.htm#CGanttHoverIcons">GanttHoverIcons</a>.<br />
+
+<!-- GanttFlagClasses -->
+<a name="CGanttFlagClasses"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttFlagClasses</h4> <s>Gantt source - column name or exact value</s>
+</div>
+A list of CSS classes for the individual flag texts defined in <a href="#CGanttFlagTexts">GanttFlagTexts</a>. Separated by semicolon. The value is exact CSS class name.<br />
+
+<!-- GanttFlagIconList -->
+<a name="CGanttFlagIconList"></a>
+<div class="XML">
+   <u>new <b>6.1</b></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>GanttFlagIconList</h4> <s></s>
+</div>
+A list of predefined icons. The icon is the exact url of the icon. First character separated array.<br />
+This list is shown in popup menu to choose the flag icon.<br />
+
+<!-- GanttFlagClassList -->
+<a name="CGanttFlagClassList"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>GanttFlagClassList</h4> <s></s>
+</div>
+A list of predefined CSS classes. The value is the exact CSS class. First character separated array.<br />
+
+<!-- GanttFlagIconNames -->
+<a name="CGanttFlagIconNames"></a>
+<div class="XML">
+   <u>new <b>6.1</b> <i>upd <b>9.3</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>GanttFlagIconNames</h4> <s></s>
+</div>
+It contains menu item names for the GanttFlagIconList. First character separated array.<br />
+The item name can contain:<br /> 
+<div class="L1">
+   <b>%1</b> to be replaced by the icon from IconList (in &lt;span>&lt;/span> tag)<br />
+   <b>%2</b> to be replaced by the CSS class from ClassList (open <span> tag) and <b>%3</b> as close </span> tag)<br />
+</div>
+If not defined, the exact icon is shown as the item and short tag with CSS class.<br />
+
+<!-- GanttFlagsTip -->
+<a name="CGanttFlagsTip"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttFlagsTip</h4> <s></s>
+</div>
+Tip shown on mouse hover the flag. It can contain HTML code.<br />
+By default it shows the value for the flag from <a href="#CGanttFlagTexts">GanttFlagTexts</a>.<br />
+It can also show values from other cells in row, set by <b>*col*</b> where col is the column name.<br />
+It can show also the specials: <b>*Text*</b> - show the <a href="#CGanttFlagTexts">GanttFlagTexts</a>, <b>*Start*</b> - date of the flag, <b>*Index*</b> - the flag index (from 1)<br />
+Example: "*Index*. *Start*&lt;br>*Text*"<br />
+To dynamically generate the tip text use <a href="GanttAPI.htm#OnGanttTip">OnGanttTip</a> API event.<br />
+
+<!-- GanttFlagsTop -->
+<a name="CGanttFlagsTop"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttFlagsTop</h4> <s></s>
+</div>
+Vertical position of all flags in the cell, in pixels.<br />
+
+<!-- GanttFlagsMove -->
+<a name="CGanttFlagsMove"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttFlagsMove</h4> <s>[1]</s>
+</div>
+If and how the flags can be moved<br />
+<b>0</b> - no, <b>1</b> - inside row, <b>2</b> - also between rows<br />
+<i>The dragging can be more controlled by API <a href="GanttAPI.htm#OnDragGantt">OnDragGantt</a> event.</i><br />
+
+<!-- GanttTextsSeparator -->
+<a name="CGanttTextsSeparator"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttTextsSeparator</h4> <s></s>
+</div>
+If set, it is used instead of Lang.Format.ValueSeparator to separate texts in GanttFlagTexts and GanttMarkTexts.
+
+<!-- GanttCenter -->
+<a name="CGanttCenter"></a>
+<div class="XML">
+   <u>new <b>13.2</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttCenter</h4> <s>[2]</s>
+</div>
+If and how the Flags, Points and main bar milestones will be centered.<br />
+<b>0</b> - no, left side of the icon is placed to the exact date, 
+<b>1</b> - yes, center of the icon is placed to the exact date, 
+<b>2</b> - yes, center of the unit is placed to center of the GanttUnits unit.<br />
+<i>It is not used in GanttUnits months and years.</i><br />
+
+
+<!-- OnGanttFlagMove -->
+<a name="OnGanttFlagMove"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnGanttFlagMove</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>index</b>, <i>int</i> <b>date</b>, <i>TGrid</i> <b>togrid</b>, <i>TRow</i> <b>torow</b>, <i>string</i> <b>tocol</b>, <i>int</i> <b>toindex</b>, <i>int</i> <b>todate</b>)</s>
+</div>
+Called befor flag moved to another row. Called instead OnGanttChange. Return true to cancel the action.<br />
+<i>When flag moved inside the same row, there is called only <tt><a href="GanttAPI.htm#OnGanttChange">OnGanttChange</a>(grid,row,col,"Flags",newval,null,oldval,null,"Move")</tt> where newval/oldval are the values of GanttFlags cell.</i><br /> 
+<b>grid</b>, <b>row</b>, <b>col</b> is source cell, <b>togrid</b>, <b>torow</b>, <b>tocol</b> is destination cell. Now the grid is always equal to togrid, but it can be changed in future.<br />
+<b>index</b> is position in source GanttFlags array. <b>toindex</b> is position in destination GanttFlags array (it is equal to length of destination GanttFlags array).<br />
+<b>date</b> is an original start date of the flag, in count of millisencods, the <b>todate</b> is a new start date.<br />
+
+<!-- OnGanttFlagMoved -->
+<a name="OnGanttFlagMoved"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API event</b> <i>void</i>
+   <h4>OnGanttFlagMoved</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>index</b>, <i>int</i> <b>date</b>, <i>TGrid</i> <b>togrid</b>, <i>TRow</i> <b>torow</b>, <i>string</i> <b>tocol</b>, <i>int</i> <b>toindex</b>, <i>int</i> <b>todate</b>)</s>
+</div>
+Called after flag moved to another row. Called instead OnGanttChanged.<br />
+<i>When flag moved inside the same row, there is called only <a href="GanttAPI.htm#OnGanttChange">OnGanttChange</a>(grid,row,col,"Flags",newval,null,oldval,null,"Move") where newval/oldval are the values of GanttFlags cell</i><br /> 
+Parameters are the same as <a href="#OnGanttFlagMove">OnGanttFlagMove</a>.<br />
+
+<!-- OnGetGanttFlagText -->
+<a name="OnGetGanttFlagText"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetGanttFlagText</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>index</b>, <i>string</i> <b>text</b>)</s>
+</div>
+Called to get the flag text HTML content to render it. It can return any HTML code or text.<br />
+<b>index</b> is the Flag index inside the Flags, <b>text</b> is original text to.<br />
+Called only if <a href="#CGanttFlagsType">GanttFlagsType</a> is <b>2</b> or <b>3</b>.<br />
+
+<!-- OnGetGanttFlagIcon -->
+<a name="OnGetGanttFlagIcon"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetGanttFlagIcon</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>index</b>, <i>string</i> <b>icon</b>)</s>
+</div>
+Called to get the flag icon. It can return exact url of the icon.<br />
+<b>index</b> is the Flag index inside the Flags, <b>icon</b> is original icon url.<br />
+Called only if <a href="#CGanttFlagsType">GanttFlagsType</a> is <b>1</b> or <b>3</b>.<br />
+
+<!-- OnGetGanttFlagIconHover -->
+<a name="OnGetGanttFlagIconHover"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetGanttFlagIconHover</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>index</b>, <i>string</i> <b>icon</b>)</s>
+</div>
+Called to get the flag icon displayed under mouse cursor. It can return exact url of the icon.<br />
+<b>index</b> is the Flag index inside the Flags, <b>icon</b> is original icon url.<br />
+Called only if <a href="#CGanttFlagsType">GanttFlagsType</a> is <b>1</b> or <b>3</b>.<br />
+
+<!-- Action MoveGanttFlag -->
+<a name="ActionsMoveGanttFlag"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>MoveGanttFlag</h4>
+   <s>Attached to <b>OnDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+Moves flag by mouse dragging.<br />
+Fails, if mouse is not above flag or the flag cannot be moved.<br />
+
+<!-- Action NewGanttFlag -->
+<a name="ActionsNewGanttFlag"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>NewGanttFlag</h4>
+   <s>Attached to <b>OnDblClickGantt</b> event</s>
+</div>
+Adds new flag on mouse position and lets a user edit its text.<br />
+
+<!-- Action DeleteGanttFlag -->
+<a name="ActionsDeleteGanttFlag"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttFlag</h4>
+   <s>Attached to <b>OnDblClickGantt</b> event</s>
+</div>
+Deletes one flag under mouse cursor.<br />
+It fails if there is no flag under mouse cursor.<br />
+
+<!-- Action EditGanttFlag -->
+<a name="ActionsEditGanttFlag"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>EditGanttFlag</h4>
+   <s>Attached to <b>OnDblClickGantt</b> event</s>
+</div>
+Lets a user to edit text of flag under mouse cursor.<br />
+It fails if there is not flag under mouse cursor.<br />
+
+<!-- Action ChooseGanttFlagIcon -->
+<a name="ActionsChooseGanttFlagIcon"></a>
+<div class="ACT">
+   <u>new <b>6.1</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseGanttFlagIcon</h4>
+   <s>Not attached to any event</s>
+</div>
+Lets a user to choose icon and / or class of the flag under mouse cursor.<br /> 
+The possible icons and classes are defined by <a href="#CGanttFlagIconList">GanttFlagIconList</a>, <a href="#CGanttFlagClassList">GanttFlagClassList</a> and <a href="#CGanttFlagIconNames">GanttFlagIconNames</a>.<br />
+
+<!-----------------------------------------------------------------------  Point ------------------------------------------------->
+<a name="Point"></a>
+<h2>Point</h2>
+<p class="H2"><b>Point at date(s)</b> - <i>one or more different movable bullets</i></p>
+
+<!-- GanttPoints -->
+<a name="CGanttPoints"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttPoints</h4> <s>Gantt source - column name or exact value</s>
+</div>
+The GanttPoints can be defined by four ways:<br />
+- Comma separated list of column names where are the individual values stored, for example <tt><b>GGanttPoints</b>='A,B,C' <b>A</b>='1/1/2000' <b>B</b>='2/1/2000' <b>C</b>='4/2/2000'</tt> (columns A,B,C must be <tt><b>Type</b>=<b>'Date'</b></tt>)<br />
+- Column name where are the column names stored, for example <tt><b>GGanttPoints</b>='X' <b>X</b>='A,B,C' <b>A</b>='1/1/2000' <b>B</b>='2/1/2000' <b>C</b>='4/2/2000'</tt> (columns A,B,C must be <tt><b>Type</b>=<b>'Date'</b></tt>)<br />
+- Direct list of values, comma or semicolon separated, it is <i><u>not</u> changeable</i>, for example <tt><b>GGanttPoints</b>='1/1/2000;2/1/2000;4/2/2000'</tt><br />
+- Column name where are the direct values stored, for example <tt><b>GGanttPoints</b>='X' <b>X</b>='1/1/2000;2/1/2000;4/2/2000'</tt> (column X must be  <tt><b>Type</b>=<b>'Date' Range</b>=<b>'1'</b></tt>)<br />
+<i>Only the last definition supports checking exclude and constraints when editing the source cell.</i><br />
+
+<!-- GanttPointsIcons -->
+<a name="CGanttPointsIcons"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttPointsIcons</h4> <s>Gantt source - column name or exact value</s>
+</div>
+A list of icons for the individual points, in the same order. Separated by comma or semicolon. The icon is the exact url of the icon.<br />
+It can be also one of predefined classes 1 - 8, defined in Grid.css as GxGanttPoint1 - GxGanttPoint8:<br />
+<b>1</b> - black, <b>2</b> - red, <b>3</b> - blue, <b>4</b> - green, <b>5</b> - pink, <b>6</b> - yellow, <b>7</b> - light blue, <b>8</b> - gray<br />
+For example <tt>GanttPointsIcons="1;4;Red.gif;Green.gif;6;Blue.gif"</tt><br />
+Hover icons can be set by <a href="GanttObjects.htm#CGanttHoverIcons">GanttHoverIcons</a>.<br />
+
+<!-- GanttPointsEdit -->
+<a name="CGanttPointsEdit"></a>
+<div class="XML">
+   <u>new <b>6.4</b><i> upd <b>7.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>GanttPointsEdit</h4> <s></s>
+</div>
+If the individual points can be changed by a user. Comma separated list of 0/1/2 values.<br />
+<b>0</b> - not editable, <b>1</b> fully editable, <b>2</b> <i>(since 7.0)</i> can move, but cannot delete<br />
+
+<!-- GanttPointsTip -->
+<a name="CGanttPointsTip"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttPointsTip</h4> <s></s>
+</div>
+Tip shown on mouse hover the point. It can contain HTML code.<br />
+It can also show values from other cells in row, set by <b>*col*</b> where col is the column name.<br />
+It can show also the specials: <b>*Start*</b> - date of the point, <b>*Index*</b> - the point index (from 1), <b>*Col*</b> - name of the column where the point value is stored<br />
+Example: <tt>"*Col* = *Start*"</tt><br />
+To dynamically generate the tip text use <a href="GanttAPI.htm#OnGanttTip">OnGanttTip</a> API event.<br />
+
+<!-- GanttPointsTop -->
+<a name="CGanttPointsTop"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttPointsTop</h4> <s></s>
+</div>
+Vertical position of all points in the cell, in pixels.<br />
+
+<!-- GanttCenter -->
+<a name="CGanttCenter"></a>
+<div class="XML">
+   <u>new <b>13.2</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttCenter</h4> <s>[1]</s>
+</div>
+If and how the Flags, Points and main bar milestones will be centered.<br />
+<b>0</b> - no, left side of the icon is placed to the exact date, 
+<b>1</b> - yes, center of the icon is placed to the exact date, 
+<b>2</b> - yes, center of the unit is placed to center of the GanttUnits unit.<br />
+
+<!-- GanttPointsShift -->
+<a name="CGanttPointsShift"></a>
+<div class="DEL">
+   <u>new <b>6.4</b> deleted <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttPointsShift</h4> <s>[3]</s>
+</div>
+Replaced by <a href="GanttObjects.htm#CGanttShift">GanttShift</a>.<br />
+Minimal distance between adjacent points.<br /> 
+If points are on the same place, the next will be shifted right for this value.<br />
+
+<!-- Action MoveGanttPoint -->
+<a name="ActionsMoveGanttPoint"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>MoveGanttPoint</h4>
+   <s>Attached to <b>OnDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+Moves point by mouse dragging.<br />
+Fails, if mouse is not above point or the point cannot be moved.<br />
+
+<!-- Action NewGanttPoint -->
+<a name="ActionsNewGanttPoint"></a>
+<div class="ACT">
+   <u>new <b>6.4</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NewGanttPoint</h4>
+   <s>Attached to <b>OnDblClickGantt</b> event</s>
+</div>
+Adds new point on mouse position.<br />
+
+<!-- Action DeleteGanttPoint -->
+<a name="ActionsDeleteGanttPoint"></a>
+<div class="ACT">
+   <u>new <b>6.4</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttPoint</h4>
+   <s>Attached to <b>OnCtrlClickGantt</b> event</s>
+</div>
+Deletes the point under mouse cursor.<br />
+It fails if there is no point under mouse cursor.<br />
+
+</div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<Grid>
+   <Cfg id='CalcOrder' NoVScroll="1" NoHScroll="1"/>
+   <Cols>
+      <C Name='X' Type='Int'/>
+      <C Name='Y' Type='Int'/>
+      <C Name='A' Type='Int' Formula='X*X+Y*Y'/>
+      <C Name='B' Type='Int' Formula='X*X-Y*Y'/>
+		<C Name='R' Type='Float' Formula='B?A/B:0' Format='0.00'/>
+   </Cols>
+   <Def> 
+   	<D Name='R' CalcOrder='A,B,R'/>
+   </Def>
+   <Header A='A=X&#xb2;+Y&#xb2;' B='B=X&#xb2;-Y&#xb2;' R='R=A/B' SortIcons='2'/>
+   <Body>
+      <B>
+         <I X='10' Y='1'/>
+         <I X='3' Y='4'/>
+         <I X='12' Y='8' />
+         <I X='7' Y='-8'/>
+      </B>
+   </Body>
+   <Foot>
+      <I CanEdit='0' CanFocus='0' X='sum()' XType='Text' Y='sum()' YType='Text' A='X&#xb2; + Y&#xb2;' AFormula='' AType='Text' B='X&#xb2; - Y&#xb2;' BFormula='' BType='Text' R='A / B' RFormula='' RType='Text'/>
+      <I Calculated='1' XFormula='sum()' YFormula='sum()' CalcOrder='X,Y,A,B,R'/>
+   </Foot>
+</Grid>

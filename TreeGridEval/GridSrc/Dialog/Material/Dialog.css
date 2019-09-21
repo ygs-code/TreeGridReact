@@ -1,0 +1,968 @@
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*        TreeGrid CSS style for dialogs, menus, messages, inline edit, debug print, line chart and animations                   */
+/*                                                          Standard style                                                       */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+
+/* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/*                                                  1) BASE DEFINITONS FOR CUSTOMIZATION                                         */
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+
+/*
+   For easy customization. Contains particular attributes of CSS classes. All theses CSS classes are fully defined in section 3) ALL GRID DEFINITIONS
+*/
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                      Fonts and text line heights                                              */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* Note, font-size and line-height are set for all tags and are not inherited */
+
+@font-face { font-family:'RobotoRegular'; src:url('Roboto-Regular.ttf') format('truetype') }
+@font-face { font-family:'RobotoRegular'; font-weight:bold; src:url('Roboto-Bold.ttf') format('truetype'); }
+
+/* Base grid font */
+.TMMain { font-family:RobotoRegular,sans-serif; font-style:normal; font-weight:normal; font-variant:normal; }
+.TMMain * { font-family:inherit; font-style:inherit; font-weight:inherit; font-variant:inherit; text-overflow:ellipsis; word-wrap:normal; }
+
+.TMMain,.TMMain * { font-size:13px; line-height:16px; }
+.TMWide,.TMWide * { font-size:16px; line-height:20px; }
+.TMGiant,.TMGiant * { font-size:20px; line-height:24px; }
+
+/* Font used for headers - grid header (TMCellHeader), index (TMCellIndex), menu header (TMMenuHead), calendar header (TMPickMY), pager caption (TMPagerHeader) */
+.TMHeaderFont { }
+
+/* All the predefined above fonts inherited children */
+.TMMessage *,.TMMenuItemText *,.TMMenuControl *,.TMPickCell *,.TMPick2CellM *,.TMPick2CellY *,.TMDialogButton * { font-size:inherit; line-height:inherit; }
+
+/* Font used for grid informational or progress message */
+.TMMessage { font-size:inherit; }
+
+/* Font used for all grid menus */
+.TMMenuItemText { font-size:inherit; line-height:22px; }
+.TMHigh .TMMenuItemText { line-height:26px; }
+.TMBig .TMMenuItemText { line-height:34px; }
+.TMSmall .TMMenuItemText { line-height:19px; }
+
+/* Font used for Enum and Edit in menu items */
+.TMMenuControl { font-size:inherit; line-height:18px;  }
+.TMWide .TMMenuControl { line-height:20px; }
+.TMHigh .TMMenuControl { line-height:22px; }
+.TMBig .TMMenuControl { line-height:30px; }
+.TMSmall .TMMenuControl { line-height:16px; }
+
+/* Font used for calendar cell */
+.TMPickCell,.TMPick2CellM,.TMPick2CellY { font-size:inherit; line-height:inherit; }
+
+/* Font for buttons in messages and dialogs */
+.TMDialogButton { font-size:inherit; line-height:inherit; }
+
+/* Predefines highlight tags */
+.TMMain b,.TMMain .GridBold { color:#2196F3; font-weight:bold; }
+.TMMain i,.TMMain .GridBlue { color:#2196F3; font-style:normal; }
+.TMMain em,.TMMain .GridRed { color:#EA4647; font-style:normal; }
+.TMMain em>b,.TMMain .GridRed .GridBold { color:#EA4647; }
+.TMMain s,.TMMain .GridGray { color:#999; text-decoration:none; }
+.TMMain s>b,.TMMain .GridGray .GridBold,.TMMain s>i,.TMMain .GridGray .GridBlue { color:#999; }
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                           Major colors, backgrounds and borders                                               */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* Base text color of all texts in grid */
+.TMMain { color:#7F7F7F; }
+.TMMain * { color:inherit; }
+
+/* -------------------------------------------- Menus, dialogs and messages -------------------------------------------- */
+
+/* Dialog buttons */
+.TMDialogButton { background:white; border:1px solid #6B6B6B; border-radius:3px; }
+.TMDialogButtonOk,.TMDialogButtonYes { background:#2196F3; border:1px solid #2196F3; color:white; }
+.TMDialogButton:active { background:#E2E2E2; }
+.TMDialogButtonHover { color:black; }
+.TMDialogButtonOkHover,.TMDialogButtonYesHover { color:yellow; }
+.TMDialogButtonOk:active,.TMDialogButtonYes:active { background:#0176C3; border:1px solid #0176C3; }
+
+/* Popup menu */
+.TMMenuMain { box-shadow:0px 0px 10px -2px #AAA; }
+.TMMenuHead { color:#3A95D5; font-weight:bold; border-bottom:1px solid #E2E2E2; }          /* Header */
+.TMMenuHorzOuter .TMMenuHead { border-bottom:0px none; border-right:1px solid #E2E2E2; }   /* Header */
+.TMMenuOuter { background:white; }                                                         /* Body with all items */
+.TMMenuFoot { background:white; border-top:1px solid #E2E2E2; }                            /* Footer with buttons */
+.TMMenuEdit,.TMMenuEditEdit,.TMMenuEnum { border:1px solid #E2E2E2; background-color:white; border-radius:3px; color:black; } /* Edit and Enum editable cells */
+.TMMenuCaption,.TMMenuLevel { font-weight:bold; text-align:center; }                       /* Caption and Level items in menu */
+.TMMenuSeparator { border-top:1px solid #E2E2E2; }                                         /* Separator between items, shown for menu item with Name:"-" */
+.TMMenuHorz .TMMenuSeparator { background:#E2E2E2; }                                       /* Separator between items, shown for menu item with Name:"-" when shown horizontally */
+.TMMenuVSeparator { border-right:1px solid #E2E2E2; }                                      /* Separator between columns of menu items; in children of menu item width Columns attribute set */
+.TMMenuHover { background:#F4F4F4; }                                                       /* Menu item under mouse cursor */
+.TMMenuFocus { background:#F4F4F4; color:#2196f3; }                                        /* Selected menu item */
+.TMMenuFocus.TMMenuHover { background:#EAEAEA; }                                           /* Selected menu item under mouse cursor */
+.TMMenuHeader { background:white; }                                                        /* Shown outside menu or dialog in place of the source tag, simulating the menu is popped up. For custom JSON menus and dialogs is used when set Header attribute. */
+
+/* Popup calendar */
+.TMPickMY { border-bottom:1px solid #E2E2E2; }                                             /* Header */
+.TMPickTableParent,.TMPick2TableParent {  }                                                /* Body */
+.TMPickFooter,.TMPick2Footer,.TMPickTimeCell { border-top:1px solid #E2E2E2; }             /* Footer with buttons */
+.TMPickRowW { }                                                                            /* Row with day names */
+.TMPickRowW .TMPickCell { padding-top:5px; }                                               /* Cells with day names */
+.TMPickWDN { color:#2196f3; font-weight:bold; }                                            /* Day names */
+.TMPickRowW .TMPickCell:first-child { border-right:1px solid #E2E2E2; }                    /* Top left icon - empty date */
+.TMPickWN,.TMPickWNE { border-right:1px solid #E2E2E2; color:#2196f3; font-weight:bold; } /* Column with week numbers */
+.TMPickOM,.TMPickOMNE { color:#ccc; }                                                      /* Dates in other month */
+.TMPickSa { }                                                                              /* Saturdays */
+.TMPickSu { }                                                                              /* Sundays */
+.TMPickSel,.TMPick2MSel,.TMPick2YSel { background-color:#F4F4F4; color:#2196f3;  }         /* Selected dates */
+.TMPickNow { font-weight:bold; color:black; }                                                           /* Today */
+.TMPickNE { text-decoration:line-through; }                                                /* Not editable date */
+.TMPickHover,.TMPick2MHover,.TMPick2YHover { background-color:#F4F4F4; }                   /* Date under mouse cursor */
+.TMPickSelHover,.TMPick2MSelHover,.TMPick2YSelHover { background-color:#EAEAEA; color:#2196f3; }          /* Selected date under mouse cursor */
+.TMPickCell { }                                                                            /* All cells in calendar */
+.TMPick2CellM,.TMPick2CellY { }                                                            /* All cells in second dialog with months and years */
+.TMPick2Sep { background:#ECECEC; }                                                        /* Separator between months and years in second calendar dialog */
+ 
+/* Message */
+.TMMessage,.TMPageMessage { background:white; box-shadow:0px 0px 10px 0px #AAA; }          /* Border and background of the message */
+.TMMessageButtons,.TMProgressButtons { background:white; }                                 /* Footer with buttons */
+.TMPrompt input { border:1px solid #E2E2E2; border-radius:3px; }                           /* Prompt message input */
+
+/* ---------------------------------------------------- Editing cells  ------------------------------------------------- */
+
+.TMEditInput,.TMEditTextarea { color:black; background-color:transparent; } /* Base editing <input> or <textarea>  */
+.TMEditHeaderInput,.TMMain .TMEditHeaderTextarea { background-color:#2196F3; color:white; }                   /* Editing in Header cell */
+.TMEditReadOnly,.TMEditTextarea.TMEditReadOnly { background-color:#EEE; }   /* Editing in preview mode (Editing=2) */
+.TMEditHeaderInput.TMEditReadOnly,.TMEditHeaderTextarea.TMEditReadOnly { background-color:#2196F3; }  /* Editing in preview mode (Editing=2) in Header cell */
+
+/* ---------------------------------------------------- Other parts ----------------------------------------------------- */
+
+/* Tip. Shown below mouse cursor on mouse hover the cell; Used only if set <Cfg StandardTip='0'/> */
+.TMTipOuter,.TMDragObject { background:white; box-shadow:1px 3px 10px 1px #AAA; }          /* Tag with the tip text */
+
+
+
+
+
+
+
+
+
+
+/* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/*                                                      2) ALL DIALOG DEFINITIONS                                                */
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                     Edit control                                                              */
+/*                                                         TGLib                                                                 */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* --- Edit text in <input> / <textarea> --- */
+
+/* @ Set background and text attributes
+   ...EditInput - set to <input> tag placed into inline edit cursor tag (...EditCellInput)
+   ...EditTextarea - set to <textarea> tag placed into inline edit cursor tag (...EditCellInput) for Lines type
+   ...Normal... is added to <input> / <textarea> for cell in table row, ...Header... is added for cell in Header row, ...Filter... is added for cell in Filter row, ...Space is added for cell in Space row
+   ...Int..., ...Float..., ...Date..., ...Pass... is added for this cell type
+   ...Text... is added for cell type Text, Lines, Link, Img
+   ...ReadOnly is added for preview cell with CanEdit='2'
+*/
+.TMEditInput,.TMEditTextarea { border:0px none; padding:0px 3px 0px 0px; outline:none; box-sizing:content-box; resize:none; }
+.TMEditTextarea { margin:0px; background:white; white-space:pre-wrap; }
+.TMEditWordWrap { word-wrap:break-word; overflow-wrap:break-word; }
+.TMEditInput::-ms-clear { height:13px; }
+.TMEditNormalInput,.TMEditNormalTextarea { }
+.TMEditHeaderInput,.TMEditHeaderTextarea { }
+.TMEditFilterInput,.TMEditFilterTextarea { }
+.TMEditInt,.TMEditFloat,.TMEditDate,.TMEditRight { text-align:right; }
+.TMEditInt::-ms-clear,.TMEditFloat::-ms-clear,.TMEditDate::-ms-clear,.TMEditRight::-ms-clear { display:none; }
+.TMWK .TMEditInt,.TMWK .TMEditFloat,.TMWK .TMEditDate,.TMWK .TMEditRight { margin-left:1px!important; }
+.TMEditText,.TMEditPass { }
+.TMEditTab { text-align:center; font-weight:bold; }
+.TMEditReadOnly { }
+.TMEditHeaderInput.TMEditReadOnly,.TMEditHeaderTextarea.TMEditReadOnly  { }
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                         Message dialogs                                                       */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* Disabled grid, absolute <div> tag shown above grid main tag. The grid is disabled when it shows some message (e.g. "Rendering").
+   ...Hard is used when showing modal message that requires user input
+   Note, for disabled page is used GridDisabled class instead. The whole page is disabled when the grid shows modal dialog (e.g. grid configuration menu).
+   @ Set background and opacity, optionally margin and padding
+*/
+.TMDisabled,.TMDisabledHard { position:absolute; z-index:264; background:white; opacity:0; } 
+.TMDisabledHard { opacity:0.5; } 
+
+/* Grid informational or progress message, absolute <div> tag
+   @ Set border, padding, background and text attributes
+*/
+.TMMessage { white-space:nowrap; text-align:center; visibility:hidden; z-index:266; position:absolute; left:0px; top:0px; padding:20px; min-width:120px; }
+
+/* Shadow <div> tag displayed under grid message tag, on the same position and size 
+   @ Set margin for the shadow shift, background, opacity and border
+*/
+.TMMessageShadow { position:absolute; display:none; }	
+
+/* Page informational message, <div> tag shown inside page being loaded or rendered, instead of the page content
+   @ Set border, padding, background and text attributes
+*/
+.TMPageMessage { padding:20px; }
+
+/* Prompt message input and input parent
+   @ Set border, padding, background and text attributes
+*/
+.TMPrompt { padding-top:30px; padding-bottom:10px; }
+.TMLow .TMPrompt { padding-top:10px; padding-bottom:0px; }
+.TMPrompt input { padding:5px 6px 5px 6px; display:inline-block; box-sizing:border-box; width:200px; }
+.TMWide .TMPrompt input { width:250px; }
+.TMGiant .TMPrompt input { width:300px; }
+.TMLow .TMPrompt input { padding:2px 4px 2px 4px; }
+
+/* Progress message 
+   ...Main is set to inner <div> of the progress message. @ Set text attributes and optionally border, margin, padding and background
+   ...Caption is set to <div> tag showing the progress message caption. @ Set border, margin, padding, background and text attributes
+   ...Text is set to <div> tag showing the progress message text. @ Set border, margin, padding, background and text attributes
+   ...Outer is set to <div> tag showing the gauge container. @ Set border, margin, padding, background and width
+   ...Inner is set to <div> tag showing the gauge indicator. @ Set border, margin, padding, background and height
+*/
+.TMProgressMain { }
+.TMProgressCaption { font-weight:bold; margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid #E2E2E2; }
+.TMLow .TMProgressCaption { margin-bottom:5px; padding-bottom:5px; }
+.TMProgressText { margin-bottom:15px; }
+.TMLow .TMProgressText { margin-bottom:10px; }
+.TMProgressOuter { text-align:left; width:300px; margin:0px 30px 10px 30px; background:#E2E2E2; border-radius:5px; }
+.TMLow .TMProgressOuter { margin:0px 10px 10px 10px; width:200px; }
+.TMProgressInner { height:8px; background:#2196F3; border-radius:5px; }
+
+/* Button in informational or progress message, <button> tag below the message inside the ...Message 
+   ...Hover is added when the <button> tag is under mouse cursor
+   @ Set border, padding, margin, background and text attributes
+*/
+.TMMessageButtons,.TMProgressButtons { margin:10px -20px -20px -20px; padding:15px; }
+.TMLow .TMMessageButtons,.TMLow .TMProgressButtons { padding:5px; }
+.TMProgressButton,.TMMessageButton { padding:4px 5px 4px 5px; margin:1px 4px 1px 4px; text-align:center; white-space:nowrap; overflow:hidden; min-width:70px; }
+.TMHigh .TMProgressButton,.TMHigh .TMMessageButton { padding-top:6px; padding-bottom:5px; }
+.TMBig .TMProgressButton,.TMBig .TMMessageButton { padding-top:8px; padding-bottom:8px; }
+.TMLow .TMProgressButton,.TMLow .TMMessageButton { padding-top:2px; padding-bottom:1px; margin-left:3px; margin-right:3px;}
+.TMTiny .TMProgressButton,.TMTiny .TMMessageButton { padding-top:1px; padding-bottom:0px; }
+.TMProgressButton:active,.TMMessageButton:active { }
+.TMProgressButtonHover,.TMMessageButtonHover { }
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                    Popup menus and dialogs                                                    */
+/*                                                             TGLib                                                             */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* Default settings for all TreeGrid popup menus and dialogs like Enum, Defaults, Filter, cfg menu, columns menu, popup Menu, Gantt menu and custom menu shown by ShowMenu and ShowPopup
+   The styles of individual menu types can be overridden by their individual classes added to all default classes (e.g. "TMMenuMain TMEnumMenuMain")
+      Individual classes: ...EnumMenu..., ...DefaultsMenu..., ...FilterMenu..., ...CfgMenu..., ...ColumnsMenu..., ...PopupMenu, ...GanttMenu...
+      For custom JSON menu can be the individual class prefix set to Class attribute, like {..., Class:"Custom", ... } and the added classes will be ...Custom..., e.g. GxCustomMain
+   Some of the classes are used also for custom JSON dialogs shown by ShowDialog API function.
+*/
+
+/* --- Menu and dialog sections --- */
+
+/* Main menu and dialog classes
+   ...Main - Main absolute <div> tag; @ Do not change 
+   ...Static - Used instead of ...Main when dialog is written directly to page HTML by WriteDialog. Used only in TGLib, not in TreeGrid. @ Do not change
+   ...Shadow - Shadow <div> tag displayed under ...Main tag, on the same position and size. @ Set margin for the shadow shift, background, opacity and border
+   ...Outer - <div> tag inside the main tag, contains the whole menu. @ Set background, border and padding
+   ...Top is added to ...Outer when the menu is shown above the header, ...Bottom is added to ...Outer when the menu is shown below the header
+*/      
+.TMMenuMain { position:absolute; left:0px; top:0px; z-index:258; }
+.TMMenuStatic { }
+.TMMenuShadow { position:absolute; background:white; z-index:257; box-shadow:1px 3px 10px 1px #AAA; }
+.TMMenuOuter { overflow:hidden; padding-top:10px; padding-bottom:10px; }
+.TMLow .TMMenuOuter { padding-top:3px; padding-bottom:3px; }
+.TMMenuHorzMain .TMMenuOuter { overflow:hidden; padding:0px 10px 0px 10px; }
+.TMLow .TMMenuHorzMain .TMMenuOuter { overflow:hidden; padding:0px 3px 0px 3px; }
+.TMMenuOuterTop { }
+.TMMenuMainTop { margin-top:-4px; }
+.TMMenuMainBottom { margin-top:4px; }
+.TMMenuShadowTop { margin-top:-5px; }
+.TMMenuShadowBottom { margin-top:3px; }
+
+/* Shown outside menu or dialog in place of the source tag, simulating the menu is popped up. For custom JSON menus and dialogs is used when set Header attribute.
+   ...Top is added to ...Header when the menu is shown above the header, ...Bottom is added to ...Header when the menu is shown below the header
+   @ Set margin to shift the header, border, padding and background
+*/
+.TMMenuHeader { overflow:hidden; position:absolute; z-index:258; cursor:pointer; user-select:none; -ms-user-select:none; -o-user-select:none; -moz-user-select:none; -khtml-user-select:none; -webkit-user-select:none; }
+.TMMenuHeader > div { vertical-align:middle; display:table-cell; }
+.TMMenuHeaderTop { }
+.TMMenuHeaderBottom { }
+
+/* Set to menu and dialog top, not scrollable, section. Used only for TreeGrid cfg / column menus. For custom JSON menus and dialogs is used when set Head attribute.
+   @ Set border, margin, padding, background and text attributes
+*/
+.TMMenuHead { padding:7px 0px 15px 17px; text-align:left; cursor:default; margin-bottom:10px; }
+.TMWide .TMMenuHead { padding-left:22px; }
+.TMHigh .TMMenuHead { padding-top:15px; padding-bottom:22px; margin-bottom:15px; }
+.TMLow .TMMenuHead { padding:4px 0px 7px 12px; margin-bottom:7px; }
+.TMSmall .TMMenuHead { padding:3px 0px 5px 7px; margin-bottom:5px; }
+.TMTiny .TMMenuHead { padding-top:0px; padding-bottom:2px; margin-bottom:2px; }
+.TMMenuHeadText { white-space:nowrap; margin-right:45px; }
+.TMWide .TMMenuHeadText { margin-right:60px; }
+.TMLow .TMMenuHeadText { margin-right:35px; }
+.TMMenuHorzOuter .TMMenuHead { padding:0px 6px 0px 6px; }
+.TMMenuHorzOuter .TMMenuHeadText { margin:0px; white-space:normal; display:inline-block; writing-mode:tb-rl; -ms-transform:rotate(180deg); -moz-transform:rotate(180deg); -webkit-transform:rotate(180deg); -o-transform:rotate(180deg); transform:rotate(180deg); }
+
+/* Close icon set <div> tag inside the ...MenuHead. Used only for TreeGrid cfg / column menus. For custom JSON menus and dialogs is used when set Head attribute and can be hidden by setting HeadClose:0 
+   @ Set background, width and height
+*/
+.TMMenuClose { float:right; width:33px; line-height:20px; cursor:pointer; display:none; background:url(MenuClose.svg?v120) no-repeat; background-size:16px 16px; }
+.TMWide .TMMenuClose { background-size:20px 20px; width:43px; }
+.TMBig .TMMenuClose { background-size:24px 24px; width:47px; background-position-y:-2px; line-height:30px; }
+.TMGiant .TMMenuClose { background-position-y:0px;  }
+.TMLow .TMMenuClose { background-size:13px 13px; line-height:20px; width:26px; background-position-y:2px; }
+.TMSmall .TMMenuClose { width:21px; }
+.TMTiny .TMMenuClose { background-position-y:0px; }
+.TMMenuHorzOuter .TMMenuClose { width:17px; }
+.TMWide .TMMenuHorzOuter .TMMenuClose { width:23px; }
+.TMBig .TMMenuHorzOuter .TMMenuClose { background-position-x:-2px; }
+.TMLow .TMMenuHorzOuter .TMMenuClose { width:16px; }
+
+/* Set to menu and dialog middle, scrollable, section. For custom JSON dialogs the tag is filled by Body attribute value. 
+   @ Set border, margin, padding, background and optionally (for the custom dialogs) text attributes
+*/
+.TMMenuBody { cursor:default; margin:0px 1px 0px 1px; width:calc(100% - 2px); }
+
+/* Set to menu and dialog bottom, not scrollable, section, contains usually control buttons. 
+   Used only for TreeGrid cfg / column menus and Range dialogs to display the buttons. For custom JSON menus and dialogs is used when set Foot or Buttons (JSON menu only) attribute.
+   @ Set border, margin, padding, background and text attributes
+*/
+.TMMenuFoot { padding:15px 13px 7px 13px; text-align:center; white-space:nowrap; margin-top:10px; }
+.TMWide .TMMenuFoot { padding-left:16px; padding-right:17px; }
+.TMHigh .TMMenuFoot { padding-top:20px; padding-bottom:10px; }
+.TMBig .TMMenuFoot { padding-top:25px; padding-bottom:15px; }
+.TMLow .TMMenuFoot { padding:7px 8px 4px 8px; margin-top:5px; }
+.TMSmall .TMMenuFoot { padding:5px 3px 2px 3px; margin-top:5px; }
+.TMTiny .TMMenuFoot { padding-top:2px; padding-bottom:2px; margin-top:2px; }
+    
+
+/* Control button inside the Foot section (e.g. OK, Cancel). <button> tag.
+   ...Hover is added when the <button> tag is under mouse cursor
+   @ Set border, margin, padding, background, width, height and text attributes
+*/
+.TMMenuButton { padding:4px 5px 3px 5px; margin:3px 4px 3px 4px; min-width:70px; text-align:center; white-space:nowrap; overflow:hidden; }
+.TMMenuButton:active {  }
+.TMMenuButtonHover { }
+.TMWide .TMMenuButton { margin-left:6px; margin-right:6px; min-width:80px; }
+.TMHigh .TMMenuButton { padding-top:6px; padding-bottom:5px; }
+.TMBig .TMMenuButton { padding-top:8px; padding-bottom:8px; }
+.TMGiant .TMMenuButton { min-width:90px; }
+.TMLow .TMMenuButton { padding:2px 2px 1px 2px; margin-top:1px; margin-bottom:1px; min-width:60px; }
+.TMTiny .TMMenuButton { padding-top:1px; padding-bottom:0px; }
+
+
+/* --- Menu item --- */
+
+/* <div> tags for individual menu items
+   ...Item is set to all menu items except focused and hovered
+   ...Focus is added to menu item with key cursor
+   ...Hover is added to menu item under mouse cursor
+   @ Set border, margin padding and background; all the eight classes should have the same edge width and height (margin+border+padding)
+*/
+.TMMenuItem { margin-left:1px; margin-right:1px; padding:1px 15px 0px 15px; }
+.TMWide .TMMenuItem { padding-left:20px; padding-right:20px; }
+.TMLow .TMMenuItem { padding-left:10px; padding-right:10px; }
+.TMSmall .TMMenuItem { padding-left:5px; padding-right:5px; }
+.TMMenuItem { }
+.TMMenuHover { }
+.TMMenuFocus { } 
+.TMMenuFocus.TMMenuHover { }
+
+/* --- Icons inside menu items --- */
+
+/* The classes are set in <div> tag inside the menu item tag
+   ...CheckedIcon...  - Bool item, checkbox, checked state,       ...UncheckedIcon... - Bool item, checkbox, unchecked state
+   ...CheckedRadio... - Bool item with Group, radio button, checked state,   ...UncheckedRadio... - Bool item with Group, radio button, unchecked state
+   ...CheckedColor... - Bool item with ShowIcon=0 or 2, checked state,       ...UncheckedColor... - Bool item with ShowIcon=0 or 2, checked state
+   ...Left - the bool icon is shown on the item text left side,   ...Right - the bool icon is shown on the item text right side
+   ...CursorIcon      - Cursor icon shown on left side, when menu have set ShowCursor:1; the width of the cursor icon is set by menu Indent attribute, by default 12px
+   ...HoverIcon       - The cursor icon in menu item under mouse cursor
+   ...ExpandedIcon    - Icon in expanded section (Expanded:1),  the menu item with Level and Items set; the width of the expanded  icon is set by menu Indent attribute, by default 12px 
+   ...CollapsedIcon   - Icon in collapsed section (Expanded:0), the menu item with Level and Items set; the width of the collapsed icon is set by menu Indent attribute, by default 12px  
+   ...NextIcon        - Icon on right side of item with submenu, the menu item with Menu:1 and Items set 
+   ...Rtl  - used instead in RTL text mode, shows the icon on the other side
+   @ Set background and for some icons padding-left or padding-right
+*/
+.TMMenuCheckedIconLeft,.TMMenuCheckedIconRight { background:url(MenuBool1.svg?v120) no-repeat; }
+.TMMenuUncheckedIconLeft,.TMMenuUncheckedIconRight { background:url(MenuBool0.svg?v120) no-repeat; }
+.TMMenuCheckedRadioLeft,.TMMenuCheckedRadioRight { background:url(MenuRadio1.svg?v120) no-repeat; }
+.TMMenuUncheckedRadioLeft,.TMMenuUncheckedRadioRight { background:url(MenuRadio0.svg?v120) no-repeat; }
+.TMMenuEmptyIconLeft,.TMMenuEmptyIconRight { background:url(MenuBoolEmpty.svg?v120) no-repeat; }
+.TMMenuBoolIconLeft { padding-left:20px; background-position:left center; background-size:16px 16px; }
+.TMWide .TMMenuBoolIconLeft { padding-left:25px; background-size:20px 20px; }
+.TMBig .TMMenuBoolIconLeft { padding-left:30px; background-size:24px 24px; }
+.TMSmall .TMMenuBoolIconLeft { padding-left:16px; background-size:13px 13px; }
+.TMMenuBoolIconRight { padding-right:20px; background-position:right center; background-size:16px 16px; }
+.TMWide .TMMenuBoolIconRight { padding-right:25px; background-size:20px 20px; }
+.TMBig .TMMenuBoolIconRight { padding-right:30px; background-size:24px 24px; }
+.TMSmall .TMMenuBoolIconRight { padding-right:16px; background-size:13px 13px; }
+.TMMenuBoolIconLeft > .TMMenuLevel,.TMMenuBoolIconRight > .TMMenuLevel { text-align:left; }
+.TMMenuCheckedColor { }
+.TMMenuUncheckedColor { }
+.TMMenuCursorIcon,.TMMenuHoverIcon { padding-left:0px!important; }
+.TMMenuEnumCursorIcon,.TMMenuEnumHoverIcon { padding-left:6px!important; }
+.TMWide .TMMenuEnumCursorIcon,.TMWide .TMMenuEnumHoverIcon { padding-left:5px!important; }
+.TMBig .TMMenuEnumCursorIcon,.TMBig .TMMenuEnumHoverIcon { padding-left:13px!important; }
+.TMLow .TMMenuEnumCursorIcon,.TMLow .TMMenuEnumHoverIcon { padding-left:10px!important; }
+.TMSmall .TMMenuEnumCursorIcon,.TMSmall .TMMenuEnumHoverIcon { padding-left:12px!important; }
+.TMMenuCursorIconRtl,.TMMenuHoverIconRtl { padding-left:0px!important; }
+.TMMenuExpandedIcon { padding-left:0px!important; background:url(MenuExpanded.svg?v120) no-repeat left center; background-size:16px 16px; }
+.TMMenuCollapsedIcon { padding-left:0px!important; background:url(MenuCollapsed.svg?v120) no-repeat left center; background-size:16px 16px; }
+.TMWide .TMMenuExpandedIcon,.TMWide .TMMenuCollapsedIcon { background-size:20px 20px; }
+.TMBig .TMMenuExpandedIcon,.TMBig .TMMenuCollapsedIcon { background-size:24px 24px; }
+.TMSmall .TMMenuExpandedIcon,.TMSmall .TMMenuCollapsedIcon { background-size:13px 13px; }
+.TMMenuExpandedIcon > div, .TMMenuCollapsedIcon > div { border:0px none; margin-left:20px; text-align:left!important; }
+.TMWide .TMMenuExpandedIcon > div, .TMWide .TMMenuCollapsedIcon > div { margin-left:26px; }
+.TMBig .TMMenuExpandedIcon > div, .TMBig .TMMenuCollapsedIcon > div { margin-left:32px; }
+.TMSmall .TMMenuExpandedIcon > div, .TMSmall .TMMenuCollapsedIcon > div { padding-left:16px; }
+.TMMenuNextIcon { background:url(MenuNext.svg?v120) no-repeat right center; background-size:16px 16px; padding-right:20px; }
+.TMWide .TMMenuNextIcon { background-size:20px 20px; padding-right:26px; }
+.TMBig .TMMenuNextIcon { background-size:24px 24px; padding-right:32px; }
+.TMSmall .TMMenuNextIcon { background-size:13px 13px; padding-right:16px; }
+.TMMenuNextIconRtl { background:url(MenuNextRtl.svg?v120) no-repeat left center; background-size:16px 16px; padding-left:20px; }
+.TMWide .TMMenuNextIconRtl { background-size:20px 20px; padding-left:26px; }
+.TMBig .TMMenuNextIconRtl { background-size:24px 24px; padding-left:32px; }
+.TMSmall .TMMenuNextIconRtl { background-size:13px 13px; padding-left:16px; }
+.TMMenuNextIconDown { background-image:url(MenuNextDown.svg?v120); }
+
+
+/* --- Menu item content --- */
+
+/* The classes are set to <td> tag of inner table that is used to display the item, if it has set Edit, Enum, Icon, LeftHtml or RightHtml attribute.
+   @ Set text attributes and optionally background, border, padding and margin
+   ...ItemText - every menu item text, caption or side Html, it set to <div> tag inside the menu item and inside the menu icon or to <td> tag with item text in inner table
+   ...ItemLeftHtml - <td> tag in inner table displaying the LeftHtml content on the left side
+   ...ItemRightHtml - <td> tag in inner table displaying the RightHtml content on the right side
+   ...ItemIcon - <td> tag in inner table displaying the Icon as background image on the left side, also left to LeftHtml; @ Do not change
+   ...Level - added to the tags with ...ItemText, ...ItemIcon, ...ItemLeft/RightHtml for item with Level set
+   ...ItemDisabled - added to all the menu item parts for item with Disabled:1; @ Set opacity and background
+   ...Align - added to all menu items with Align set or if the menu has set ItemAlign
+*/
+.TMMenuItemText { white-space:nowrap; overflow:hidden; }
+.TMMenuItemText * { font-size:inherit; line-height:inherit; }
+.TMMenuItemLeftHtml,.TMMenuItemRightHtml { }
+.TMMenuItemIcon { background-repeat:no-repeat; background-position:center center; }
+.TMMenuItemDisabled { opacity:0.70; }
+.TMMenuLevel { }
+.TMMenuAlignLeft { text-align:left; }
+.TMMenuAlignRight { text-align:right; }
+.TMMenuAlignCenter { text-align:center; }
+.TMMenuAlignJustify { text-align:justify; }
+
+
+/* The Enum combo in item with Enum:1
+   ...EnumParent - <td> tag in inner table displaying the Enum combo for the Enum:1 item, on left or right side according to Left value
+   ...Enum - <div> tag inside the <td> tag ...EnumParent displaying the Enum combo
+   ...EnumHeader - is set to the <div> tag in Header of the popped up Enum menu
+*/
+.TMMenuEnumParent { padding-left:5px; }
+.TMMenuItemLeft .TMMenuEnumParent { padding-left:0px; padding-right:5px; }
+.TMMenuEnum,.TMMenuEnumHeaderLeft { white-space:nowrap; overflow:hidden; background-repeat:no-repeat; background-size:16px 16px; background-position:3px center; }
+.TMMenuEnum { background-image:url(MenuEnum.svg?v120); padding-left:22px; }
+.TMMenuItemLeft .TMMenuEnum { padding-right:3px; }
+.TMMenuEnumHeaderLeft { background-image:url(MenuEnumExpanded.svg?v120); padding:2px 0px 0px 23px; cursor:default; background-position:4px center; }
+.TMWide .TMMenuEnum,.TMWide .TMMenuEnumHeaderLeft { background-size:20px 20px; padding-left:26px; }
+.TMWide .TMMenuEnumHeaderLeft { padding-left:27px; }
+.TMBig .TMMenuEnum,.TMBig .TMMenuEnumHeaderLeft { background-size:24px 24px; padding-left:34px; }
+.TMBig .TMMenuEnumHeaderLeft { padding-left:35px; }
+.TMSmall .TMMenuEnum,.TMSmall .TMMenuEnumHeaderLeft { background-size:13px 13px; padding-left:18px; }
+.TMSmall .TMMenuEnumHeaderLeft { padding-left:19px; }
+.TMMenuEnumParent,.TMMenuEnum,.TMMenuEnumHeaderLeft { width:90px; }
+.TMWide .TMMenuEnumParent,.TMWide .TMMenuEnum,.TMWide .TMMenuEnumHeaderLeft { width:120px; }
+.TMGiant .TMMenuEnumParent,.TMGiant .TMMenuEnum,.TMGiant .TMMenuEnumHeaderLeft { width:150px; }
+.TMMenuEnumMain { margin-top:0px; }
+
+/* The edit text in item with Edit:1
+   ...EditParent - <td> tag in inner table displaying the editable text for the Edit:1 item, on left or right side according to Left value; @ Set border, padding and background
+   ...Edit - <div> tag inside the <td> tag ...EditParent displaying the editable text; @ Set border, padding, background and text attributes 
+   ...EditMulti - added to the ...Edit tag for item with set Multi:1, multi line edit, to be edited in <textarea>; @ Set border, background and text attributes
+   ...EditEdit - added to the ...Edit when editing the item text
+   ...EditText, ...EditInt, ...EditFloat, ...EditDate - added to the ...Edit tag and also to the <input> or <textarea> tag according to the Type attribute; @ Set text attributes
+   ...EditInput - set to <input> tag placed into ...Edit tag when editing the value; @ Set text attributes
+   ...EditTextarea - set to <textarea> tag placed into ...Edit tag when editing the value in item with Multi:1 set; @ Set text attributes
+*/
+.TMMenuEditParent { padding-left:5px; }
+.TMMenuItemLeft .TMMenuEditParent { padding-left:0px; padding-right:5px; }
+.TMMenuEdit { padding-left:3px; padding-right:3px; overflow:hidden; white-space:nowrap; }
+.TMMenuEditParent,.TMMenuEdit { width:30px; }
+.TMMenuEditParentPDFName,.TMMenuEditParentPDFName > .TMMenuEdit,.TMMenuEditParentExportName,.TMMenuEditParentExportName > .TMMenuEdit { width:106px; }
+.TMWide .TMMenuEditParent,.TMWide .TMMenuEdit { width:50px; }
+.TMWide .TMMenuEditParentPDFName,.TMWide .TMMenuEditParentPDFName > .TMMenuEdit,.TMWide .TMMenuEditParentExportName,.TMWide .TMMenuEditParentExportName > .TMMenuEdit { width:140px; }
+.TMBig .TMMenuEditParentPDFName,.TMBig .TMMenuEditParentPDFName > .TMMenuEdit,.TMBig .TMMenuEditParentExportName,.TMBig .TMMenuEditParentExportName > .TMMenuEdit { width:148px; }
+.TMGiant .TMMenuEditParent,.TMGiant .TMMenuEdit { width:60px; }
+.TMGiant .TMMenuEditParentPDFName,.TMGiant .TMMenuEditParentPDFName > .TMMenuEdit,.TMGiant .TMMenuEditParentExportName,.TMGiant .TMMenuEditParentExportName > .TMMenuEdit { width:178px; }
+.TMSmall .TMMenuEditParentPDFName,.TMSmall .TMMenuEditParentPDFName > .TMMenuEdit,.TMSmall .TMMenuEditParentExportName,.TMSmall .TMMenuEditParentExportName > .TMMenuEdit { width:102px; }
+.TMMenuEditMulti { white-space:pre-wrap; }
+.TMMenuEditEdit { }
+input.TMMenuEditInput,textarea.TMMenuEditTextarea { border:0px none; margin:0px 1px 0px 0px; padding:0px; height:18px; outline:none; background:transparent; resize:none; }
+.TMHigh .TMMenuEditInput,.TMHigh .TMMenuEditTextarea { height:22px; }
+.TMGiant .TMMenuEditInput,.TMGiant .TMMenuEditTextarea { height:30px; }
+.TMSmall .TMMenuEditInput,.TMSmall .TMMenuEditTextarea { height:15px; }
+.TMMenuEditInput::-ms-clear { height:13px; }
+.TMMenuEditInt,.TMMenuEditFloat,.TMMenuEditDate { text-align:right; } 
+.TMMenuEditText { }
+
+/* --- Special menu items --- */
+
+/* ...Caption - Inactive item, used instead of ...Item..., along width ...ItemText, shown for menu item with Caption:1; @ Set border, margin padding, background and text attributes
+   ...Separator - Separator between items, shown for menu item with Name:"-", used instead of ...Item...; @ Set border, margin, padding, background and height
+   ...VSeparator - <td> tag shown between columns of menu items; in children of menu item width Columns attribute set; @ Set border, padding, background and width 
+   ...Section - Tag around children of item width Level attribute set; @ Set border, margin, padding and background
+*/
+.TMMenuCaption { padding:4px 2px 3px 2px; }
+.TMHigh .TMMenuCaption { padding-top:8px; padding-bottom:7px; }
+.TMMenuSeparator { margin:10px 15px 10px 15px; height:0px; overflow:hidden; }
+.TMLow .TMMenuSeparator { margin:5px; }
+.TMTiny .TMMenuSeparator { margin-top:2px; margin-bottom:2px; }
+.TMMenuHorz .TMMenuSeparator { margin:0px; border:15px solid white; border-left:10px solid white; border-right:10px solid white; }
+.TMLow .TMMenuHorz .TMMenuSeparator { border-width:5px; }
+.TMTiny .TMMenuHorz .TMMenuSeparator { border-left-width:2px; border-right-width:2px; }
+.TMMenuHorz .TMMenuSeparator > div { overflow:hidden; width:1px; }
+.TMMenuVSeparator { width:0px; font-size:0px; }
+.TMMenuSection { }
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                       Calendar dialog                                                         */
+/*                                                          TGLib                                                                */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* --- Main calendar classes --- */
+
+/* Added to main menu / dialog classes ...Menu... as ...Pick...
+   ...Main - Main absolute <div> tag; @ Do not change 
+   ...Shadow - Shadow <div> tag displayed under ...Main tag, on the same position and size. @ Set margin for the shadow shift, background, opacity and border
+   ...Outer - <div> tag inside the main tag, contains the whole calendar. @ Set background, border and padding
+   ...Body - <div> inside ...Outer, contains the whole calendar, including buttons; @ Set background, border, padding and margin
+*/      
+.TMPickMain { position:absolute; left:0px; top:0px; z-index:258; }
+.TMPickShadow { }
+.TMPickOuter { border:0px none; padding:0px; overflow:hidden; }
+.TMPickBody { cursor:default; padding:0px; margin:0px; width:100%; }
+.TMWide .TMPickBody { margin:0px; }
+
+/* --- Other standard dialog parts' classes, NOT shown by default --- */
+
+/* Added to main menu / dialog classes ...Menu... as ...Pick...
+   ...Header is shown outside the calendar dialog in place of the source tag. Used only if set Header attribute. @ Set margin to shift the header, border, padding and background
+   ...HeaderTop is added to ...Header when the calendar is shown above the header, ...HeaderBottom is added to ...Header when the calendar is shown below the header
+   ...Head is set to calendar top section. Used only if set Head attribute. @ Set border, margin, padding, background and text attributes
+   ...Close is close icon set <div> tag inside the ...PickHead. Used only if set Head attribute. Can be hidden by setting HeadClose:0; @ Set background, width and height
+   ...Foot is set to calendar bottom section. Used only if set Foot attribute. It does NOT show calendar buttons. @ Set border, margin, padding, background and text attributes
+*/
+.TMPickHeader { 
+   position:absolute; z-index:258; border:1px solid #ABD7D3; background:white; 
+   overflow:hidden; cursor:pointer; 
+   }
+.TMPickHeaderBottom { border-bottom:0px none; }
+.TMPickHeaderTop { border-top:0px none; }
+.TMPickHead,.TMPickFoot { background:white; padding:1px 0px 1px 5px; color:white; cursor:default; }
+.TMPickHead { }
+.TMPickFoot { }
+.TMPickClose { display:none; }
+
+/* --- The calendar header showing month and year --- */
+
+/* ...PickMY - the whole header tag showing the month and year; @ Set border, padding, margin, background and text attributes
+   ...PickMYDown - shown inside PickMY to display icon down in the first calendar table; @ Set background and padding-right
+   ...PickMYUp - shown inside PickMY to display icon up in the second calendar table; @ Set background and padding-right
+   ...PickMYRtl - added to ...PickMYUp and ...PickMYDown in RTL mode; @ Set padding-left
+   ...PickBL - previous month icon, ...PickBR - next month icon; @ Set background, width and height
+*/
+.TMPickMY { padding:8px 0px 13px 0px; cursor:default; text-align:center; margin-top:6px; }
+.TMHigh .TMPickMY { padding-top:11px; padding-bottom:23px; margin-top:12px; }
+.TMBig .TMPickMY { padding-top:16px; padding-bottom:30px; margin-top:14px; }
+.TMLow .TMPickMY { padding-top:4px; padding-bottom:5px; margin-top:2px; }
+.TMPickMYDown { background-image:url(CalendarMonths.svg?v120); }
+.TMPickMYUp { background-image:url(CalendarDays.svg?v120); }
+.TMPickMYDown,.TMPickMYUp { padding-right:18px; background-size:16px 16px; background-position:right center; background-repeat:no-repeat; cursor:pointer; }
+.TMWide .TMPickMYDown,.TMWide .TMPickMYUp { padding-right:22px; background-size:20px 20px; }
+.TMBig .TMPickMYDown,.TMBig .TMPickMYUp { padding-right:26px; background-size:24px 24px; }
+.TMLow .TMPickMYDown,.TMLow .TMPickMYUp { padding-right:15px; background-size:13px 13px; }
+.TMPickMYRtl { padding-right:0px; padding-left:13px; }
+.TMPickBL { float:left; background:url(CalendarPrevMonth.svg?v120) no-repeat 5px 8px; }
+.TMPickBR { float:right; background:url(CalendarNextMonth.svg?v120) no-repeat right 5px top 8px; }
+.TMPickBL,.TMPickBR { width:24px; height:24px; background-size:16px 16px; padding:0px; overflow:hidden; cursor:pointer; display:none; }
+.TMWide .TMPickBL,.TMWide .TMPickBR { background-size:20px 20px; background-position-y:8px; height:31px; }
+.TMHigh .TMPickBL,.TMHigh .TMPickBR { background-position-y:11px; height:34px; }
+.TMBig .TMPickBL,.TMBig .TMPickBR { background-size:24px 24px; background-position-y:14px; height:39px; }
+.TMGiant .TMPickBL,.TMGiant .TMPickBR { background-position-y:17px; height:42px; }
+.TMLow .TMPickBL,.TMLow .TMPickBR { background-size:13px 13px; background-position-y:6px; height:20px; }
+
+/* --- The first calendar table with days --- */
+
+/* ...PickTableParent - <div> tag containing the whole table; @ Set border, padding, margin and background 
+   ...PickTable - <table> tag inside ...PickTableParent; @ Do not change
+   ...PickRow - <tr> tags with individual day numbers; @ Set background and optionally height
+   ...PickRowW - top <tr> tag with week day names; @ Set background and optionally height
+   ...PickCell - <td> tags with day numbers or week names; @ Set width and optionally background, padding and height
+*/
+.TMPickTableParent { border-top:0px none; clear:both; padding:0px 5px 10px 5px; }
+.TMHigh .TMPickTableParent { padding-bottom:20px; }
+.TMTiny .TMPickTableParent { padding-bottom:3px; }
+.TMPickTable { table-layout:fixed; width:0px; }
+.TMPickRow { background:white; }
+.TMPickRowW { }
+.TMPickRowW > td { }
+.TMPickCell { width:28px; font-size:inherit; line-height:inherit; }
+.TMWide .TMPickCell { width:36px; }
+.TMGiant .TMPickCell { width:42px; }
+
+/* Individual day cells in the first calendar table; only one class per tag is set. <div> tags inside <td> tag.
+   @ Set background, border, margin, padding, height and text attributes
+   @ All the classes should have the same height and should not be wider than ...PickCell to avoid blinking the calendar cells on mouse actions
+   ...PickWDN - week day name in top row
+   ...PickWN  - week number in left column 
+   ...PickWNE - not selectable week number in left column
+   ...PickWD  - work day number
+   ...PickSa  - Saturday number
+   ...PickSu  - Sunday number
+   ...PickOM  - Day number from another month
+   ...PickNow - Today number
+   ...PickSel - Selected day number
+   ...NE      - any not selectable day number
+   ...PickHover - Any not selected day number under mouse cursor
+   ...PickSelHover - Selected day number under mouse cursor
+   ...PickEmpty - top left button in <div> tag to select empty date; @ Set background and height
+*/
+.TMPickWDN { margin:2px 3px 2px 3px; padding:1px; line-height:18px; text-align:center; cursor:default; }
+.TMHigh .TMPickWDN { line-height:30px; }
+.TMPickHover,.TMPickSelHover,.TMPickWD,.TMPickSa,.TMPickSu,.TMPickSel,.TMPickNow,.TMPickWDNE,.TMPickSaNE,.TMPickSuNE,.TMPickSelNE,.TMPickNowNE,.TMPickOM,.TMPickOMNE {
+   margin:1px; padding:1px 3px 1px 3px; line-height:18px; text-align:center; cursor:pointer; 
+   }
+.TMPickWN,.TMPickWNE { padding:2px 4px 2px 4px; line-height:18px; text-align:center; cursor:pointer; }
+.TMHigh .TMPickCell>div { line-height:26px; }
+.TMBig .TMPickCell>div { line-height:30px; }
+.TMLow .TMPickCell>div { line-height:14px; }
+.TMPickWNE { cursor:default; }
+.TMPickNE { cursor:default; }
+.TMPickWD { }
+.TMPickSa { }
+.TMPickSu { }
+.TMPickSel { }
+.TMPickNow { }
+.TMPickOM { }
+.TMPickEmpty { background:url(CalendarEmpty.svg?v120) no-repeat center center; background-size:16px 16px; cursor:pointer; height:17px; }
+.TMWide .TMPickEmpty { background-size:20px 20px; height:20px; }
+.TMBig .TMPickEmpty { background-size:24px 24px; height:24px; }
+.TMLow .TMPickEmpty { background-size:13px 13px; height:13px; }
+.TMPickHover { }
+.TMPickSelHover { }
+
+/* --- The second calendar table with months and years --- */
+
+/* ...Pick2TableParent - <div> tag containing the whole table; @ Set border, padding, margin and background 
+   ...Pick2Table - <table> tag inside ...Pick2TableParent; @ Do not change
+   ...Pick2Row - <tr> tags with the cells: 2 months, separator and 2 years; @ Set background and optionally height
+   ...Pick2CellM - <td> tags with month names; @ Set height, width and optionally background and padding
+   ...Pick2CellY - <td> tags with year numbers; @ Set height, width and optionally background and padding
+   ...Pick2CellSep - <td> tag, separator between months and years section; @ Set height, width and optionally background and padding
+   ...Pick2SepH - separator between the calendar header ...PickMY and calendar body ...Pick2TableParent; @ Set height to synchronize heights of both calendar dialogs
+*/
+.TMPick2TableParent { padding:2px 5px 7px 5px; display:block; overflow:hidden; clear:both; }
+.TMHigh .TMPick2TableParent { padding-bottom:12px; }
+.TMBig .TMPick2TableParent { padding-bottom:11px; }
+.TMTiny .TMPick2TableParent { padding-bottom:0px; }
+.TMPick2Table { table-layout:fixed; width:0px; margin-left:3px; margin-right:3px; }
+.TMPick2Row { }
+.TMPick2CellM { width:67px; }
+.TMLow .TMPick2CellM { width:68px; }
+.TMWide .TMPick2CellM { width:87px; }
+.TMGiant .TMPick2CellM { width:105px; }
+.TMPick2CellY { width:40px; }
+.TMLow .TMPick2CellY { width:40px; }
+.TMWide .TMPick2CellY { width:50px; }
+.TMGiant .TMPick2CellY { width:58px; }
+.TMPick2CellSep { width:5px; }
+.TMLow .TMPick2CellSep { width:2px; }
+.TMPick2SepH { display:none; }
+
+/* Individual cells, <div> tag inside <td> tag
+   @ Set background, border, margin, padding, height and text attributes
+   @ All the classes should have the same height and should not be wider than ...Pick2Cell... to avoid blinking the calendar cells on mouse actions
+   ...Pick2M - month name; ...Pick2Y - year number; ...Sel - selected cell; ...Hover - cell under mouse cursor; ...SelHover - selected cell under mouse cursor
+*/
+.TMPick2M,.TMPick2Y { margin:2px; padding:3px 1px 3px 1px; line-height:17px; cursor:pointer; text-align:center; overflow:hidden; }
+.TMBig .TMPick2M,.TMBig .TMPick2Y { line-height:26px; }
+.TMLow .TMPick2M,.TMLow .TMPick2Y { line-height:16px; padding-top:1px; padding-bottom:1px; }
+.TMPick2MSel,.TMPick2YSel { }
+.TMPick2MHover,.TMPick2YHover { }
+.TMPick2MSelHover,.TMPick2YSelHover { }
+
+/* Special cells, <div> tag inside <td> tag
+   ...Pick2Sep - separator between months and years; @ Set height, width, background, border, margin, padding
+   ...Pick2BL - button (<div> tag) showing previous 5 years; @ Set background, width and height
+   ...Pick2BR - button (<div> tag) showing next 5 years; @ Set background, width and height
+*/
+.TMPick2Sep { height:27px; width:1px; overflow:hidden; margin-left:2px; margin-right:2px; }
+.TMHigh .TMPick2Sep { height:37px; }
+.TMBig .TMPick2Sep { height:42px; }
+.TMLow .TMPick2Sep { height:22px; }
+.TMPick2BL,.TMPick2BR { width:40px; cursor:pointer; height:27px; background-repeat:no-repeat; background-position:center 7px; background-size:16px 16px; }
+.TMPick2BL { background-image:url(CalendarPrevYears.svg?v120); }
+.TMPick2BR { background-image:url(CalendarNextYears.svg?v120); }
+.TMWide .TMPick2BL,.TMWide .TMPick2BR { width:50px; background-position:center 5px; background-size:20px 20px; }
+.TMHigh .TMPick2BL,.TMHigh .TMPick2BR { height:38px; background-position:center 10px; }
+.TMBig .TMPick2BL,.TMBig .TMPick2BR { height:41px; background-position:center 10px; background-size:24px 24px; }
+.TMGiant .TMPick2BL,.TMGiant .TMPick2BR { width:58px; }
+.TMLow .TMPick2BL,.TMLow .TMPick2BR { height:24px; width:40px; background-position:center 6px; background-size:13px 13px; }
+ 
+/* --- The calendar footer with time --- */
+
+/* Shown when EditFormat contains time definition (H or h or m or s); it is not shown for Range cells
+   For custom calendar it is shown if set TimeFormat attribute; it is not shown if set Multi:1
+   ...PickTimeCell - the whole calendar footer (<div> tag) on the same level as ...PickTableParent; @ Set border, padding, margin, background and text-align
+   ...PickTime - set to <input> tag inside ...PickTimeCell; @ Set text attributes
+*/
+.TMPickTimeCell { padding:13px 14px 13px 0px; margin-top:-1px; text-align:right; line-height:0px; height:15px; }
+.TMWide .TMPickTimeCell { height:19px; padding-right:17px; }
+.TMHigh .TMPickTimeCell { padding-top:18px; padding-bottom:18px; }
+.TMBig .TMPickTimeCell { padding-top:26px; padding-bottom:25px; }
+.TMGiant .TMPickTimeCell { height:23px; }
+.TMLow .TMPickTimeCell { padding-top:9px; padding-bottom:9px; padding-right:10px; }
+.TMTiny .TMPickTimeCell { padding-top:5px; padding-bottom:5px; }
+.TMPickTime { margin:0px; padding:0px; border:0px none; white-space:nowrap; text-align:right; outline:none; background:transparent; }
+
+/* --- The calendar footer with buttons --- */
+
+/* Contains buttons like OK, Today, Clear; shown for Range cells or when set CalendarButtons; For custom calendar is shown for Multi and for Buttons set.
+   ...PickFooter is the whole first calendar footer (<div> tag) on the same level as ...PickTableParent; @ Set border, padding, margin, background and text-align
+   ...Pick2Footer is the whole second calendar footer (<div> tag) on the same level as ...Pick2TableParent; @ Set border, padding, margin, background and text-align
+   ...PickButton is set to <button> tags; @ Set border, margin, padding, background, width, height and text attributes
+   ...PickButtonHover is added when the <button> tag is under mouse cursor; @ Set border, margin, padding, background, width, height and text attributes 
+*/
+.TMPickFooter,.TMPick2Footer { padding:7px 0px 7px 0px; cursor:default; text-align:center; margin-top:-1px; }
+.TMHigh .TMPickFooter,.TMHigh .TMPick2Footer { padding-top:10px; padding-bottom:10px; }
+.TMBig .TMPickFooter,.TMBig .TMPick2Footer { padding-top:15px; padding-bottom:15px; }
+.TMLow .TMPickFooter,.TMLow .TMPick2Footer { padding-top:7px; padding-bottom:5px; }
+.TMTiny .TMPickFooter,.TMTiny .TMPick2Footer { padding-top:4px; padding-bottom:2px; }
+.TMPickButton { padding:4px 7px 3px 7px; margin:1px 5px 1px 4px; width:50px; text-align:center; white-space:nowrap; overflow:hidden; }
+.TMWide .TMPickButton { width:68px; }
+.TMHigh .TMPickButton { padding-top:6px; padding-bottom:5px; }
+.TMBig .TMPickButton { padding-top:8px; padding-bottom:8px; }
+.TMGiant .TMPickButton { width:85px; }
+.TMLow .TMPickButton { padding-top:2px; padding-bottom:1px; width:52px; margin-left:3px; margin-right:3px; }
+.TMTiny .TMPickButton { padding-top:1px; padding-bottom:0px; }
+.TMPickButton:active { }
+.TMPickButtonHover { }
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                              TGLib special classes not used in TreeGrid                                       */
+/*                                                            TGLib                                                              */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* --- Edit control (TGLib only) --- */
+
+/* ...EditParent is set to temporary parent div tag if the edit is shown on given position, not inside tag; @ Do not change
+   ...Edit is set to the TGLib Edit control tag (cc="Edit"); @ Set border, margin, padding, background and text attributes
+   ...EditInline is set instead if the TGLib Edit control tag has display:inline; @ Set side border, margin, padding, background and text attributes
+   ...EditMulti is added for control with Multi:1 as multiline edit in <textarea>; @ Set border, margin, padding, background and text attributes
+*/
+.TMEditParent { position:absolute; z-index:258; overflow:hidden; }
+.TMEdit,.TMEditInline {
+   padding:2px 4px 2px 4px;
+   border:1px solid #DDD; border-top:1px solid #666; border-left:1px solid #666; background:white; white-space:nowrap; overflow:hidden;
+   }
+.TMEditInline { display:inline-block; vertical-align:bottom; }
+.TMEditMulti { white-space:pre-wrap; }
+
+/* --- Enum control (TGLib only) --- */
+
+/* ...EnumControl is set to the TGLib Enum control tag (cc="Enum"); @ Set border, margin, padding, background and text attributes
+   ...EnumInline is set instead if the TGLib Enum control tag has display:inline; @ Set side border, margin, padding, background and text attributes
+   ...EnumHeader is used inside popup menu header ...MenuHeader tag and shows the Enum icon on left side; @ Set background, padding and text attributes and optionally border and margin
+*/
+.TMEnumControl,.TMEnumInline,.TMEnumHeader { cursor:pointer; background:white url(MenuEnum.svg?v120) no-repeat; background-size:16px 16px; }
+.TMEnumControl,.TMEnumInline { background-position:2px 5px; padding:2px 4px 2px 20px; border:1px solid #DDD; border-top:1px solid #666; border-left:1px solid #666; overflow:hidden; }
+.TMEnumInline { display:inline-block; vertical-align:bottom; }
+.TMEnumHeader { background-position:3px 6px; padding:4px 4px 2px 21px; }
+
+/* --- Mouse dragging (TGLib only) --- */
+
+/* ...MouseOrig is set to original tag being dragged by mouse, when copying the tag
+   ...DragObject is set to ghost tag being dragged by mouse, when copying the tag
+*/
+.TMMouseOrig { background:yellow!important; opacity:0.5; }
+.TMMouseDragObject { position:absolute; z-index:260; background:#888; opacity:0.5; }
+
+/* --- Focused control (TGLib only) --- */
+
+.TMFocus { border:1px solid #AAF; border-top:1px solid #00F; border-left:1px solid #00F; background-color:#EEE; } 
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                      Cell tooltip - Tip                                                       */
+/*                                                            TGLib                                                              */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* Tip is shown below mouse cursor on mouse hover the cell; Used only if set <Cfg StandardTip='0'/>
+   ...Main - main tip <div> tag absolutely positioned; @ Do not change
+   ...Outer - outer tip <div> tag inside ...Main, has set maximal width to overflow long text; @ Set border, margin, padding, background
+   ...Body - inner tip <div> tag inside ...Outer; @ Set text attributes and optionally border, margin, padding and background
+   ...Shadow - <div> tag displayed under tip ...Main tag, on the same position and size; @ Set margin for the shadow shift, background, opacity and border
+*/
+.TMTipMain { position:absolute; left:0px; top:0px; z-index:262; visibility:hidden; }
+.TMTipOuter { padding:5px; overflow:hidden; cursor:default; }
+.TMTipBody { white-space:nowrap; overflow:hidden; }
+.TMTipShadow { position:absolute; display:none; }
+
+/* Set to ghost tag under mouse cursor when dragging rows in grid, if set <Cfg DragObject='2'/> and <Cfg ShowDrag='1'/>
+   The tag is <div> with absolute position and contains information about the count of dragged rows
+   @ Set border, margin, padding, background, opacity, text attributes and optionally height and width
+*/
+.TMDragObject { z-index:300; margin-left:15px; margin-top:10px; padding:5px; }
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                 Line chart (cell type Chart)                                                  */
+/*                                                           TGLib                                                               */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* ...Chart - cell type, <td> tag; @ Set border, padding and background
+   ...ChartInner - inner <div> tag containing the whole chart; @ Set background
+   ...ChartLayer - individual chart layers, <div> tags, one per TChartLine, one for Axis and one for Caption; @ Do not change
+   ...ChartAxisY - horizontal axis, <div> tag; @ Set height and background
+   ...ChartAxisX - vertical axis, <div> tag; @ Set width and background
+   ...ChartAxisYLabel, ...ChartAxisXLabel - <div> tag with labels for X and Y axes; @ Set background
+   ...ChartAxisYText, ...ChartAxisXText - <div> tag inside ...Label; @ Set text attributes and optionally background, border, margin and padding
+   ...ChartCaption - chart top caption, <div> tag; @ Set background, border, padding and text attributes
+*/
+.TMChart { padding:5px; }
+.TMChartInner { background:white; width:100%; }
+.TMChartLayer { overflow:hidden; height:1000px; }
+.TMChartAxisY { background:black; height:1px; overflow:hidden; }
+.TMChartAxisYLabel { overflow:hidden; }
+.TMChartAxisYText { margin-right:5px; margin-top:12px; text-align:right; }
+.TMChartAxisX { width:1px; overflow:hidden; background:black; }
+.TMChartAxisXLabel { overflow:hidden; }
+.TMChartAxisXText { text-align:center; }
+.TMChartCaption { text-align:center; margin-top:3px; }
+
+/* Individual chart points for PointType value; @ Set only background*/
+.TMChartPoint { background-repeat:no-repeat; background-size:9px 9px; background-position:11px 11px; width:32px; height:32px; overflow:hidden; }
+.TMChartPoint1 { background-image:url(ChartPointBlack.svg?v120); }
+.TMChartPoint2 { background-image:url(ChartPointRed.svg?v120); }
+.TMChartPoint3 { background-image:url(ChartPointBlue.svg?v120); }
+.TMChartPoint4 { background-image:url(ChartPointGreen.svg?v120); }
+.TMChartPoint5 { background-image:url(ChartPointFuchsia.svg?v120); }
+.TMChartPoint6 { background-image:url(ChartPointYellow.svg?v120); }
+.TMChartPoint7 { background-image:url(ChartPointAqua.svg?v120); }
+.TMChartPoint8 { background-image:url(ChartPointSilver.svg?v120); }
+
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                          Debug print                                                          */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* ! Note, here is no .TM style prefix
+   Controls the default debug window shown bottom the page, controlled by <bdo Debug> attribute
+   ...Tag - <div> tag containing the debug print; @ Set position attributes, background, border and padding
+   ...TagMax - used instead of ...Tag when maximized by clicking to Max button
+   ...Buttons - <div> tag placed next to ...Tag to show the debug control buttons; @ Set position attributes, background, border and padding
+   ...ButtonsMax - used instead of ...Buttons when maximized by clicking to Max button
+*/
+.GridDebugTag,.GridDebugTagMax { overflow:auto; overflow-y:scroll; border:1px solid black; background:#DDD; }
+.GridDebugTag,.GridDebugTagMax,.GridDebugButtons,.GridDebugButtonsMax { position:fixed; z-index:256; left:5px; right:5px; bottom:5px; height:200px; padding:4px; }
+.GridDebugTagMax,.GridDebugButtonsMax { top:5px; height:auto; }
+.GridDebugButtons,.GridDebugButtonsMax { text-align:right; margin-right:25px; width:150px; left:auto; }
+
+/* Individual parts of the debug print
+   ...Button - one debug button, <button> tag placed inside ...Buttons; @ Set width, height, background, border, padding, margin and text attributes
+   ...Title - <span> tag with grid or print identification; @ Set text attributes and background
+   ...Mark - <span> tag that highlights some information, e.g. actual values; @ Set text attributes and background
+   ...Stop (0), ...Error (1), ...Warning (2), ...List (3), ...Info (>3) - <div> or <span> tag containing the information according to the debug level number; @ Set text attributes and background
+*/
+.GridDebugButton { font-size:10px; width:40px; padding:0px; }
+.GridDebugTitle { font-size:10px; color:#2196F3; font-style:normal;font-weight:normal; }
+.GridDebugMark { font-weight:bold; }
+.GridDebugStop { font-size:18px; font-weight:bold; color:red; }
+.GridDebugError { font-size:12px; color:red; }
+.GridDebugWarning { font-size:12px; color:#A60;}
+.GridDebugList { font-size:10px; color:#888;}
+.GridDebugInfo { font-size:12px; }
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                          Animations                                                           */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+.TMAnimateOverflow { overflow:hidden; }
+@keyframes TMExpandH { from { height:0px; } }
+@keyframes TMCollapseH { to { height:0px; } }
+
+.TMAnimateTransparent { opacity:0; }
+@keyframes TMShow { from { opacity:0; } to { opacity:1; } }
+@keyframes TMHide { from { opacity:1; } to { opacity:0; } }
+
+.TMAnimateHidden { display:none; }
+.TMAnimateVisible { display:inherit; }
+.TMAnimateLeftTop { overflow:hidden; transform-origin:0% 0%; }
+.TMAnimateCenterTop { overflow:hidden; transform-origin:50% 0%; }
+.TMAnimateRightTop { overflow:hidden; transform-origin:100% 0%; }
+.TMAnimateLeftBottom { overflow:hidden; transform-origin:0% 100%; }
+.TMAnimateRightBottom { overflow:hidden; transform-origin:100% 100%; }
+.TMAnimateCenterBottom { overflow:hidden; transform-origin:50% 100%; }
+.TMAnimateLeftCenter { overflow:hidden; transform-origin:0% 50%; }
+.TMAnimateRightCenter { overflow:hidden; transform-origin:100% 50%; }
+.TMAnimateCenterCenter { overflow:hidden; transform-origin:50% 50%; }
+@keyframes TMZoomInH { from { height:0px; transform:scale(1,0); } to { transform:scale(1,1); } }
+@keyframes TMZoomOutH { from { transform:scale(1,1); } to { transform:scale(1,0); height:0px; } }
+@keyframes TMZoomInY { from { transform:scale(1,0); } to { transform:scale(1,1); } }
+@keyframes TMZoomOutY { from { transform:scale(1,1); } to { transform:scale(1,0); } }
+@keyframes TMZoomInX { from { transform:scale(0,1); } to { transform:scale(1,1); } }
+@keyframes TMZoomOutX { from { transform:scale(1,1); } to { transform:scale(0,1); } }
+@keyframes TMZoomIn { from { transform:scale(0); } to { transform:scale(1); } }
+@keyframes TMZoomOut { from { transform:scale(1); } to { transform:scale(0); } }
+
+@keyframes TMRotateX90 { 0% { transform:rotateX(0deg); } 50% { transform:rotateX(90deg); } 100% { transform:rotateX(0deg); } }
+@keyframes TMRotateX90To { from { transform:rotateX(0deg); } to { transform:rotateX(90deg); } }
+@keyframes TMRotateX90From { from { transform:rotateX(90deg); } to { transform:rotateX(0deg); } }
+@keyframes TMRotateY90 { 0% { transform:rotateY(0deg); } 50% { transform:rotateY(90deg); } 100% { transform:rotateY(0deg); } }
+@keyframes TMRotateY90To { from { transform:rotateY(0deg); } to { transform:rotateY(90deg); } }
+@keyframes TMRotateY90From { from { transform:rotateY(90deg); } to { transform:rotateY(0deg); } }
+
+@keyframes TMFocus { 0% { color:inherit; } 50% { color:red; } 100% { color:inherit; } }
+@keyframes TMCopy { 0% { transform:translateX(0px); } 25% { transform:translateX(1px); } 75% { transform:translateX(-1px); } 100% { transform:translateX(0px); } }
+
+@keyframes TMOpacityBlink { 0% { opacity:1; } 50% { opacity:0.2; } 100% { opacity:1; } }
+@keyframes TMBackgroundBlink { 0% { background-color:#FFF; } 50% { background-color:#888; } 100% { background-color:#FFF; } }
+
+.TMMark { background-color:#AAA!important; }
+@keyframes TMMark { 0% { background-color:#FFF; } 25% { background-color:#AAA; } 75% { background-color:#AAA; } 100% { background-color:#FFF; } }
+@keyframes TMHighlight { 0% { background-color:#FFF; } 25% { background-color:#AAA; } 50% { background-color:#FFF; } 75% { background-color:#AAA; } 100% { background-color:#FFF; } }
+@keyframes TMHighlightDeselect { 0% { background-color:#FFF; } 25% { background-color:#FF0; } 50% { background-color:#FFF; } 75% { background-color:#FF0; } 100% { background-color:#FFF; } }
+@keyframes TMHighlightSelect { 0% { background-color:#FF0; } 25% { background-color:#FFF; } 50% { background-color:#FF0; } 75% { background-color:#FFF; } 100% { background-color:#FF0; } }
+@keyframes TMHighlightDelete { 0% { background-color:#FAA; } 25% { background-color:#FFF; } 50% { background-color:#FAA; } 75% { background-color:#FFF; } 100% { background-color:#FAA; } }
+@keyframes TMHighlightMove { 0% { background-color:#AEE; } 25% { background-color:#FFF; } 50% { background-color:#AEE; } 75% { background-color:#FFF; } 100% { background-color:#AEE; } }
+@keyframes TMHighlightAdd { 0% { background-color:#AFA; } 25% { background-color:#FFF; } 50% { background-color:#AFA; } 75% { background-color:#FFF; } 100% { background-color:#AFA; } }
+@keyframes TMHighlightChange { 0% { background-color:#AAF; } 25% { background-color:#FFF; } 50% { background-color:#AAF; } 75% { background-color:#FFF; } 100% { background-color:#AAF; } }
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                          System settings                                                      */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* Tag added to disable whole page, e.g. when showing modal dialog. ! Note, here is no .TM style prefix
+   Note, to disable only the grid is used .TMDisabled class instead (e.g. when showing message in grid).
+   @ Set background and opacity, optionally margin and padding
+*/
+.GridDisabled { position:absolute; z-index:256; background:white; opacity:0.5; } 
+
+/* Marks the style loaded; must be the last class in the file; @ Do not change */
+.TMDialogLoaded { border:1px solid black!important; }

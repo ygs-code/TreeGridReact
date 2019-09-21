@@ -1,0 +1,634 @@
+﻿<Grid>
+   <!-- Translations to other languages -->
+
+   <!-- German -->
+
+   <TextDE>
+      <Replace Col="T" Def="Task" Group="Gruppe"/>
+      <Regex Col="TEdit" Def="Task" N="Gruppe" V="Group"/>
+      <Replace Col="T" Def="R" Task="Aufgabe"/>
+      <Regex Col="TEdit" Def="R" N="Aufgabe" V="Task"/>
+      <Set Row="Header" T="Aufgabe" R="Definition" S="Anfang" D="Linien"/>
+      <Set Row="Controls" ZoomTip='Zoom-Level; von Millisekunden bis Jahre möglich'
+         HideLabelRight="Nur Chart" HideTip="Blendet alle Grid-Teile aus außer dem Gantt-Chart"
+         ExcludeLabelRight='Keine Feiertage' ExcludeTip='Arbeitsfreie Tage ausblenden'
+         ShiftLabelRight='Texte einrücken' ShiftTip='Texte einrücken um Überlappung mit Abhängigkeiten zu vermeiden; nur für Gantt-Style Weiß'
+         WinLabelRight='Fenster scrollen' WinTip='Scrollbalken des Grids deaktivieren und die der Webseite verwenden'
+         />
+      <Replace Row="Controls" Col="Zoom">
+         <U N="years and halves" V="Jahre und Halbjahre"/>
+         <U N="years and quarters" V="Jahre und Quartale"/>
+         <U N="halves and months" V="Halbjahre und Monate"/>
+         <U N="quarters and months" V="Quartale und Monate"/>
+         <U N="months and weeks" V="Monate und Wochen"/>
+         <U N="months and days" V="Monate und Tage"/>
+         <U N="weeks and days" V="Wochen und Tage"/>
+         <U N="days and quarters" V="Tage und 6 Stunden"/>
+         <U N="days and hours" V="Tage und Stunden"/>
+         <U N="halves and hours" V="Halbe Tage und Stunden"/>
+         <U N="hours and quarters" V="Stunden und Viertelstunden"/>
+         <U N="hours and 5 minutes" V="Stunden und 5 Minuten"/>
+         <U N="hours and minutes" V="Stunden und Minuten"/>
+         <U N="halves and minutes" V="Halbe Stunden und Minuten"/>
+         <U N="quarters and minutes" V="Viertelstunden und Minuten"/>
+         <U N="5 minutes and minutes" V="5 Minuten und Minuten"/>
+         <U N="minutes and 15 seconds" V="Minuten und 15 Sekunden"/>
+         <U N="minutes and 5 seconds" V="Minuten und 5 Sekunden"/>
+         <U N="minutes and seconds" V="Minuten und Sekunden"/>
+         <U N="halves and seconds" V="Halbe Minuten und Sekunden"/>
+         <U N="quarters and seconds" V="Viertelminuten und Sekunden"/>
+         <U N="5 seconds and seconds" V="5 Sekunden und Sekunden"/>
+         <U N="seconds and 100 ms" V="Sekunden und 100 ms"/>
+         <U N="seconds and 100 ms 2" V="Sekunden und 100 ms 2"/>
+         <U N="100 ms and 10 ms" V="100 ms und 10 ms"/>
+         <U N="100 ms and 10 ms 2" V="100 ms und 10 ms 2"/>
+         <U N="10 ms and ms" V="10 ms und ms"/>
+         <U N="10 ms and ms 2" V="10 ms und ms 2"/>
+         <U N="10 ms and ms 3" V="10 ms und ms 3"/>
+      </Replace>
+      <Replace Row="Controls" Col="ZoomFix" N="Zoom to" V="Zoom auf"/>
+      <Set Row="Info" Info="
+            Maus im Chart:
+            &lt;i style='padding-left:15px;'>Linke&lt;/i> Maustaste &lt;i>in Zeile ziehen&lt;/i> = Verschieben, Größe anpassen oder Anlegen,
+            &lt;i style='padding-left:10px;'>Linke&lt;/i> Maustaste &lt;i>zwischen Zeilen ziehen&lt;/i> = Verschieben (Verbinden bei Kante), 
+            &lt;i style='padding-left:10px;'>Umsch + linke&lt;/i> Maustaste &lt;i>zwischen Zeilen ziehen&lt;/i> = Freies Verschieben (und trennen),&lt;br>
+            &lt;i style='visibility:hidden;'>Maus im Chart:&lt;/i> 
+            &lt;i style='padding-left:15px;'>Rechte&lt;/i> Maustaste &lt;i>ziehen&lt;/i> = Chart scrollen,
+            &lt;i style='padding-left:10px;'>Strg + ziehen&lt;/i> = Erzeuge Linie zwischen Boxen,
+            &lt;i style='padding-left:10px;'>Umsch + ziehen&lt;/i> = Bereich auswählen,
+            &lt;i style='padding-left:10px;'>Doppelklick&lt;/i> = Auswählen, 
+            &lt;i style='padding-left:10px;'>Rechtsklick&lt;/i> = Menü,
+            &lt;i style='padding-left:10px;'>Strg + Linksklick&lt;/i> = Löschen&lt;br/>
+            Maus in Überschrift:
+            &lt;i style='padding-left:6px;'>Linke&lt;/i> Maustaste &lt;i>ziehen&lt;/i> = Zoom auf Datumsbereich,
+            &lt;i style='padding-left:10px;'>Linksklick&lt;/i> = Zoom auf Datum, 
+            &lt;i style='padding-left:10px;'>Rechtsklick&lt;/i> = Zurück- oder herauszoomen
+            &lt;i style='padding-left:15px;'>Alle Maus- und Tastenaktionen können im Konfigurations-XML geändert werden&lt;/i>
+            "
+         />
+   </TextDE>
+   <Media>
+      <M Language='DE'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Seite %1H / %4 , %2V / %5&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='margin-top:%0px;width:%7px'>Beispiel 'Run', Seite %3 / %6&lt;/center>"/>
+         <Cols>
+            <C Name="T" Width="105"/>
+         </Cols>
+         <Lang>
+            <Format
+               wk="'&lt;i>'*an*'&lt;/i>' *lm*" dur=", 0.## 'Stunden';;, 'gelöscht'"
+               h1="HH 'Stunde'" m1="' Minute'" m2="' halbe Minute'" m3="' Viertelminute'"
+               />
+            <Text HeaderTip=""/>
+         </Lang>
+      </M>
+   </Media>
+
+
+   <!-- French -->
+
+   <Media>
+      <M Language='FR'>
+         <Lang>
+            <Format
+               wk="'&lt;i>'*an*'&lt;/i>' *lm*" dur=", 0.## 'hours';;, 'deleted'"
+               h1="HH 'hour'" m1="' minute'" m2="' half minute'" m3="' quarter minute'"
+               />
+         </Lang>
+      </M>
+   </Media>
+
+
+   <!-- Canadian French -->
+
+   <Media>
+      <M Language='CA'>
+         <Lang>
+            <Format
+               wk="'&lt;i>'*an*',&lt;/i>' *lm*" dur=", 0.## 'hours';;, 'deleted'"
+               h1="HH 'hour'" m1="' minute'" m2="' half minute'" m3="' quarter minute'"
+               />
+         </Lang>
+      </M>
+   </Media>
+
+
+   <!-- Spanish -->
+
+   <Media>
+      <M Language='ES'>
+         <Lang>
+            <Format
+               wk="'&lt;i>'*an*',&lt;/i>' *lm*" dur=", 0.## 'hours';;, 'deleted'"
+               h1="HH 'hour'" m1="' minute'" m2="' half minute'" m3="' quarter minute'"
+               />
+         </Lang>
+      </M>
+   </Media>
+
+
+   <!-- Portuguese -->
+
+   <Media>
+      <M Language='PT'>
+         <Lang>
+            <Format
+               wk="'&lt;i>'*an*',&lt;/i>' *lm*" dur=", 0.## 'horas';;, 'apagar'"
+               h1="HH 'hora'" m1="' minuto'" m2="' meio minuto'" m3="' um quarto de minuto'"
+               />
+         </Lang>
+      </M>
+   </Media>
+
+
+   <!-- Brazilian Portuguese -->
+
+   <TextBR>
+      <Replace Col="T" Def="Task" Group="Grupo"/>
+      <Regex Col="TEdit" Def="Task" N="grupo" V="Group"/>
+      <Replace Col="T" Def="R" Task="Tarefa"/>
+      <Regex Col="TEdit" Def="R" N="tarefa" V="Task"/>
+      <Set Row="Header" T="Tarefa" R="Definição" S="Comece" D="Linhas"/>
+      <Set Row="Controls" ZoomTip='Nível de zoom, disponíivel de milisegundos  para anos'
+         HideLabelRight="Mostrar apenas gráfico" HideTip="Esconde todas as partes da grade, exceto o gráfico de Gantt"
+         ExcludeLabelRight='Ocultar feriados' ExcludeTip='Oculta dias não úteis'
+         ShiftLabelRight='Shift textos' ShiftTip='Deslocar textos da caixa para não sobrepor dependências, apenas para o estilo Gantt White'
+         WinLabelRight='Rolagem da janela' WinTip='Desativar barras de rolagem da grade e usar barras de rolagem de página'
+         />
+      <Replace Row="Controls" Col="Zoom">
+         <U N="years and halves" V="Anos e metades"/>
+         <U N="years and quarters" V="Anos e quartos"/>
+         <U N="halves and months" V="Metades e meses"/>
+         <U N="quarters and months" V="Trimestres e meses"/>
+         <U N="months and weeks" V="Meses e semanas"/>
+         <U N="months and days" V="Meses e dias"/>
+         <U N="weeks and days" V="Semanas e dias"/>
+         <U N="days and quarters" V="Dias e quartos"/>
+         <U N="days and hours" V="Dias e horas"/>
+         <U N="halves and hours" V="Metades e horas"/>
+         <U N="hours and quarters" V="Horas e quartos"/>
+         <U N="hours and 5 minutes" V="Horas e 5 minutos"/>
+         <U N="hours and minutes" V="Horas e minutos"/>
+         <U N="halves and minutes" V="Metades e minutos"/>
+         <U N="quarters and minutes" V="Quartos e minutos"/>
+         <U N="5 minutes and minutes" V="5 minutos e minutos"/>
+         <U N="minutes and 15 seconds" V="Minutos e 15 segundos"/>
+         <U N="minutes and 5 seconds" V="Minutos e 5 segundos"/>
+         <U N="minutes and seconds" V="Minutos e segundos"/>
+         <U N="halves and seconds" V="Metades e segundos"/>
+         <U N="quarters and seconds" V="Quartos e segundos"/>
+         <U N="5 seconds and seconds" V="5 segundos e segundos"/>
+         <U N="seconds and 100 ms" V="Segundos e 100 ms"/>
+         <U N="seconds and 100 ms 2" V="Segundos e 100 ms 2"/>
+         <U N="100 ms and 10 ms" V="100 ms e 10 ms"/>
+         <U N="100 ms and 10 ms 2" V="100 ms e 10 ms 2"/>
+         <U N="10 ms and ms" V="10 ms e ms"/>
+         <U N="10 ms and ms 2" V="10 ms e ms 2"/>
+         <U N="10 ms and ms 3" V="10 ms e ms 3"/>
+      </Replace>
+      <Replace Row="Controls" Col="ZoomFix" N="Zoom to" V="Zoom para"/>
+      <Set Row="Info" Info="
+            Mouse no gráfico:
+            &lt;i style='padding-left: 15px;'> botão&lt;/i>&lt;i> arrastar na linha&lt;/i> = mover (deslizar), redimensionar ou criar,
+            &lt;i style='padding-left: 10px;'> botão&lt;/i>&lt;i> arrastar entre as linhas&lt;/i> = mover (unir na extremidade),
+            &lt;i style='padding-left: 10px;'> shift + botão esquerdo &lt;/i> e &lt;i> arrastar entre as linhas&lt;/i> = mover e remover o erro,&lt;br>
+            &lt;i style='visibility: hidden;'> Mouse no gráfico:&lt;/i>
+            &lt;i style='padding-left: 15px;'> right botão&lt;/i> arrastar = grade de rolagem,
+            &lt;i style='padding-left: 10px;'> ctrl + arrastar&lt;/i> = criar linha entre caixas,
+            &lt;i style='padding-left: 10px;'> shift + arrastar&lt;/i> = selecionarintervalo,
+            &lt;i style='padding-left: 10px;'> clique duas vezes&lt;/i> = select,
+            &lt;i style='padding-left: 10px;'> clique com o botão direito do mouse&lt;/i> = menu,
+            &lt;i style='padding-left: 10px;'> ctrl + clique esquerdo&lt;/i> = excluir&lt;br>
+            Mouse no cabeçalho:
+            &lt;i style='padding-left: 6px;'> botão&lt;/i>&lt;i> arrastar&lt;/i> = zoom para ointervalo de datas,
+            &lt;i style='padding-left: 10px;'> clique com o botão esquerdo&lt;/i> = zoom até a data,
+            &lt;i style='padding-left: 10px;'> clique com o botão direito&lt;/i> = diminuir ou diminuir o zoom
+            &lt;i style='padding-left: 15px;'> Todas as ações do mouse e da tecla podem ser alteradas na configuração XML&lt;/i>
+            "
+         />
+   </TextBR>
+   <Media>
+      <M Language='BR'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Página %1H / %4 , %2V / %5&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='margin-top:%0px;width:%7px'>Execute o exemplo da página %3 / %6&lt;/center>"/>
+         <Cols>
+            <C Name="T" Width="100"/>
+            <C Name="S" Width="85"/>
+            <C Name="D" Width="75"/>
+         </Cols>
+         <Lang>
+            <Format
+               wk="'&lt;i>'*an*'&lt;/i>', *lm*" dur=", 0.## 'horas';;, 'apagar'"
+               h1="HH 'hora'" m1="' minuto'" m2="' meio minuto'" m3="' um quarto de minuto'"
+               />
+            <Text HeaderTip=""/>
+         </Lang>
+      </M>
+   </Media>
+
+
+   <!-- Czech -->
+
+   <TextCS>
+      <Replace Col="T" Def="Task" Group="Skupina"/>
+      <Regex Col="TEdit" Def="Task" N="skup[^\s]*" V="Group"/>
+      <Replace Col="T" Def="R" Task="Úkol"/>
+      <Regex Col="TEdit" Def="R" N="[ÚúUu]kol" V="Task"/>
+      <Set Row="Header" T="Úkol" R="Definice" S="Začátek" D="Ćáry"/>
+      <Set Row="Controls" ZoomTip='Úroveň měřítka, možné od milisekund po roky'
+         HideLabelRight="Zobrazit jen graf" HideTip="Skryje všechny části tabulky a nechá pouze Ganttův diagram"
+         ExcludeLabelRight='Skrýt svátky' ExcludeTip='Skryje nepracovní dny a časy v grafu'
+         ShiftLabelRight='Posun textů' ShiftTip='Posune texty rámců, aby se nepřekrývaly se závislostmi, pouze pro Bílý styl Ganttu'
+         WinLabelRight='Posun okna' WinTip='Neposunovat tabulku, ale celé okno'
+         />
+      <Replace Row="Controls" Col="Zoom">
+         <U N="years and halves" V="roky a pololetí"/>
+         <U N="years and quarters" V="roky a čtvrtletí"/>
+         <U N="halves and months" V="pololetí a měsíce"/>
+         <U N="quarters and months" V="čtvrtletí a měsíce"/>
+         <U N="months and weeks" V="měsíce a týdny"/>
+         <U N="months and days" V="měsíce a dny"/>
+         <U N="weeks and days" V="týdny a dny"/>
+         <U N="days and quarters" V="dny a 6 hodin"/>
+         <U N="days and hours" V="dny a hodiny"/>
+         <U N="halves and hours" V="půl dne a hodiny"/>
+         <U N="hours and quarters" V="hodiny a čtvrt hodiny"/>
+         <U N="hours and 5 minutes" V="hodiny a 5 minut"/>
+         <U N="hours and minutes" V="hodiny a minuty"/>
+         <U N="halves and minutes" V="půl hodiny a minuty"/>
+         <U N="quarters and minutes" V="čtvrt hodiny a minuty"/>
+         <U N="5 minutes and minutes" V="5 minut a minuty"/>
+         <U N="minutes and 15 seconds" V="minuty čtvrt minuty"/>
+         <U N="minutes and 5 seconds" V="minuty a 5 sekund"/>
+         <U N="minutes and seconds" V="minuty a sekundy"/>
+         <U N="halves and seconds" V="půl minuty a sekundy"/>
+         <U N="quarters and seconds" V="čvrt minuty a sekundy"/>
+         <U N="5 seconds and seconds" V="5 sekund a sekundy"/>
+         <U N="seconds and 100 ms" V="sekundy a 100 ms"/>
+         <U N="seconds and 100 ms 2" V="sekundy a 100 ms 2"/>
+         <U N="100 ms and 10 ms" V="100 ms a 10 ms"/>
+         <U N="100 ms and 10 ms 2" V="100 ms a 10 ms 2"/>
+         <U N="10 ms and ms" V="10 ms a ms"/>
+         <U N="10 ms and ms 2" V="10 ms a ms 2"/>
+         <U N="10 ms and ms 3" V="10 ms a ms 3"/>
+      </Replace>
+      <Replace Row="Controls" Col="ZoomFix" N="Zoom to" V="Měřítko grafu"/>
+         <Set Row="Info" Info="
+            Myš v grafu:
+            &lt;i style='padding-left:15px;'>tažení v řádce levým&lt;/i> tlačítkem = posun, změna velikosti nebo vytvoření,
+            &lt;i style='padding-left:10px;'>tažení mezi řádkami levým&lt;/i> tlačítkem = přesun (připojení ke hraně), 
+            &lt;i style='padding-left:10px;'>tažení mezi řádkami shift + levým&lt;/i> tlačítkem&lt;/i> = volný přesun a rozpojení,&lt;br>
+            &lt;i style='visibility:hidden;'>Myš v grafu:&lt;/i> 
+            &lt;i style='padding-left:15px;'>tažení pravým&lt;/i> tlačítkem = posun tabulky,
+            &lt;i style='padding-left:10px;'>ctrl + tažení&lt;/i> = vytvoření linku mezi rámci,
+            &lt;i style='padding-left:10px;'>shift + tažení&lt;/i> = výběr oblasti,
+            &lt;i style='padding-left:10px;'>dvojklik&lt;/i> = výběr, 
+            &lt;i style='padding-left:10px;'>klik pravým&lt;/i> tlačítkem = menu,
+            &lt;i style='padding-left:10px;'>ctrl + click levým&lt;/i> tlačítkem = smazat&lt;br/>
+            Myš v hlavičce:
+            &lt;i style='padding-left:6px;'>tažení levým&lt;/i> tlačítkem = přiblíží vybranou oblast,
+            &lt;i style='padding-left:10px;'>klik levým&lt;/i> tlačítkem = přiblíží dané datum, 
+            &lt;i style='padding-left:10px;'>klik pravým&lt;/i> tlačítkem = oddálí zpět,
+            &lt;i style='padding-left:15px;'>Všechny akce myši a kláves lze nastavit v konfigurace v XML&lt;/i>
+            "
+         />
+   </TextCS>
+   <Media>
+      <M Language='CS'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Stránka %1H / %4 , %2V / %5&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='margin-top:%0px;width:%7px'>Příklad 'Run', stránka %3 / %6&lt;/center>"/>
+         <Lang>
+            <Format
+               wk="'&lt;i>'*ln*'&lt;/i>' *lm*" dur=", 0.## 'hodin';;, 'smazané'"
+               h1="HH 'hodin'" m1="' minuta'" m2="' půl minuta'" m3="' čtvrt minuta'"
+               />
+            <Text HeaderTip="&lt;br>&lt;i>Klik přiblíží a zobrazí datum v grafu&lt;/i>&lt;br>&lt;i>Klik pravým tlačítkem vrátí zpět poslední úroveň přiblížení&lt;/i>&lt;br>&lt;i>Tažení myší zobrazí vybraný rozsah v grafu&lt;/i>"/>
+         </Lang>
+      </M>
+   </Media>
+
+
+   <!-- Russian -->
+
+   <TextRU>
+      <Replace Col="T" Def="Task" Group="Группа"/>
+      <Regex Col="TEdit" Def="Task" N="груп" V="Group"/>
+      <Replace Col="T" Def="R" Task="Задача"/>
+      <Regex Col="TEdit" Def="R" N="Задача" V="Task"/>
+      <Set Row="Controls" ZoomTip='Уровень масштаба, доступный от миллисекунд до лет'
+         HideLabelRight="Показать только диаграмму" HideTip="Скрыть все части сетки, кроме диаграммы Ганта"
+         ExcludeLabelRight='Скрыть праздники' ExcludeTip='Скрыть нерабочие дни'
+         ShiftLabelRight='Сдвиг текстов' ShiftTip='Сдвиг текстовых полей, чтобы не перекрывать связи, только для стиля Ганта Белого'
+         WinLabelRight='Прокрутка окна' WinTip='Отключить полосы прокрутки сетки и использовать полосы прокрутки страницы'
+         />
+      <Replace Row="Controls" Col="Zoom">
+         <U N="years and halves" V="годы и полугодия"/>
+         <U N="years and quarters" V="годы и кварталы"/>
+         <U N="halves and months" V="полугодия и месяцы"/>
+         <U N="quarters and months" V="кварталы и месяцы"/>
+         <U N="months and weeks" V="месяцы и недели"/>
+         <U N="months and days" V="месяцы и дни"/>
+         <U N="weeks and days" V="недели и дни"/>
+         <U N="days and quarters" V="дни и 6 часоб"/>
+         <U N="days and hours" V="дни и часы"/>
+         <U N="halves and hours" V="полдня и часы"/>
+         <U N="hours and quarters" V="часы и 15 минут"/>
+         <U N="hours and 5 minutes" V="часы и 5 минут"/>
+         <U N="hours and minutes" V="часы и минуты"/>
+         <U N="halves and minutes" V="полчаса и минуты"/>
+         <U N="quarters and minutes" V="15 минут и минуты"/>
+         <U N="5 minutes and minutes" V="5 минут и минуты"/>
+         <U N="minutes and 15 seconds" V="минуты и 15 секунд"/>
+         <U N="minutes and 5 seconds" V="минуты и 5 секунд"/>
+         <U N="minutes and seconds" V="минуты и секунды"/>
+         <U N="halves and seconds" V="30 секунд и секунды"/>
+         <U N="quarters and seconds" V="15 секунд и секунды"/>
+         <U N="5 seconds and seconds" V="5 секунд и секунды"/>
+         <U N="seconds and 100 ms" V="секунды и 100 мс"/>
+         <U N="seconds and 100 ms 2" V="секунды и 100 мс 2"/>
+         <U N="100 ms and 10 ms" V="100 мс и 10 мс"/>
+         <U N="100 ms and 10 ms 2" V="100 мс и 10 мс 2"/>
+         <U N="10 ms and ms" V="10 мс и мс"/>
+         <U N="10 ms and ms 2" V="10 мс и мс 2"/>
+         <U N="10 ms and ms 3" V="10 мс и мс 3"/>
+      </Replace>
+      <Replace Row="Controls" Col="ZoomFix" N="Zoom to" V="Увеличить до"/>
+      <Set Row="Info" Info="
+            Мышь в диаграмме:
+            &lt;i style='padding-left:15px;'>перетащить&lt;/i> левой &lt;/i>кнопкой в строке&lt;/i> = переместить (слайд), изменить размер или создать,
+            &lt;i style='padding-left:10px;'>перетащить&lt;/i> левой &lt;/i>кнопкой между строками&lt;/i> = двигаться (присоединиться к краю), 
+            &lt;i style='padding-left:10px;'>shift + перетащить&lt;/i> левой &lt;/i>кнопкой между строками&lt;/i> = вольное перемещение и разделение,&lt;br>
+            &lt;i style='visibility:hidden;'>Мышь в диаграмме:&lt;/i> 
+            &lt;i style='padding-left:15px;'>перетащить&lt;/i> правой &lt;/i>кнопкой&lt;/i> = прокрутки сетки,
+            &lt;i style='padding-left:10px;'>ctrl + перетащить&lt;/i> = создать линию между ящиками,
+            &lt;i style='padding-left:10px;'>shift + перетащить&lt;/i> = выбрать диапазон,
+            &lt;i style='padding-left:10px;'>двойной щелчок&lt;/i> = выбрать, 
+            &lt;i style='padding-left:10px;'>щелчок правой кнопкой&lt;/i> = меню,
+            &lt;i style='padding-left:10px;'>ctrl + щелчок левой кнопкой&lt;/i> = удалить&lt;br/>
+            Мышь в заголовке:
+            &lt;i style='padding-left:6px;'>перетащить&lt;/i> левой &lt;/i>кнопкой&lt;/i> = увеличить на диапазон дат,
+            &lt;i style='padding-left:10px;'>left click&lt;/i> = увеличить на дату, 
+            &lt;i style='padding-left:10px;'>right click&lt;/i> = увеличить назад или уменьшить
+            &lt;i style='padding-left:15px;'>Все операции мыши и клавиши могут быть изменены в конфигурации XML&lt;/i>
+            "
+         />
+   </TextRU>
+   <Media>
+      <M Language='RU'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Страница %1H / %4 , %2V / %5&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='margin-top:%0px;width:%7px'>Пример 'Рун' страница %3 / %6&lt;/center>"/>
+         <Cols>
+            <C Name="T" Width="100"/>
+         </Cols>
+         <Lang>
+            <Format
+               wk="'&lt;i>'*an*'&lt;/i>' *lm*" dur=", 0.## 'часов';;, удаленные"
+               h1="HH 'часов'" m1="' минута'" m2="' полминуты'" m3="' четверть минуты'"
+               />
+            <Text HeaderTip=""/>
+         </Lang>
+      </M>
+   </Media>
+
+
+   <!-- Japanese -->
+
+   <TextJP>
+      <Replace Col="T" Def="Task" Group="グループ"/>
+      <Regex Col="TEdit" Def="Task" N="グループ" V="Group"/>
+      <Replace Col="T" Def="R" Task="タスク"/>
+      <Regex Col="TEdit" Def="R" N="タスク" V="Task"/>
+      <Set Row="Header" T="タスク" R="定義" S="開始" D="行"/>
+      <Set Row="Controls" ZoomTip='ズーム レベル (ミリ秒から年単位まで利用可能)'
+         HideLabelRight="チャートのみ表示" HideTip="ガント チャート以外のすべてのグリッド部分を非表示にします。"
+         ExcludeLabelRight='休日を非表示' ExcludeTip='休日を非表示にします。'
+         ShiftLabelRight='テキストをシフト' ShiftTip='ガント ホワイト スタイルの場合のみ依存関係が重ならないようにボックス テキストをシフトします。'
+         WinLabelRight='ウィンドウ スクロール' WinTip='グリッドのスクロール バーを無効にしてページのスクロール バーを使用します。'
+         />
+      <Replace Row="Controls" Col="Zoom">
+         <U N="years and halves" V="年と前・後期"/>
+         <U N="years and quarters" V="年と四半期"/>
+         <U N="halves and months" V="前・後期と月"/>
+         <U N="quarters and months" V="四半期と月"/>
+         <U N="months and weeks" V="月と週"/>
+         <U N="months and days" V="月と日"/>
+         <U N="weeks and days" V="週と日"/>
+         <U N="days and quarters" V="日と 6 時間"/>
+         <U N="days and hours" V="日と時間"/>
+         <U N="halves and hours" V="半日と時間"/>
+         <U N="hours and quarters" V="時間と 15 分"/>
+         <U N="hours and 5 minutes" V="時間と 5 分"/>
+         <U N="hours and minutes" V="時間と分"/>
+         <U N="halves and minutes" V="30 分と分"/>
+         <U N="quarters and minutes" V="15 分と分"/>
+         <U N="5 minutes and minutes" V="5 分と分"/>
+         <U N="minutes and 15 seconds" V="分と15 秒"/>
+         <U N="minutes and 5 seconds" V="分と 5 秒"/>
+         <U N="minutes and seconds" V="分と秒"/>
+         <U N="halves and seconds" V="1/2 分と秒"/>
+         <U N="quarters and seconds" V="1/4 分と秒"/>
+         <U N="5 seconds and seconds" V="5 秒と秒"/>
+         <U N="seconds and 100 ms" V="秒と100ms"/>
+         <U N="seconds and 100 ms 2" V="秒と 100ms 2"/>
+         <U N="100 ms and 10 ms" V="100ms と 10ms"/>
+         <U N="100 ms and 10 ms 2" V="100ms と 10ms 2"/>
+         <U N="10 ms and ms" V="10ms と ms"/>
+         <U N="10 ms and ms 2" V="10ms と ms 2"/>
+         <U N="10 ms and ms 3" V="10ms と ms3"/>
+      </Replace>
+      <Replace Row="Controls" Col="ZoomFix" N="Zoom to" V="ズーム単位:"/>
+      <Set Row="Info" Info="
+            チャート上でのマウス操作:
+            &lt;i style='padding-left:15px;'>左&lt;/i>ボタンで&lt;i>行をドラッグ&lt;/i> = 移動 (スライド)、サイズ変更、または作成、
+            &lt;i style='padding-left:10px;'>左&lt;/i>ボタンで&lt;i>行の間をドラッグ&lt;/i> = 移動 (エッジを結合)、 
+            &lt;i style='padding-left:10px;'>Shift + 左&lt;/i>ボタンで&lt;i>行の間をドラッグ&lt;/i> = エラーの移動と結合解除&lt;br>
+            &lt;i style='visibility:hidden;'>チャート上でのマウス操作:&lt;/i> 
+            &lt;i style='padding-left:15px;'>右&lt;/i>ボタンで&lt;i>ドラッグ&lt;/i> = グリッドをスクロール、
+            &lt;i style='padding-left:10px;'>Ctrl + ドラッグ&lt;/i> = ボックスの間に線を引く、
+            &lt;i style='padding-left:10px;'>Shift + ドラッグ&lt;/i> = 範囲を選択、
+            &lt;i style='padding-left:10px;'>ダブルクリック&lt;/i> = 選択、 
+            &lt;i style='padding-left:10px;'>右クリック&lt;/i> = メニュー、
+            &lt;i style='padding-left:10px;'>Ctrl + 左クリック&lt;/i> = 削除&lt;br/>
+            ヘッダー上でのマウス操作:
+            &lt;i style='padding-left:6px;'>左&lt;/i>ボタンで&lt;i>ドラッグ&lt;/i> = 日付範囲にズーム イン、
+            &lt;i style='padding-left:10px;'>左クリック&lt;/i> = 日付にズーム、 
+            &lt;i style='padding-left:10px;'>右クリック&lt;/i> = ズーム バックまたはズーム アウト
+            &lt;i style='padding-left:15px;'>すべてのマウスとキー操作は XML 設定で変更できます&lt;/i>
+            "
+         />
+   </TextJP>
+   <Media>
+      <M Language="JP">
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>%6 からのガント サンプル印刷ページ %3&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='width:%7px'>%4 から水平方向にページ %1、%5 から垂直方向にページ %2&lt;/center>"/>
+         <Cols>
+            <C Name="T" Width="95"/>
+            <C Name="S" Width="85"/>
+         </Cols>
+         <Lang>
+            <Format
+               wk="'&lt;i>'*ln*'&lt;/i>' *lm*" dur=", 0.## 時間;;, 削除"
+               h1="HH '時間'" m1="' 分'" m2="' 1/2 分'" m3="' 1/4 分'"
+               />
+            <Text HeaderTip=""/>
+         </Lang>
+      </M>
+   </Media>
+
+
+   <!-- Persian -->
+
+   <TextFA>
+      <Replace Col="T" Def="Task" Group="گروه بندي"/>
+      <Regex Col="TEdit" Def="Task" N="گروه" V="Group"/>
+      <Replace Col="T" Def="R" Task="فعاليت"/>
+      <Regex Col="TEdit" Def="R" N="فعاليت" V="Task"/>
+      <Set Row="Header" T="فعاليت" R="تعريف" S="شروع" D="رديف"/>
+      <Set Row="Controls" ZoomTip='سطح زوم , قابل انجام از ميلي ثانيه تا سال'
+         HideLabelRight="نمايش فقط چارت" HideTip="مخفي نمودن همه بجز چارت"
+         ExcludeLabelRight='مخفي كردن تعطيلات' ExcludeTip='مخفي كردن ساعات غير كاري'
+         ShiftLabelRight='شيفت' ShiftTip='انتقال متن Box ها به منظور عدم تداخل آنها فقط در استایل سفید قابل انجام است'
+          WinLabelRight='اسكرول' WinTip='غير فعال كردن اسكرول و فعال شدن اسكرول صفحه'
+         />
+      <Replace Row="Controls" Col="Zoom">
+         <U N="years and halves" V="سال و شش ماه"/>
+         <U N="years and quarters" V="سال و فصل"/>
+         <U N="halves and months" V="شش ماه و ماه"/>
+         <U N="quarters and months" V="فصل و ماه"/>
+         <U N="months and weeks" V="ماه و هفته"/>
+         <U N="months and days" V="ماه و روز"/>
+         <U N="weeks and days" V="هفته و روز"/>
+         <U N="days and quarters" V="ساعت و هر شش ساعت"/>
+         <U N="days and hours" V="روز و ساعت"/>
+         <U N="halves and hours" V="12 ساعت و ساعت"/>
+         <U N="hours and quarters" V="ساعت و يك ربع"/>
+         <U N="hours and 5 minutes" V="ساعت و 5 دقيقه"/>
+         <U N="hours and minutes" V="ساعت و دقيقه"/>
+         <U N="halves and minutes" V="نيم ساعت و دقيقه"/>
+         <U N="quarters and minutes" V="يك ربع و دقيقه"/>
+         <U N="5 minutes and minutes" V="5 دقيقه و دقيقه"/>
+         <U N="minutes and 15 seconds" V="دقيقه و 15 ثانيه"/>
+         <U N="minutes and 5 seconds" V="دقيقه و 5 ثانيه"/>
+         <U N="minutes and seconds" V="دقيقه و ثانيه"/>
+         <U N="halves and seconds" V="نيم دقيقه و ثانيه"/>
+         <U N="quarters and seconds" V="15 ثانيه و ثانيه"/>
+         <U N="5 seconds and seconds" V="5 ثانيه و ثانيه"/>
+         <U N="seconds and 100 ms" V="ثانيه و 100 ميلي ثانيه"/>
+         <U N="seconds and 100 ms 2" V="ثانيه و 100 ميلي ثانيه 2"/>
+         <U N="100 ms and 10 ms" V="100 ميلي ثانيه و 10 ميلي ثانيه"/>
+         <U N="100 ms and 10 ms 2" V="100 ميلي ثانيه و 10 ميلي ثانيه 2"/>
+         <U N="10 ms and ms" V="10 ميلي ثانيه و ميلي ثانيه"/>
+         <U N="10 ms and ms 2" V="10 ميلي ثانيه و ميلي ثانيه 2"/>
+         <U N="10 ms and ms 3" V="10 ميلي ثانيه و ميلي ثانيه 3"/>
+      </Replace>
+      <Replace Row="Controls" Col="ZoomFix" N="Zoom to" V="زوم به"/>
+      <Set Row="Info" Info="
+            ماوس در نمودار:
+            &lt;i style='padding-left:15px;'>چپ&lt;/i>دكمه &lt;i>و كشيدن بين رديفها&lt;/i> = جابجايي تغيير يا ايجاد ,
+            &lt;i style='padding-left:10px;'>چپ&lt;/i>و كشيدن &lt;i>بين رديفها&lt;/i> =جابجايي و الحاق لبه ها , 
+            &lt;i style='padding-left:10px;'>شيفت + چپ&lt;/i> دكمه &lt;i>و كشيدن بين رديفها&lt;/i> = جابجايي خطاها و جداسازي , &lt;br/>
+            &lt;i style='visibility:hidden;'>ماوس در نمودار:&lt;/i> 
+            &lt;i style='padding-left:15px;'>راست&lt;/i> دكمه &lt;i>و كشيدن&lt;/i> = اسكرول گريد ,
+            &lt;i style='padding-left:10px;'>كنترل + كشيدن&lt;/i> = ايجاد خط بين Box ها ,
+            &lt;i style='padding-left:10px;'>شيفت + كشيدن&lt;/i> = انتخاب مجموعه ,
+            &lt;i style='padding-left:10px;'>دوبار كليك&lt;/i> = انتخاب , 
+            &lt;i style='padding-left:10px;'>راست كليك&lt;/i> = منو ,
+            &lt;i style='padding-left:10px;'>كنترل + كليك&lt;/i> = حذف&lt;br/>
+            ماوس در هدر:
+            &lt;i style='padding-left:6px;'>چپ&lt;/i> دكمه &lt;i>و كشيدن&lt;/i> = زوم در محدوده تاريخ ,
+            &lt;i style='padding-left:10px;'>كليك&lt;/i> = زوم درتاريخ , 
+            &lt;i style='padding-left:10px;'>راست كليك&lt;/i> = برگشت زوم يا زوم كمتر
+            &lt;i style='padding-right:25px;'>عملكرد ماوس و كليدها در تنظيمات Xml قابل تغيير ميباشد&lt;/i>
+            "
+         />
+   </TextFA>
+   <Media>
+      <M Language='FA'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>صفحه %1H / %4 , %2V / %5&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='margin-top:%0px;width:%7px'>مثال Run صفحه چاپ شده %3 / %6&lt;/center>"/>
+         <Lang>
+            <Format
+               wk="'&lt;i>'*ln*'&lt;/i>' *lm*" dur=", 0.## ساعت;;, حذف"
+               h1="HH 'ساعت'" m1="' دقيقه'" m2="' 30 ثانيه'" m3="' ربع'"
+            />
+            <Text HeaderTip=""/>
+         </Lang>
+      </M>
+   </Media>
+
+
+   <!-- Framework for translations, English to English -->
+   <!-- To use it, rename the XX to your language code and add the language code also to the ...Def.xml to Languages Code and translate the texts !...! -->
+   <!-- Optionally extend Media tag (with Language set to your language code) to change sizes of cells and columns if translated text have different widths -->
+
+   <TextXX>
+      <Replace Col="T" Def="Task" Group="!Group!"/>
+      <Regex Col="TEdit" Def="Task" N="!group!" V="Group"/>
+      <Replace Col="T" Def="R" Task="!Task!"/>
+      <Regex Col="TEdit" Def="R" N="!task!" V="Task"/>
+      <Set Row="Header" T="!Task!" R="!Run!" S="!Start!" D="!Lines!"/>
+      <Set Row="Controls" ZoomTip='!Zoom level, available from milliseconds to years!'
+         HideLabelRight="!Show only chart!" HideTip="!Hides all grid parts except the Gantt chart!"
+         ExcludeLabelRight='!Hide holidays!' ExcludeTip='!Hides non working days!'
+         ShiftLabelRight='!Shift texts!' ShiftTip='!Shift box texts to not overlay dependencies, only for Gantt White style!'
+         WinLabelRight='!Window scroll!' WinTip='!Disable grid scrollbars and use page scrollbars!'
+         />
+      <Replace Row="Controls" Col="Zoom">
+         <U N="years and halves" V="!years and halves!"/>
+         <U N="years and quarters" V="!years and quarters!"/>
+         <U N="halves and months" V="!halves and months!"/>
+         <U N="quarters and months" V="!quarters and months!"/>
+         <U N="months and weeks" V="!months and weeks!"/>
+         <U N="months and days" V="!months and days!"/>
+         <U N="weeks and days" V="!weeks and days!"/>
+         <U N="days and quarters" V="!days and quarters!"/>
+         <U N="days and hours" V="!days and hours!"/>
+         <U N="halves and hours" V="!halves and hours!"/>
+         <U N="hours and quarters" V="!hours and quarters!"/>
+         <U N="hours and 5 minutes" V="!hours and 5 minutes!"/>
+         <U N="hours and minutes" V="!hours and minutes!"/>
+         <U N="halves and minutes" V="!halves and minutes!"/>
+         <U N="quarters and minutes" V="!quarters and minutes!"/>
+         <U N="5 minutes and minutes" V="!5 minutes and minutes!"/>
+         <U N="minutes and 15 seconds" V="!minutes and 15 seconds!"/>
+         <U N="minutes and 5 seconds" V="!minutes and 5 seconds!"/>
+         <U N="minutes and seconds" V="!minutes and seconds!"/>
+         <U N="halves and seconds" V="!halves and seconds!"/>
+         <U N="quarters and seconds" V="!quarters and seconds!"/>
+         <U N="5 seconds and seconds" V="!5 seconds and seconds!"/>
+         <U N="seconds and 100 ms" V="!seconds and 100 ms!"/>
+         <U N="seconds and 100 ms 2" V="!seconds and 100 ms 2!"/>
+         <U N="100 ms and 10 ms" V="!100 ms and 10 ms!"/>
+         <U N="100 ms and 10 ms 2" V="!100 ms and 10 ms 2!"/>
+         <U N="10 ms and ms" V="!10 ms and ms!"/>
+         <U N="10 ms and ms 2" V="!10 ms and ms 2!"/>
+         <U N="10 ms and ms 3" V="!10 ms and ms 3!"/>
+      </Replace>
+      <Replace Row="Controls" Col="ZoomFix" N="Zoom to" V="!Zoom to!"/>
+         <Set Row="Info" Info="
+            !Mouse in chart:
+            &lt;i style='padding-left:15px;'>left&lt;/i> button &lt;i>drag in row&lt;/i> = move (slide), resize or create,
+            &lt;i style='padding-left:10px;'>left&lt;/i> button &lt;i>drag between rows&lt;/i> = move (join on edge), 
+            &lt;i style='padding-left:10px;'>shift + left&lt;/i> button &lt;i>drag between rows&lt;/i> = error move and unjoin,!&lt;br>
+            &lt;i style='visibility:hidden;'>!Mouse in chart:&lt;/i> 
+            &lt;i style='padding-left:15px;'>right&lt;/i> button &lt;i>drag&lt;/i> = scroll grid,
+            &lt;i style='padding-left:10px;'>ctrl + drag&lt;/i> = create line between boxes,
+            &lt;i style='padding-left:10px;'>shift + drag&lt;/i> = select range,
+            &lt;i style='padding-left:10px;'>double click&lt;/i> = select, 
+            &lt;i style='padding-left:10px;'>right click&lt;/i> = menu,
+            &lt;i style='padding-left:10px;'>ctrl + left click&lt;/i> = delete!&lt;br/>
+            !Mouse in header:
+            &lt;i style='padding-left:6px;'>left&lt;/i> button &lt;i>drag&lt;/i> = zoom to date range,
+            &lt;i style='padding-left:10px;'>left click&lt;/i> = zoom to date, 
+            &lt;i style='padding-left:10px;'>right click&lt;/i> = zoom back or zoom out
+            &lt;i style='padding-left:15px;'>All the mouse and key actions can be changed in XML configuration&lt;/i>!
+            "
+         />
+   </TextXX>
+   <Media>
+      <M Language='XX'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Page %1H / %4 , %2V / %5&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='margin-top:%0px;width:%7px'>Run example printed page %3 / %6&lt;/center>"/>
+         <Lang>
+            <Format
+               wk="'&lt;i>'*ln*'&lt;/i>' *lm*" dur=", 0.## 'hours';;, 'deleted'"
+               h1="HH 'hour'" m1="' minute'" m2="' half minute'" m3="' quarter minute'"
+               />
+            <Text HeaderTip="!&lt;br>&lt;i>Click to zoom to this date&lt;/i>&lt;br>&lt;i>Right click to zoom back to previous zoom level&lt;/i>&lt;br>&lt;i>Drag by mouse to zoom to selected range&lt;/i>!"/>
+         </Lang>
+      </M>
+   </Media>
+</Grid>

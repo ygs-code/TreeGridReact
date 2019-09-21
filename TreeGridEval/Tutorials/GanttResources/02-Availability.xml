@@ -1,0 +1,150 @@
+<Grid>
+   <Cfg id="Availability" MainCol="N" NoVScroll="1" HideRootTree="1" Size="Low" CopyPasteRows="3"/>
+   <Panel Visible="0"/>
+   <DefCols>
+      <D Name="COLAV" Button="Dates" 
+         DatesStartDefaultDate="11/1/2011" DatesEndDefaultDate="11/1/2011"
+         DatesRepeatType="Enum" DatesRepeatEnum="||Weekly|Daily" DatesRepeatEnumKeys="||w|d" 
+         DatesValueType="Float" DatesValueFormat="0.00" DatesValueCaption="Count"
+         />
+   </DefCols>
+   <LeftCols>
+      <C Name="N" Width="120"/>
+      <C Name="A" Width="100" Def="COLAV"/>
+      <C Name="B" Width="50" Def="COLAV"/>
+      <C Name="C" Width="50" Def="COLAV" />
+   </LeftCols>
+   <Cols>
+      <C Name="GANTT" Type="Gantt"
+         GanttAvailability="A,B,C"
+         GanttChartMaxStart="10/1/2011" GanttChartMinEnd="12/1/2011"
+         GanttUnits="d" GanttWidth="16"
+         GanttHeader1="d#&quot;&lt;div style='font-size:9px;'>&quot;%d&quot;&lt;/div>&quot;" GanttHeader2="d#ddddd" GanttHeader3="w#d.M.yyyy" GanttHeader4="M#MMMM yyyy"
+         GanttAvailabilityZero="0"
+         GanttExclude="d#17:00~8:00;d#12:00~13:00;w#11/5/2011~11/7/2011" GanttHideExclude="0" GanttAvailabilityExclude="0"
+         GanttAvailabilityFormat="0.##" 
+         GanttAvailabilityUnits="w"
+         GanttAvailabilitySplit="0"
+         GanttAvailabilityJoin="1"
+         GanttAvailabilitySum="0"
+         GanttAvailabilityStack="0"
+         GanttAvailabilityVPos="0"
+         GanttAvailabilityHPos="0"
+         GanttAvailabilityTextWidth="15"
+         />
+   </Cols>
+   <Header N="Note"/>
+   <Body>
+      <B>
+         <I N="Sum 1" Calculated="1" AFormula="sumrange()" BFormula="sumrange()" AButton="" BButton="" Height="50" 
+               GANTTGanttAvailabilityClass=",Black">
+            <I N="1" A="5;w#11/1/2011~11/4/2011#3" Height="30"/>
+            <I N="2" A="-1;w#11/2/2011~11/5/2011#2" Height="30"/>
+            <I N="3" A="w#11/1/2011~11/6/2011#5" B="w#11/3/2011~11/5/2011#3;w#11/5/2011~11/7/2011#1" GANTTGanttAvailabilityClass="Red,Green" Height="30"/>
+            <I N="4 Mat" A="-6;w#10/1/2011#1;w#10/3/2011#1" GANTTGanttAvailabilityType="2" Height="30"/>
+            <I N="5 Mat" GANTTGanttAvailabilityType="2" GANTTGanttAvailabilityClass="Red,Green,Blue" Height="100"
+               A="w#11/5/2011~11/7/2011#3;w#11/11/2011~11/20/2011#3;d#11/14/2011 8:00~11/20/2011 12:00#-2"
+               B="w#11/6/2011~11/9/2011#2"
+               CFormula="A+';'+negav(B)" Calculated="1" CButton=""
+               />
+            <I N="6" A="5;w#11/5/2011~11/9/2011#10;w#11/7/2011~11/9/2011#10;M#11/20/2011~11/30/2011#-30" 
+               GANTTGanttAvailabilityMax="10" GANTTGanttAvailabilityMin="-10" Height="30"/>
+            <I N="7" A="10/2/2011~10/12/2011#5;10/12/2011~10/22/2011#5;10/22/2011~11/2/2011#5;11/2/2011~11/12/2011#8;11/12/2011~11/22/2011#8;11/22/2011~12/2/2011#8;11/28/2011~12/2/2011#2"/>
+         </I>
+         <I N="Sum 2" Calculated="1" AFormula="sumrange()" AButton="" BButton="" Height="50">
+            <I N="1" GANTTGanttAvailabilityClass="Red" A="w#11/5/2011~11/7/2011#5;w#11/7/2011~11/10/2011#1;w#11/5/2011~11/8/2011#5"/>
+            <I N="2" GANTTGanttAvailabilityClass="Maroon" A="w#11/5/2011~11/7/2011#5;w#11/7/2011~11/10/2011#1"/>
+            <I N="3" GANTTGanttAvailabilityClass="Orange" A="w#11/6/2011~11/9/2011#3"/>
+            <I N="4" GANTTGanttAvailabilityClass="Yellow" A="2;d#8:00~12:00#6"/>
+            <I N="5" GANTTGanttAvailabilityClass="Olive" A="M#11/1/2011~11/10/2011"/>
+            <I N="6" GANTTGanttAvailabilityClass="Lime" A="w#11/1/2011~11/5/2011#3;M#11/2/2011~11/10/2011#2" />
+            <I N="7" GANTTGanttAvailabilityClass="Green" A="w#11/3/2011~11/8/2011#5;d#0:00~12:00#-3"/>
+            <I N="8" GANTTGanttAvailabilityClass="Aqua" A="M#11/5/2011~11/15/2011#-6;10/10/2011~11/20/2011#10"/>
+            <I N="9" GANTTGanttAvailabilityClass="Teal" A="10/25/2011~11/5/2011#-20"/>
+            <I N="10" GANTTGanttAvailabilityClass="Blue" A="3;w#11/11/2011~11/13/2011#-10"/>
+            <I N="11 Mat" GANTTGanttAvailabilityClass="Navy" A="w#10/11/2011" GANTTGanttAvailabilityType="2"/>
+            <I N="12 Mat" GANTTGanttAvailabilityClass="Fuchsia" A="-5;d#10/5/2011#1;w#10/8/2011#-5" GANTTGanttAvailabilityType="2"/>
+            <I N="13" GANTTGanttAvailabilityClass="Purple" A="w#10/10/2011~11/20/2011#3.5;w#10/10/2011~10/13/2011#-2.5"  GANTTGanttAvailabilityFormat="0.00"/>
+            <I N="14 Ignore exclude" GANTTGanttAvailabilityClass="Black" A="w#10/10/2011~11/12/2011" GANTTGanttAvailabilityExclude="0"/>
+            <I N="15 Exclude bounds" GANTTGanttAvailabilityClass="Gray" A="w#10/10/2011~11/12/2011" GANTTGanttAvailabilityExclude="1"/>
+            <I N="16 Exclude all" GANTTGanttAvailabilityClass="Silver" A="w#10/10/2011~11/12/2011" GANTTGanttAvailabilityExclude="2"/>
+            <I N="17 Exclude bounds" GANTTGanttAvailabilityClass="White" A="w#10/10/2011~11/11/2011" GANTTGanttAvailabilityExclude="1"/>
+         </I>
+      </B>
+   </Body>
+   <Solid>
+      <Topbar1 Space="0"
+         Cells="Exclude,Split,Units,Join,Sum,Stack"
+
+         ExcludeType='Select' ExcludeLabel='Exclude' ExcludeWidth='45' ExcludeRelWidth='55'
+         ExcludeDefaults='|Ignore|Bounds|All'
+         ExcludeFormula='Grid.GetDefaultsValue(Row,Col,Grid.Cols.GANTT.GanttAvailabilityExclude)'
+         ExcludeOnChange='Grid.Cols.GANTT.GanttAvailabilityExclude=Grid.GetDefaultsIndex(Row,Col,Value); Grid.RefreshGantt();'
+         ExcludeTip='Controls showing chart through excluded dates. Only for Work type Availability chart.&lt;br>Attribute GanttAvailabilityExclude'
+
+         SplitType='Select' SplitWidth='70' SplitLeft='15' SplitRelWidth='70'
+         SplitDefaults='|Do nothing|Split|Split and join'
+         SplitFormula='Grid.GetDefaultsValue(Row,Col,Grid.Cols.GANTT.GanttAvailabilitySplit)'
+         SplitOnChange='Grid.Cols.GANTT.GanttAvailabilitySplit = Grid.GetDefaultsIndex(Row,Col,Value); Grid.RefreshGantt();'
+         SplitTip='If and how the ranges will be split to selected units&lt;br>Attribute GanttAvailabilitySplit'
+
+         UnitsType='Select' UnitsWidth='45' UnitsRelWidth='45'
+         UnitsLabel=' to units'
+         UnitsDefaults='|6 Hours|Days|Weeks|Months'
+         UnitsFormula='{"h6":"6 Hours","d":"Days","w":"Weeks","M":"Months"}[Grid.Cols.GANTT.GanttAvailabilityUnits]'
+         UnitsOnChange='Grid.Cols.GANTT.GanttAvailabilityUnits = {"6 Hours":"h6","Days":"d","Weeks":"w","Months":"M"}[Value]; Grid.RefreshGantt();'
+         UnitsTip='Gantt units to split the ranges to, if selected the split action&lt;br>Attribute GanttAvailabilityUnits'
+
+         JoinType='Bool' JoinCanEdit='1' JoinLeft='10'
+         JoinLabelRight='Join the same ranges'
+         JoinFormula='Grid.Cols.GANTT.GanttAvailabilityJoin'
+         JoinOnChange='Grid.Cols.GANTT.GanttAvailabilityJoin = Value; Grid.RefreshGantt();'
+         JoinTip='If set, joins all adjacent ranges with the same value&lt;br>Attribute GanttAvailabilityJoin'
+
+         SumType='Select' SumWidth='50' SumLabel='Sum in units' SumLeft='10' SumRelWidth='50'
+         SumDefaults='|None|6 Hours|Days|Weeks|Months'
+         SumFormula='{"0":"None","h6":"6 Hours","d":"Days","w":"Weeks","M":"Months"}[Grid.Cols.GANTT.GanttAvailabilitySum]'
+         SumOnChange='Grid.Cols.GANTT.GanttAvailabilitySum = {"None":"0","6 Hours":"h6","Days":"d","Weeks":"w","Months":"M"}[Value]; Grid.RefreshGantt();'
+         SumTip='If set, all the values shown on the chart will be multiplied by the length of the range in the selected units&lt;br>Attribute GanttAvailabilitySum'
+
+         StackType='Select' StackWidth='70' StackLabel='Stack more charts' StackLeft='10' StackRelWidth='70'
+         StackDefaults='|None|Vertically|Horizontally'
+         StackFormula='Grid.GetDefaultsValue(Row,Col,Grid.Cols.GANTT.GanttAvailabilityStack)'
+         StackOnChange='Grid.Cols.GANTT.GanttAvailabilityStack = Grid.GetDefaultsIndex(Row,Col,Value); Grid.RefreshGantt();'
+         StackTip='If and how the charts in one cell will be merged&lt;br>Attribute GanttAvailabilityStack'
+
+         />
+      <Topbar2 Cells='Show,Zero,Text,VPos,HPos' Space='0'
+         ShowType='Select' ShowWidth='90' ShowLabel='Show' ShowRelWidth='90'
+         ShowDefaults='|Nothing|Bars|Values|Bars and values'
+         ShowFormula='Grid.GetDefaultsValue(Row,Col,Grid.Cols.GANTT.GanttAvailabilityShow)'
+         ShowOnChange='Grid.Cols.GANTT.GanttAvailabilityShow = Grid.GetDefaultsIndex(Row,Col,Value); Grid.RefreshGantt();'
+         ShowTip='What will be shown in the availability chart&lt;br>Attribute GanttAvailabilityShow'
+
+         ZeroType='Bool' ZeroCanEdit='1' ZeroLeft='10'
+         ZeroLabelRight='Show also zero values'
+         ZeroFormula='Grid.Cols.GANTT.GanttAvailabilityZero'
+         ZeroOnChange='Grid.Cols.GANTT.GanttAvailabilityZero = Value; Grid.RefreshGantt();'
+         ZeroTip='If set, shows also bars with zero value, as little bars&lt;br>Attribute GanttAvailabilityZero'
+
+         TextType='Bool' TextCanEdit='1' TextLeft='10'
+         TextLabelRight='Show all labels'
+         TextFormula='Grid.Cols.GANTT.GanttAvailabilityTextWidth>5?0:1'
+         TextOnChange='Grid.Cols.GANTT.GanttAvailabilityTextWidth = Value?1:15; Grid.RefreshGantt();'
+         TextTip='If set, shows all text labels, including the overlaid&lt;br>Attribute GanttAvailabilityTextWidth'
+
+         VPosType='Select' VPosWidth='50' VPosLabel='Label position' VPosLeft='10' VPosRelWidth='50'
+         VPosDefaults='|Above|Top|Center|Bottom|Below'
+         VPosFormula='Grid.GetDefaultsValue(Row,Col,Grid.Cols.GANTT.GanttAvailabilityVPos)'
+         VPosOnChange='Grid.Cols.GANTT.GanttAvailabilityVPos = Grid.GetDefaultsIndex(Row,Col,Value); Grid.RefreshGantt();'
+         VPosTip='Vertical position of all text labels regarding to the bars.&lt;br>It can be set also individually for every chart.&lt;br>Attribute GanttAvailabilityVPos'
+
+         HPosType='Select' HPosWidth='80' HPosLeft='10' HPosRelWidth='80'
+         HPosDefaults='|Center|Left|Right|Center left|Center right|Center,left,right'
+         HPosFormula='var val = Grid.Cols.GANTT.GanttAvailabilityHPos; return Grid.GetDefaultsValue(Row,Col,val>=0?val:5)'
+         HPosOnChange='var val = Grid.GetDefaultsIndex(Row,Col,Value); Grid.Cols.GANTT.GanttAvailabilityHPos = val==5?"0,3,4":val; Grid.RefreshGantt();'
+         HPosTip='Horizontal position of all text labels regarding to the bars.&lt;br>It can be set also individually for every chart.&lt;br>The last item sets different position for every chart&lt;br>Attribute GanttAvailabilityHPos'
+
+         />
+   </Solid>
+</Grid>

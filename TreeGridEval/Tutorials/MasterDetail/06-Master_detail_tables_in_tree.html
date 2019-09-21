@@ -1,0 +1,94 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; overflow:hidden; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>6. Master detail tables in tree</h1>
+   <h2>Master detail relation in master tree and detail table with tree</h2>
+   <center class="Border" id="Border">
+      <div style="width:700px;">
+         <div style="float:left; margin-right:10px;">
+            <div class="Xml">Source: <a href='06-Master.xml'>06-Master.xml</a></div>
+            <div class="Main" style='width:410px; height:520px;'>
+               <bdo Debug='check' Data_Url='06-Master.xml'></bdo>
+            </div>
+         </div>
+         <div style="float:left;">
+            <div class="Xml">Source: <a href='06-Detail.xml'>06-Detail.xml</a></div>
+            <div class="Main" style='width:280px; height:520px;'>
+               <bdo Debug='check' Data_Url='06-Detail.xml'></bdo>
+            </div>
+         </div>
+      </div>
+   </center>
+
+   <ul>
+      <li>
+         It is possible to define master tree, where some children will be shown in detail grid and other children in the same parent will be normal or master rows in the master grid.
+      </li>
+      <li>
+         Define the master and detail grids as usual for master / detail plain tables.<br />
+         In the master grid define the <b>MainCol</b> and nest the rows to tree like in normal TreeGrid.<br />
+         Ensure all the master rows in tree will get the master default row that defines the detail children, use appropriate Def/CDef attributes.<br />
+      </li>
+      <li>
+         Set attribute <h3>AddDefChildren</h3><b>='2'</b> to the default row that is used for master rows and defines the detail children.<br />
+         It will add its children to all master rows, even to those having their children already.
+      </li>
+      <li>
+         Define new default row (e.g. &lt;D Name='Detail'/>) and attach it to all the detail children defined in the default master row.<br />
+         Set the detail default attribute <b>Visible='0'</b> and if the master grid has filter also <b>CanFilter='0'</b>.<br />
+         To never show the detail rows in the master grid.<br />
+      </li>
+      <li>
+         In master grid set also Cfg attribute <h3>DetailExpand</h3><b>='1'</b> to expand / collapse the master rows normally and not show them in detail grid.<br />
+      </li>
+      <li>
+         In <b>detail grid</b> set Cfg attribute <h3>MasterDef</h3> to the default detail row name (e.g. the 'Detail') defined above.<br />
+         Only rows using this default will be shown in the detail grid. To not show the other standard master rows here.
+      </li>
+      <li>
+         If you permit dragging in master grid, you should set in detail grid <b>&lt;Root AcceptDef=''/></b> to not permit dragging into the detail grid.
+      </li>
+      <li>
+         To define tree structure in detail grid define appropriate default rows with children.<br />
+         To the children in the main default attach new default that defines its own children. Set also CopyTo attribute that will bubble the changes up and down.<br />
+         The tree structure is completely independent on master tree structure in this case.<br />
+
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialMaster\s*=\s*(\d+)/), TGIndex = 32;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridMaster6", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialMaster="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

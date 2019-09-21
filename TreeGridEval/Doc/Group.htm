@@ -1,0 +1,688 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Grouping rows</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Grouping rows to tree</h1>
+<p>TreeGrid documentation</p>
+
+TreeGrid supports grouping rows according to the same values in some column(s) to tree like in Pivot tables.<br />
+It is also possible group rows in existing tree - creating new levels.<br />
+Only variable rows can be grouped.<br />
+Strings can be grouped case sensitive or insensitive. Can be also grouped according to actual browser language or by special settings. See <a href="#Strings">comparing strings</a>.<br /><br />
+
+Grouping can be changed by a user in special <a href="#Group">Group</a> row.<br />
+Grouping can be preset in XML by &lt;Cfg <a href="#CfgGroup">Group</a>/> attribute.<br />
+Grouping can be changed by API by <a href="#DoGrouping">DoGrouping</a> method.<br /><br />
+
+The created group rows can be controlled by <tt>&lt;D Group='1'/></tt> <a href="#DGroup1">default rows</a>.<br />
+
+<!-- Grouping -->
+<a name="CfgGrouping"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Grouping</h4> <s>[1]</s>
+</div>
+If grouping in grid is permitted.<br />
+Setting it to <b>0</b> disables all grouping functions.<br />
+
+<!-- Grouped -->
+<a name="CfgGrouped"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Grouped</h4> <s>[1] Saved to cookies, to not load it, set <tt><b>GroupedLap</b>='1'</tt></s>
+</div>
+If grouping is enabled by user.<br />
+A user can enable / disable grouping by click to <a href="#Group">Group</a> row left panel.<br />
+
+<!-- CanGroup -->
+<a name="CCanGroup"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>int</i>
+   <h4>CanGroup</h4> <s>[1]</s>
+</div>
+If rows can be grouped by this column, its caption can be dragged to drop area for custom sorting in group row.<br />
+<b>0</b> cannot be grouped, <b>1</b> can be grouped, <b>2</b> can be grouped, but column is not hidden when grouping.<br />
+
+<!-- Group -->
+<a name="CfgGroup"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>Group</h4> <s>[""]	Saved to cookies, to not load it, set <tt><b>GroupLap</b>='1'</tt></s>
+</div>
+Predefined or actual grouping.<br />
+Array of column names (comma separated), according to them are rows grouped, in this order.<br />
+
+<!-- GroupMain -->
+<a name="CfgGroupMain"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>GroupMain</h4> <s></s>
+</div>
+Column where to show tree when rows are grouped.<br /> 
+Used only for plain tables; for tree is used always <a href="Tree.htm#CfgMainCol">MainCol</a>.<br />
+Used only if <a href="#DGroupMain">GroupMain</a> is not set in chosen default &lt;<a href="#DGroup1">D</a>> row.<br />
+
+<!-- GroupTree -->
+<a name="CfgGroupTree"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>GroupTree</h4> <s>[0]</s>
+</div>
+If set, it shows the group tree in individual grouped columns instead of one main col.<br />
+It should be used only in plain grids without MainCol, because the MainCol is hidden when grid is grouped.<br />
+If set to <b>1</b>, the expand button is shown left side, if set to <b>2</b>, it is shown right side.<br />
+If set to <b>3</b> or <b>4</b>, the group cell will be editable and its change will change all its children. <b>3</b> shows the button left side, <b>4</b> right side.<br />
+
+<!-- GroupTreeCol -->
+<a name="CfgGroupTreeCol"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>GroupTreeCol</h4> <s></s>
+</div>
+If set, moves grouped columns (in <a href="#CfgGroup">Group</a> array) to the specified position. To be the tree correctly position.<br />
+It can be column name to move the columns right to this column (this column should not be possible to group by).<br />
+Or number of column section (0,1,2) to place it as the first column in the section.<br />
+
+<!-- GroupSortMain -->
+<a name="CfgGroupSortMain"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>GroupSortMain</h4> <s>[0]</s>
+</div>
+If set to <b>1</b> when grouping, always sorts according to main column ascending.<br />
+If set to <b>2</b> when grouping, always sorts according to main column descending.<br />
+
+<!-- GroupRestoreSort -->
+<a name="CfgGroupRestoreSort"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>GroupRestoreSort</h4> <s>[0]</s>
+</div>
+If set to <b>1</b> restores sorting state after ungrouping that was before grouping.<br />
+
+<!-- MaxGroupLength -->
+<a name="CfgMaxGroupLength"></a>
+<div class="XML">
+   <u>chg <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MaxGroupLength</h4> <s>[0]</s>
+</div>
+Maximal count of immediate children in grouped row. If the count is higher, the grouping row is divided to more rows with the same value in the main column.<br />
+<i>Since 7.0</i> it has default value <b>0</b> as disabled.<br />
+
+<!-- GroupChangeMoved -->
+<a name="CfgGroupChangeMoved"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>GroupChangeMoved</h4> <s>[1]</s>
+</div>
+Changes all required cell values when row is moved to another group or newly added into group (to be correctly grouped).<br />
+
+<!-- GroupMoveFree -->
+<a name="CfgGroupMoveFree"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>GroupMoveFree</h4> <s>[1]</s>
+</div>
+If not set, rows cannot be moved to group created by another column than source parent group.<br />
+If set to <b>2</b>, rows can be moved or added also as children to other data row and switch the data row to group row. In this case <a href="RowDefaults.htm#IDefParent">DefParent</a> and <a href="RowDefaults.htm#IDefEmpty">DefEmpty</a> should be set to change default to group or data row when it gets or looses children.<br />
+
+<!-- GroupIdValue -->
+<a name="CfgGroupIdValue"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>GroupIdValue</h4> <s>[0]</s>
+</div>
+For <b>0</b> it creates the group row ids as <a href="RowId.htm#CfgGroupIdPrefix">GroupIdPrefix</a> + ascending number<br />
+For <b>1</b> it creates the group row ids as column name + <a href="RowId.htm#CfgGroupIdPrefix">GroupIdPrefix</a> + grouping value<br />
+For <b>2</b> it creates the group row ids as column name + <a href="RowId.htm#CfgGroupIdPrefix">GroupIdPrefix</a> + first child row id<br />
+For <b>3</b> it creates the group row ids as row Level + <a href="RowId.htm#CfgGroupIdPrefix">GroupIdPrefix</a> + grouping value<br />
+For <b>4</b> it creates the group row ids as row Level + <a href="RowId.htm#CfgGroupIdPrefix">GroupIdPrefix</a> + first child row id<br />
+
+<!-- GroupDef -->
+<a name="CGroupDef"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>string</i>
+   <h4>GroupDef</h4> <s>[""]</s>
+</div>
+A name for default row for group row when grouping according to this column.<br /> 
+It is used instead of default "Group" but <u>not</u> instead of chosen default row according to <a href="#DGroupCols">GroupCols</a> and / or <a href="#DGroupCol">GroupCol</a>.<br />
+
+<!-- GroupWidth -->
+<a name="CGroupWidth"></a>
+<div class="XML">
+   <u><i>upd <b>7.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>GroupWidth</h4> <s></s>
+</div>
+A width of column when it shows the tree with grouped rows.<br />
+You can specify this width to change column width when it becomes main column while grouping - to resize column to accommodate the tree.<br />
+When grid is ungrouped or it shows the tree in another column, the column width returns to previous setting.<br />
+<i>Since 7.0</i>, if set to <b>1</b>, the width of the column will be automatically increased by the widths of columns hidden by grouping.<br />
+
+<!-----------------------------------------------------------------------  Creating groups  ------------------------------------------------->
+<a name="Groups"></a>
+<h2>Creating groups</h2>
+
+<!-- CanGroup -->
+<a name="ICanGroup"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>bool</i>
+   <h4>CanGroup</h4> <s>[1]</s>
+</div>
+If row can be grouped.<br /> 
+If set to 0 the row will not be moved to grouping row. But if contains children, all its children will be grouped inside.<br />
+In tree you can control by this attribute the level where will be grouping applied or even for every node you can choose different level.<br />
+When grouping, only the root rows are grouped.<br /> 
+If you want to group another level in tree, set CanGroup of the root (and next level(s)) rows to <b>0</b>.<br />
+
+<!-- GroupEmpty -->
+<a name="CGroupEmpty"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GroupEmpty</h4> <s>[2]</s>
+</div>
+If there will be created grouping for empty and zero values<br />
+<b>0</b> - Zero and empty values are <u>not</u> grouped<br />
+<b>1</b> - Only zero values are grouped, empty values are <u>not</u> grouped<br />
+<b>2</b> - Empty and zero are grouped<br />
+
+<!-- GroupSole -->
+<a name="CGroupSole"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>GroupSole</h4> <s>[1]</s>
+</div>
+If set to <b>0</b>, does not create grouping row with only one child row - if the cell value is unique in the column.<br />
+
+<!-- GroupSingle -->
+<a name="CGroupSingle"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b> <i>upd <b>11.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GroupSingle</h4> <s>[1]</s>
+</div>
+If set to <b>0</b>, does not create single grouping row - when all rows have the same value in the column.<br />
+<i>Since 11.0</i> if set to <b>2</b>, it creates only one single group if more single groups are created in the tree.<br />
+
+<!-- GroupDeleted -->
+<a name="CGroupDeleted"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>GroupDeleted</h4> <s>[1]</s>
+</div>
+If set to <b>0</b>, does not group deleted rows. Only when are shown (<tt><a href="RowDelete.htm#CfgShowDeleted">ShowDeleted</a>='1'</tt>), otherwise deleted rows are not grouped anyway.<br />
+
+<!-- GroupChar -->
+<a name="CGroupChar"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GroupChar</h4> <s></s>
+</div>
+It is possible to create more or all grouping levels from one column. Specify GroupChar as separator.<br />
+It can be used for example to group by directory paths, set <tt>GroupChar='/'</tt><br />
+The cell value is split by the GroupChar and is grouped by all the parts.<br />
+Remember, by default also empty values and parts are grouped by, see <a href="#CGroupEmpty">GroupEmpty</a>.<br />
+
+<!-- MaxChars -->
+<a name="CMaxChars"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>int[ ]</i>
+   <h4>MaxChars</h4> <s>[0]</s>
+</div>
+Maximum characters from strings to compare. It should be set only for string columns. It can be used to group by according to first few characters.<br /> 
+It can contain more values to create more group levels according to given parts of the values.<br />
+<div class="L1">For example <tt>MaxChars='1,2,3,4'</tt> creates up to four levels by the first four characters.</div>
+<div class="L1">For example <tt>MaxChars='2,6'</tt> creates up to two levels, the first by first two characters, the second by next four characters.</div>
+When used <b>MaxChars</b>, it is better to not hide the grouped column, by setting it as <a href="#DGroupMain">GroupMain</a> or by setting its <tt><a href="#CCanGroup">CanGroup</a>='2'</tt>.<br />
+
+<!-- SortValue -->
+<a name="CellSortValue"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;cell></b> <i>string</i>
+   <h4>SortValue</h4> <s></s>
+</div>
+Value used for compare when <b>sorting</b> and <b>grouping</b> instead of cell value.<br /> 
+Useful for special non editable cells like Html, Icon, List.<br />
+
+<!-- OnGetSortValue -->
+<a name="OnGetSortValue"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>string</i>
+   <h4>OnGetSortValue</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>val</b>, <i>bool</i> <b>desc</b>, <i>bool</i> <b>group</b>)</s>
+</div>
+Called to get value for <b>sorting</b> and <b>grouping</b>, <i>val</i> is predefined value, returns <i>val</i> or new value.<br />
+<b>desc</b> is true for descending sorting, <b>group</b> is true when called while grouping.<br />
+
+<!-----------------------------------------------------------------------  Comparing strings  ------------------------------------------------->
+<a name="Strings"></a>
+<h2>Comparing strings</h2>
+
+You can also specify these settings for whole grid in default column <tt>&lt;Def>&lt;D Name='C'/>&lt;/Def></tt>.<br />
+
+<!-- LocaleCompare -->
+<a name="CLocaleCompare"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>LocaleCompare</h4> <s>[0]</s>
+</div>
+If strings are compared according to browser's locale settings. For sorting, filtering and grouping.<br />
+It is done only for first <b>1920</b> Unicode characters.<br />
+For higher Unicode characters like Chinese, Korean or Japanese you must define <a href="#CCharCodes">CharCodes</a> instead.<br />
+<i>If set to row cell, it affects row's children for sorting and grouping. For filter it can be set only to Filter cell and affects also all values in the column.</i><br />
+
+<!-- CaseSensitive -->
+<a name="CCaseSensitive"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>CaseSensitive</h4> <s>[1]</s>
+</div>
+If strings are compared case sensitive. For sorting, filtering and grouping.<br />
+<i>If set to row cell, it affects row's children for sorting and grouping. For filter it can be set only to Filter cell and affects also all values in the column.</i><br />
+
+<!-- WhiteChars -->
+<a name="CWhiteChars"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>WhiteChars</h4> <s></s>
+</div>
+List of characters to ignore when sorting, filtering or grouping.<br /> 
+It can be set for example to " " (space) to ignore spaces (it means that for example <tt>"a b   c"</tt> and <tt>"abc"</tt> strings are the same.<br />
+<i>Setting this attribute can slow down sorting, grouping and filtering.</i><br />
+<i>If set to row cell, it affects row's children for sorting and grouping. For filter it can be set only to Filter cell and affects also all values in the column.</i><br />
+
+<!-- CharCodes -->
+<a name="CCharCodes"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>CharCodes</h4> <s></s>
+</div>
+It changes characters in comparing strings for sorting, filtering and grouping.<br />
+It is first character separated array of pair of characters to replace the first character by the second when comparing strings.<br />
+For example <tt>"|y|i|Y|I|.|,"</tt> - replaces 'y' by 'i', 'Y' by 'I' and '.' by ','<br /> 
+<div class="L1">- it means that when comparing strings does not differ between letter 'y' and 'i', both cases and also does not differ between comma and point.</div>
+The first character must be one letter, but the second in fact can be any letter or string or even empty string, like <tt>"|a|xxx|b||c|ff"</tt><br />
+If you use <a href="DLL.htm">TreeGrid server</a> DLL/SO, there must be the second character one letter only too.<br />
+<i>Setting this attribute can slow down sorting, grouping and filtering.</i><br />
+<i>If set to row cell, it affects row's children for sorting and grouping. For filter it can be set only to Filter cell and affects also all values in the column.</i><br />
+
+<!-----------------------------------------------------------------------  Created group rows <D Group='1'/>  ------------------------------------------------->
+<a name="DGroup1"></a>
+<h2>Created group rows <tt>&lt;D Group='1'/></tt></h2>
+
+The rows created as parent rows when grouping are preset by default row <tt>&lt;D Group='1'/></tt>.<br />
+From this row are filled all attributes in rows created when grouping. It contains also attributes <a href="RowDefaults.htm#DName">Name</a> and <a href="RowDefaults.htm#IDef">Def</a> and all other attributes in <a href="RowDefaults.htm">&lt;D></a> tag.<br />
+<strong>For other &lt;D> attributes see <a href="RowDefaults.htm">Default rows</a>.</strong><br /><br />
+
+It is possible to define more default rows (<tt>&lt;D Group='1'</tt>) and use them for different grouping.<br />
+By default there is only one default row defined in Defaults.xml named "Group" that is used for all created grouping rows.<br /><br />
+
+How the appropriate grouping default row is chosen? When grouping starts:<br /> 
+1) There are searched all default rows with <tt><a href="#DGroup">Group</a>='1'</tt> and tested their <a href="#DGroupCols">GroupCols</a> attributes if passes the actual &lt;Cfg <a href="">Group</a>/> are chosen.<br /> 
+2) If any of found default rows in point 1) have set <a href="#DGroupMain">GroupMain</a>, this value is set to <a href="Tree.htm#CfgMainCol">MainCol</a>. If some row have set <a href="#XMLOnGroup">OnGroup</a> action, this action is called.<br />
+3) Grouping is done for every column in &lt;Cfg <a href="#CfgGroup">Group</a>/> - e.g. if there are three columns, three levels of rows will be created and every level can have different default<br />
+<div class="L1">	
+  a) For every column in &lt;Cfg GroupCols/> (= for every level in grouping tree) are searched the defaults found in point 1) and the first one that passes by its <a href="">GroupCol</a> is used for the level.<br />
+  b) If no default row passes the point a), it is used default row set by &lt;C <a href="#CGroupDef">GroupDef</a> />.<br /> 
+  c) If no default row is found, it is used <tt>&lt;D Name="Group"/></tt> defined in Defaults.xml.<br />
+</div>
+
+<!-- Group -->
+<a name="DGroup"></a>
+<div class="XML">
+   <u></u> <b>&lt;D></b> <i>bool</i>
+   <h4>Group</h4> <s>[0]</s>
+</div>
+If set to 1, this default row will be used for grouping.<br /> 
+Also when ungrouping all rows that have its Def set to default with <tt>Group='1'</tt> are deleted and their children are ungrouped.<br />
+
+<!-- GroupCols -->
+<a name="DGroupCols"></a>
+<div class="XML">
+   <u></u> <b>&lt;D></b> <i>string[*]</i>
+   <h4>GroupCols</h4> <s></s>
+</div>
+Specifies, for which grouping will be this default row used.<br />
+This default row will be used if &lt;Cfg <a href="#CfgGroup">Group</a>/> attribute contains any string in this array.<br /> 
+The string can contain "*" as wildcard for any substring.<br />
+When GroupCols is not set, the default can be used for any grouping.<br /> 
+When GroupCols is empty, the default will never be used for grouping automatically.<br />
+When more than one default row pass the actual grouping, one of them will be used by random, but always have precedence the defaults with GroupCols set and def named exactly "Group" is tested as the last.<br /><br />
+
+For example <tt>"|*B,C|*X*|A"</tt> means all grouping with the last two columns B,C or any grouping containing column 'X' or grouping by only column A.<br />
+
+<!-- GroupCol -->
+<a name="DGroupCol"></a>
+<div class="XML">
+   <u></u> <b>&lt;D></b> <i>string[ ]</i>
+   <h4>GroupCol</h4> <s></s>
+</div>
+Specifies, for which grouping column will be this default row used, when GroupCols passed more default rows.<br />
+This default will be used only when creating groups according to column in this (comma separated) array.<br />
+In the array can be listed column name or its position in &lt;Cfg <a href="#CfgGroup">Group</a>/>. The position can be 0 for first, 1 second, -1 last, -2 last but one and so on.<br /><br />
+
+For example <tt>&lt;D Group='1' GroupCols='|A,B' GroupCol='A' ... /> &lt;D Group='1' GroupCols='|A,B' GroupCol='B'/></tt><br />
+	<div class="L1">When grouping, for first group rows created for column A will be used the first &lt;D>, for the second group rows created for column B will be used the second &lt;D></div>
+For example <tt>&lt;D Group='1' GroupCols='|A*' GroupCol='-1'/> ... &lt;Cfg GroupCols='A,B,C'/></tt><br />
+	<div class="L1">This default will be used for groups created for column 'C' - the last column in &lt;Cfg Group/></div>
+  
+<!-- GroupMain -->
+<a name="DGroupMain"></a>
+<div class="XML">
+   <u></u> <b>&lt;D></b> <i>string</i>
+   <h4>GroupMain</h4> <s></s>
+</div>
+A column where the grouping tree will be displayed. Changes <a href="Tree.htm#CfgMainCol">MainCol</a> when this default is used.<br /> 
+When more than one default row passed the <a href="#DGroupCols">GroupCols</a> (but not <a href="#GroupGroupCol">GroupCol</a>!), the first found <b>GroupMain</b> attribute is used for setting <a href="Tree.htm#CfgMainCol">MainCol</a>.<br />  
+
+<!-- GroupMainCaption -->
+<a name="DGroupMainCaption"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;D></b> <i>string</i>
+   <h4>GroupMainCaption</h4> <s></s>
+</div>
+A column caption that will be set to the main column when grouping by this default.<br /> 
+When more than one default row passed the <a href="#DGroupCols">GroupCols</a> (but not <a href="#GroupGroupCol">GroupCol</a>!), the first found <b>GroupMainCaption</b> attribute is used.<br />
+
+<!-- OnGetGroupDef -->
+<a name="OnGetGroupDef"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>string</i>
+   <h4>OnGetGroupDef</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>col</b>, <i>string</i> <b>def</b>)</s>
+</div>
+Called to get default row for the group when grouping according to column <b>col</b>.<br />
+<b>col</b> is column name, <b>def</b> is chosen name of default. Return new name of default or <i>def</i>.<br />
+
+<!-- ParentCDef -->
+<a name="DParentCDef"></a>
+<div class="XML">
+   <u></u> <b>&lt;D></b> <i>string</i>
+   <h4>ParentCDef</h4> <s></s>
+</div>
+Changes <a href="RowDefaults.htm#ICDef">CDef</a> of parent node. To change adding new rows to parent when it contains group rows.<br />
+
+<!-- ParentAcceptDef -->
+<a name="DParentAcceptDef"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;D></b> <i>string</i>
+   <h4>ParentAcceptDef</h4> <s></s>
+</div>
+Changes <a href="RowDefaults.htm#IAcceptDef">AcceptDef</a> of parent node. To change dragging rows to parent when it contains group rows.<br />
+
+<!-- EditCols -->
+<a name="DEditCols"></a>
+<div class="XML">
+   <u></u> <b>&lt;D></b> <i>string[ ]</i>
+   <h4>EditCols</h4> <s></s>
+</div>
+Comma separated list of columns that will be editable in group row and will change all values in the group children.<br />
+<i>In this list can be present only columns where the actual grouping results all values the same.</i><br />
+Can contain special value "<b>Main</b>" that means main grouping column that will be mirrored to column according to the grouping is done.<br />
+
+<!-- AggChildren -->
+<a name="DAggChildren"></a>
+<div class="XML">
+   <u></u> <b>&lt;D></b> <i>bool</i>
+   <h4>AggChildren</h4> <s>[0]</s>
+</div>
+If set to <b>1</b> and row's parent calculates some aggregate functions on its children,<br /> 
+this row calculates its children instead of itself - behaves like its children was directly in its parent.<br />
+
+<!-- MaxChars -->
+<a name="DCellMaxChars"></a>
+<div class="XML">
+   <u><i>upd <b>7.0</b></i></u> <b>&lt;D> &lt;cell></b> <i>int[ ]</i>
+   <h4>MaxChars</h4> <s>[0]</s>
+</div>
+<i>Remember, it is cell attribute!</i><br />
+Maximum characters from strings to compare. It should be set only for string columns. It can be used to group by according to first few characters.<br /> 
+<i>(Since 7.0)</i> It can contain more values to create more group levels according to given parts of the values.<br />
+<div class="L1">
+  For example <tt>MaxChars='1,2,3,4'</tt> creates up to four levels by the first four characters.<br />
+  For example <tt>MaxChars='2,6'</tt> creates up to two levels, the first by first two characters, the second by next four characters.<br />
+</div>
+When used <b>MaxChars</b>, it is better to not hide the grouped column, by setting it as <a href="#DGroupMain">GroupMain</a> or by setting its <tt><a href="#CCanGroup">CanGroup</a>='2'</tt>.<br />
+
+<!-- Action OnGroup -->
+<a name="XMLOnGroup"></a>
+<div class="ACT">
+   <u>renamed <b>6.0</b></u> <b style="width:120px;margin-right:-25px;" >&lt;D XML event></b> <i></i>
+   <h4>OnGroup</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>TRow</i> <b>default</b>)</s>
+</div>
+Standard default row or Actions attribute containing JavaScript code.<br />
+It is run when this default is chosen by the <a href="#DGroupCols">GroupCols</a>. The action is run only once per whole grouping, before grouping is started.<br />
+When more than one default row passed the <a href="#DGroupCols">GroupCols</a> (but not GroupCol!), only the first not empty Action is run.<br />
+Example: <tt>&lt;D Group='1' OnGroup='Grid.Editing=0;'/></tt><br />
+
+<!-- Action OnUngroup -->
+<a name="OnRemoveGroup"></a>
+<div class="ACT">
+   <u>renamed <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>OnUngroup</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>)</s>
+</div>
+Standard Actions attribute containing JavaScript code.<br />
+It is run when grid is ungrouped - GroupCols are set to empty.<br />
+Example: <tt>&lt;Actions OnUngroup='Grid.Editing=1;'/></tt><br />
+
+<!-- OnGroup -->
+<a name="OnGroup"></a>
+<div class="API">
+   <u>chg <b>6.0</b> <i>upd <b>7.1</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnGroup</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>Group</b>)</s>
+</div>
+Called before grouping grid after user action. <b>Group</b> is new value that will be set for <a href="#CfgGroup">Group</a>.<br />
+Called also before ungrouping grid with <tt><b>Group</b> = ""</tt>.<br />
+Called also after <a href="#CfgGrouped">Grouped</a> is changed with <tt><b>Group</b> = null</tt>, but before the grid is re-grouped. <i>(Before 7.1 was called always with <tt>Grouped=1</tt>)</i><br />
+It is <u>not</u> called on start even if grid is grouped.<br />
+Return true to suppress the action.<br />
+
+<!-- OnGroupFinish -->
+<a name="OnGroupFinish"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnGroupFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+Called after grid was re-grouped in data, but before changes are visible in grid.<br />
+
+<!-----------------------------------------------------------------------  User interface to choose grouping  ------------------------------------------------->
+<a name="Group"></a>
+<h2>User interface to choose grouping</h2>
+
+User interface for grouping is shown by <b>solid space</b> &lt;<b style="color:red;">Group</b>> row. <tt>&lt;Solid>&lt;Group ... />&lt;/Solid></tt><br />
+This row is not divided to any section and is never scrolled. It can contain any cells like <a href="RowSpace.htm">Space</a> row, but <b>List</b> cell and <b>Custom</b> area have special functions.<br />
+The group row can be also done by pure <a href="RowSpace.htm">Space</a> row with the cells <a href="TypeEnum.htm">Select</a> and <a href="TypeHtml.htm#TDropCols">DropCols</a>.<br />
+It can be placed in <span style="color:red;">&lt;<b style="color:blue;">Solid</b>></span> tag. The position in grid is set by its <a href="#GroupSpace">Space</a> attribute.<br /> 
+<i><b>Note: when grouping, created grouping rows have default row "<a href="RowDefaults.htm#DName">Group</a>", to change this settings see <tt>&lt;D <a href="">Group</a>='1'/></tt>.</b></i><br />
+
+<!-- List -->
+<a name="GroupList"></a>
+<div class="XML">
+   <u></u> <b>&lt;Group></b> <i>string[*]</i>
+   <h4>List</h4> <s></s>
+</div>
+First character separated array of predefined grouping names. It can contain HTML code.<br />
+A user will choose one item from the list to select the grouping set by <a href="#GroupCols">Cols</a> attribute.<br />
+If it is empty, no cell with predefined grouping will be displayed.<br />
+This list has the same format as list for Button of type <a href="CellEdit.htm#CDefaults">Defaults</a>.<br />
+
+<!-- ListCustom -->
+<a name="GroupListCustom"></a>
+<div class="XML">
+   <u></u> <b>&lt;Group></b> <i>string</i>
+   <h4>ListCustom</h4> <s></s>
+</div>
+Value displayed in <a href="#GroupList">List</a> cell for custom grouping not in <a href="#GroupCols">Cols</a>. It can contain HTML code.<br />
+
+<!-- Cols -->
+<a name="GroupCols"></a>
+<div class="XML">
+   <u></u> <b>&lt;Group></b> <i>string[ ][*]</i>
+   <h4>Cols</h4> <s></s>
+</div>
+First character separated array of comma separated arrays of column names as predefined <a href="#CfgGroup">Group</a> for defaults in <a href="#GroupList">List</a>.<br />
+<table>
+<tr><td style="width:90px;">Example:</td><td><tt>List="|Group by A|Group by A, B and C|Group by C and D"</tt></td></tr>
+<tr><td></td><td><tt>Cols="|A|A,B,C|C,D"</tt></td></tr>
+</table>
+
+<!-- Custom -->
+<a name="GroupCustom"></a>
+<div class="XML">
+   <u></u> <b>&lt;Group></b> <i>bool</i>
+   <h4>Custom</h4> <s>[0/1]</s>
+</div>
+If the custom grouping is permitted - if the drop area for column captions is displayed, cell type <a href="TypeHtml.htm#TDropCols">DropCols</a> named Custom.<br />
+The text displayed in the area "To group by, drag column caption here..." can be changed by <tt>&lt;Grid>&lt;Lang>&lt;Text GroupCustom=""/>&lt;/Lang>&lt;/Grid></tt>, default located in <a href="Files.htm#TextXml">Text.xml</a>.<br />
+The Custom cell is by default displayed if no <a href="#GroupList">List</a> and <a href="#GroupCells">Cells</a> are defined.<br />
+
+<!-- Space -->
+<a name="GroupSpace"></a>
+<div class="XML">
+   <u></u> <b>&lt;Group></b> <i>int</i>
+   <h4>Space</h4> <s>[1]</s>
+</div>
+Position of the row in grid, specifies horizontal section of the grid.<br />
+If more solid rows has the same Space value, are placed in the order they are in data.<br />
+-<b>1</b> - above grid, <b>0</b> - above header, <b>1</b> - under head rows, <b>2</b> - above foot rows, <b>3</b> - under foot rows, <b>4</b> - under vertical scrollbar, <b>5</b> - under grid<br />
+-1, 0, 4, 5 are spanned for whole grid, including vertical scrollbar and pager, 1, 2, 3  are spanned only for columns.<br />
+
+<!-- Panel -->
+<a name="GroupPanel"></a>
+<div class="XML">
+   <u></u> <b>&lt;Group></b> <i>int</i>
+   <h4>Panel</h4> <s>[1]</s>
+</div>
+If the row displays left side panel, to show icon for enabling / disabling grouping.<br /> 
+If set to <b>1</b>, the panel is displayed only if the grid left side panel is displayed.<br />
+If set to <b>2</b>, the panel is displayed always.<br />
+
+<!-- Cells -->
+<a name="GroupCells"></a>
+<div class="XML">
+   <u></u> <b>&lt;Group></b> <i>string[ ]</i>
+   <h4>Cells</h4> <s>["List" / "Custom"]</s>
+</div>
+Comma separated list of cells in the group row.<br />
+The Group row can have two special cells, <b style="color:blue;">List</b> and <b style="color:blue;">Custom</b>. These cells have also all other attributes as standard space row cells.<br />
+If the Cells attribute is <u>not</u> set, it contains <b>List</b> or <b>Custom</b> if <a href="#GroupList">List</a> and / or <a href="#GroupCustom">Custom</a> attribute is set.<br />
+If the Cells attribute is set, to show the List or Custom, include <b>List</b> and / or <b>Custom</b> name to the Cells list.<br />
+
+<!-----------------------------------------------------------------------  Grouping actions and API  ------------------------------------------------->
+<a name="Actions"></a>
+<h2>Grouping actions and API</h2>
+
+<!-- Action GroupBy -->
+<a name="ActionsGroupBy"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GroupBy <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Groups by actual or focused column as the first column, fails if grid is already grouped by this column.<br />
+
+<!-- Action GroupByLast -->
+<a name="ActionsGroupByLast"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GroupByLast <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Groups by actual or focused column as the last column, fails if grid is already grouped by this column.<br />
+
+<!-- Action UngroupBy -->
+<a name="ActionsUngroupBy"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>UngroupBy <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Removes the actual or focused column from grouping, fails if grid is not grouped by this column.<br />
+
+<!-- Action GroupOn -->
+<a name="ActionsGroupOn"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GroupOn</h4>
+   <s>Attached to event <b>OnClickPanelGrouped</b></s>
+</div>
+Enables grouping in grid and re-groups it according to actual settings. It fails if groupings already enabled.<br />
+
+<!-- Action GroupOff -->
+<a name="ActionsGroupOff"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GroupOff</h4>
+   <s>Attached to event <b>OnClickPanelGrouped</b></s>
+</div>
+Disables grouping in grid and un-groups it. It does not clear actual grouping settings. It fails if groupings already disabled.<br />
+
+<!-- Action DropColMove -->
+<a name="ActionsDropColMove"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DropColMove</h4>
+   <s>Attached to event <b>OnDragDropCol</b>, can be attached only to <b>OnDrag...</b> actions</s>
+</div>
+Starts moving column in DropCols (usually in Group row).<br />
+
+<!-- DoGrouping -->
+<a name="DoGrouping"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>DoGrouping</h4>
+   <s>(<i>string</i> <b>Group</b>)</s>
+</div>
+Re-groups grid according given settings. If <b>Group</b> is null, it un-groups grid.<br /> 
+<b>Group</b> is new value for <a href="#CfgGroup">Group</a>.<br />
+
+<!-- GroupCol -->
+<a name="GroupCol"></a>
+<div class="API">
+   <u>new <b>6.4</b></u> <b style="width:120px;margin-left:-25px;">API TRow var.</b> <i>string</i>
+   <h4>GroupCol</h4>
+   <s></s>
+</div>
+Variable of created group row, it contains column name according to it was the group created.<br />
+
+<!-- GroupPos -->
+<a name="GroupPos"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b style="width:120px;margin-left:-25px;">API TRow var.</b> <i>int</i>
+   <h4>GroupPos</h4>
+   <s></s>
+</div>
+Variable of created group row, it contains row position (from 0) when there are created more groups for one columns by <a href="#CGroupChar">GroupChar</a> or <a href="#CMaxChars">MaxChars</a>.<br />
+
+<!-- OnCreateGroup -->
+<a name="OnCreateGroup"></a>
+<div class="API">
+   <u>new <b>6.4</b> <i>upd <b>8.0</b></i></u> <b>API event</b> <i>void</i>
+   <h4>OnCreateGroup</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>group</b>, <i>string</i> <b>col</b>, <i>string</i> <b>val</b>)</s>
+</div>
+Called for every created group while grouping grid.<br />
+The group is already set and placed in grid, but does not have its children yet.<br />
+<i>Since 8.0</i> it can change the <i>group</i> row id.<br />
+
+<!-- OnRemoveGroup -->
+<a name="OnRemoveGroup"></a>
+<div class="API">
+   <u>new <b>6.4</b></u> <b>API event</b> <i>void</i>
+   <h4>OnRemoveGroup</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>group</b>, <i>bool</i> <b>ungroup</b>)</s>
+</div>
+Called when the group is removed.<br />
+The group is still placed in grid and has its children.<br />
+Can be called also while grouping when the group is removed due some restriction like <a href="#CGroupSole">GroupSole</a>. In this case is <b>ungroup</b> false.<br />
+
+</div>
+</body>	
+</html>

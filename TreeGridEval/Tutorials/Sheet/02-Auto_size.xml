@@ -1,0 +1,42 @@
+<Grid>
+   <Cfg id="AutoSize" SuppressCfg="1" Sorting="0"/> <!-- Suppresses configuration and sorting -->
+   <Cfg SuppressMessage="3"/> <!-- Suppresses all messages, including page messages -->
+
+   <!-- Defines automatic row pages -->
+   <Cfg Paging="2"/> <!-- Turns on client paging for rows, required for AutoPages -->
+   <Cfg AutoPages="1"/> <!-- Automatically adds new rows after scrolling to bottom -->
+   <Cfg PageLength="10"/> <!-- The rows are added by 10 in the step -->
+   <Cfg MaxPages="3"/> <!-- Removes unused row pages, renders maximally 3 pages -->
+   <Cfg RemoveUnusedFixed="0"/> <!-- Shows always the left side row index and panel -->
+   <Cfg RemoveAutoPages="1"/> <!-- Automatically removes all unused pages at the grid end -->
+   <Pager Visible="0"/> <!-- Hides the side pager that is shown for paging by default -->
+
+   <!-- Defines automatic column pages -->
+   <Cfg ColPaging="2"/> <!-- Turns on client paging for columns, required for AutoColPages -->
+   <Cfg AutoColPages="1"/> <!-- Automatically adds new columns after scrolling to left-->
+   <Cfg ColPageLength="10"/> <!-- The columns are added by 10 in the step -->
+   <Cfg ColPageMin="0"/> <!-- Does not render any column on start outside the column pages -->
+   <Cfg MaxColPages="3"/> <!-- Removes unused column pages, renders maximally 3 pages --> 
+   <Cfg ColPagingFixed="0"/> <!-- Shows always the top column header and panel -->
+   <Cfg RemoveAutoColPages="1"/> <!-- Automatically removes all unused column pages at the grid end -->
+
+   <!-- Defines row and column indexes -->
+   <Cfg RowIndex="Index" RowIndexType="6"/> <!-- Creates number RowIndex with all variable rows except deleted -->
+   <Cfg ColIndex="Header" ColIndexType="6" ColIndexChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ"/> <!-- Creates letter ColIndex with all variable columns except deleted  -->
+
+   <!-- Other settings often set in the sheets -->
+   <Cfg SelectAllType="31"/> <!-- The SelectAll button on panels is a switch; it is changed also when the row/column is selected/unselected; the added rows/columns are automatically selected if it is on -->
+   <Cfg ColAdding="1" ColDeleting="1" SelectingCols="1"/> <!-- Permits column manipulating; shows the buttons on column panel -->
+   <Cfg Undo="79"/> <!-- Permits undoing all actions, including scroll -->
+   <Cfg EnterMode="1"/> <!-- Enter moves cursor down -->
+   <Cfg FocusRect="5"/> <!-- Permits focusing cell range and hides focused cursor for the whole row. Does not show the corner and does not move and copy the focused range by dragging. -->
+   <Cfg CopyCols="0" PasteCols="5" PasteFocused="11" ExcludeClear="1"/> <!-- Copy & paste focused cells instead of rows -->
+   <Panel Copy="1"/> <!-- Show add button in row panel -->
+   <Header Index=" " Align="Center"/> <!-- Centers all cells in header -->
+   <Head> 
+      <Panel Index="ColSelectAll,ColDeleteAll"/> <!-- Adds panel for columns -->
+   </Head>
+   <Toolbar Cells05="Win"
+      WinType="Bool" WinLabelRight="Window scroll" WinFormula="Grid.NoVScroll?1:0" WinCanEdit="1" WinOnChange="Grid.NoVScroll = Value; Grid.NoHScroll = Value; if(!Value) { Grid.MainTag.style.width='800px'; Grid.MainTag.style.height='500px'; } Grid.Update();"
+   />
+</Grid>

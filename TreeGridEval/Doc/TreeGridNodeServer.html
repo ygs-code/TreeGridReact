@@ -1,0 +1,93 @@
+<html>
+<body>
+<style>
+b { color:#D08; }
+tt { color:#080; font-weight:bold; }
+h3 i { color:#666; }
+ul { list-style-type:lower-alpha; }
+li { margin-bottom:5px; }
+h1,h2 { text-align:center; }
+body { padding:10px; }
+</style>
+
+<!-- ---------------------------------------------------------- Examples --------------------------------------------------------------- -->
+
+<h2>TreeGrid Node Server</h2>
+This Node Server serves and accepts data in TreeGrid JSON format and loads and saves the data in SQLLite3 database or in static file. It can also generate PDF from TreeGrid.<br />
+The file <b>index.js</b> can be used as framework for application serving files for TreeGrid.<br />
+
+<h3>1) Install and run the Node Server</h3>
+<ul>
+   <li>
+      Go to directory <b>/ExamplesNode/Server/</b>.
+   </li>
+   <li>
+      Run here command <b>npm install</b> to install the node modules and wait until they are installed.
+   </li>
+   <li>
+      Next run <b>npm start</b> to start the NodeJS server. The server serves at <a href="http://localhost:8000/" target="_blank"><b>http://localhost:8000/</b></a>.
+   </li>
+</ul>
+
+<h3>2) Test the NodeJS server with TreeGrid</h3>
+<ul>
+   <li>
+      Run the simple Html &amp; JavaScript example in <b>/ExamplesNode/Html/</b>.<br />
+      Run the <a href="../Html/Static/Index.html" target="_blank" class="Local"><b>/ExamplesNode/Html/Static/Index.html</b></a> 
+      or <a href="../Html/Dynamic/Index.html" target="_blank" class="Local"><b>/ExamplesNode/Html/Dynamic/Index.html</b></a> page from your http server url in your browser.<br />
+   </li>
+   <li>
+      Or run some example from particular framework, see 
+      <a href="../Angular/TreeGridAngular.html" class="Node">Angular</a>, 
+      <a href="../React/TreeGridReact.html" class="Node">React</a> or 
+      <a href="../Vue/TreeGridVue.html" class="Node">Vue</a>.
+      <br />
+   </li>
+</ul>
+
+<h3>3) Use the Node Server</h3>
+By default the server serves at <a href="http://localhost:8000/" target="_blank"><b>http://localhost:8000/</b></a>, the host and port can be changed in beginning of <b>Index.js</b> file.<br />
+The server provides <b>five functions</b>:<br />
+<ul>
+   <li><b>get</b> (http://localhost:8000/get?table=REQUIRED&idcol=id&parentcol=&defcol=) - Returns data from given table in JSON format.</li>
+   <li><b>set</b> (http://localhost:8000/set?table=REQUIRED&idcol=id&parentcol=&defcol=&autoid=) with changes in JSON in POST Data attribute - Saves posted changes to given table.</li>
+   <li><b>getfile</b> (http://localhost:8000/getfile?file=REQUIRED) - Returns data from given file without any modifications</li>
+   <li><b>setfile</b> (http://localhost:8000/setfile?file=REQUIRED) - Saves posted data (in POST Data attribute) to given file without any modifications.</li>
+   <li><b>getpdf</b> (http://localhost:8000/getpdf?layout=url&data=url) - Converts TreeGrid data in POST Data to PDF</li>
+</ul>
+<b>function parameters</b>:<br />
+<ul>
+   <li>Parameter <b>idcol</b> can be set to the primary key column name, if the primary key column in table is not named 'id'</li>
+   <li>Parameter <b>parentcol</b> should be set to column name where row Parent attribute is stored, the Parent contains the id of the parent row</li>
+   <li>Parameter <b>defcol</b> should be set to column name where row Def attribute is saved, if the rows can have different Def</li>
+   <li>Parameter <b>autoid</b> should be set to 1 if the table generates the record ids automatically</li>
+   <li>Parameters <b>layout</b> and <b>data</b> in <b>getpdf</b> can be set to url where to load TreeGrid layout and data</li>
+</ul>
+
+<h3>4) Server files description</h3>
+<ul>
+   <li><b>index.js</b> - main and only JavaScript script that provides the server functionality.<br />
+      It loads data from and saves data to SQLLite3 database in file <b>SQLite.db</b>. It uses module <b>better-sqlite3</b> module for communication with SQLLite3 database.<br />
+      function <b>get</b> it runs SQL SELECT to select all data from given table and converts the result set to the TreeGrid JSON format.<br />
+      function <b>set</b> parses provide TreeGrid JSON data and generates SQL commands INSERT, DELETE and UPDATE to save the changes to the database.<br />
+      The file provides also function <b>getfile</b> and <b>setfile</b> to read data from and write data to given file without any modifications.<br />
+   </li>
+   <li><b>SQLite.db</b> - Sample SQLLite3 with tables for TreeGrid examples for Angular, React and other frameworks.<br />
+   It contains five table for five examples: TableData, TreeData, GanttBasic, GanttTree and Run.<br />
+   </li>
+   <li><b>SQLite.sql</b> - SQL script that can create and fill the sample tables in SQL database.<br />
+      Use it to create the sample tables in other SQL database like MySQL or MSSQL server.<br />
+   </li>
+   <li><b>SheetData.js</b> - source JSON file for Sheet example to be served and saved as is.</li>
+   <li><b>ExportPDF.html</b> - Support html file for PDF export. It shows printed TreeGrid according to parameters in URL. It is run on server in Chrome headless.</li>
+   <li><b>TreeGridNodeServer.html</b> - this documentation</li>
+   <li><b>package.json</b> - npm package file for installation</li>
+</ul>
+
+<script> 
+if(location.protocol.search(/http/i)<0 || location.pathname.search(/examplesnode/i)<0) for(var i=0,AE=document.getElementsByClassName("Local");i<AE.length;i++) AE[i].removeAttribute("href");  
+if(location.pathname.search(/\/doc\//i)>=0) for(var i=0,AE=document.getElementsByClassName("Node");i<AE.length;i++) AE[i].setAttribute("href",AE[i].href.replace(/Angular|React|Vue/,"Doc"));
+</script>
+
+</body>
+</html>

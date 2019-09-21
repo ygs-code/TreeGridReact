@@ -1,0 +1,99 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+
+      .Tutorial .Desc { margin-top:10px; padding:10px; border:1px solid #dfdfdf; }
+
+      /* Styles special for this example */
+      .Text1 { color:brown; font-style:italic; }
+      .Text2 { color:navy; font-weight:bold; }
+      .Text3 { color:lime; }
+
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>7. Conditional formatting and styling</h1>
+   <h2>TreeGrid can calculate cell's look according to its value or any other condition</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='07-Conditional_Formatting.xml'>07-Conditional_Formatting.xml</a></div>
+      <div class="Main" style='width:100%; height:733px;'>
+         <bdo Debug='check' Data_Url='07-Conditional_Formatting.xml'></bdo>
+      </div>
+   </center>
+
+   <ul style="margin-left:-15px;">
+   <div class="Desc">
+   Remember, when you specify <b>Formula</b> for cell attribute like Class, Color or Icon, you must add it to the row <b>CalcOrder</b> list, otherwise it will be ignored.
+   To add CalcOrder to all rows, set it to the &lt;D Name='R'/>. Remember, when you set <b>CalcOrder</b> attribute, you must list here also all calculated cells.<br />
+   For example &lt;Def>&lt;D Name='R' CalcOrder='Col1Class,Col3,Col3Color,Col5'/>&lt;/Def> when set &lt;C Name='Col1' ClassFormula='...'/>&lt;C Name='Col3' Formula='...' ColorFormula='...'/>&lt;C Name='Col5' Formula='...'/>.
+   </div>
+
+   <div class="Desc"> 
+   All the <b>...Formula</b> attributes can be set also to individual cells, not only to whole columns. In this case the row must have set <b>Calculated</b>='1'.<br /> 
+   The conditional formatting can be used also for any other cell <b>Type</b> like Date, Enum or Text, not only numbers.<br />
+   The Format, Color and Class attributes can be calculated also in API events <b>OnGetFormat</b>, <b>OnGetColor</b> and <b>OnGetClass</b>.<br />
+   </div>
+   </ul>
+
+   <br />
+
+   <ul style='margin-top:6px; font: 13px Arial; margin-bottom:6px;'>
+      <li>
+         <h3>Format</h3> attribute (for Int and Float Type only). The simplest way, you can specify three different formats, for positive values, negative values and zero. 
+         Empty value can be specified independently by <b>EmptyValue</b> attribute.<br />
+         By Format you can specify the count of digits, count of decimal places, group separator and also any HTML code to set font, text color, etc.
+      </li>
+      <li>
+         <b>Calculated</b> <h3>Class</h3> attribute. You can set <b>ClassFormula</b> to calculate the cell class name according to any condition.
+         For example to assign different class to value between -3 and 3. The CSS classes are defined inside HTML page. <br />
+         By the Class you can specify font, text color and other text attributes. The Class should <b>not</b> set background color, see Color attribute below.
+      </li>
+      <li>
+         <b>Calculated</b> <h3>Color</h3> attribute. You can set <b>ColorFormula</b> to calculate the cell background color according to any condition.<br />
+         You can also calculate the individual RGB parts of the color from the cell value to achieve color scale according to the values.<br />
+         For example Col1Color="Value+',0,0'" displays scale in red color. <i>Remember, the RGB parts must be in range 0-255, otherwise the color will be completely different.</i>
+      </li>
+      <li>
+         <b>Calculated</b> <h3>Icon</h3> attribute. You can set <b>IconFormula</b> to calculate left side icon according to any condition. The icon can be clickable to run some action (correction) on click.<br />
+      </li>
+      <li>
+         <b>Calculated</b> <h3>HtmlPrefix</h3> and / or HtmlPostfix. You can set <b>HtmlPrefixFormula</b> to append before the cell value any HTML code calculated according to any condition.<br />
+         By the HtmlPrefix you can show for example the gauge according to the cell value.
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialCells\s*=\s*(\d+)/), TGIndex = 64;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridCells7", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialCells="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

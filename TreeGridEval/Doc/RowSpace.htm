@@ -1,0 +1,154 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Space rows</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Space rows</h1>
+<p>TreeGrid documentation</p>
+
+<strong>Space rows have all row and cell attributes as normal grid rows.</strong><br /><br />
+
+Solid space rows are especially used for toolbars, tabbers, functional rows like Group or Search or any custom control rows.<br />
+Space row is <u>not</u> divided to column sections, is still visible and never scrolled.<br /> 
+Space row <u>cannot</u> be sorted, filtered, selected, deleted, added or dragged, <u>cannot</u> have child rows, <u>cannot</u> be exported to Excel.<br />
+By space rows are done special rows <b>Group</b>, <b>Search</b>, <b>Toolbar</b> and <b>Tabber</b>.<br /><br />
+
+Space row can be placed in <span style="color:red;">&lt;<b style="color:blue;">Solid</b>></span> tag as the <span style="color:red;">&lt;<b style="color:blue;">I</b>></span> or <span style="color:red;">&lt;<b style="color:blue;">Space</b>></span> tag.<br />
+It is placed into table between other rows sections (Head / Body / Foot) or above or below table, the position is set by <a href="#SpaceSpace">Space</a> attribute.<br /> 
+It can be placed also outside grid by <a href="#SpaceTag">Tag</a> attribute.<br /><br />
+
+Every space row can have its own named cells defined by <a href="#SpaceCells">Cells</a> array. The names of cells can, but don't need to be the same as column names.<br />
+<b>The space cells are <u>not</u> related to grid columns</b>, every cell have its width set by its <a href="ColWidth.htm#SpaceCellWidth">Width</a> attribute. The cells cannot be spanned.<br /> 
+The space cell attributes never read its value from grid column, even if they are named same. The space cells are not affected by any grid column resize or move.<br /><br />
+
+Space row can be hidden and displayed by <a href="RowVisibility.htm#IVisible">Visible</a> attribute or by <a href="RowVisibility.htm#ShowRow">ShowRow</a> / <a href="RowVisibility.htm#HideRow">HideRow</a> API methods.<br />
+Can be calculated, the <a href="CellFormula.htm#CellFormula">Formula</a> must be set for individual cells. Can run after cell change or button type cell click. Cells can be focused and/or edited.<br />
+
+<!-- Cells -->
+<a name="SpaceCells"></a>
+<div class="XML">
+   <u></u> <b>&lt;Space></b> <i>string[ ]</i>
+   <h4>Cells</h4> <s></s>
+</div>
+Comma separated list of cells in the row. The names of cells can, but don't need to be the same as column names.<br />
+<b>These cells are <u>not</u> related to grid columns</b>, even if they have the same names.<br /> 
+Every cell have its width set by its <a href="ColWidth.htm#SpaceCellWidth">Width</a> attribute, so the cells are not aligned with grid columns. The cells cannot be spanned.<br />
+
+<!-- CellsXXX -->
+<a name="SpaceCellsXXX"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Space></b> <i>string[ ]</i>
+   <h4>Cells<span style="color:black;">XXX</span></h4> <s></s>
+</div>
+If the space row contains many cells, it is possible to split their definition to more CellsXXX arrays.<br />
+The XXX can be any alphanumeric string. The final Cells order is done by sorting the CellsXXX by the XXX, always as strings.<br />
+For API the cells are all always placed in the <a href="#SpaceCells">Cells</a> array.<br />
+<i>It is <u>not</u> possible to use both <a href="#SpaceCells">Cells</a> and <b>CellsXXX</b> attributes in one row.</i><br />
+For example definitions <tt>
+&lt;I Cells5="A,B" Cells06="C,D" Cell10Test="E,F,G" Cells100C="H" CellsB="I,J" Cellsaaa="K"/></tt> and 
+<tt>&lt;I Cells="C,D,H,E,F,G,A,B,I,J,K"/></tt> are the same.<br />
+
+<!-- Space -->
+<a name="SpaceSpace"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;Space></b> <i>int</i>
+   <h4>Space</h4> <s>[2]</s>
+</div>
+Position of the row inside grid, specifies horizontal section of the grid.<br />
+If more solid rows has the same Space value, they are placed in the order they are in XML.<br />
+<b style="color:blue;">-1</b> - above table, <b style="color:blue;">0</b> - above Head, <b style="color:blue;">1</b> - between Head and Body, <b style="color:blue;">2</b> - between Body and Foot, <b style="color:blue;">3</b> - between Foot and vertical scrollbar, <b style="color:blue;">4</b> - under vertical scrollbar, <b style="color:blue;">5</b> - under table<br />
+<b>-1</b>, <b>0</b>, <b>4</b>, <b>5</b> are spanned for whole grid, including vertical scrollbar and pager,<br /> 
+<b>1</b>, <b>2</b>, <b>3</b>  are spanned only for columns - the vertical scrollbar and pager are placed right side.<br />
+
+<!-- Tag -->
+<a name="SpaceTag"></a>
+<div class="XML">
+   <u></u> <b>&lt;Space></b> <i>string</i>
+   <h4>Tag</h4> <s></s>
+</div>
+To place Space row <b>outside</b> the grid to any HTML tag on page. If set, the <a href="#SpaceSpace">Space</a> attribute is ignored.<br />
+It is the <b>id</b> of HTML tag where to render the row.<br /> 
+The width of the external space row is still preserved to be the same as the actual main table width.<br />
+<i>In trial version this attribute is ignored.</i><br />
+
+<!-- Kind -->
+<a name="SpaceKind"></a>
+<div class="XML">
+   <u><i>upd <b>7.0</b></i></u> <b>&lt;Space></b> <i>string</i>
+   <h4>Kind</h4> <s></s>
+</div>
+Kind of the space row, can be set also by tag name, e.g <tt>&lt;Space Kind='Test' ... /></tt> is the same as <tt>&lt;Test ... /></tt><br />
+There are special kinds of space rows: <b>Group</b>, <b>Search</b>, <b>Toolbar</b>, <b>Toolbar1</b>, <b>Toolbar2</b>, <b>Toolbar3</b>, <b>Topbar</b>, <b>Topbar1</b>, <b>Topbar2</b>, <b>Topbar3</b>, <b>Tabber</b>, <b>Tabber2</b> <i>(since 10.0)</i>, <b>Fill</b> (empty row created for ConstHeight) with special features, <b>NoData</b> (row shown on empty grid).<br />
+By the custom Kind settings you can set CSS class for the whole row, the CSS class name will be Tx + kind + Row, e.g. TSTestRow.<br />
+
+<!-- Mirror -->
+<a name="SpaceMirror"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Space></b> <i>string</i>
+   <h4>Mirror</h4> <s></s>
+</div>
+If set, copies all not defined attributes in actual space row from the Mirror space row. The Mirror is the row id.<br />
+Use especially to split toolbar with many cells to more rows for different media rule - mirror the original toolbar, hide it and hide particular cells in the destination toolbars.<br />
+<i>It should be used instead of default row (<a href="RowDefaults.htm#IDef">Def</a> attribute), because the default space row cannot define cells.</i><br />
+Mirror can be nested, one row can mirror another row that already mirrors another row.<br />
+
+<!-- Panel -->
+<a name="SpacePanel"></a>
+<div class="XML">
+   <u></u> <b>&lt;Space></b> <i>int</i>
+   <h4>Panel</h4> <s></s>
+</div>
+If the row displays (disabled) left panel, just for the same look as other rows.<br /> 
+If set to 2, it displays the panel even if the whole panel column is hidden.<br />
+
+<!-- Label -->
+<a name="SpaceCellLabel"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>Label</h4> <s></s>
+</div>
+HTML label displayed in front of the cell.<br />
+Inserts new cell <tt>Type='Html' CanFocus='0' Width='-1'</tt> in front of the cell.<br />
+
+<!-- LabelRight -->
+<a name="SpaceCellLabelRight"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>LabelRight</h4> <s></s>
+</div>
+HTML label displayed after the cell.<br />
+Inserts new cell <tt>Type='Html' CanFocus='0' Width='-1'</tt> after the cell.<br />
+
+<!-- Left -->
+<a name="SpaceCellLeft"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Space cell></b> <i>int</i>
+   <h4>Left</h4> <s></s>
+</div>
+Left indent of any cell, in pixels.<br />
+Inserts new cell <tt>Type='Html' CanFocus='0' Width='Label width'</tt> in front of the cell.<br />
+
+<!-- RelWidth -->
+<a name="SpaceCellRelWidth"></a>
+<div class="XML">
+   <u></u> <b>&lt;Space cell></b> <i>bool</i>
+   <h4>RelWidth</h4> <s>[0]</s>
+</div>
+Set it to 1 to resize the cell to whole rest of the space row.<br />
+Or to have previous cells aligned to left edge and next cells aligned to right edge of the row.<br />
+
+<!-- SpaceWrap -->
+<a name="SpaceSpace"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Space></b> <i>bool</i>
+   <h4>SpaceWrap</h4> <s>[0]</s>
+</div>
+If set to 1 it wraps row cells to more lines if there is not enough room to display them horizontally in one line.<br />
+
+</div>
+</body>	
+</html>

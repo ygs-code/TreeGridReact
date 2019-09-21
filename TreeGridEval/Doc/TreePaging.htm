@@ -1,0 +1,332 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Paging in tree</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Paging in tree</h1>
+<p>TreeGrid documentation</p>
+
+<!-----------------------------------------------------------------------  ChildPaging  ------------------------------------------------->
+<a name="ChildPaging"></a>
+<h2>ChildPaging - download or render children on expand</h2>
+
+In tree you can render or download children on background when their parent is being expanded at first time (or even next times).<br />
+The parent row must be collapsed to be paged. You have to set its <a href="Tree.htm#IExpanded">Expanded</a> attribute to 0.<br /> 
+To send all rows collapsed you can set for default row named "R": <tt>&lt;Def>&lt;D Name='R' Expanded='0'/>&lt;/Def></tt><br />
+The maximum of children in row is limited, because all the children are rendered at once. By default there can be 1000 children. If the count of children overruns this limit, the children are divided to newly created rows. See row's attribute <a href="#IMaxChildren">MaxChildren</a>.<br />
+<i>An alternative to <b>client ChildPaging</b> are also <a href="#ChildParts">ChildParts</a>.</i><br />  
+<i>In tree you can of course use also standard <a href="Paging.htm">paging</a> for root rows.</i><br />
+
+<!-- ChildPaging -->
+<a name="CfgChildPaging"></a>
+<div class="XML">
+   <u><i>upd <b>7.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ChildPaging</h4> <s>[2]</s>
+</div>
+Method of paging of children rows in tree. How will be rendered or downloaded children rows after parent is expanded for the first time.<br />
+<i>Remember, default setting is <b>2</b> - client paging.</i><br /><br />
+
+<table><tr><td style="width:50px;"><b style="color:blue;">0</b></td><td><i><b>No Paging</b></i></td></tr></table>
+All rows, including all children are rendered on start.<br /> 
+This means slow start and fast use.<br /> 
+The rendering on scroll by <a href="#ChildParts">ChildParts</a> is still applicable, but limiting children count by <a href="#MaxChildren">MaxChildren</a> is ignored.<br /><br />
+
+<table><tr><td style="width:50px;"><b>1</b></td><td><i>not applicable</i></td></tr></table><br />
+
+<table><tr><td style="width:50px;"><b style="color:blue;">2</b></td><td><b>Client paging</b> (render on expand)</td></tr></table>
+Rendered on start are only children of expanded rows. Children of collapsed parent are rendered on first access.<br />
+This means faster start for collapsed tree, but slower first expanding of collapsed node.<br />
+<i>The client paging is fully done by TreeGrid.</i><br /><br />
+
+<table><tr><td style="width:50px;"><b style="color:blue;">3</b></td><td><b>Server paging</b> (download and render on expand or on scroll)</td></tr></table>
+Children of collapsed rows are downloaded on first expand. Server must be able to send the children of the row.<br />
+<i>Since 7.0 also the children of expanded rows can be downloaded from server when they become visible due scroll.</i><br />
+See <a href="PagingServer.htm">server paging documentation</a>.<br />
+<i>The server paging requires cooperation with server and you are responsible for sending children from server.</i><br />
+For server application you can use also <a href="DLL.htm">TreeGrid.dll/so</a>.<br />
+
+<!-- ChildPageLength -->
+<a name="CfgChildPageLength"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ChildPageLength</h4> <s>[0]</s>
+</div>
+<i>Only for ChildPaging=3.</i> To download many immediate children in parts only for demand. See <a href="PagingServer.htm#CfgChildPageLength">ChildPageLength</a> in server paging doc.<br />
+
+<!-- RemoveCollapsed -->
+<a name="CfgRemoveCollapsed"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RemoveCollapsed</h4> <s>[0]</s>
+</div>
+If rendered children are removed when parent row collapses. To speed up grid with many collapsed rows.<br /><br />
+
+<table><tr><td style="width:50px;"><b style="color:blue;">0</b></td><td><b>None</b></td></tr></table>
+It does not remove the children, just hides them. The next expanding is faster.<br /><br />
+
+<table><tr><td style="width:50px;"><b>1</b></td><td><i>not applicable</i></td></tr></table><br />
+
+<table><tr><td style="width:50px;"><b style="color:blue;">2</b></td><td><b>Html</b> (render on next expand will be needed)</td></tr></table>
+The rows are removed from html page only and stay in data unchanged.<br /> 
+It can be set only for <b>client</b> or <b>server</b> <a href="#CfgChildPaging">ChildPaging</a> (<b>2</b> or <b>3</b>).<br />
+The next expanding is as slow as the first.<br /> 
+It speeds up grids with many rows that were expanded and back collapsed, to <u>not</u> have too many HTML tags rendered.<br /><br />
+
+<table><tr><td style="width:50px;"><b style="color:blue;">3</b></td><td><b>Data</b> (download and render on next expand will be needed)</td></tr></table>
+The rows are removed from both html and data.<br /> 
+It can be set only for <b>server</b> <a href="#CfgChildPaging">ChildPaging</a> (3).<br /> 
+Changes in speed are the same as for value <b>2</b> (Html).<br />
+This setting can be used when children are generated dynamically to regenerate new children in every expanding.<br />
+<i>The unsaved changes in all children are lost! Also all selection is lost.</i><br />
+
+<!-- OnRemoveCollapsed -->
+<a name="OnRemoveCollapsed"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnRemoveCollapsed</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>)</s>
+</div>
+Called when the row is collapsed and its children are deleted from data, only if set <tt>&lt;Cfg <a href="#CfgRemoveCollapsed">RemoveCollapsed</a>='3'/></tt>.<br />
+
+<!-- RemoveChanged -->
+<a name="CfgRemoveChanged"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RemoveChanged</h4> <s>[0]</s>
+</div>
+How will behave changed rows on RemoveCollapsed or RemoveUnused.<br />
+<b>0</b> - Don't remove changed rows and selected rows. If there is any such row, the removing is not done.<br />
+<b>1</b> - Don't remove changed rows. If there is any such row, the removing is not done.<br />
+<b>2</b> - Remove changed rows.<br />
+<b>3</b> - Save changes and remove rows immediately.<br />
+<b>4</b> - Save changes and wait for the server success response before removing rows.<br />
+
+<!-- OnRemoveChanged -->
+<a name="OnRemoveChanged"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API event</b> <i>int</i>
+   <h4>OnRemoveChanged</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>page</b>)</s>
+</div>
+Called if removing page containing some changed (or selected row for <tt>RemoveChanged==0</tt>)<br />
+For <tt>RemoveChanged==2</tt> is called always.<br />
+Return new value for RemoveChanged to use - 1, 2, 3, 4<br />
+
+<!-- OnRenderPageStart -->
+<a name="OnRenderPageStart"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderPageStart</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>)</s>
+</div>
+Called before rendering of the root page or child page started rendering.<br />
+When used child paging (&lt;Cfg ChildPaging>), this event is fired before start of rendering children when a parent row is being expanded.<br />
+
+<!-- OnRenderPageFinish -->
+<a name="OnRenderPageFinish"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderPageFinish</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>)</s>
+</div>
+Called after the root page or child page is fully rendered and ready.<br /> 
+When used child paging (&lt;Cfg ChildPaging>), this event is fired after children are rendered when a parent row is being expanded.<br />
+
+<!-- State -->
+<a name="State"></a>
+<div class="API">
+   <u></u> <b>API TRow var.</b> <i>int</i>
+   <h4>State</h4>
+   <s></s>
+</div>
+Page or parent row state of loading / rendering its children.<br />
+<b>0</b> - not yet loaded, <b>1</b> - children are loading, <b>2</b> - children are loaded, but not rendered, <b>3</b> - children are rendering, <b>4</b> - fully rendered.<br />
+
+<!-----------------------------------------------------------------------  MaxChildren - limit children count  ------------------------------------------------->
+<a name="MaxChildren"></a>
+<h2>MaxChildren - limit children count</h2>
+
+<i>Applied only when used child paging (<a href="#CfgChildPaging">ChildPaging</a>>=2), (by default is <tt>ChildPaging='2'</tt>).</i><br />
+Expanding rows with too many children can be very slow.<br />
+You can limit the maximal count of immediate children by row's attribute <a href="#IMaxChildren">MaxChildren</a>.<br />
+If the row children exceed this count, in row's children are automatically created new collapsed rows that will contain the row's children.<br />
+<i>Since 7.0</i> the attributes of the creates temporary parents are read from the default row named CPage (<tt>&lt;D Name='CPage'/></tt>).<br />
+Sorting, filtering, grouping and calculations will still work with all the children like they were not moved.<br />
+<i>An alternative to <b>MaxChildren</b> are also <a href="#ChildParts">ChildParts</a>.</i><br />  
+
+<!-- MaxChildren -->
+<a name="IMaxChildren"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>int</i>
+   <h4>MaxChildren</h4> <s>[10000]</s>
+</div>
+Maximal count of row's children. <i>Applied only when used child paging (<a href="#CfgChildPaging">ChildPaging</a>>=2).</i><br />
+<i>Default value 10000 is very high and nearly disables the feature.</i><br />
+If the count of children exceeds this limit, in row are created sub nodes that contain parts of the children list.<br />
+This means that if MaxChildren is 1000 and row contain 3500 children, there will be created four sub nodes with 3x1000 and 1x500 children rows.<br />
+The text displayed in child page is in <tt>&lt;Grid>&lt;Lang>&lt;Text Items='...'/>&lt;/Lang>&lt;/Grid></tt>.<br />
+
+<!-- MaxChildrenDiff -->
+<a name="IMaxChildrenDiff"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>int</i>
+   <h4>MaxChildrenDiff</h4> <s>[20]</s>
+</div>
+The children rows are grouped to sub nodes only if their count exceeds <a href="#IMaxChildren">MaxChildren</a> + MaxChildrenDiff.<br />
+To avoid creating sub nodes with 1000 + 1 node or so.<br />
+
+<!-- MaxChildrenMin -->
+<a name="IMaxChildrenMin"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;I></b> <i>int</i>
+   <h4>MaxChildrenMin</h4> <s>[1]</s>
+</div>
+Minimal length of the group. To avoid creating sub nodes with 1000+1000+1.<br />
+The last group with less children than the MaxChildrenMin is merged with previous group.<br />
+
+<!-- MaxChildrenEmpty -->
+<a name="CfgMaxChildrenEmpty"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>MaxChildrenEmpty</h4> <s>[0]</s>
+</div>
+Used when the count of children exceeds <a href="#IMaxChildren">MaxChildren</a> value and in row are created children pages.<br />
+If the child page row shows all values of its parent [0] or shows only value in main cell [1].<br />
+
+<!-- OnCreateCPage -->
+<a name="OnCreateCPage"></a>
+<div class="API">
+   <u>new <b>13.3</b></u> <b>API event</b> <i>void</i>
+   <h4>OnCreateCPage</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>)</s>
+</div>
+Called when created new MaxChildren parent row, before it is displayed.<br />
+Use it to preset row values, especially in main column that cannot be calculated in this row.<br />
+For example to show the first and last child value in the main column:<br />
+<tt>Grids.OnCreateCPage = function(G,row){ row[G.MainCol] = row.firstChild[G.MainCol] + " - " + row.lastChild[G.MainCol]; }</tt>
+
+<!------------------------------------------------------  ChildParts - rendering children parts on scroll  ------------------------------------------------->
+<a name="ChildParts"></a>
+<h2>ChildParts - rendering children parts on scroll</h2>
+
+Because standard <b>paging</b> is applied only on root rows, in deep tree the root page can be very long and the root paging become ineffective.<br /> 
+It is possible to render parts of child rows only on scroll, similarly to root paging (by default it is permitted, see <a href="#CfgChildParts">ChildParts</a>).<br />
+You should play with <a href="#CfgChildPartLength">ChildPartLength</a> and <a href="#CfgChildPartMin">ChildPartMin</a> to get the best settings for your tree - for different tree structures different settings are the best.<br />
+<i>Remember, the child part length is applied only to immediate children, not for sub nodes, so for deep slim tree you should set <tt><a href="#CfgChildPartMin">ChildPartMin</a>='0'</tt> to take the child parts its effect.</i><br />
+
+<!-- ChildParts -->
+<a name="CfgChildParts"></a>
+<div class="XML">
+   <u>new <b>6.0</b> chg <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ChildParts</h4> <s>[0/2]</s>
+</div>
+<strong>Since version <b>7.0</b> the original and also default value <b>1</b> was changed to <b>2</b> to be compatible with other paging types (Paging, ColPaging, ChildPaging).</strong><br />
+If set to <b>0</b>, all children are rendered on expand or on start for all expanded parents.<br />
+<i>(new 7.0)</i> If set to <b>1</b>, all children are rendered on expand or on start for all expanded parents, but with progress dialog and is possible to cancel the rendering and render it on demand.<br />
+<i>(in 7.0 was changed from 1)</i> If set to <b>2</b>, it renders only visible (by scroll) parts of expanded children, similarly when paged root rows with all pages displayed.<br />	
+On start or first expand of the children it renders only few rows (set by <a href="#CfgChildPartMin">ChildPartMin</a>) and next actually visible child rows renders when grid is scrolled and the part become visible.<br />
+By default it is set to <b>2</b> in grid with more than 200 children and in grids with server paging or server child paging.<br />
+
+<!-- ChildPartLength -->
+<a name="CfgChildPartLength"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ChildPartLength</h4> <s>[20]</s>
+</div>
+Count of rows in one part for <a href="#CfgChildParts">ChildParts</a>. The part is rendered whenever is (at least partially) visible by scroll.<br />
+<i>Remember, the child part length is applied only to immediate children, not for sub nodes, so for deep slim tree you should set <tt><a href="#CfgChildPartMin">ChildPartMin</a>='0'</tt> to take the child parts its effect.</i><br />
+
+<!-- ChildPartMin -->
+<a name="CfgChildPartMin"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ChildPartMin</h4> <s>[3]</s>
+</div>
+Minimal count of rows rendered immediately the parent row is expanded or rendered expanded.<br /> 
+It can be also 0 to not render anything immediately - it is should be set in deep slim tree.<br />
+
+<!-- MaxChildParts -->
+<a name="CfgMaxChildParts"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MaxChildParts</h4> <s>[0]</s>
+</div>
+Maximum rendered child parts in grid, only for <tt><a href="#CfgChildParts">ChildParts</a> = 2</tt>.<br />
+When grid contains more rendered child parts, the child parts longer not accessed are cleared (only in HTML, data are <u>not</u> affected).<br />
+Used to <u>not</u> slow down the browser when too many HTML tags are displayed.<br />
+For large child parts you can lower this value.<br />
+The actually displayed child parts are never cleared.<br />
+Set it to <b>0</b> to disable clearing child parts.<br />
+
+<!-- RemoveUnusedPages -->
+<a name="CfgRemoveUnusedPages"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RemoveUnusedPages</h4> <s>[2]</s>
+</div>
+If set to <b>0</b>, it never removes unused root pages, child pages/parts and column pages.<br />
+If set to <b>2</b>, it removes unused pages due <a href="Paging.htm#CfgMaxPages">MaxPages</a>, <a href="#CfgMaxChildParts">MaxChildParts</a> and <a href="ColPaging.htm#CfgMaxColPages">MaxColPages</a>.<br />
+If set to <b>3</b>, it removes also data of unused root pages or child pages.<br />
+It removes only page or child page that does not contain changed rows.<br />
+
+<!-- RemoveUnusedFixed -->
+<a name="CfgRemoveUnusedFixed"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RemoveUnusedFixed</h4> <s>[3]</s>
+</div>
+If the fixed left and right column sections will be removed when removing unused row pages by 
+<a href="Paging.htm#CfgMaxPages">MaxPages</a> or <a href="#CfgMaxChildParts">MaxChildParts</a>.<br />
+<b>0</b> - none, <b>1</b> - left, <b>2</b> - right, <b>3</b> - both<br />
+
+<!-- RemoveChanged -->
+<a name="OnRemovePage"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RemoveChanged</h4> <s>[0]</s>
+</div>
+How will behave changed rows on RemoveCollapsed or RemoveUnused.<br />
+<b>0</b> - Don't remove changed rows and selected rows. If there is any such row, the removing is not done.<br />
+<b>1</b> - Don't remove changed rows. If there is any such row, the removing is not done.<br />
+<b>2</b> - Remove changed rows<br />
+<b>3</b> - Save changes and remove rows immediately<br />
+<b>4</b> - Save changes and wait for the server success response before removing rows.<br />
+
+<!-- OnRenderChildPartStart -->
+<a name="OnRenderChildPartStart"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderChildPartStart</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>int</i> <b>index</b>)</s>
+</div>
+Called before rendering of a part of children is started rendering.<br />
+The <b>index</b> is an index of the part from 0.<br />
+
+<!-- OnRenderChildPartFinish -->
+<a name="OnRenderChildPartFinish"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderChildPartFinish</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>int</i> <b>index</b>)</s>
+</div>
+Called after the part of children is rendered and ready.<br />
+The <b>index</b> is an index of the part from 0.<br />
+
+<!-- OnRemovePage -->
+<a name="OnRemovePage"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnRemovePage</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>page</b>)</s>
+</div>
+Called after removing data from page or child page, when set <tt><a href="#CfgRemoveUnusedPages">RemoveUnusedPages</a> = <b>3</b></tt>.<br />
+
+<!-- OnRemoveChanged -->
+<a name="OnRemoveChanged"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API event</b> <i>int</i>
+   <h4>OnRemoveChanged</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>page</b>)</s>
+</div>
+Called if removing page containing some changed (or selected row for <tt>RemoveChanged==0</tt>)<br />
+For <tt>RemoveChanged==2</tt> is called always.<br />
+Return new value for RemoveChanged to use - 1, 2, 3, 4<br />
+
+</div>
+</body>	
+</html>

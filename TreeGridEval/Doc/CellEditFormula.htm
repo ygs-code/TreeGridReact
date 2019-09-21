@@ -1,0 +1,2406 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Editable formulas</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Calculations - editable cell formulas</h1>
+<p>TreeGrid documentation</p>
+
+<strong>This document describes <b>EDITABLE</b> formulas entered by users directly into cells.</strong><br /> 
+To read about <b>NOT EDITABLE</b> formulas entered by developers into data see <a href="CellFormula.htm">Cell data formulas</a>.<br />
+When calculating the grid, the editable formulas are calculated independently after the not editable formulas.<br />
+
+<br />
+
+If set <a href="#CfgFormulaEditing">FormulaEditing</a>="1", a user can enter formula in given cell(s) by starting the value by "=", like in Excel.<br />
+When entered the value starting by "=", the cell <a href="#CellEFormula">EFormula</a> is updated and calculated and the cell value gets the formula result.<br />
+<br />
+<a name="Strings"></a><b>Strings</b><br />
+Strings are written in quotes, there can be used both " or '. 
+To place the quote to string, double it, e.g. "aaa""bbb" => aaa"bbb. 
+All other characters, including '\' have standard meaning.<br />
+<br />
+<a name="Numbers"></a><b>Numbers</b><br />
+Numbers are written as they are in digits 0 - 9, optionally with decimal separator.<br />
+<br />
+<a name="Dates"></a><b>Dates</b><br />
+Date constants are <u>not</u> accepted. 
+They must be created by formulas like <a href="#date">date</a>() from string or separate arguments.<br />
+<br />
+<a name="Operators"></a><b>Operators</b><br />
+Default operators use standard C++/JavaScript syntax: <br />
+Arithmetic: <b>+</b> (add, both numbers and strings), <b>-</b> (subtract), <b>*</b> (multiply), <b>/</b> (divide), <b>%</b> (modulo) <br />
+Logical: <b>&&</b> (logical and), <b>||</b> (logical OR), <b>!</b> (logical not) <br /> 
+Bit: <b>&</b> (bit AND), <b>|</b> (bit OR), <b>^</b> (bit XOR), <b>~</b> (bit negate), <b><<</b> (bit shift left), <b>>></b> (bit shift right)<br />
+Compare: <b>==</b> (equals), <b>!=</b> (not equals), <b><</b> (less), <b><=</b> (less or equal), <b>></b> (greater), <b>>=</b> (greater or equal) <br />
+Condition: <b>?:</b> (three arguments, condition<b>?</b>result_true<b>:</b>result_false)<br />
+Special <b>MS Excel</b> operators: <b>=</b> (equals), <b>&lt;></b> (not equals), <b>^</b> (power), <b>&amp;</b> (concatenate strings), <b>%</b> (percent, = *100), <b>!</b> (external reference)<br /> 
+The operators <b>^</b> <b>&amp;</b> <b>%</b> <b>!</b> have different meaning in MS Excel and JavaScript, by default <i>since 13.0</i> the MS Excel meaning is used. It can be changed in &lt;Lang>&lt;<b>FormulaOperators</b>/>&lt;Lang>.<br />
+Priority of operators is the same as in JavaScript and cannot be changed. You can always use parenthesis <b>( )</b> to change the priority.<br />
+All the operators are defined in &lt;Lang>&lt;<b>FormulaOperators</b>/>&lt;Lang>, it is possible to modify, add or delete the operators.<br />
+<br />
+<a name="Constants"></a><b>Constants</b><br />
+There are defined constants: <b>pi</b> (3.14), <b>ln2</b> (ln(2)), <b>ln10</b> (ln(10)), <b>log2e</b> (log2(e)), <b>log10e</b> (log10(e)), <b>sqrt2</b> (sqrt(2)), <b>sqrt1_2</b> (1/sqrt(2)), <b>null</b> (nothing).<br />
+All the constants are defined in &lt;Lang>&lt;<b>FormulaConstants</b>/>&lt;Lang>, it is possible to modify, add or delete the constants.<br />
+<br />
+<a name="References"></a><b>Cell references</b><br />
+In the formulas there can be addressed any the grid cell as Row.Name (or Row.id) + Col.SearchNames (or column name).<br />
+For example, <tt>&lt;C Name="AB"/> &lt;C Name="BC"/> &lt;C Name="XY" ... &lt;I id="20" XY="<b>=AB20+BC20</b>" /> </tt><br />
+<br />
+<a name="Range"></a><b>Cell range references</b><br />
+In the formulas there can be addressed any range of cells in grid as CornerCell <b>:</b> OppositeCornerCell 
+or Column1 <b>:</b> Column2 or Row1 <b>:</b> Row2<br />
+For example, <tt>&lt;C Name="AB"/> &lt;C Name="BC"/> &lt;C Name="XY" ... &lt;I id="20" XY="<b>=sum(AB5:BC19,1:3)+AB20+100</b>" /> </tt><br />
+The range separator <b>:</b> is defined by <a href="#FormatFormulaRangeSeparator">FormulaRangeSeparator</a>.<br />
+<i>Since 13.0</i> It is possible to get intersection of cell ranges by operator space, e.g. XY="=sum(A1:D5 A2:D8)".
+The operator space is defined by <a href="#FormatFormulaIntersectionSeparator">FormulaIntersectionSeparator</a>.<br />
+<br />
+
+<a name="External"></a><b>External references</b><br />
+It is possible to refer also cells or cells ranges in other sheet in the same xlsx by "!" operator. <i>Since 14.0</i> the sheet name is case insensitive.<br />
+If the sheet name contains spaces, it must be quoted. For example <tt>XY='="Sheet 1"!A1:A2'</tt>.<br />
+External references to other xlsx files are <u>not</u> supported!<br />
+<br />
+
+<a name="Functions"></a><b>Functions</b><br />
+It is possible to use more than 200 predefined functions.<br />
+<b>The functions have MS Excel English names and syntax and are completely different from the data (not editable) formula functions, although they can have the same name!</b> <br />
+For example <b>sum</b> function in <a href="CellFormula.htm#sum">data usage</a> and in <a href="#sum">editable usage</a>.<br />
+In the function arguments it is possible to pass one string in "" or number as is, one cell value as R1C1, cell values range as R1C1:R2C2, the whole column(s) as C1:C2, the whole row(s) as R1:R2 or any function call.<br />
+The arguments in the function call are separated by <b>comma</b>, it can be changed by <a href="#FormatFormulaValueSeparator">FormulaValueSeparator</a>.<br />
+For example, <tt>&lt;C Name="AB"/> &lt;C Name="BC"/> &lt;C Name="XY" ... &lt;I id="20" XY="<b>=sum(AB5:BC19,1:3)+AB20+100</b>" /> </tt><br />
+See the <a href="#Func"><b>Functions list</b></a><br />
+<br />
+
+<a name="Localization"></a><b>Localization</b><br />
+The values in formula during <b>editing</b> are <b>localized</b>, they are affected by &lt;Format> settings like <a href="TypeNumber.htm#FormatDecimalSeparator">DecimalSeparator</a> and <a  href="TypeNumber.htm#FormatInputDecimalSeparators">InputDecimalSeparators</a> 
+and formula special locale settings like <a href="#FormatFormulaValueSeparator">FormulaValueSeparator</a>, <a href="#FormatFormulaRangeSeparator">FormulaRangeSeparator</a>, <a href="#FormatFormulaIntersectionSeparator">FormulaIntersectionSeparator</a> and <a href="#FormatFormulaPrefix">FormulaPrefix</a>.<br />
+For example if the system has set comma as decimal separator, the decimal numbers in the formula show comma. In this case the function parameter separator <a href="#FormatFormulaValueSeparator">FormulaValueSeparator</a> should be set to semicolon.<br />
+The function names can be localized (translated) in &lt;Lang>&lt;FormulaFunctions />&lt;/Lang, for example <tt>&lt;Lang>&lt;FormulaFunctions sum="localsum" />&lt;/Lang></tt><br />
+The input and output xml/json <b>data</b> can contain localized or English formulas according to <a href="#CfgFormulaLocal">FormulaLocal</a> setting, default is English.<br />
+<br />
+
+<a name="White"></a><b>White spaces</b><br />
+All white spaces are automatically removed from formula, except from strings.<br />
+<br />
+
+<a name="Compatibility"></a><b>Compatibility with MS Excel 2016</b><br />
+<i>The editable formulas are compatible with MS Excel formula syntax and function names.</i><br />
+The MS Excel <b>array formulas</b> are not implemented yet.<br />
+The <b>external references</b> to other <b>workbook</b> are not implemented. Note, references to other sheets are supported.<br />
+TreeGrid does not differ between error and N/A.<br />
+TreeGrid Auto type does not recognize special <b>boolean</b> type, as boolean there used values 0 and 1, although constants and functions TRUE and FALSE are available.<br />
+There are implemented 237 more frequent MS Excel functions. But next 207 less frequent and special MS Excel functions are not implemented yet, they can be implemented as <a href="#Custom">custom functions</a> or on request: <br />
+<i>Other</i>: info, error.type, bahttext, getpivotdata, indirect, hyperlink, rtd <br />
+<i>Date</i>: workday, workday.intl, days360, networkdays, networkdays.intl, yearfrac <br />
+<i>Matrix</i>: minverse, mmult, munit, arabic, roman <br />
+<i>Trend line</i>: forecast.ets, forecast.ets.confint, forecast.ets.seasonality, forecast.ets.stat, trend, growth, logest <br />
+<i>Confidence</i>: confidence, confidence.norm, confidence.t<br />
+<i>Distribution</i>: betadist, beta.dist, betainv, beta.inv, 
+binomdist, binom.dist, binom.dist.range, negbinomdist, negbinom.dist, critbinom, binom.inv, 
+chdist, chisq.dist.rt, chisq.dist, chiinv, chisq.inv.rt, chisq.inv, chitest, chisq.test, 
+correl, expondist, expon.dist, fdist, f.dist.rt, f.dist, finv, f.inv.rt, f.inv, fisher, fisherinv, 
+ftest, f.test, gammadist, gammainv, gamma.inv, gamma, gammaln, gammaln.precise, gauss, 
+hypgeomdist, hypgeom.dist, kurt, lognormdist, lognorm.dist, loginv, lognorm.inv, 
+normdist, norm.dist, norminv, norm.inv, normsdist, norm.s.dist, normsinv, norm.s.inv, 
+pearson, rsq, phi, poisson, poisson.dist, prob, skew,skew.p, 
+standardize, tdist, t.dist.2t, t.dist.rt, t.dist, tinv, t.inv.2t, t.inv, ttest, t.test,
+weibull, weibull.dist, ztest, z.test.<br />
+<i>Database</i>: daverage, dcount, dcounta, dget, dmax, dmin <br />
+<i>Financial</i>: fv, fvschedule, npv, pv, received, xnpv, disc, 
+price, pricedics, pricemat, oddfprice, oddlprice, tbillprice,
+irr, mirr, xirr, amordegrc, amorlinc, db, ddb, sln, syd, vdb, dollarde, dollarfr, 
+cumipmt, cumprinc, ipmt, ispmt, pmt, ppmt, accrint, accrintm, effect, intrate, nominal, rate, rri, 
+yield, yielddisc, yieldmat, oddfyield, oddlyield, tbilleq, tbillyield,
+coupdaybs, coupdays, coupdaysnc, coupncd, coupnum, couppcd, duration, mduration, nper, pduration, <br />
+<i>Bessel</i>: besseli, besselj, besselk, bessely<br />
+<i>Error</i>: erf, erf.precise, erfc, erfc.precise<br />
+<i>Complex</i>: complex, imabs, imaginary, imargument, imconjugate, imcos, imcosh, imcot, imcsc, imcsch, imdiv, imexp, 
+imln, imlog10, imlog2, impower, improduct, imreal, imsec, imsech, imsin, imsinh, imsqrt, imsub, imsum, imtan<br />
+<i>Cube</i>: cubekpimember, cubemember, cubememberproperty, cuberankedmember, cubeset, cubesetcount, cubevalue<br />
+<i>Web</i>: encodeurl, filterxml, webservice<br />
+<br />
+
+<!-- FormulaEditing -->
+<a name="CfgFormulaEditing"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FormulaEditing</h4> <s>[0]</s>
+</div>
+If set, the grid supports calculated formulas in cells. 
+The formulas can be entered into cell by editing. 
+Or in input data in the cell value with '=' or in <a href="#CellEFormula">EFormula</a> cell attribute.<br />
+If set to <b>1</b>, the formula is uploaded in cell value with '=' and the formula result is not uploaded.<br />
+If set to <b>2</b>, the formula is uploaded in <a href="#CellEFormula">EFormula</a> attribute (without '=') 
+and the formula result in the cell value. Set also &lt;treegrid>/&lt;bdo> <a href="DataUpload.htm#Upload_Attrs">Upload_Attrs</a>="*EFormula,...." to upload the EFormula attribute.<br />
+
+<!-- FormulaRelative -->
+<a name="CfgFormulaRelative"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FormulaRelative</h4> <s>[0]</s>
+</div>
+If and how the cells can be referenced relatively to the formula source cell.<br />
+<br />
+<b>0</b><br />
+The cell references are only absolute, they refer to exact row and column and don't change after the row or column is moved or deleted.<br />
+All the cell references are set as ColRow or RowCol (e.g. A1 or A1:B5).<br />
+The row is identified by row <a href="RowBasics.htm#IName">Name</a>, value in <a href="RowBasics.htm#CfgNameCol">NameCol</a> or row <a href="RowId.htm#Iid">id</a>.<br />
+Column is identified by any value in its <a href="Search.htm#CSearchNames">SearchNames</a> or the column <a href="ColBasics.htm#CName">Name</a>.<br />
+<br />
+<b>1</b> or <b>2</b><br />
+The cell references are relative to the cell with the formula or absolute. <br />
+The absolute reference is with "$" prefix, it can be changed by <a href="#FormatFormulaAbsolute">FormulaAbsolute</a>.<br />
+For example "A1:B3" is relative, "$A$1:$B$3" is absolute, "$A1:$B3" is absolute column, relative row, "A$1:B$3" is relative column, absolute row.<br />
+Both the absolute and relative references are updated when the row or column is moved or deleted.<br />
+The relative references are updated 
+The rows and columns are identified by their position, the rows by value in <a href="RowBasics.htm#CfgRowIndex">RowIndex</a>, the columns by value in <a href="ColBasics.htm#CfgColIndex">ColIndex</a>.<br />
+If the <a href="RowBasics.htm#CfgRowIndex">RowIndex</a> is not defined, it is automatically added as new column named "Index".<br />
+If the <a href="ColBasics.htm#CfgColIndex">ColIndex</a> is not defined, it is automatically set to the main Header row and defined with ColIndexChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".<br />
+<table>
+   <tr><td><b>1</b></td><td>The cell references are the same (ColRow / $Col$Row) also in input and output data.</td></tr>
+   <tr><td><b>2</b></td><td>
+      The cell references in input and output data are in special format:<br /> 
+      <b>RxCx</b> for absolute reference where x is row or column position from the top left corner from 1.<br />
+      <b>R[x]C[x]</b> for relative. Where x is the cell position relative to the cell with formula, 1 means next cell, -1 means previous cell.<br />
+      <b>RC</b> for the same row or column.<br />
+      The references can be mixes, e.g. R1C means the first row in the same column, R[-2]C5 means two rows above the row and the fifth column.<br />
+      It counts only rows / columns with <a href="RowBasics.htm#CfgRowIndex">RowIndex</a> / <a href="ColBasics.htm#CfgColIndex">ColIndex</a> set. It counts rows / cols regardless on FormulaCanUse value.<br />
+   </td></tr>
+</table>
+
+<!-- FormulaLocal -->
+<a name="CfgFormulaLocal"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>FormulaLocal</h4> <s>[0]</s>
+</div>
+If the localized functions, operators and constants will be stored also in input and output XML / JSON data and in <a href="#CellEFormula">EFormula</a> for API.
+
+<!-- FormulaResults -->
+<a name="CfgFormulaResults"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FormulaResults</h4> <s>[15]</s>
+</div>
+
+<table>
+   <tr><td style="width:70px;">1.bit (<b>&amp;1</b>)</td><td>If the cell gets an <a href="CellEdit.htm#CellError">Error</a> attribute with the formula result error</td></tr>
+   <tr><td>2.bit (<b>&amp;2</b>)</td><td>If the formula result values are restricted by cell limit attributes. Checks <a href="CellEdit.htm#CSize">Size</a>, <a href="CellEdit.htm#CEditMask">EditMask</a>, <a href="CellEdit.htm#CResultMask">ResultMask</a> and <a href="TypeEnum.htm#CEnum">Enum</a> values</td></tr>
+   <tr><td>3.bit (<b>&amp;4</b>)</td><td>If the NaN / Infinity results are restricted. Otherwise it is converted to empty string or zero according to the cell type</td></tr>
+   <tr><td>4.bit (<b>&amp;8</b>)</td><td>If the null result is restricted. Otherwise it is converted to empty string or zero according to the cell type</td></tr>
+   <tr><td>5.bit (<b>&amp;16</b>)</td><td>If the new error messages are shown after formula change</td></tr>
+</table>
+
+
+
+<!-- FormulaCanEdit -->
+<a name="CFormulaCanEdit"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>bool</i>
+   <h4>FormulaCanEdit</h4> <s>[1]</s>
+</div>
+If the cell or cells in row or column can accept its Formula by entering its value starting with "=".
+
+<!-- FormulaCanUse -->
+<a name="CFormulaCanUse"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C>&lt;I></b> <i>bool</i>
+   <h4>FormulaCanUse</h4> <s>[1/0]</s>
+</div>
+If the row or column can be used as source for editable formulas.<br />
+Default value is 0 for solid space rows, Panel and Gantt columns and 1 for all other rows and columns.
+
+<!-- FormulaNames -->
+<a name="CfgFormulaNames"></a>
+<div class="XML">
+   <u>new <b>12.0</b> chg <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FormulaNames</h4> <s>[0]</s>
+</div>
+<i>Since 13.0 all the formula items except strings are case insensitive.</i><br />
+How the cells can be addressed in editable formula and letter case in formula items, bit array:<br />
+<table>
+   <tr><td style="width:70px;">1.bit (<b>&amp;1</b>)</td><td>Order in cell reference: <b>0</b> - ColRow, <b>1</b> - RowCol</td></tr>
+   <tr><td>2.bit (<b>&amp;2</b>)</td><td>If the order in cell reference is strict. <b>0</b> - both the orders can be used in input and the result is converted to selected order, <b>2</b> - only selected order can be entered </td></tr>
+   <tr><td>3.bit (<b>&amp;4</b>)</td><td><i>(changed 13.0)</i> Letter case conversion of formula items (cell references, functions, operators, constants) for editing. <b>0</b> - to upper case, <b>4</b> - to lower case.</td></tr>
+   <tr><td>4.bit (<b>&amp;8</b>)</td><td>If permits spaces in function or cell names. If permitted, textual operators (like AND) are restricted.</td></tr>
+   <tr><td>5.bit (<b>&amp;16</b>)</td><td><i>(new 13.0)</i> Letter case conversion of formula items (cell references, functions, operators, constants) for data. <b>0</b> - to upper case, <b>16</b> - to lower case.</td></tr>
+</table>
+The <b>Row</b> is <b>RowIndex</b> value if set <a href="#CfgFormulaRelative">FormulaRelative</a>, otherwise it is  <b>Name</b> attribute, or if it is not set, the row cell value in <b>NameCol</b> or if it is not set, the row <b>id</b> attribute.<br />
+The <b>Col</b> is <b>ColIndex</b> value if set <a href="#CfgFormulaRelative">FormulaRelative</a>, otherwise it is one of the items in column <b>SearchNames</b> attribute, or if it is not set, the column <b>Name</b> attribute.
+
+<!-- FormulaType -->
+<a name="CfgFormulaType"></a>
+<div class="XML">
+   <u>new <b>12.0</b> <i>upd <b>13.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FormulaType</h4> <s>[0]</s>
+</div>
+How the formula iterates rows and columns, bit array.<br />
+<table>
+   <tr><td style="width:70px;">1.bit (<b>&amp;1</b>)</td><td>Include deleted rows and columns.</td></tr>
+   <tr><td>2.bit (<b>&amp;2</b>)</td><td>Include filtered rows and columns.</td></tr>
+   <tr><td>3.bit (<b>&amp;4</b>)</td><td>Include manually hidden rows and columns</i></td></tr>
+   <tr><td>4.bit (<b>&amp;8</b>)</td><td>(<i>new 13.0</i>) Include left fixed columns</i></td></tr>
+   <tr><td>5.bit (<b>&amp;16</b>)</td><td>(<i>new 13.0</i>) Include right fixed columns</i></td></tr>
+   <tr><td>6.bit (<b>&amp;32</b>)</td><td>(<i>new 13.0</i>) Include fixed rows (only Kind="Data" and without ColIndex)</i></td></tr>
+</table>
+
+<!-- FormulaCircular -->
+<a name="CfgFormulaCircular"></a>
+<div class="XML">
+   <u>new <b>12.0</b> <i>upd <b>13.3</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FormulaCircular</h4> <s>[1]</s>
+</div>
+How the circular references between cells will be checked and reported.<br />
+<b>0</b> - permit, <b>1</b> - permit and mark by Error, <b>2</b> - restrict and cancel editing, 
+<b>3</b> - ask 0 or 2, <b>4</b> - ask 1 or 2, <b>5</b> - 1 with alert, <b>6</b> - 2 with alert, 
+<b>7</b> - <i>(new 13.3)</i> restrict and continue editing, <b>8</b> <i>(new 13.3)</i> 7 with alert.
+
+<!-- FormulaMaxIterations -->
+<a name="CfgFormulaMaxIterations"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FormulaMaxIterations</h4> <s>[1000]</s>
+</div>
+Maximum calculated cells when testing one formula for circular dependencies.<br />
+
+<!-- FormulaChanges -->
+<a name="CfgFormulaChanges"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FormulaChanges</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, it marks as changed all cells and rows changed by editable formula result.<br />
+If set to <b>2</b>, it marks as changed also the cell calculated for first time if resulted to different value.<br />
+In the first cell calculation it stores the calculated value. If some next calculation returns different result the stored one, it marks the cell changed.<br />
+If the next calculation returns the same result as the first stored result, the changed flag is cleared.<br />
+It will also upload these changes to server.<br />
+
+<!-- FormulaAddParenthesis -->
+<a name="CfgFormulaAddParenthesis"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>FormulaAddParenthesis</h4> <s>[0]</s>
+</div>
+If set, tries to add ending parenthesis to incorrect formula.
+
+<!-- FormulaTip -->
+<a name="CfgFormulaTip"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>FormulaTip</h4> <s>[1]</s>
+</div>
+If cell formula is shown as cell tip.
+
+<!-- FormatFormulaPrefix -->
+<a name="FormatFormulaPrefix"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Format></b> <i>string</i>
+   <h4>FormulaPrefix</h4> <s>[=]</s>
+</div>
+The formula in cell starts by this string.
+
+<!-- FormatFormulaRangeSeparator -->
+<a name="FormatFormulaRangeSeparator"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Format></b> <i>string</i>
+   <h4>FormulaRangeSeparator</h4> <s>[:]</s>
+</div>
+This string separates bounds in cell range like C5:D8.
+
+<!-- FormatFormulaValueSeparator -->
+<a name="FormatFormulaValueSeparator"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Format></b> <i>string</i>
+   <h4>FormulaValueSeparator</h4> <s>[,]</s>
+</div>
+This string separates arguments in formula function.<br />
+It should be especially changed when changed <a href="TypeNumber.htm#FormatDecimalSeparator">DecimalSeparator</a> to comma.
+
+<!-- FormatFormulaIntersectionSeparator -->
+<a name="FormatFormulaIntersectionSeparator"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Format></b> <i>string</i>
+   <h4>FormulaIntersectionSeparator</h4> <s>[ ]</s>
+</div>
+This string separates intersection of cell ranges like C5:D8 A1:D4. Default is space.
+
+<!-- FormatFormulaAbsolute -->
+<a name="FormatFormulaAbsolute"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Format></b> <i>string</i>
+   <h4>FormulaAbsolute</h4> <s>[$]</s>
+</div>
+The absolute reference starts by this string, like A1:B2 (relative), $A$1:$B$2 (absolute), $A1:$B2 (absolute col, relative row), A$1:B$2 (relative col, absolute row).
+
+<!-- EFormula -->
+<a name="CellEFormula"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;cell></b> <i>string</i>
+   <h4>EFormula</h4> <s></s>
+</div>
+Cell edit formula (without the '='). It can be set in input data or it can be read by API Get(row,col+"EFormula");<br />
+Or it can be written to output data if set <a href="#CfgFormulaEditing">FormulaEditing</a>=2.<br />
+
+<!-- OnFormula -->
+<a name="OnFormula"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>type</i>
+   <h4>OnFormula</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>value</b>, <i>type</i> <b>oldvalue</b>, <i>string</i> <b>formula</b>, <i>object</i> <b>errors</b>)</s>
+</div>
+Called on calculate editable <b>formula</b> in given cell. The <b>value</b> is the formula result to be placed to the cell.<br />
+Return null or <b>value</b> to not change it. Or return new cell value. Or return <b>oldval</b> to <u>not</u> set the value to cell.<br />
+The <b>formula</b> is actually calculated formula in string.<br />
+For <b>errors</b> see <a href="CellEdit.htm#OnEditErrors">OnEditErrors</a> API event.
+
+<!-- GetCellName -->
+<a name="GetCellName"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>string</i>
+   <h4>GetCellName</h4> <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Returns cell name for formula, e.g. A1 or B3. <br />
+Returns the name according to the FormulaRelative and FormulaNames settings.<br />
+
+<!-- GetStringEdit -->
+<a name="GetStringEdit"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>string</i>
+   <h4>GetStringEdit</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Returns cell value as string for editing. If the cell contains <a href="CellEditFormula.htm#CellEFormula">EFormula</a>, it returns the <a href="CellEditFormula.htm#CellEFormula">EFormula</a> starting by '='.<br /> 
+
+<!-----------------------------------------------------------------------  Suggest list (auto complete) ------------------------------------------------->
+<a name="Suggest"></a>
+<h2>Suggest list (auto complete)</h2>
+Editable formulas have their own suggest list definition. 
+The definition is similar to standard <a href="CellEdit.htm#Suggest">cell Suggest list</a>, the attributes have just the "Formula" prefix.<br />
+The cell can have defined different standard and editable formula suggest lists.
+For more information see the <a href="CellEdit.htm#Suggest">cell Suggest list</a>.<br />
+
+<!-- FormulaSuggest -->
+<a name="CFormulaSuggest"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>FormulaSuggest</h4> <s></s>
+</div>
+A list o values to suggest for editable formula, when the edited value starts by '='. Format is the same as <a href="CellEdit.htm#CSuggest">Suggest</a>.<br />
+Or it can be set to number to generate the suggest list for all available functions.<br />
+<b>1</b> - generates and shows only function names, 
+<b>2</b> - generates function name plus open brace,
+<b>4</b> - shows function names with braces, <b>6</b> = 2+4.
+
+<!-- FormulaSuggestType -->
+<a name="CFormulaSuggestType"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[]</i>
+   <h4>FormulaSuggestType</h4> <s>["BeforeSeparator"]</s>
+</div>
+Various settings for <a href="#CFormulaSuggest">FormulaSuggest</a> menu for editable formula</a>. Format is the same as <a href="CellEdit.htm#CSuggestType">SuggestType</a>.
+
+<!-- FormulaSuggestDelay -->
+<a name="CFormulaSuggestDelay"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>FormulaSuggestDelay</h4> <s></s>     
+</div>
+Delay before the suggest formula menu is shown. If next key is pressed within this time, the menu is <u>not</u> shown for the previous text.
+
+<!-- FormulaSuggestMin -->
+<a name="CFormulaSuggestMin"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>FormulaSuggestMin</h4> <s></s>
+</div>
+Minimal count of characters in text to show the suggest formula menu for the text.
+
+<!-- FormulaSuggestSeparator -->
+<a name="CFormulaSuggestSeparator"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>FormulaSuggestSeparator</h4> <s>"[+\-*\/!%&|^<>=?:()\[\]{}"',~]+"</s>
+</div>
+Sets regex for all characters that separate the formula function names. Has the same format as <a href="CellEdit.htm#CSuggestSeparator">SuggestSeparator</a><br />
+By default it is set to all operator characters.
+
+<!-----------------------------------------------------------------------  Actions ------------------------------------------------->
+<a name="Actions"></a>
+<h2>Actions for choosing cells</h2>
+
+<!-- ChooseCellsInsert -->
+<a name="ActionsChooseCellsInsert"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseCellsInsert</h4> <s>Attached to <b>OnCtrlDragRow</b>, can be attached only to On...Drag... events</s>
+</div>
+Can be called only during editing formula to let a user to select range of cells by dragging. 
+If there is already some cell ranges in edit on cursor position, places the selected range after them.
+
+<!-- ChooseCellsReplace -->
+<a name="ActionsChooseCellsReplace"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseCellsReplace</h4> <s>Not attached to any event, can be attached only to On...Drag... events</s>
+</div>
+Can be called only during editing formula to let a user to select range of cells by dragging. 
+If there is already some cell ranges in edit on cursor position, replaces the one range by the selected range.
+
+<!-- ChooseCellsReplaceAll -->
+<a name="ActionsChooseCellsReplaceAll"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseCellsReplaceAll</h4> <s>Attached to <b>OnDragRow</b>, can be attached only to On...Drag... events</s>
+</div>
+Can be called only during editing formula to let a user to select range of cells by dragging.
+If there is already some cell ranges in edit on cursor position, replaces all adjacent cell ranges by the selected range.
+
+<!-- ChooseRowsInsert -->
+<a name="ActionsChooseRowsInsert"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseRowsInsert</h4> <s>Not attached to any event, can be attached only to On...Drag... events</s>
+</div>
+Can be called only during editing formula to let a user to select range of rows by dragging.
+If there is already some cell ranges in edit on cursor position, places the selected range after them.
+
+<!-- ChooseRowsReplace -->
+<a name="ActionsChooseRowsReplace"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseRowsReplace</h4> <s>Not attached to any event, can be attached only to On...Drag... events</s>
+</div>
+Can be called only during editing formula to let a user to select range of rows by dragging. 
+If there is already some cell ranges in edit on cursor position, replaces the one range by the selected range.
+
+<!-- ChooseRowsReplaceAll -->
+<a name="ActionsChooseRowsReplaceAll"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseRowsReplaceAll</h4> <s>Not attached to any event, can be attached only to On...Drag... events</s>
+</div>
+Can be called only during editing formula to let a user to select range of rows by dragging.
+If there is already some cell ranges in edit on cursor position, replaces all adjacent cell ranges by the selected range.
+
+<!-- ChooseColsInsert -->
+<a name="ActionsChooseColsInsert"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseColsInsert</h4> <s>Not attached to any event, can be attached only to On...Drag... events</s>
+</div>
+Can be called only during editing formula to let a user to select range of columns by dragging.
+If there is already some cell ranges in edit on cursor position, places the selected range after them.
+
+<!-- ChooseColsReplace -->
+<a name="ActionsChooseColsReplace"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseColsReplace</h4> <s>Not attached to any event, can be attached only to On...Drag... events</s>
+</div>
+Can be called only during editing formula to let a user to select range of columns by dragging. 
+If there is already some cell ranges in edit on cursor position, replaces the one range by the selected range.
+
+<!-- ChooseColsReplaceAll -->
+<a name="ActionsChooseColsReplaceAll"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseColsReplaceAll</h4> <s>Not attached to any event, can be attached only to On...Drag... events</s>
+</div>
+Can be called only during editing formula to let a user to select range of columns by dragging.
+If there is already some cell ranges in edit on cursor position, replaces all adjacent cell ranges by the selected range.
+
+<!-- ChooseCellInsert -->
+<a name="ActionsChooseCellInsert"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseCellInsert</h4> <s>Attached to <b>OnCtrlClickCell</b></s>
+</div>
+Can be called only during editing formula to let a user to select one cell by clicking.
+If there is already some cell ranges in edit on cursor position, places the selected cell after them.
+
+<!-- ChooseCellReplace -->
+<a name="ActionsChooseCellReplace"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseCellReplace</h4> <s>Not attached to any event</s>
+</div>
+Can be called only during editing formula to let a user to select one cell by clicking.
+If there is already some cell ranges in edit on cursor position, replaces the one range by the selected cell.
+
+<!-- ChooseCellReplaceAll -->
+<a name="ActionsChooseCellReplaceAll"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseCellReplaceAll</h4> <s>Attached to <b>OnShiftClickCell</b></s>
+</div>
+Can be called only during editing formula to let a user to select one cell by clicking.
+If there is already some cell ranges in edit on cursor position, replaces all adjacent cell ranges by the selected cell.
+
+<!-- ChooseRowInsert -->
+<a name="ActionsChooseRowInsert"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseRowInsert</h4> <s>Not attached to any event</s>
+</div>
+Can be called only during editing formula to let a user to select one row by clicking.
+If there is already some cell ranges in edit on cursor position, places the selected cell after them.
+
+<!-- ChooseRowReplace -->
+<a name="ActionsChooseRowReplace"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseRowReplace</h4> <s>Not attached to any event</s>
+</div>
+Can be called only during editing formula to let a user to select one row by clicking.
+If there is already some cell ranges in edit on cursor position, replaces the one range by the selected cell.
+
+<!-- ChooseRowReplaceAll -->
+<a name="ActionsChooseRowReplaceAll"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseRowReplaceAll</h4> <s>Not attached to any event</b></s>
+</div>
+Can be called only during editing formula to let a user to select one row by clicking.
+If there is already some cell ranges in edit on cursor position, replaces all adjacent cell ranges by the selected cell.
+
+<!-- ChooseColInsert -->
+<a name="ActionsChooseColInsert"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseColInsert</h4> <s>Not attached to any event</s>
+</div>
+Can be called only during editing formula to let a user to select one column by clicking.
+If there is already some cell ranges in edit on cursor position, places the selected cell after them.
+
+<!-- ChooseColReplace -->
+<a name="ActionsChooseColReplace"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseColReplace</h4> <s>Not attached to any event</s>
+</div>
+Can be called only during editing formula to let a user to select one column by clicking.
+If there is already some cell ranges in edit on cursor position, replaces the one range by the selected cell.
+
+<!-- ChooseColReplaceAll -->
+<a name="ActionsChooseColReplaceAll"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseColReplaceAll</h4> <s>Not attached to any event</b></s>
+</div>
+Can be called only during editing formula to let a user to select one column by clicking.
+If there is already some cell ranges in edit on cursor position, replaces all adjacent cell ranges by the selected cell.
+
+<!-- SwitchCellAbsolute -->
+<a name="ActionsSwitchCellAbsolute"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SwitchCellAbsolute</h4> <s>Not attached to any event</s>
+</div>
+Switches between absolute and relative cell or cell range reference under cursor (adds or removes the $) during editing formula.<br />
+
+<!-- SwitchRowColAbsolute -->
+<a name="ActionsSwitchRowColAbsolute"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SwitchRowColAbsolute</h4> <s>Attached to <b>OnF4Edit</b></s>
+</div>
+Switches between absolute and relative cell or cell range reference under cursor (adds or removes the $) during editing formula.<br />
+Switches 4 states 1) absolute cell, 2) absolute row, 3) absolute column, 4) relative cell.
+
+<!-- SetCellAbsolute -->
+<a name="ActionsSetCellAbsolute"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetCellAbsolute</h4> <s>Not attached to any event</s>
+</div>
+Set the cell or cell range reference under cursor as absolute (adds the $) during editing formula.<br />
+
+<!-- SetCellRelative -->
+<a name="ActionsSetCellRelative"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetCellRelative</h4> <s>Not attached to any event</s>
+</div>
+Set the cell or cell range reference under cursor as relative (removes the $) during editing formula.<br />
+
+
+<!-- OnClearChooseCells -->
+<a name="OnClearChooseCells"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>int []</i>
+   <h4>OnClearChooseCells</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int []</i> <b>selection</b>, <i>object</i> <b>input</b>, <i>int</i> <b>replace</b>)</s>
+</div>
+Called on start choosing cell range or cell during editing formula.
+Called to clear or change the actual range on cursor position.<br />
+It is called before any formula processing, so it allows to use the Choose actions to any custom processing the chosen cell range.<br />
+<b>row</b>, <b>col</b> is the dragged or clicked cell. The edited cell can be got as <b>grid.ERow</b>, <b>grid.ECol</b>.<br />
+<b>selection</b> array as [start,end] is actual cursor position in the <b>input</b>. The <b>input</b> is HTML &lt;input> tag being edited.<br />
+<b>replace</b> is requested action, 0 - insert, 1 - replace, 2 - replace all.<br />
+Modify the <b>input.value</b> by the requested action and return new selection/cursor position as [start,end].<br />
+Or return <b>true</b> to cancel the action, or return <b>null</b> to continue standard action.
+
+<!-- OnSetChooseCells -->
+<a name="OnSetChooseCells"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>int []</i>
+   <h4>OnSetChooseCells</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>object []</i> <b>range</b>, <i>int []</i> <b>selection</b>, <i>object</i> <b>input</b>, <i>string</i> <b>text</b>)</s>
+</div>
+Called on every change during dragging by ChooseCells/Rows/Cols action or once in ChooseCell/Row/Col action to set the selected range or cell to the edited input.<br />
+<b>range</b> is selected cells range as [row1,col1,row2,col2]. row1, col1 is always top left corner. For ChooseCell there is row1==row2 and col1==col2.<br />
+<b>selection</b> array as [start,end] is actual cursor position in the <b>input</b>. The <b>input</b> is HTML &lt;input> tag being edited.<br />
+<b>text</b> is the selected range as text that will be placed to the cursor position into <b>input</b>.<br />
+Return new text to place to cursor position or return <b>true</b> to not modify the input.
+
+<!-----------------------------------------------------------------------   Functions ------------------------------------------------->
+<a name="Func"></a>
+<h2>Functions in editable formulas</h2>
+
+<!-----------------------------------------------------------------------   Conditional functions ------------------------------------------------->
+<a name="CondFunc"></a>
+<h3>Conditional functions</h3>
+
+<!-- if -->
+<a name="if"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>type</i>
+   <h4>if</h4> <s>(<i>bool</i> <b>condition</b>, <i>type</i> <b>value_if_true</b>, <i>type</i> <b>value_if_false</b>)</s>
+</div>
+Returns one from the two values according to the <b>condition</b>.
+
+<!-- ifs -->
+<a name="ifs"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>type</i>
+   <h4>ifs</h4> <s>(<i>bool</i> <b>test1</b>, <i>type</i> <b>value1</b>, <i>bool</i> <b>test2</b>, <i>type</i> <b>value2</b>, ...)</s>
+</div>
+Returns the first <b>value</b> that's accompanied <b>test</b> condition is true.<br />
+
+<!-- switch -->
+<a name="switch"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>type</i>
+   <h4>switch</h4> <s>(<i>type</i> <b>expression</b>, <i>type</i> <b>compare1</b>, <i>type</i> <b>result1</b>, <i>type</i> <b>compare2</b>, <i>type</i> <b>result2</b>, ..., <i>type</i> <b>default</b>)</s>
+</div>
+Returns the first <b>value</b> that's accompanied <b>test</b> condition is true.<br />
+Compares a number of supplied values to a supplied test expression and returns a result corresponding to the first value that matches the test expression. <br />
+A default value can be supplied, to be returned if none of the supplied values match the test expression.
+
+<!-- choose -->
+<a name="choose"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>type</i>
+   <h4>choose</h4> <s>(<i>int</i> <b>index</b>, <i>type</i> <b>value1</b>, <i>type</i> <b>value2</b>, ...)</s>
+</div>
+Returns the index's value from the arguments, for index = 1  returns the first value (the second argument).
+
+<!-- iferror -->
+<a name="iferror"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>type</i>
+   <h4>iferror</h4> <s>(<i>type</i> <b>value</b>, <i>type</i> <b>value_if_error</b>)</s>
+</div>
+Returns <b>value_if_error</b> if the <b>value</b> is NaN otherwise returns the <b>value</b>.
+
+<!-- ifna -->
+<a name="ifna"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>type</i>
+   <h4>ifna</h4> <s>(<i>type</i> <b>value</b>, <i>type</i> <b>value_if_error</b>)</s>
+</div>
+Returns <b>value_if_error</b> if the <b>value</b> is NaN otherwise returns the <b>value</b>.<br />
+It is the same as <b>iferror</b> because TreeGrid does not differ between the error sources.<br />
+
+<!-----------------------------------------------------------------------Lookup functions ------------------------------------------------->
+<a name="LookupFunc"></a>
+<h3>Lookup functions</h3>
+
+<!-- match -->
+<a name="match"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>match</h4> <s>(<i>type</i> <b>value</b>, <i>range</i> <b>range</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Returns index (from 1) of <b>value</b> in <b>range</b>. <br />
+<b>type</b> - what to do if the <b>value</b> is not found: 
+<b>-1</b> returns index of the biggest smaller value, 
+<b>0</b> returns error, 
+<b>1</b> returns index of the smallest bigger value.<br />
+
+<!-- lookup -->
+<a name="lookup"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>lookup</h4> <s>(<i>type</i> <b>value</b>, <i>range</i> <b>range</b>, <i>range</i> <b>results</b>)</s>
+</div>
+Looks for <b>value</b> in <b>range</b> and returns corresponding value from <b>results</b> range.<br />
+If the <b>value</b> is not found, returns the last value from the <b>results</b>.<br />
+
+<!-- vlookup -->
+<a name="vlookup"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>vlookup</h4> <s>(<i>type</i> <b>value</b>, <i>range</i> <b>range</b>, <i>int</i> <b>col_index</b>, <i>bool</i> <b>closest</b>)</s>
+</div>
+Looks for <b>value</b> in the first column of <b>range</b> and returns corresponding value from <b>range</b> in <b>col_index</b> column (from 1).<br />
+<b>closest</b> - what to do, if the <b>value</b> is not found: <b>0</b> - returns error, <b>1</b> returns the biggest smaller value.<br />
+
+<!-- hlookup -->
+<a name="hlookup"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>hlookup</h4> <s>(<i>type</i> <b>value</b>, <i>range</i> <b>range</b>, <i>int</i> <b>row_index</b>, <i>bool</i> <b>closest</b>)</s>
+</div>
+Looks for <b>value</b> in the first row of <b>range</b> and returns corresponding value from <b>range</b> in <b>row_index</b> row (from 1).<br />
+<b>closest</b> - what to do, if the <b>value</b> is not found: <b>0</b> - returns error, <b>1</b> returns the biggest smaller value.<br />
+
+<!-----------------------------------------------------------------------Cell references ------------------------------------------------->
+<a name="CellFunc"></a>
+<h3>Cell reference functions</h3>
+
+<!-- index -->
+<a name="index"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>range</i>
+   <h4>index</h4> <s>(<i>range</i> <b>range</b>, <i>int</i> <b>row_num</b>, <i>int</i> <b>col_num</b>)</s>
+</div>
+Returns cell given by <b>row_num</b> and <b>col_num</b> from the <b>range</b>. Indexes are from 1.<br />
+If the <b>row_num</b> is 0 or empty, returns all cells in the column from the <b>range</b>.<br />
+If the <b>col_num</b> is 0 or empty, returns all cells in the row from the <b>range</b>.<br />
+If the <b>col_num</b> is 0 or empty and the <b>range</b> contains only one row, the <b>row_num</b> is taken as column index.<br />
+
+<!-- offset -->
+<a name="offset"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>range</i>
+   <h4>offset</h4> <s>(<i>range</i> <b>range</b>, <i>int</i> <b>shift_rows</b>, <i>int</i> <b>shift_cols</b>, <i>int</i> <b>rows</b>, <i>int</i> <b>cols</b>)</s>
+</div>
+Returns a range of cells shifted by <b>shift_rows</b> down and <b>shift_col</b> right from the <b>range</b> top left corner.<br />
+The returned range contains <b>rows</b> rows and <b>cols</b> columns. If the <b>rows</b> or <b>cols</b> is not set, the size of the <b>range</b> is used.<br />
+
+<!-- column -->
+<a name="column"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>column</h4> <s>(<i>range</i> <b>range</b>)</s>
+</div>
+Returns column number (from 1) of the first cell in the <b>range</b>. If range is null, returns column number of the current cell.<br />
+
+<!-- columns -->
+<a name="columns"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>columns</h4> <s>(<i>range</i> <b>range</b>)</s>
+</div>
+Returns count of columns in given range.<br />
+
+<!-- row -->
+<a name="row"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>row</h4> <s>(<i>range</i> <b>range</b>)</s>
+</div>
+Returns row number (from 1) of the first cell in the <b>range</b>. If range is null, returns row number of the current cell.<br />
+
+<!-- rows -->
+<a name="rows"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>rows</h4> <s>(<i>range</i> <b>range</b>)</s>
+</div>
+Returns count of rows in given range.<br />
+
+<!-- address -->
+<a name="address"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>address</h4> <s>(<i>int</i> <b>row_num</b>, <i>int</i> <b>col_num</b>, <i>int</i> <b>abs_type</b> = 1, <i>bool</i> <b>a1</b> = 1)</s>
+</div>
+Returns a cell reference in string from given row and column (from 1), e.g. "A6" or "$F$12".<br />
+<b>abs_type</b> = <b>1</b> - absolute ($A$1), <b>2</b> - absolute row, relative col (A$1), 
+<b>3</b> - relative row, absolute col ($A1), <b>4</b> - relative (A1).<br />
+<b>a1</b> = <b>0</b> - RxCx type, e.g. "R3C6" or "R[-2]C[4]", <b>1</b> - default - A1 type, e.g. "A6" or "$F$12".<br />
+
+<!-----------------------------------------------------------------------Logical functions ------------------------------------------------->
+<a name="LogicFunc"></a>
+<h3>Logical functions</h3>
+
+<!-- and -->
+<a name="and"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>and</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+<a href="#SumFunc">Summary function</a>. Logical AND for all values in input parameters. Returns 0 if any of the input parameter is 0, empty or NaN; otherwise returns 1.<br />
+
+<!-- or -->
+<a name="or"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>or</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+<a href="#SumFunc">Summary function</a>. Logical OR for all values in input parameters. Returns 0 if all the input parameter are 0, empty or NaN; otherwise returns 1.<br />
+
+<!-- xor -->
+<a name="xor"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>xor</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+<a href="#SumFunc">Summary function</a>. Logical XOR for all values in input parameters. Returns 0 if count of the input parameter that is not 0, empty and NaN is even; otherwise returns 1.<br />
+
+<!-- not -->
+<a name="not"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>not</h4> <s>(<i>type</i> <b>value</b>)</s>
+</div>
+Returns 1 if the value is 0, empty or NaN otherwise returns 0.<br />
+
+<!-- delta -->
+<a name="delta"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>delta</h4> <s>(<i>type</i> <b>value1</b>, <i>type</i> <b>value2</b> = 0)</s>
+</div>
+Compares values. Returns 1 if value1==value2 otherwise returns 0.
+
+<!-- gestep -->
+<a name="gestep"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>gestep</h4> <s>(<i>type</i> <b>value1</b>, <i>type</i> <b>value2</b> = 0)</s>
+</div>
+Tests whether a number is greater than a supplied threshold value. Returns value1 >= value ? 1 : 0.
+
+<!-- true -->
+<a name="true"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>true</h4> <s>( )</s>
+</div>
+Returns 1. <i>For compatibility.</i><br />
+
+<!-- false -->
+<a name="false"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>false</h4> <s>( )</s>
+</div>
+Returns 0. <i>For compatibility.</i><br />
+
+<!-----------------------------------------------------------------------Informational functions ------------------------------------------------->
+<a name="InfoFunc"></a>
+<h3>Informational functions</h3>
+
+<!-- isblank -->
+<a name="isblank"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>isblank</h4> <s>(<i>type</i> <b>value</b>)</s>
+</div>
+Returns 1 if the cell is empty - its value is empty string and has not any formula set.
+
+<!-- iserror -->
+<a name="iserror"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>iserror</h4> <s>(<i>type</i> <b>value</b>)</s>
+</div>
+Returns 1 if the value is NaN.
+
+<!-- iserr -->
+<a name="iserr"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>iserr</h4> <s>(<i>type</i> <b>value</b>)</s>
+</div>
+Returns 1 if the value is NaN. <i>TreeGrid does not differ between error and N/A.</i>
+
+<!-- isna -->
+<a name="isna"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>isna</h4> <s>(<i>type</i> <b>value</b>)</s>
+</div>
+Returns 1 if the value is NaN. <i>TreeGrid does not differ between error and N/A.</i>
+
+<!-- islogical -->
+<a name="islogical"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>islogical</h4> <s>(<i>type</i> <b>value</b>)</s>
+</div>
+Returns 1 if the value is 0 or 1. <i>TreeGrid does not differ between types, it returns 1 for 1 or 0 in string too.</i>
+
+<!-- isnumber -->
+<a name="isnumber"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>isnumber</h4> <s>(<i>type</i> <b>value</b>)</s>
+</div>
+Returns 1 if the value can be converted to number. <i>TreeGrid does not differ between types, it returns 1 for number in string too.</i>
+
+<!-- istext -->
+<a name="istext"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>istext</h4> <s>(<i>type</i> <b>value</b>)</s>
+</div>
+Returns 1 if the value is string and cannot be converted to number. <i>TreeGrid does not differ between types, it returns 0 for number in string.</i>
+
+<!-- isnontext -->
+<a name="isnontext"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>isnontext</h4> <s>(<i>type</i> <b>value</b>)</s>
+</div>
+Returns 1 if the value is not string or it can be converted to number. <i>TreeGrid does not differ between types, it returns 1 for number in string.</i>
+
+<!-- isref -->
+<a name="isref"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>isref</h4> <s>(<i>type</i> <b>value</b>)</s>
+</div>
+Returns 1 if the value is the cell or range, not simple value.</i>
+
+<!-- isformula -->
+<a name="isformula"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>isformula</h4> <s>(<i>type</i> <b>value</b>)</s>
+</div>
+Returns 1 if the value is the cell or range and the (first) cell contains formula.</i>
+
+<!-- iseven -->
+<a name="iseven"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>iseven</h4> <s>(<i>type</i> <b>value</b>)</s>
+</div>
+Returns 1 if the value can be converted to even number.</i>
+
+<!-- isodd -->
+<a name="isodd"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>isodd</h4> <s>(<i>type</i> <b>value</b>)</s>
+</div>
+Returns 1 if the value can be converted to odd number.</i>
+
+<!-- type -->
+<a name="type"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>type</h4> <s>(<i>type</i> <b>value</b>)</s>
+</div>
+Returns value type. <br />
+Returns <b>1</b> for number, or value that can be converted to number, except 0 and 1.<br />
+Returns <b>2</b> for string that cannot be converted to number.<br />
+Returns <b>4</b> for value 0 and 1.<br />
+Returns <b>16</b> for error value.<br />
+
+<!-- formulatext -->
+<a name="formulatext"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>formulatext</h4> <s>(<i>type</i> <b>cell</b>)</s>
+</div>
+Returns formula in text of the given cell.
+
+<!-----------------------------------------------------------------------Math functions ------------------------------------------------->
+<a name="MathFunc"></a>
+<h3>Mathematical functions</h3>
+
+<!-- abs -->
+<a name="abs"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>float</i>
+   <h4>abs</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+Returns absolute value of the parameter.
+
+<!-- sign -->
+<a name="sign"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>sign</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+Returns -1 for negative number, 1 for positive and 0 for zero.
+
+<!-- log -->
+<a name="log"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>float</i>
+   <h4>log</h4> <s>(<i>float</i> <b>value</b>, <i>float</i> <b>base</b> = <i>e</i>)</s>
+</div>
+Returns log<span style="vertical-align:sub"><b>base</b></span><b>value</b>.
+
+<!-- ln -->
+<a name="ln"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>ln</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+Returns log<span style="vertical-align:sub"><b>e</b></span><b>value</b>.
+
+<!-- log10 -->
+<a name="log10"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>log10</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+Returns log<span style="vertical-align:sub"><b>10</b></span><b>value</b>.
+
+<!-- exp -->
+<a name="exp"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>float</i>
+   <h4>exp</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+Returns e power <b>value</b>.
+
+<!-- power -->
+<a name="pow"></a>
+<a name="power"></a>
+<div class="ACT">
+   <u>new <b>12.0</b> renamed <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>power</h4> <s>(<i>float</i> <b>value</b>, <i>float</i> <b>index</b>)</s>
+</div>
+Returns <b>value</b> power <b>index</b>. <i>Renamed from pow</i>.<br />
+
+<!-- sqrt -->
+<a name="sqrt"></a>
+<div class="ACT">
+   <u>new <b>12.0</b> <i>upd <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>sqrt...</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+<b>sqrt</b> Returns <b>value</b> square root. For other radixes than 2 use <a href="#power">power</a>(x,1/y).<br />
+<a name="sqrtpi"></a><b>sqrtpi</b> <i>(new 13.0)</i>Returns the square root of a supplied number multiplied by pi.<br />
+
+<!-- fact -->
+<a name="fact"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>fact</h4> <s>(<i>int</i> <b>value</b>)</s>
+</div>
+Returns the factorial of a given number  as n *(n-1) * (n-2) * ...
+
+<!-- factdouble -->
+<a name="factdouble"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>factdouble</h4> <s>(<i>int</i> <b>value</b>)</s>
+</div>
+Returns the double factorial of a given number as n *(n-2) * (n-4) * ...
+
+<!-- gcd -->
+<a name="gcd"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>gcd</h4> <s>(<i>int</i> <b>value1</b>, <i>int</i> <b>value2</b>, ...)</s>
+</div>
+Returns the Greatest Common Divisor of two or more supplied numbers.
+
+<!-- lcm -->
+<a name="lcm"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>lcm</h4> <s>(<i>int</i> <b>value1</b>, <i>int</i> <b>value2</b>, ...)</s>
+</div>
+Returns the Least Common Multiple of two or more supplied numbers.
+
+<!-- combin -->
+<a name="combin"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>combin</h4> <s>(<i>int</i> <b>n</b>, <i>int</i> <b>k</b>)</s>
+</div>
+Returns the number of combinations (without repetitions) for a given number of items.
+
+<!-- combina -->
+<a name="combina"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>combina</h4> <s>(<i>int</i> <b>n</b>, <i>int</i> <b>k</b>)</s>
+</div>
+Returns the number of combinations (with repetitions) for a given number of items.
+
+<!-- permut -->
+<a name="permut"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>permut</h4> <s>(<i>int</i> <b>n</b>, <i>int</i> <b>k</b>)</s>
+</div>
+Returns the number of permutations for a given number of items.
+
+<!-- permutationa -->
+<a name="permutationa"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>permutationa</h4> <s>(<i>int</i> <b>n</b>, <i>int</i> <b>k</b>)</s>
+</div>
+Returns the number of permutations for a given number of items (with repetitions) that can be selected from the total items. Returns power(n,k)
+
+<!-- quotient -->
+<a name="quotient"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>quotient</h4> <s>(<i>float</i> <b>value</b>, <i>float</i> <b>denom</b>)</s>
+</div>
+Returns the integer portion of a division between two supplied numbers: int(value/denom).
+
+<!-- mod -->
+<a name="mod"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>mod</h4> <s>(<i>float</i> <b>value</b>, <i>float</i> <b>denom</b>)</s>
+</div>
+Returns the remainder of a division between two supplied numbers: value/denom - int(value/denom).
+
+<!-- bitand -->
+<a name="bitand"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>bitand</h4> <s>(<i>int</i> <b>value1</b>, <i>int</i> <b>value2</b>)</s>
+</div>
+Returns bit AND as value1 &amp; value2;
+
+<!-- bitor -->
+<a name="bitor"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>bitor</h4> <s>(<i>int</i> <b>value1</b>, <i>int</i> <b>value2</b>)</s>
+</div>
+Returns bit OR as value1 | value2;
+
+<!-- bitxor -->
+<a name="bitxor"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>bitxor</h4> <s>(<i>int</i> <b>value1</b>, <i>int</i> <b>value2</b>)</s>
+</div>
+Returns bit XOR as value1 ^ value2;
+
+<!-- bitlshift -->
+<a name="bitlshift"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>bitlshift</h4> <s>(<i>int</i> <b>value</b>, <i>int</i> <b>shift</b>)</s>
+</div>
+Shifts the value by given bits to left as value &lt;&lt; shift.
+
+<!-- bitrshift -->
+<a name="bitrshift"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>bitrshift</h4> <s>(<i>int</i> <b>value</b>, <i>int</i> <b>shift</b>)</s>
+</div>
+Shifts the value by given bits to right as value >> shift.
+
+<!-- rand -->
+<a name="rand"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>rand</h4> <s>( )</s>
+</div>
+Returns a random number between 0 and 1. <i>It changes in every recalculation of the sheet!</i><br />
+
+<!-- randbetween -->
+<a name="randbetween"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>randbetween</h4> <s>(<i>int</i> <b>min</b>, <i>int</i> <b>max</b>)</s>
+</div>
+Returns a random integer number between <b>min</b> and <b>max</b>. <i>It changes in every recalculation of the sheet!</i><br />
+
+
+<!-----------------------------------------------------------------------Trigonometry functions ------------------------------------------------->
+<a name="TrigFunc"></a>
+<h3>Trigonometry functions</h3>
+
+<!-- pi -->
+<a name="pi"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>pi</h4> <s>( )</s>
+</div>
+Returns pi 3.1415...
+
+<!-- degrees -->
+<a name="degrees"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>degrees</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+Converts radians to degrees.
+
+<!-- radians -->
+<a name="radians"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>radians</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+Converts degrees to radians.
+
+<!-- sin -->
+<a name="sin"></a>
+<div class="ACT">
+   <u>new <b>12.0</b> <i>upd <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>sin...</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+<b>sin</b> returns sine (-1 to 1) of <b>value</b> in radians.<br />
+<a name="sinh"></a><b>sinh</b> <i>(new 13.0)</i> returns hyperbolic sine of <b>value</b>.<br />
+
+<!-- cos -->
+<a name="cos"></a>
+<div class="ACT">
+   <u>new <b>12.0</b> <i>upd <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>cos...</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+<b>cos</b> returns cosine(-1 to 1) of <b>value</b> in radians.<br />
+<a name="cosh"></a><b>cosh</b> <i>(new 13.0)</i> returns hyperbolic cosine of <b>value</b>.<br />
+
+<!-- tan -->
+<a name="tan"></a>
+<div class="ACT">
+   <u>new <b>12.0</b> <i>upd <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>tan...</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+<b>tan</b> returns tangent of <b>value</b> in radians.<br />
+<a name="tanh"></a><b>tanh</b> <i>(new 13.0)</i> returns hyperbolic tangent of <b>value</b>.<br />
+
+<!-- asin -->
+<a name="asin"></a>
+<div class="ACT">
+   <u>new <b>12.0</b> <i>upd <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>asin...</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+<b>asin</b> returns arcsine in radians of <b>value</b> (-1 to 1).<br />
+<a name="asinh"></a><b>asinh</b> <i>(new 13.0)</i> returns hyperbolic arcsine of <b>value</b>.<br />
+
+<!-- acos -->
+<a name="acos"></a>
+<div class="ACT">
+   <u>new <b>12.0</b> <i>upd <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>acos...</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+<b>acos</b> returns arccosine in radians of <b>value</b> (-1 to 1).<br />
+<a name="acosh"></a><b>acosh</b> <i>(new 13.0)</i> returns hyperbolic arccosine of <b>value</b>.<br />
+
+<!-- atan -->
+<a name="atan"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>atan...</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+<b>atan</b> returns arctangent in radians of <b>value</b>.<br />
+<a name="atanh"></a><b>atanh</b> <i>(new 13.0)</i> returns hyperbolic arctangent of <b>value</b>.<br />
+
+<!-- atan2 -->
+<a name="atan2"></a>
+<div class="ACT">
+   <u>new <b>12.0</b> renamed <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>atan2</h4> <s>(<i>float</i> <b>value1</b>, <i>float</i> <b>value2</b> = null)</s>
+</div>
+Returns arctangent of <b>value2</b> / <b>value1</b> in all four quadrants (atan2). <i>Renamed from <b>atan</b>.</i><br />
+
+<!-- sec -->
+<a name="sec"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>sec...</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+<b>sec</b> returns secant of <b>value</b> in radians.<br />
+<a name="sech"></a><b>sech</b> returns hyperbolic secant of <b>value</b>.<br />
+
+<!-- csc -->
+<a name="csc"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>csc...</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+<b>csc</b> returns cosecant of <b>value</b> in radians.<br />
+<a name="csch"></a><b>csch</b> returns hyperbolic cosecant of <b>value</b>.<br />
+
+<!-- cot -->
+<a name="cot"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>cot...</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+<b>cot</b> returns cotangent of <b>value</b> in radians.<br />
+<a name="coth"></a><b>coth</b> returns hyperbolic cotangent of <b>value</b>.<br />
+
+<!-- acot -->
+<a name="acot"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>acot...</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+<b>acot</b> returns cotangent of <b>value</b> in radians.<br />
+<a name="acoth"></a><b>acoth</b> returns hyperbolic arccotangent of <b>value</b>.<br />
+
+<!-----------------------------------------------------------------------   Round functions ------------------------------------------------->
+<a name="RoundFunc"></a>
+<h3>Rounding numbers</h3>
+
+<!-- round -->
+<a name="round"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>float</i>
+   <h4>round</h4> <s>(<i>float</i> <b>value</b>, <i>int</i> <b>digits</b> = 0)</s>
+</div>
+Returns rounded <b>value</b> to given number of decimal <b>digits</b>, e.g. digits = 2 means round to hundredths.<br />
+If <b>digits</b> is negative, rounds in the left side of decimal point, e.g. digits = -2 means round to hundreds.<br />
+If <b>digits</b> is decimal number, the decimal part can be .1 to round to odd, .2 to round to even, .5 to round to 5, .25 round to 25, etc., 
+e.g. round(170,-1.5) = 150, round(170,-1.25) = 175, round(170,-0.1) = 171.<br />
+Examples: round(123.456) = 123; round(123.456,2) = 123.46; round(123.456,-2) = 100; round(-1.5) = -1; round(1.005,2) = 1.01;
+
+<!-- rounddown --->
+<a name="floor"></a>
+<a name="rounddown"></a>
+<div class="ACT">
+   <u>new <b>12.0</b> renamed <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>rounddown</h4> <s>(<i>float</i> <b>value</b>, <i>int</i> <b>digits</b> = 0)</s>
+</div>
+Like <a href="#round">round</a>, but rounds down. Examples: rounddown(123.456,2) = 123.45; rounddown(-123.456,0) = -124;
+<i>Renamed from <b>floor</b>.</i><br />
+
+<!-- roundup -->
+<a name="ceil"></a>
+<a name="roundup"></a>
+<div class="ACT">
+   <u>new <b>12.0</b> renamed <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>roundup</h4> <s>(<i>float</i> <b>value</b>, <i>int</i> <b>digits</b> = 0)</s>
+</div>
+Like <a href="#round">round</a>, but rounds up. Examples: roundup(123.456,0) = 124; roundup(-123.456,2) = -123.45;
+<i>Renamed from <b>ceil</b>.</i><br />
+
+<!-- trunc -->
+<a name="trunc"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>trunc</h4> <s>(<i>float</i> <b>value</b>, <i>int</i> <b>digits</b> = 0)</s>
+</div>
+Like <a href="#round">round</a>, but rounds down positive numbers and up negative.
+
+<!-- ceiling -->
+<a name="ceiling"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>ceiling...</h4> <s>(<i>float</i> <b>value</b>, <i>int</i> <b>multiple</b> = 0)</s>
+</div>
+<b>ceiling</b> Rounds a supplied number away from zero, to the nearest multiple of a given number. Negative numbers towards to zero.<br />
+<b>ceiling.math</b> Like <b>ceiling</b>, but has third parameter <b>mode</b>, if set to 1, it rounds negative numbers away from zero.<br />
+<b>ceiling.precise</b> Rounds a number up, regardless of the sign of the number, to a multiple of significance.<br />
+
+<!-- floor -->
+<a name="floor"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>floor...</h4> <s>(<i>float</i> <b>value</b>, <i>int</i> <b>multiple</b> = 0)</s>
+</div>
+<b>floor</b> Rounds a supplied number towards zero to the nearest multiple of a specified significance. Negative numbers away from zero.<br />
+<b>floor.math</b> Like <b>floor</b>, but has third parameter <b>mode</b>, if set to 1, it rounds negative numbers towards zero.<br />
+<b>floor.precise</b> Rounds a number up, regardless of the sign of the number, to a multiple of significance.<br />
+
+<!-- mround -->
+<a name="mround"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>mround</h4> <s>(<i>float</i> <b>value</b>, <i>int</i> <b>multiple</b> = 0)</s>
+</div>
+Rounds a supplied number up or down to the nearest multiple of a given number.
+
+<!-- int -->
+<a name="int"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>int</h4> <s>(<i>float</i> <b>value</b>)</s>
+</div>
+Rounds a supplied number to the nearest integer.
+
+<!-----------------------------------------------------------------------Conversion functions ------------------------------------------------->
+<a name="ConvFunc"></a>
+<h3>Number conversions</h3>
+
+<!-- decimal -->
+<a name="decimal"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>decimal</h4> <s>(<i>string</i> <b>text</b>, <i>int</i> <b>radix</b>)</s>
+</div>
+Converts a text representation of a number in a specified base, into a decimal value.
+
+<!-- base -->
+<a name="base"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>base</h4> <s>(<i>int</i> <b>number</b>, <i>int</i> <b>radix</b>, <i>int</i> <b>min_length</b>)</s>
+</div>
+Converts a number into a supplied base (radix), and returns a text representation of the calculated value.<br />
+If set, it fills zeros from to left to be the string at least as long as the min_length.<br />
+
+<!-- bin2dec -->
+<a name="bin2dec"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>bin2dec</h4> <s>(<i>string</i> <b>text</b>)</s>
+</div>
+Converts binary value in string to decimal integer.
+
+<!-- oct2dec -->
+<a name="oct2dec"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>oct2dec</h4> <s>(<i>string</i> <b>text</b>)</s>
+</div>
+Converts octal value in string to decimal integer.
+
+<!-- hex2dec -->
+<a name="hex2dec"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>hex2dec</h4> <s>(<i>string</i> <b>text</b>)</s>
+</div>
+Converts hexadecimal value in string to decimal integer.
+
+<!-- dec2bin -->
+<a name="dec2bin"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>dec2bin</h4> <s>(<i>int</i> <b>number</b>)</s>
+</div>
+Converts decimal integer to binary value in string.
+
+<!-- dec2oct -->
+<a name="dec2oct"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>dec2oct</h4> <s>(<i>int</i> <b>number</b>)</s>
+</div>
+Converts decimal integer to octal value in string.
+
+<!-- dec2hex -->
+<a name="dec2hex"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>dec2hex</h4> <s>(<i>int</i> <b>number</b>)</s>
+</div>
+Converts decimal integer to hexadecimal value in string.<br />
+
+<!-- bin2oct -->
+<a name="bin2oct"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>bin2oct</h4> <s>(<i>string</i> <b>text</b>)</s>
+</div>
+Converts binary value in string to octal value in string.<br />
+
+<!-- bin2hex -->
+<a name="bin2hex"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>bin2hex</h4> <s>(<i>string</i> <b>text</b>)</s>
+</div>
+Converts binary value in string to hexadecimal value in string.<br />
+
+<!-- oct2bin -->
+<a name="oct2bin"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>oct2bin</h4> <s>(<i>string</i> <b>text</b>)</s>
+</div>
+Converts octal value in string to binary value in string.<br />
+
+<!-- oct2hex -->
+<a name="oct2hex"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>oct2hex</h4> <s>(<i>string</i> <b>text</b>)</s>
+</div>
+Converts octal value in string to hexadecimal value in string.<br />
+
+<!-- hex2bin -->
+<a name="hex2bin"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>hex2bin</h4> <s>(<i>string</i> <b>text</b>)</s>
+</div>
+Converts hexadecimal value in string to binary value in string.<br />
+
+<!-- hex2oct -->
+<a name="hex2oct"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>hex2oct</h4> <s>(<i>string</i> <b>text</b>)</s>
+</div>
+Converts hexadecimal value in string to octal value in string.<br />
+
+<!-----------------------------------------------------------------------String functions ------------------------------------------------->
+<a name="StringFunc"></a>
+<h3>String functions</h3>
+
+<!-- text -->
+<a name="text"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>string</i>
+   <h4>text</h4> <s>(<i>float</i> <b>value</b>, <i>string</i> <b>format</b> = null, <i>int</i> <b>type</b> = 0)</s>
+</div>
+Returns formatted date or number in string.
+The <b>format</b> is <a href="TypeDate.htm#CFormat">date format</a> or <a href="TypeNumber.htm#CFormat">number format</a>.<br />
+<b>type</b> specifies the <b>value</b> type: <b>1</b> for number, <b>2</b> for date, <b>0</b> to guess by <b>format</b> and <b>value</b>.<br />
+If <u>not</u> set <b>format</b> and <b>type</b> is 0 or 2, returns formatted date as "M/d/yyyy HH:mm:ss" if the <b>value</b> is not decimal. For <b>type</b> = 1 returns the number in string.<br />
+
+<!-- dollar -->
+<a name="dollar"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>dollar</h4> <s>(<i>float</i> <b>number</b>)</s>
+</div>
+Converts a supplied number into text, using a currency format
+
+<!-- fixed -->
+<a name="fixed"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>fixed</h4> <s>(<i>float</i> <b>number</b>, <i>int</i> <b>digits</b>, <i>bool</i> <b>no_commas</b>)</s>
+</div>
+Rounds a supplied number to a specified number of decimal places, and then converts this into text.<br />
+If set <b>no_commas</b> does not separate thousands by group separator.<br />
+
+<!-- t -->
+<a name="t"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>t</h4> <s>(<i>object</i> <b>value</b>)</s>
+</div>
+Converts value to string. It is not needed, the conversion is usually automatic.<br />
+
+<!-- n -->
+<a name="n"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>n</h4> <s>(<i>string</i> <b>text</b>)</s>
+</div>
+Converts value to number. It is usually not required, the conversion is usually automatic. <br />
+
+<!-- value -->
+<a name="value"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>value</h4> <s>(<i>string</i> <b>string</b>)</s>
+</div>
+Converts a text string into a numeric value. It is not needed, the conversion is usually automatic.<br />
+
+<!-- numbervalue -->
+<a name="numbervalue"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>numbervalue</h4> <s>(<i>string</i> <b>string</b>, <i>string</i> <b>decimal_separator</b>, <i>string</i> <b>group_separator</b>)</s>
+</div>
+Converts a text string into a numeric value using specific separators.<br />
+
+<!-- exact -->
+<a name="exact"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>bool</i>
+   <h4>exact</h4> <s>(<i>string</i> <b>string1</b>, <i>string</i> <b>string2</b>)</s>
+</div>
+Compares two strings and returns 1 if they are the same. The same as comparing by =.<br />
+
+<!-- len -->
+<a name="len"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>len</h4> <s>(<i>string</i> <b>string</b>)</s>
+</div>
+Returns count of characters in the <b>string</b>.<br />
+
+<!-- char -->
+<a name="char"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>char...</h4> <s>(<i>int</i> <b>code</b>)</s>
+</div>
+<b>char</b> Returns the character that corresponds to a supplied numeric value.<br />
+<a name="unichar"></a><b>unichar</b> Like <b>char</b>.<br />
+
+<!-- code -->
+<a name="code"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>code...</h4> <s>(<i>string</i> <b>character</b>)</s>
+</div>
+<b>code</b> Returns the numeric code for the first character of a supplied string.<br />
+<a name="unicode"></a><b>unicode</b> Like <b>code</b>.<br />
+
+<!-- concat -->
+<a name="concat"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>concat...</h4> <s>(<i>string</i> <b>string1</b>, <i>string</i> <b>string2</b>, ...)</s>
+</div>
+<b>concat</b> Joins together two or more text strings.<br />
+<a name="concatenate"></a><b>concatenate</b> Like <b>concat</b>
+
+<!-- textjoin -->
+<a name="textjoin"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>textjoin</h4> <s>(<i>string</i> <b>delimiter</b>, <i>bool</i> <b>empty</b>, <i>string</i> <b>string1</b>, <i>string</i> <b>string2</b>, ...)</s>
+</div>
+Joins together two or more text strings, separated by a <b>delimiter</b>. If set <b>empty</b>, places delimiter also after empty strings.<br />
+
+<!-- rept -->
+<a name="rept"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>rept</h4> <s>(<i>string</i> <b>string</b>, <i>int</i> <b>count</b>)</s>
+</div>
+Creates new string by repeating given string.<br />
+
+<!-- search -->
+<a name="search"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>search</h4> <s>(<i>string</i> <b>search</b>, <i>string</i> <b>string</b>, <i>int</i> <b>position</b>)</s>
+</div>
+Searches <b>search</b> string in <b>string</b> and returns its position (from 1) or 0. <i>case insensitive</i>.<br />
+<b>position</b> can be set to start search from this position (from 1) in the <b>string</b>.<br />
+
+<!-- find -->
+<a name="find"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>find</h4> <s>(<i>string</i> <b>search</b>, <i>string</i> <b>string</b>, <i>int</i> <b>position</b>)</s>
+</div>
+Searches <b>search</b> string in <b>string</b> and returns its position (from 1) or 0. <i>case sensitive</i>.<br />
+<b>position</b> can be set to start search from this position (from 1) in the <b>string</b>.<br />
+
+<!-- substitute -->
+<a name="substitute"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>substitute</h4> <s>(<i>string</i> <b>string</b>, <i>string</i> <b>old_text</b>, <i>string</i> <b>new_text</b>, <i>int</i> <b>instance</b>)</s>
+</div>
+Replaces <b>old_text</b> by <b>new_text</b> in <b>string</b>. <i>case sensitive</i>.<br />
+If not set <b>instance</b> replaces all instances, otherwise it replaces given one instance (from 1).<br />
+
+<!-- replace -->
+<a name="replace"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>replace</h4> <s>(<i>string</i> <b>string</b>, <i>int</i> <b>position</b>, <i>int</i> <b>count</b>, <i>string</i> <b>replace</b>)</s>
+</div>
+Replaces a part of the <b>string</b> by string <b>replace</b>.<br />
+
+<!-- mid -->
+<a name="mid"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>mid</h4> <s>(<i>string</i> <b>string</b>, <i>int</i> <b>position</b>, <i>int</i> <b>count</b>)</s>
+</div>
+Returns substring from <b>string</b> on given position <b>pos</b> (from 1) and given length <b>count</b>.<br />
+
+<!-- left -->
+<a name="left"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>left</h4> <s>(<i>string</i> <b>string</b>, <i>int</i> <b>count</b>)</s>
+</div>
+Returns substring from beginning of <b>string</b> with given length <b>count</b>.<br />
+
+<!-- right -->
+<a name="right"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>right</h4> <s>(<i>string</i> <b>string</b>, <i>int</i> <b>count</b>)</s>
+</div>
+Returns substring from end of <b>string</b> with given length <b>count</b>.<br />
+
+<!-- lower -->
+<a name="lower"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>lower</h4> <s>(<i>string</i> <b>string</b>)</s>
+</div>
+Converts the string to lowercase.<br />
+
+<!-- upper -->
+<a name="upper"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>upper</h4> <s>(<i>string</i> <b>string</b>)</s>
+</div>
+Converts the string to lowercase.<br />
+
+<!-- proper -->
+<a name="proper"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>proper</h4> <s>(<i>string</i> <b>string</b>)</s>
+</div>
+Converts all first characters in words uppercase and the others lowercase. <i>Not localized yet</i>.<br />
+
+<!-- clean -->
+<a name="clean"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>clean</h4> <s>(<i>string</i> <b>string</b>)</s>
+</div>
+Removes all non-printable characters from a supplied text string.<br />
+
+<!-- trim -->
+<a name="trim"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>string</i>
+   <h4>trim</h4> <s>(<i>string</i> <b>string</b>)</s>
+</div>
+Removes all spaces from string. Remains only one space between words.<br />
+
+
+<!-----------------------------------------------------------------------Date functions ------------------------------------------------->
+<a name="DateFunc"></a>
+<h3>Date functions</h3>
+All dates are long integers in milliseconds since 1/1/1970 in UTC (GMT) timezone.<br />
+It is possible do basic mathematical operations with the dates, like subtract them or adding to them.<br />
+For example: date("5/7/2000") + date(,5,3) means 9/9/2000;
+
+<!-- date -->
+<a name="date"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>int</i>
+   <h4>date</h4> <s>(<i>int</i> <b>year</b>, <i>int</i> <b>month</b>, <i>int</i> <b>day</b>, <i>int</i> <b>hour</b>, <i>int</i> <b>minute</b>, <i>int</i> <b>second</b>)</s>
+</div>
+Returns new date from given parameters. If any of the parameter is missing, null or zero, it is used from 1/1/1970 00:00:00.<br /> 
+<b>year</b> is full year, <b>month</b> is 1-12, <b>day</b> is 1-31, <b>hour</b> is 0-23, <b>minute</b> is 0-59, <b>second</b> is 0-59.<br />
+If the input parameter exceeds its range, the given number of the units is added to the date.
+
+<!-- todate -->
+<a name="todate"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>int</i>
+   <h4>date</h4> <s>(<i>string</i> <b>date</b>, <i>string</i> <b>format</b> = null)</s>
+</div>
+Returns new date from given <b>date</b> string. 
+<b>format</b> can be set as input <a href="TypeDate.htm#CFormat">date format</a>, especially to specify order of day, month, year. <br /> 
+<i>Only numbers in the date string are acceptable, not any string like month names.</i><br />
+If <u>not</u> set <b>format</b>, accepted are three base English formats "M/d/yyyy", "d.M.yyyy", "yyyy-M-d".
+
+<!-- time -->
+<a name="time"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>int</i>
+   <h4>time</h4> <s>(<i>int</i> <b>hour</b>, <i>int</i> <b>minute</b>, <i>int</i> <b>second</b>)</s>
+</div>
+Returns new time (in date 1/1/1970) from given parameters, <b>hour</b> is 0-23, <b>minute</b> is 0-59, <b>second</b> is 0-59.<br /> 
+The same as <a href="#date">date</a> (null,null,null,<b>hour</b>,<b>minute</b>,<b>second</b>).
+
+<!-- totime -->
+<a name="totime"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>int</i>
+   <h4>time</h4> <s>(<i>string</i> <b>time</b>)</s>
+</div>
+Returns new time from given <b>time</b> string. The same as <a href="#date">date</a> (<b>time</b>).
+
+<!-- datevalue -->
+<a name="datevalue"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>datevalue</h4> <s>(<i>string</i> <b>date</b>)</s>
+</div>
+Converts a text string showing a date, to an integer that represents the date without time.
+
+<!-- timevalue -->
+<a name="timevalue"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>timevalue</h4> <s>(<i>string</i> <b>date</b>)</s>
+</div>
+Converts a text string showing a time, to an integer that represents the time only.
+
+<!-- days -->
+<a name="days"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>days</h4> <s>(<i>int</i> <b>date1</b>, <i>int</i> <b>date2</b>)</s>
+</div>
+Returns number of days between the dates (date1-date2). Ignores time part of the dates.<br />
+
+<!-- edate -->
+<a name="edate"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>edate</h4> <s>(<i>int</i> <b>date</b>, <i>int</i> <b>months</b>)</s>
+</div>
+Returns a date that is the specified number of months before or after an initial supplied start date.<br />
+
+<!-- eomonth -->
+<a name="eomonth"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>eomonth</h4> <s>(<i>int</i> <b>date</b>, <i>int</i> <b>months</b>)</s>
+</div>
+Returns a date that is the last day of the month which is a specified number of months before or after an initial supplied start date.<br />
+
+<!-- now -->
+<a name="now"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>int</i>
+   <h4>now</h4> <s>( )</s>
+</div>
+Returns actual date and time. It is actual date and time on the computer.<br />
+Note, the formulas in grid are recalculated only on some change in grid, not periodically.
+
+<!-- today -->
+<a name="today"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>int</i>
+   <h4>today</h4> <s>( )</s>
+</div>
+Returns actual date (time 00:00:00). It is actual date on the computer.
+
+<!-- year -->
+<a name="year"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>int</i>
+   <h4>year</h4> <s>(<i>int</i> <b>date</b>)</s>
+</div>
+Returns full year from the date.
+
+<!-- month -->
+<a name="month"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>int</i>
+   <h4>month</h4> <s>(<i>int</i> <b>date</b>)</s>
+</div>
+Returns month number (1-12) from the date.
+
+<!-- day -->
+<a name="day"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>int</i>
+   <h4>day</h4> <s>(<i>int</i> <b>date</b>)</s>
+</div>
+Returns day number (1-31) from the date
+
+<!-- weekday -->
+<a name="weekday"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>int</i>
+   <h4>weekday</h4> <s>(<i>int</i> <b>date</b>)</s>
+</div>
+Returns number of day of week from the date. <br />
+Returns 1 = Sunday, 2 = Monday or 1 = Monday, 7 = Sunday, depending on TreeGrid language settings (FirstWeekDay).
+
+<!-- weeknum -->
+<a name="weeknum"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>int</i>
+   <h4>weeknum</h4> <s>(<i>int</i> <b>date</b>)</s>
+</div>
+Returns week number (1-54) from the date. The week numbering is controlled by Format <a href="TypeDate.htm#FormatFirstWeekYearDay">FirstWeekYearDay</a> attribute.
+
+<!-- isoweeknum -->
+<a name="isoweeknum"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>isoweeknum</h4> <s>(<i>int</i> <b>date</b>)</s>
+</div>
+Returns week number (1-53) from the date according to European ISO week numbering.
+
+<!-- hour -->
+<a name="hour"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>int</i>
+   <h4>hour</h4> <s>(<i>int</i> <b>date</b>, <i>bool</i> <b>half</b> = 0)</s>
+</div>
+Returns hours (0-23) from the date. If set <b>half</b> = 1, returns hours (0-11).
+
+<!-- minute -->
+<a name="minute"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>int</i>
+   <h4>minute</h4> <s>(<i>int</i> <b>date</b>)</s>
+</div>
+Returns minutes (0-59) from the date
+
+<!-- second -->
+<a name="second"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>int</i>
+   <h4>second</h4> <s>(<i>int</i> <b>date</b>)</s>
+</div>
+Returns seconds (0-59) from the date.
+<br />
+
+<!-----------------------------------------------------------------------Summary functions ------------------------------------------------->
+
+<a name="SumFunc"></a>
+<h3>Summary functions</h3>
+All summary functions accept one or more arguments.<br />
+Any of the argument can be: cell range (like A5:B10), column range (like A:D), row range (like 3:5), one cell (like A5) or direct value (like 100).<br />
+All the summary functions iterate only values that can be converted to <b>number</b>. Other values are ignored.
+
+<!-- sum -->
+<a name="sum"></a>
+<div class="ACT">
+   <u>new <b>12.0</b> <i>upd <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>sum...</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+<b>sum</b> Sums all values in input parameters.<br />
+<a name="sumsq"></a><b>sumsq</b> Sums all squares of values in its parameters.<br />
+<a name="sumproduct"></a><b>sumproduct</b> <i>(new 13.0)</i> Returns the sum of the products of corresponding values in two or more supplied arrays.<br />
+
+<!-- sumif -->
+<a name="sumif"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>sumif</h4> <s>(<i>range</i> <b>range</b>, <i>string</i> <b>criteria</b>, <i>range</i> <b>sum_range</b>)</s>
+</div>
+Sums all cells from <b>sum_range</b> (or from <b>range</b> if sum_range is not defined) where the <b>range</b> cell satisfies the <b>criteria</b>.<br />
+<b>criteria</b> can be simple number or string to compare the cell values to. The string can contain wildcards * zero or for more characters and ? for one character.<br />
+<b>criteria</b> can be simple compare formula: "=XXX","<>XXX",">XXX",">=XXX","&lt;XXX","<=XXX", where XXX is a number or string.<br />
+
+<!-- sumifs -->
+<a name="sumifs"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>sumifs</h4> <s>(<i>range</i> <b>sum_range</b>, <i>range</i> <b>range1</b>, <i>string</i> <b>criteria1</b>, <i>range</i> <b>range2</b>, <i>string</i> <b>criteria2</b> ,...)</s>
+</div>
+Sums all cells from <b>sum_range</b> that satisfy multiple criteria. Parameters see <a href="sumif">sumif</a><br />
+
+
+<!-- sumxy -->
+<a name="sumxy"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>sumxy...</h4> <s>(<i>range</i> <b>range_x</b>, <i>range</i> <b>range_y</b>)</s>
+</div>
+<a name="sumx2my2"></a><b>sumx2my2</b> Returns the sum of the difference of squares of corresponding values in two supplied arrays.<br />
+<a name="sumx2py2"></a><b>sumx2py2</b> Returns the sum of the sum of squares of corresponding values in two supplied arrays.<br />
+<a name="sumxmy2"></a><b>sumxmy2</b> Returns the sum of squares of differences of corresponding values in two supplied arrays.<br />
+
+<!-- seriessum -->
+<a name="seriessum"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>seriessum</h4> <s>(<i>float</i> <b>x</b>, <i>int</i> <b>n</b>, <i>m</i>, <i>range</i> <b>range</b>)</s>
+</div>
+Returns the sum of a power series.<br />
+<b>x</b> is the input value to the power series. <b>n</b> is the first power to which x is to be raised.
+<b>m</b> is the step size that n is increased by, on each successive power of x.
+<b>range</b> is an array of coefficients that multiply each successive power of x.
+
+<!-- count -->
+<a name="count"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>int</i>
+   <h4>count...</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+<b>count</b> Returns count of all cells in its parameters that contain number.<br />
+<a name="counta"></a><b>counta</b> Returns count of all not empty cells in its parameters.<br />
+<a name="countblank"></a><b>countblank</b> Returns count of all empty cells in its parameters.<br />
+
+<!-- countif -->
+<a name="countif"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>countif</h4> <s>(<i>range</i> <b>range</b>, <i>string</i> <b>criteria</b>)</s>
+</div>
+Counts all cells in <b>range</b> that satisfy criteria. Parameters see <a href="sumif">sumif</a><br />
+
+<!-- countifs -->
+<a name="countifs"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>int</i>
+   <h4>countifs</h4> <s>(<i>range</i> <b>range1</b>, <i>string</i> <b>criteria1</b>, <i>range</i> <b>range2</b>, <i>string</i> <b>criteria2</b>, ...)</s>
+</div>
+Counts all cells in <b>range1</b> that satisfy multiple criteria. Parameters see <a href="sumif">sumif</a><br />
+
+<!-- max -->
+<a name="max"></a>
+<div class="ACT">
+   <u>new <b>12.0</b> <i>upd <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>max...</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+<b>max</b> Returns maximum value from the cells in its parameters.<br />
+<a name="maxa"></a><b>maxa</b> <i>(new 13.0)</i> Returns maximum value from the cells in its parameters. Counts texts and empty as 0.<br />
+
+<!-- maxifs -->
+<a name="maxifs"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>maxifs</h4> <s>(<i>range</i> <b>max_range</b>, <i>range</i> <b>range1</b>, <i>string</i> <b>criteria1</b>, <i>range</i> <b>range2</b>, <i>string</i> <b>criteria2</b>,...)</s>
+</div>
+Calculates maximum from all cells from <b>max_range</b> that satisfy multiple criteria. Parameters see <a href="sumif">sumif</a><br />
+
+<!-- min -->
+<a name="min"></a>
+<div class="ACT">
+   <u>new <b>12.0</b> <i>upd <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>min...</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+<b>min</b> Returns minimum value from the cells in its parameters.<br />
+<a name="mina"></a><b>mina</b> <i>(new 13.0)</i> Returns minimum value from the cells in its parameters. Counts texts and empty as 0.<br />
+
+<!-- minifs -->
+<a name="minifs"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>minifs</h4> <s>(<i>range</i> <b>min_range</b>, <i>range</i> <b>range1</b>, <i>string</i> <b>criteria1</b>, <i>range</i> <b>range2</b>, <i>string</i> <b>criteria2</b>, ...)</s>
+</div>
+Calculates minimum from all cells from <b>min_range</b> that satisfy multiple criteria. Parameters see <a href="sumif">sumif</a><br />
+
+<!-- large -->
+<a name="large"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>large</h4> <s>(<i>range</i> <b>range</b>, <i>int</i> <b>n</b>)</s>
+</div>
+Returns given <b>n</b>th (from 1) maximum value from the cells in its parameters.<br />
+
+<!-- small -->
+<a name="small"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>small</h4> <s>(<i>range</i> <b>range</b>, <i>int</i> <b>n</b>)</s>
+</div>
+Returns given <b>n</b>th (from 1) minimum value from the cells in its parameters.<br />
+
+<!-- rank -->
+<a name="rank"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></i></u> <b>formula</b> <i>int</i>
+   <h4>rank</h4> <s>(<i>float</i> <b>value</b>, <i>range</i> <b>range</b>, <i>bool</i> <b>asc</b>)</s>
+</div>
+Returns position of the <b>value</b> in <b>range</b> like it was sorted descendant or ascendent (if <b>asc</b> is true).<br />
+
+<!-- rank.eq -->
+<a name="rank.eq"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></i></u> <b>formula</b> <i>int</i>
+   <h4>rank.eq</h4> <s>(<i>float</i> <b>value</b>, <i>range</i> <b>range</b>, <i>bool</i> <b>asc</b>)</s>
+</div>
+The same as rank.<br />
+
+<!-- rank.avg -->
+<a name="rank.avg"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>rank.avg</h4> <s>(<i>float</i> <b>value</b>, <i>range</i> <b>range</b>, <i>bool</i> <b>asc</b>)</s>
+</div>
+Similar to rank, but if there are more <b>value</b> in the <b>range</b>, it returns average rank, not the first one.<br />
+
+<!-- percentrank -->
+<a name="percentrank"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>percentrank</h4> <s>(<i>range</i> <b>range</b>, <i>float</i> <b>value</b>, <i>int</i> <b>digits</b> = 3)</s>
+</div>
+Returns the relative position of the <b>value</b>, within the <b>range</b>, as a percentage.<br />
+Rounds result to given number of decimal <b>digits</b>.<br />
+
+<!-- percentrank.inc -->
+<a name="percentrank.inc"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>percentrank.inc</h4> <s>(<i>range</i> <b>range</b>, <i>float</i> <b>value</b>, <i>int</i> <b>digits</b> = 3)</s>
+</div>
+The same as percentrank.
+
+<!-- percentrank.exc -->
+<a name="percentrank.exc"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>percentrank.exc</h4> <s>(<i>range</i> <b>range</b>, <i>float</i> <b>value</b>, <i>int</i> <b>digits</b> = 3)</s>
+</div>
+Similar to percentrank, but it is exclusive.
+
+<!-- percentile -->
+<a name="percentile"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>percentile</h4> <s>(<i>range</i> <b>range</b>, <i>float</i> <b>k</b>)</s>
+</div>
+Returns the k'th percentile (i.e. the value below which k% of the data values fall) for the <b>range</b>.
+
+<!-- percentile.inc -->
+<a name="percentile.inc"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>percentile.inc</h4> <s>(<i>range</i> <b>range</b>, <i>float</i> <b>k</b>)</s>
+</div>
+The same as percentile.
+
+<!-- percentile.exc -->
+<a name="percentile.exc"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>percentile.exc</h4> <s>(<i>range</i> <b>range</b>, <i>float</i> <b>k</b>)</s>
+</div>
+Similar to percentile, but it is exclusive.
+
+<!-- quartile -->
+<a name="quartile"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>quartile</h4> <s>(<i>range</i> <b>range</b>, <i>int</i> <b>quartile</b>)</s>
+</div>
+Returns the <b>quartile</b> (0-4) for the <b>range</b>.<br />
+
+<!-- quartile.inc -->
+<a name="quartile.inc"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>quartile.inc</h4> <s>(<i>range</i> <b>range</b>, <i>int</i> <b>quartile</b>)</s>
+</div>
+The same as quartile.
+
+<!-- quartile.exc -->
+<a name="quartile.exc"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>quartile.exc</h4> <s>(<i>range</i> <b>range</b>, <i>int</i> <b>quartile</b>)</s>
+</div>
+Similar to quartile, but it is exclusive.
+
+<!-- product -->
+<a name="product"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>formula</b> <i>float</i>
+   <h4>product</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+Multiplies all values in its parameters.
+
+<!-- multinominal -->
+<a name="multinominal"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>multinominal</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+Calculates multinominal of all values in its parameters as factorial of summary divided by multiply of factorials.<br />
+
+<!-- average -->
+<a name="average"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>average...</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+<b>average</b> Returns mean (average) value from the cells in its parameters.<br />
+<a name="averagea"></a><b>averagea</b> Returns mean (average) value from the cells in its parameters. Counts texts and empty as 0.<br />
+
+<!-- averageif -->
+<a name="averageif"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>averageif</h4> <s>(<i>range</i> <b>range</b>, <i>string</i> <b>criteria</b>,<i>range</i> <b>average_range</b>)</s>
+</div>
+Calculates average of all cells from <b>average_range</b> (or from <b>range</b> if average_range is not defined) where the <b>range</b> cell satisfies the <b>criteria</b>. Parameters see <a href="sumif">sumif</a><br />
+
+<!-- averageifs -->
+<a name="averageifs"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>averageifs</h4> <s>(<i>range</i> <b>average_range</b>, <i>range</i> <b>range1</b>, <i>string</i> <b>criteria1</b>, <i>range</i> <b>range2</b>, <i>string</i> <b>criteria2</b>, ...)</s>
+</div>
+Calculates average of all cells from <b>average_range</b> that satisfy multiple criteria. Parameters see <a href="sumif">sumif</a><br />
+
+<!-- trimmean -->
+<a name="trimmean"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>trimmean</h4> <s>(<i>range</i> <b>range</b>, <i>float</i> <b>percent</b>)</s>
+</div>
+Returns mean (average) values in the range. Ignores the percent of the biggest and smallest values. For example if range is 10 values length and percent is 0.4, it ignores two biggest and two smallest values.<br />
+
+<!-- geomean -->
+<a name="geomean"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>geomean</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+Calculates geometric mean of all values in its parameters.<br />
+
+<!-- harmean -->
+<a name="harmean"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>harmean</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+Calculates harmonic mean of all values in its parameters.<br />
+
+<!-- median -->
+<a name="median"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>median</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+Returns statistical median (middle) value of all values in its parameters. For even number of values returns an average of the two medians. <br />
+
+<!-- mode -->
+<a name="mode"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>mode...</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+<b>mode</b> Returns the Mode (the most frequently occurring value) of a list of supplied numbers.<br />
+<b>mode.sngl</b> Like <b>mode</b>.<br />
+
+<!-- avedev -->
+<a name="avedev"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>avedev</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+Returns the average of the absolute deviations of values from their mean.<br />
+
+<!-- devsq -->
+<a name="devsq"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>devsq</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+Returns the sum of the squares of the deviations of a set of values from their sample mean.<br />
+
+<!-- stdev -->
+<a name="stdev"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>stdev...</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+<b>stdev</b> Returns the standard deviation of a supplied set of values (which represent a sample of a population).<br />
+<a name="stdeva"></a><b>stdeva</b> Like <b>stdev</b>, but counts all non values as 0.<br />
+<a name="stdevp"></a><b>stdevp</b> Returns the standard deviation of a supplied set of values (which represent an entire population).<br />
+<a name="stdevpa"></a><b>stdevpa</b> Like <b>stdevp</b>, but counts all non values as 0.<br />
+<a name="stdev.s"></a><b>stdev.s</b> Like <b>stdev</b>.<br />
+<a name="stdev.p"></a><b>stdev.p</b> Like <b>stdevp</b>.<br />
+
+<!-- var -->
+<a name="var"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>var...</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+<b>var</b> Returns the variance of a supplied set of values (which represent a sample of a population).<br />
+<a name="vara"></a><b>vara</b> Like <b>var</b>, but counts all non values as 0.<br />
+<a name="varp"></a><b>varp</b> Returns the variance of a supplied set of values (which represent an entire population).<br />
+<a name="varpa"></a><b>varpa</b> Like <b>varp</b>, but counts all non values as 0.<br />
+<a name="var.s"></a><b>var.s</b> Like <b>var</b>.<br />
+<a name="var.p"></a><b>var.p</b> Like <b>varp</b>.<br />
+
+<!-- covar -->
+<a name="covar"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>covar...</h4> <s>(<i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+<b>covar</b> Returns population covariance (i.e. the average of the products of deviations for each pair within two supplied data sets).<br />
+<a name="covariance.s"></a><b>covariance.s</b> Returns sample covariance (i.e. the average of the products of deviations for each pair within two supplied data sets).<br />
+<a name="covariance.p"></a><b>covariance.p</b> Like <b>covar</b>.<br />
+
+<!-- forecast -->
+<a name="forecast"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>forecast...</h4> <s>(<i>float</i> <b>x</b>, <i>range</i> <b>range_y</b>, <i>range</i> <b>range_x</b>)</s>
+</div>
+<b>forecast</b> Predicts a future point on a linear trend line fitted to a supplied set of x- and y- values.<br />
+<a href="forecast.linear"></a><b>forecast.linear</b> Like <b>forecast</b>.<br />
+
+<!-- intercept -->
+<a name="intercept"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>intercept</h4> <s>(<i>range</i> <b>range_y</b>, <i>range</i> <b>range_x</b>)</s>
+</div>
+Calculates the best fit regression line, through a supplied series of x- and y- values and returns the value at which this line intercepts the y-axis.<br />
+
+<!-- slope -->
+<a name="slope"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>slope</h4> <s>(<i>range</i> <b>range_y</b>, <i>range</i> <b>range_x</b>)</s>
+</div>
+Returns the slope of the linear regression line through a supplied series of x- and y- values.<br />
+
+<!-- stexy -->
+<a name="stexy"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>stexy</h4> <s>(<i>range</i> <b>range_y</b>, <i>range</i> <b>range_x</b>)</s>
+</div>
+Returns the standard error of the predicted y-value for each x in the regression line for a set of supplied x- and y- values.<br />
+
+<!-- subtotal -->
+<a name="subtotal"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>subtotal</h4> <s>(<i>int</i> <b>function</b>, <i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+Applies given summary function to all values in its next parameters.<br />
+<b>function</b> = <b>1</b> average, <b>2</b> count, <b>3</b> counta, <b>4</b> min, <b>5</b> max, <b>6</b> product, <b>7</b> stdev, <b>8</b> stdevp, <b>9</b> sum, <b>10</b> var, <b>11</b> varp, <b>12</b> median, <b>13</b> mode.<br />
+
+<!-- aggregate -->
+<a name="aggregate"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>aggregate</h4> <s>(<i>int</i> <b>function</b>, <i>int</i> <b>option</b>, <i>range</i> <b>range1</b>, <i>range</i> <b>range2</b>, ...)</s>
+</div>
+Applies given summary function to all values in its next parameters.<br />
+<b>option</b> = <b>0</b> ignore other aggregate and subtotal results, <b>1</b> like 0 and also hidden and deleted rows <i>not implemented</i>, <b>2</b> like 0 and also ignore strings and errors, <b>3</b> like 1+2.<br />
+<b>option</b> = <b>4</b> - ignore nothing, <b>5</b> ignore hidden and deleted rows <i>not implemented</i>, <b>6</b> ignore strings and errors, <b>7</b> like 5+6.<br />
+<b>function</b> = <b>1</b> average, <b>2</b> count, <b>3</b> counta, <b>4</b> min, <b>5</b> max, <b>6</b> product, <b>7</b> stdev, <b>8</b> stdevp, <b>9</b> sum, <b>10</b> var, <b>11</b> varp, <b>12</b> median, <b>13</b> mode, <b>14</b> large, <b>15</b> small.<br />
+For function 14 and 15 the fourth parameter is the percent for the function.<br />
+
+<!-- mdeterm -->
+<a name="mdeterm"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>formula</b> <i>float</i>
+   <h4>mdeterm</h4> <s>(<i>range</i> <b>range</b>)</s>
+</div>
+Returns the matrix determinant of a supplied range.<br />
+
+
+<!--------------------  Custom editable functions  ------------------------->
+<a name="Custom"></a>
+<h2>Custom functions in editable formulas</h2>
+<i>Since 13.0 the JavaScript function name must be <b>lower case</b>!</i><br />
+Define the custom function as global JavaScript function and assign its name in &lt;Lang>&lt;FormulaFunctions>&lt/Lang>.<br />
+In the custom function you will get the parameters normally in <b>arguments</b> array.<br /> 
+The one cell and cell ranges parameters are already converted to one dimension array of all the cell values.<br />
+The cell range is converted like [R1C1,R1C2,R1C3,...,R2C1,R2C2,R2C3,...].<br />
+Every the parameter array has set also properties <b>Rows</b> as array of rows, <b>Cols</b> as array of column names and <b>Grid</b> as calling grid.<br />
+Note, the constant string or number parameter is passed as is, without any conversion or properties.<br />
+<br />
+Example, in script:<br />
+<pre><tt>function <b>mysum</b>(){ <i>// Name must be lower case</i>
+for(var i=0,sum=0;i&lt;arguments.length;i++){
+   var a = arguments[i]; if(typeof(a)!="object") a = [a];
+   for(var j=0;j&lt;a.length;j++) if(a[j]-0) sum += a[j]-0;
+   }
+return sum;
+}
+</tt></pre>
+In XML:<pre><tt>&lt;Grid>
+   &lt;Lang> &lt;FormulaFunctions <b>mysum</b>="<b>specsum</b>"/> &lt;/Lang> <i>&lt;!-- mysum is used in data, specsum is displayed when editing  --></i>
+   &lt;Cfg FormulaEditing="1"/>
+   &lt;Cols> &lt;C Name="A"/> &lt;C Name="B"/> &lt;/Cols>
+   &lt;Body> &lt;B>
+      &lt;I id="1" A="1" B="2"/> &lt;I id="2" A="2" B="4"/> &lt;I id="3" A="3" B="8"/> &lt;I id="4" A="4" B="16"/>
+      &lt;I id="5" A="sum" B="=<b>mysum</b>(A1:B3,A4,-10)"/>
+   &lt;/B> &lt;/Body>
+&lt;/Grid>
+</tt></pre>
+
+
+</div>
+</body>	
+</html>

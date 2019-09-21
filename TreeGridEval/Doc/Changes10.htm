@@ -1,0 +1,127 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Version compatibility 10</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Changes from 9.3 to 10.0 in Gantt chart</h1>
+<p>TreeGrid documentation</p>
+
+This document describes only changes in compatibility between TreeGrid 9.3 and TreeGrid 10.0.<br />
+<b>This document does <u>not</u> describe new features of TreeGrid 10.0.</b><br />
+
+<!------------------------------------------------------------------ Incompatibilities -------------------------------------------------------------->
+<a name="RowId"></a>
+<h2>Incompatibilities</h2>
+<p class="H2">These items must be changed to work like in previous version</p>
+
+<b>Gantt chart is <u>not</u> resized according to side text by default.</b><br />
+<a href="GanttMain.htm#CGanttShowHtml">GanttShowHtml</a> and <a href="GanttRun.htm#CGanttRunShowHtml">GanttRunShowHtml</a> are set to <b>1</b> by default, to not resize Gantt column width according to side text, if set <tt>GanttSize=""</tt> or <tt>"0"</tt>.<br /> 
+Set them to <b>3</b> for 9.3 behavior used for GanttFormat.<br /><br /><br />
+
+
+<b>Dependency must have defined bar plan if more plans are permitted for dependencies.</b><br />
+If more bar types (more main bar plans and / or run) support dependencies, the dependency definition must contain the bar identification (number for main bar plan or '-' for run bar). Like <tt>"1,1@R1"</tt>, where 1,1 is the from and to plan number.<br />
+Only the first object in <a href="GanttObjects.htm#CGanttTask">GanttTask</a> (formerly GanttObject) need not have this identification.<br /> 
+In 9.3 version only the first bar defined in row had dependencies and no identification was required.<br /><br /><br />
+
+
+<b>Dependency API changed, the dependency API definition is different.</b><br /> 
+Changed <a href="GanttCompute.htm#OnGetDependency">OnGetDependency</a>, <a href="GanttCompute.htm#OnCheckDependencies">OnCheckDependencies</a>, <a href="GanttCompute.htm#GetIncorrectDependencies">GetIncorrectDependencies</a>, <a href="GanttCompute.htm#GetIncorrectConstraints">GetIncorrectConstraints</a>, <a href="GanttCompute.htm#GetTasksToSchedule">GetTasksToSchedule</a>, <a href="GanttCompute.htm#OnCorrectDependencies">OnCorrectDependencies</a>.<br /> 
+API <a href="GanttCompute.htm#GetDependency">GetDependency</a> and <a href="GanttCompute.htm#SetDependency">SetDependency</a> deleted and replaced by <a href="GanttCompute.htm#GetDependencies">GetDependencies</a>, <a href="GanttCompute.htm#DeleteDependencies">DeleteDependencies</a>, <a href="GanttCompute.htm#AddDependencies">AddDependencies</a> and <a href="GanttCompute.htm#TestDependencies">TestDependencies</a>.<br />
+<a href="GanttAPI.htm#GetGanttXY">GetGanttXY</a> returns different values for dependency.<br /><br />
+
+<b>Scheduling algorithm was rewritten.</b><br /> 
+It can produce different results than 9.3. version especially due different meaning of <a href="GanttCompute.htm#CGanttStrict">GanttStrict</a> options.<br />
+The tasks with none of dependency, dependencycorrect and bar ...correct in <a href="GanttObjects.htm#CGanttEdit">GanttEdit</a> are ignored when scheduling, including their relation (dependencies and children).<br /><br /><br />
+
+
+<b><a href="GanttResources.htm#CGanttResources">GanttResources</a> for Run was renamed to <a href="GanttResources.htm#CGanttRunResources">GanttRunResources</a>.</b><br /> 
+<a href="GanttResources.htm#CGanttResources">GanttResources</a> are now used only for the first main bar plan and due compatibility also for GanttFlow.<br /><br /><br />
+
+
+<b><a href="GanttSummary.htm#CellGanttSummary">GanttSummary</a> for Run was renamed to <a href="GanttSummary.htm#CellGanttRunSummary">GanttRunSummary</a>.</b><br /><br /><br />
+
+
+<b><a href="GanttMain.htm#CGanttComplete">GanttComplete</a> (GanttFlowComplete) / <a href="GanttRun.htm#CGanttRunComplete">GanttRunComplete</a> is used only if the bar is included in <a href="GanttObjects.htm#CGanttTask">GanttTask</a> (GanttObject).</b><br /><br /><br />
+
+
+<b><a href="GanttMain.htm#OnGetGanttHtml">OnGetGanttHtml</a> does <u>not</u> change the main bar class to Html.</b><br />
+In 9.3. if OnGetGanttHtml API event returned not null, the bar class was set to Html, without border and background.<br /> 
+Now you must explicitly set the <a href="GanttMain.htm#CGanttClass">GanttClass</a>/X to "Html", "Void" or "None" to change the class for the bar.<br /><br /><br />
+
+
+<b>By default the Sort and Calc buttons on Toolbar are hidden.</b><br />
+You can show them by setting <tt>&lt;Toolbar SortVisibleFormula='1' CalcVisibleFormula='1'/></tt><br /><br /><br />
+
+
+<b>Empty Run box is not shown by default, even if it has set Text or Class.</b><br />
+Set <tt>&lt;C GanttRunEmpty='1'/></tt> to show it in this case.<br /><br /><br />
+
+
+<b><a href="GanttRun.htm#OnGetGanttRunRect">OnGetGanttRunRect</a> is called also when calculating dependencies.</b><br /><br /><br />
+
+
+<b>For milestone the <a href="GanttMain.htm#CGanttDuration">GanttDuration</a> column value is set to 0 or "" according to <a href="TypeNumber.htm#CCanEmpty">CanEmpty</a> value regardless on the cell Type.</b><br /><br /><br />
+
+
+<b><a href="GanttMain.htm#CGanttClass">GanttClass</a> is now used only for the first main bar plan.</b><br /> 
+Run has GanttRunClass or Run Class and other main bar plans have their own GanttClassX attribute.<br /><br /><br />
+
+
+<b>CSS style sheet for Gantt chart was rewritten.</b><br />
+The Gantt CSS was separated from Grid.css to its own file Gantt.css.<br />
+Many of the CSS classes renamed, deleted or created new.<br /> 
+Gantt internal HTML height was increased from 500 to 5000 pixels to support rows higher than 500 pixels.<br />
+If you used customized CSS for Gantt, you need to rewrite it completely, based on the new TreeGrid Gantt.css.<br /><br /><br />
+
+
+<b>The Run <a href="GanttRun.htm#CfgFastGantt">FastGantt</a> is now boolean and affects all browsers.</b><br /><br /><br />
+
+
+<b><a href="GanttMenu.htm#OnGanttMenuClick">OnGanttMenuClick</a> is called for all items, not only for custom ones.</b><br /><br /><br />
+
+
+<b>Various changes in TreeGrid (not only Gantt).</b><br />
+Some of previous HTML ids used by TreeGrid were changed, especially in Gantt objects.<br />
+<a href="RowAdd.htm#CfgCopying">Copying</a>, <a href="RowAdd.htm#CfgCopyDeleted">CopyDeleted</a>, <a href="RowAdd.htm#ICanCopy">CanCopy</a> and <a href="RowAdd.htm#ICopy">Copy</a> attributes are now used also when copying rows between grids by dragging.<br />
+The exported HTML is now in UTF8 also in IE5,6,7,8, regardless on the page encoding.<br />
+Hover classes in CSS for space Bool and Select types were modified and renamed.<br />
+
+<!------------------------------------------------------------------ Deprecated items -------------------------------------------------------------->
+<a name="RowId"></a>
+<h2>Deprecated items</h2>
+<p class="H2">These items work also in the new version, but it is strongly recommended to use them in the new way</p>
+
+<b><a href="GanttSummary.htm#CellGanttSummary">GanttSummary</a> should be set to main bar plan, 0 for first plan.</b><br />
+In 9.3. the GanttSummary was set to 1 for all bars, or to 2 for all editable bars.<br />
+<b>For editable summary should be set <a href="GanttSummary.htm#CGanttSummaryType">GanttSummaryType</a> instead of <tt>GanttSummary = 2</tt>.</b><br /><br /><br />
+
+
+<b><a href="GanttMain.htm#CGanttFlow">GanttFlow</a> should be replaced by <a href="GanttMain.htm#CGanttParts">GanttParts</a>.</b><br /> 
+The Flow bar was removed and should be replaced by main bar. It is possible to have more main bar plans and also discrete main bars.<br />
+Set also <tt>GanttCount=2</tt> or more if you want to have two main bar plans (formerly main bar and flow together).<br />
+Rename or update also other Flow attributes to main bar attributes.<br /><br /><br />
+
+
+<b><a href="GanttMain.htm#CGanttFormat">GanttFormat</a> should be replaced by bar side text.</b><br />
+Use <a href="GanttMain.htm#CGanttHtmlLeft">GanttHtmlLeft</a>/X or <a href="GanttMain.htm#CGanttHtmlRight">GanttHtmlRight</a>/X for main bar or <a href="GanttRun.htm#CGanttRunHtmlLeft">GanttRunHtmlLeft</a> or <a href="GanttRun.htm#CGanttRunHtmlRight">GanttRunHtmlRight</a> for run bar.<br />
+<a href="GanttMain.htm#CGanttFormatObject">GanttFormatObject</a> is replaced by <a href="GanttMain.htm#CGanttHtmlLeftEdge">GanttHtmlLeftEdge</a>/X or <a href="GanttMain.htm#CGanttHtmlRightEdge">GanttHtmlRightEdge</a>/X for main bar or <a href="GanttRun.htm#CGanttRunHtmlLeftEdge">GanttRunHtmlLeftEdge</a> or <a href="GanttRun.htm#CGanttRunHtmlRightEdge">GanttRunHtmlRightEdge</a> for run bar.<br /><br /><br />
+
+
+<b>Scheduling algorithm was rewritten.</b><br /> 
+<a href="GanttCompute.htm#CGanttStrict">GanttStrict</a> option 2 has been replaced by manual date (<a href="GanttMain.htm#CGanttManual">GanttManual</a>, <a href="GanttRun.htm#CGanttRunManual">GanttRunManual</a>, GanttRun - <a href="GanttRun.htm#RunManual">Manual</a>).<br /><br /><br />
+
+
+<b><a href="GanttObjects.htm#CGanttObject">GanttObject</a> renamed to <a href="GanttObjects.htm#CGanttTask">GanttTask</a>.</b><br />
+By default only the first main bar plan is set as Gantt task and provides dependencies, resources, completion state, manual constraint and locked / disabled state.<br /><br /><br />
+
+
+<b><a href="Pager.htm#PZoomToPage">ZoomToPage</a> in Pager was replaced by attributes <a href="Pager.htm#PClick">Click</a> and <a href="Pager.htm#PDblClick">DblClick</a>.</b><br />
+
+</div>
+</body>	
+</html>

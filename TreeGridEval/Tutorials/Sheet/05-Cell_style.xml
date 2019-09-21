@@ -1,0 +1,84 @@
+<Grid>
+   <Cfg id="CellStyle" SuppressCfg="1" Sorting="0"/> <!-- Suppresses configuration and sorting -->
+   <Cfg SuppressMessage="3"/> <!-- Suppresses all messages, including page messages -->
+   <Cfg AutoIdPrefix=""/> <!-- Prefix for automatically generated row id, here set empty instead of AR -->
+
+   <!-- Automatic column and row pages -->   
+   <Cfg Paging="2" AutoPages="1" PageLength="10" MaxPages="3" RemoveUnusedFixed="0" RemoveAutoPages="1"/> <!-- Defines automatic row pages -->
+   <Pager Visible="0"/> <!-- Hides the side pager that is shown for paging by default -->
+   <Cfg ColPaging="2" AutoColPages="1" ColPageLength="10" ColPageMin="0" MaxColPages="3" ColPagingFixed="0" RemoveAutoColPages="1"/> <!-- Defines automatic column pages -->
+
+   <!-- Defines row and column indexes -->
+   <Cfg RowIndex="Index" RowIndexType="6"/> <!-- Creates number RowIndex with all variable rows except deleted -->
+   <Cfg ColIndex="Header" ColIndexType="6" ColIndexChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ"/> <!-- Creates letter ColIndex with all variable columns except deleted  -->
+
+   <!-- Cell popup menu to manipulate cells and their styles -->
+   <Cfg Menu="{Items:[
+      {Name:'Edit',Menu:1,Items:'|SetEditable|SetReadOnly|SetPreview|ClearEditable|-|SetEditableSelected|SetReadOnlySelected|SetPreviewSelected|ClearEditableSelected|-|SetEditableRow|SetReadOnlyRow|SetPreviewRow|ClearEditableRow|-|SetEditableCol|SetReadOnlyCol|SetPreviewCol|ClearEditableCol'},
+      {Name:'Clear',Menu:1,Items:'|ClearCell|ClearValue|ClearStyle|-|ClearSelectedCells|ClearSelectedValues|ClearSelectedStyles'},
+      {Name:'Span',Menu:1,Items:'|SplitCell|SplitSelected|SpanSelected'},
+      {Name:'Border',Menu:1,Items:'|SetBorder|SetSelectedBorders|ClearBorder|ClearSelectedBorders|-|ChooseBorderStyle|ChooseBorderEdge|ChooseBorderColor|-|ChooseSelectedBordersStyle|ChooseSelectedBordersEdge|ChooseSelectedBordersColor'},
+      {Name:'Style',Menu:1,Items:'|BoldOn|BoldOff|BoldOnSelected|BoldOffSelected|-|ItalicOn|ItalicOff|ItalicOnSelected|ItalicOffSelected|-|UnderlineOn|UnderlineOff|UnderlineOnSelected|UnderlineOffSelected|-|StrikeOn|StrikeOff|StrikeOnSelected|StrikeOffSelected|-|OverlineOn|OverlineOff|OverlineOnSelected|OverlineOffSelected|-|SmallCapsOn|SmallCapsOff|SmallCapsOnSelected|SmallCapsOffSelected|-|NoTextStyle|NoTextStyleSelected'},
+      {Name:'Font',Menu:1,Items:'|SetTextFont|NoTextFont|ChooseTextFont|-|SetTextFontSelected|NoTextFontSelected|ChooseTextFontSelected|-|SetTextSize|NoTextSize|ChooseTextSize|-|SetTextSizeSelected|NoTextSizeSelected|ChooseTextSizeSelected'},
+      {Name:'Color',Menu:1,Items:'|SetTextColor|NoTextColor|ChooseTextColor|-|SetTextColorSelected|NoTextColorSelected|ChooseTextColorSelected|-|SetColor|NoColor|ChooseColor|-|SetColorSelected|NoColorSelected|ChooseColorSelected'},
+      {Name:'Shadow',Menu:1,Items:'|SetTextShadow|NoTextShadow|ChooseTextShadow|-|SetTextShadowSelected|NoTextShadowSelected|ChooseTextShadowSelected|-|SetTextShadowColor|NoTextShadowColor|ChooseTextShadowColor|-|SetTextShadowColorSelected|NoTextShadowColorSelected|ChooseTextShadowColorSelected'},
+      {Name:'Align',Menu:1,Items:'|AlignLeft|AlignRight|AlignCenter|NoAlign|-|AlignLeftSelected|AlignRightSelected|AlignCenterSelected|NoAlignSelected|-|VAlignTop|VAlignBottom|VAlignMiddle|NoVAlign|-|VAlignTopSelected|VAlignBottomSelected|VAlignMiddleSelected|NoVAlignSelected'},
+      {Name:'Direction',Menu:1,Items:'|RotateLeft|RotateRight|NoRotate|-|RotateLeftSelected|RotateRightSelected|NoRotateSelected|-|WrapOn|WrapOff|NoWrap|-|WrapOnSelected|WrapOffSelected|NoWrapSelected'}
+      ]}"/>
+   <Cfg ShowMenuSingle="1"/> <!-- shows menu also with single option instead of doing it immediately -->
+   <Cfg HideMenuUnused="1"/> <!-- Hide unused child items, disable parent items with no child items -->
+   <Actions OnRightClick="ShowPopupMenu OR ShowNoMenu"/> <!-- Shows the popup menu for any right click to the grid -->
+
+   <!-- Other settings often set in the sheets -->
+   <Cfg Undo="79"/> <!-- Permits undoing all actions, including scroll -->
+   <Cfg EnterMode="1"/> <!-- Enter moves cursor down -->
+   <Cfg FocusRect="31"/> <!-- Permits focusing cell range, shows the corner, hides focused cursor for the whole row, shows relative color for focused cell, permits move and copy the focused range by dragging. -->
+   <Cfg SelectingCells="3"/> <!-- Permits selecting cells and row/columns independently -->
+   <Cfg SelectingFocus="1"/> <!-- Automatically selects the focused cells and clears all other selected cells on focus change -->
+   <Cfg AutoFillType="31"/>  <!-- Permits auto filling numbers and strings, also from one cell, shrinking range clears the rest -->
+   <Actions OnDel="ClearSelectedCellsF OR ClearCellF"/> <!-- Clears the selected cells -->
+
+   <!-- Dynamic style -->
+   <Cfg DynamicStyle="1"/> <!-- Permits to set and change the style attributes for individual cells -->
+
+   <!-- Settings for cell span, borders and mass changes -->
+   <Cfg EditAttrs=",CanEdit,Span,RowSpan,BorderTop,BorderRight,BorderBottom,BorderLeft,Wrap,Align,VAlign,Rotate,Color,TextColor,TextStyle,TextSize,TextFont,TextShadow,TextShadowColor"/> <!-- What will be affected by mass change like clear or move focus; the first empty item means value -->
+   <Cfg DynamicSpan="2"/> <!-- Permits dynamic spanning and splitting spanned cells -->
+   <Cfg DynamicBorder="1"/> <!-- Permits dynamic change of cell borders, only for variable rows and middle columns -->
+   <Cfg SpannedBorder="3"/> <!-- Update border in spanned cells to better displayed -->
+   <Cfg BorderType="0"/> <!-- Set borders only in visible, not deleted cells -->
+   <Cfg SelectHidden="0"/> <!-- Select only visible, not deleted cells -->
+   <Cfg MoveFocusType="11"/> <!-- Ignore span in cells when moving focused range by dragging -->
+
+   <!-- Settings for copying and pasting cells via clipboard -->
+   <Cfg CopyCols="0"/> <!-- Copy only focused cells -->
+   <Cfg ExcludeClear="1"/> <!-- CtrlX clears the copied cells -->
+   <Cfg PasteCols="5"/> <!-- Pastes to focused cell range or to focused and next columns-->
+   <Cfg PasteFocused="11"/> <!-- Pastes to focused cell range or to focused and next rows -->
+   
+   <Panel Visible="0"/> <!-- Hides row panel, its features are not demonstrated here -->
+   <DefCols> <D Name="Auto" Width="60" VarHeight="1"/> </DefCols> <!-- Default width of all column -->
+   <Header Align="Center" Index=""/> <!-- Centers the column captions -->
+
+   <!-- Splits toolbar to two rows -->
+   <Solid>
+      <Toolbar id="Toolbar1" Kind="Toolbar1" Mirror="Toolbar" Cells40Sheet="" Visible="1"/>
+      <Toolbar id="Toolbar2" Kind="Toolbar2" Mirror="Toolbar" Cells20Data="" Cells30Manipulate="" Cells60Cfg="" Cells70Styles="" Visible="1"/>
+      <Toolbar id="Toolbar" Visible="0" CanHide="0"/>
+   </Solid>
+
+   <!-- Sample data -->
+   <Cfg AutoCols="20"/>
+   <Cfg FocusedRect="3,C,7,I"/>
+   <Body>
+      <B>
+         <I/>
+         <I/>
+         <I C="C3" D="D3" E="E3" ERotate="1" F="F3" G="G3" H="H3" FTextFont="serif" GTextSize="24" GTextStyle="1" HTextStyle="6" I="ABCDEFG 1234567890 abcdefgh" IWrap="1"/>
+         <I C="C4" D="D4" E="E4" F="F4" G="G4" H="H4" HTextShadowColor="red" DSpan="3" DRowSpan="2" DBorderLeft="1,black" DBorderTop="1,black" EBorderTop="1,black" FBorderTop="1,black" FBorderRight="1,black"/>
+         <I C="C5" D="D5" E="E5" F="F5" G="G5" H="H5" HTextShadow="8" HTextShadowColor="red" DBorderLeft="1,black" DBorderBottom="1,black" EBorderBottom="1,black" FBorderBottom="1,black" FBorderRight="1,black"/>
+         <I C="C6" D="D6" E="E6" F="F6" G="G6" GCanEdit="0" H="H6" HCanEdit="2" HTextShadow="9" CBorderTop="3,black" DBorderTop="3,black" EBorderTop="3,black" FBorderTop="3,black" GBorderTop="3,black" HBorderTop="3,black"/>
+         <I C="C7 XXXX AAAA BBBB" Wrap="1" D="D7" E="E7" F="F7" G="G7" H="H7" CTextShadow="9" CTextShadowColor="red" DBorderBottom="3,blue,1" EColor="#F88" ETextColor="white"/>
+      </B>
+   </Body>
+   </Grid>

@@ -1,0 +1,24 @@
+<Grid>
+   <Cfg id='CalcAttrs' NoVScroll="1" NoHScroll="1"/>
+   <Cols>
+      <C Name='C' Type='Enum' Enum='|White|Yellow|Lime|Aqua'/>
+      <C Name='D' Type='Bool'/>
+      <C Name='E' Type='Bool'/>
+      <C Name='X' Type='Int' CanEditFormula='E'/>
+      <C Name='Y' Type='Int' Formula='X*X'/>
+   </Cols>
+   <Header X='X' Y='Y=X&#xb2;' E='Can edit X' C='Color row' D='Can delete row'/>
+   <Def>
+      <D Name='R' CalcOrder='D,Y,XCanEdit,Color,CanDelete' ColorFormula='C' C='White' CanDeleteFormula='D' D='1'/>
+   </Def>
+   <Body>
+      <B>
+         <I X='1' E='1' C='Lime'/>
+         <I X='4' E='1' D='0'/>
+         <I X='8' E='0' />
+         <I X='3' E='1' />
+         <I X='10' E='1' C='Aqua'/>
+         <I X='9' E='0' D='0'/>
+      </B>
+   </Body>
+</Grid>

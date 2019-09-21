@@ -1,0 +1,404 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Type Enum</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>List & Combo - Enum & Radio</h1>
+<p>TreeGrid documentation</p>
+
+<!-----------------------------------------------------------------------  Introduction ------------------------------------------------->
+<a name=""></a>
+<h2>Introduction</h2>
+
+The Enum and Radio types specify a list of values and let user to choose on or more from them.<br />
+These cells are <u>not</u> editable by &lt;input>, so a user cannot enter another value that the ones in list.<br />
+<i>To have a combo with input use <a href="CellEdit.htm#CDefaults">Defaults</a> list with Text type.</i><br />
+
+<h5>Enum type</h5>
+A user selects the item(s) from combo box (similar to &lt;SELECT> tag).<br />
+It is possible to let a user to select more items by setting <b>Range</b> attribute.<br />
+<i>If you want to mix selection from list and direct value editing, use rather <a href="CellEdit.htm#CDefaults">Defaults</a> list instead of Enum type.</i><br />
+The left Enum <b>icon</b> can be hidden by setting attribute <tt><a href="CellSideButton.htm#CIcon">Icon</a>=""</tt>. To place it to the right set <tt><a href="CellSideButton.htm#CIconAlign">IconAlign</a>='Right'</tt><br />
+
+<h5>Radio type</h5>
+All items are displayed with radio button or checkbox and a user checks one or more of them.<br />
+It is possible to let a user to select more items by setting <b>Range</b> attribute.<br />
+
+<h5>Select type</h5>
+Cell type <b>Select</b> is special type to show not editable combo with list of predefined values.<br />
+Its functionality is similar to Enum type, but it does not have its complexity. It just permits selecting cell value from popup list.<br />
+It is just shortcut for <tt><b>Type</b>="<b>Html</b>" <b>Button</b>="<b>Defaults</b>"</tt>.<br />
+The predefined list is defined by <a href="CellEdit.htm#CDefaults">Defaults</a> attribute.<br />
+<i>Since 9.2</i> it is possible to simulate Enum value/key pairs by Html type <a href="TypeHtml.htm#CFormat">Format</a> attribute.<br />
+<i>It does not have any Enum attribute listed below, here is stated just for its similarity to Enum.</i><br />
+
+<h5>Changing a look between Select type and Enum type</h5>
+If you want to have <b>Enum</b> type looking like the <b>Select</b> type, set:<br />
+<tt>Type="Enum" Button="Defaults" Icon="" ShowEnumHeader="0"</tt><br />
+<br />
+If you want to have <b>Select</b> type looking like the <b>Enum</b> type, set:<br />
+<tt>Type="Html" Icon="Enum" Cursor="Pointer" OnClick="ShowDefaults" Wrap="0" Class="TxSelect"</tt> (where Tx is Style prefix, e.g. TSSelect for Standard style)<br />
+
+<h5>Value in Enum and Radio cell</h5>
+The Enum cell value can be set as<br />
+<div class="L1">
+a) index to Enum array, from 0. For example <tt>Enum='|One|Two|Three'</tt>, <tt>Value='2'</tt> as Three<br />
+b) value from Enum array. For example <tt>Enum=' |One|Two|Three'</tt>, <tt>Value='Three'</tt><br />
+c) value from EnumKeys array. For example <tt>Enum=' |One|Two|Three'</tt> <tt>EnumKeys='|A|B|C'</tt> <tt>Value='C'</tt> as Three<br />
+</div>
+To distinguish ambiguity cases between a) and b) when Enum array contains numbers, set <a href="TypeEnum.htm#CfgIndexEnum">IndexEnum</a> (by default is preferred b)).<br />
+After change of the value, the value is set by the same way as it was preset (index/Enum name/EnumKeys name).<br />
+To distinguish ambiguity cases between a) and b) when changing empty / null Enums, set <a href="TypeEnum.htm#CfgIndexEnum">IndexEnum</a> (by default is preferred b)).<br />
+The Enum value is uploaded to server as it is set in data.<br />
+When set Range, the value contains list of selected items, separated by semicolon. The items can be also index/Enum name/EnumKeys name.<br />
+
+<h5>Filter</h5>
+If the Enum or Radio type cell is used in <b>Filter</b> row, it automatically hides the filter operator menu.<br />
+For <b>Enum</b> it adds one empty item as the first item to the list to clear the filter.<br />
+For <b>Radio</b> it adds one item "off" as the last item.<br />
+You can change this behavior by <a href="TypeEnum.htm#IFilterOff">FilterOff</a> attribute.<br />
+To filter by more Enum values set <b>Range</b> attribute of the <b>Filter</b> cell.<br />
+
+<!-----------------------------------------------------------------------  Definition ------------------------------------------------->
+<a name="Definition"></a>
+<h2>Definition</h2>
+
+<!-- Type -->
+<a name="CType"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"] <tt>Type = "Enum"</tt> or <tt>"Radio"</tt></s>
+</div>
+To define Enum type, set column or cell attribute Type to "<b>Enum</b>", for Radio type set Type to "<b>Radio</b>".<br />
+
+<!-- Enum -->
+<a name="CEnum"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>Enum</h4> <s></s>
+</div>
+A list of values to select from. It is first character separated array (the first character in the string is separator). For example <tt>",one,two,three"</tt> or <tt>"|1,1|2,3"</tt>.<br />
+This value will be shown in the cell.<br />
+This list will be also shown in expanded combo if <a href="TypeEnum.htm#CEditEnum">EditEnum</a> and <a href="TypeEnum.htm#CEnumMenu">EnumMenu</a> are not set.<br />
+
+<!-- OnGetEnum -->
+<a name="OnGetEnum"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetEnum</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>enum</b>)</s>
+</div>
+Called to get Enum attribute dynamically. Returns <b>enum</b> or new enum list.<br />
+
+<!-- EnumKeys -->
+<a name="CEnumKeys"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>EnumKeys</h4> <s></s>
+</div>
+A list of keys for Enum type.<br />
+If set, the Enum type cell contain this key instead of Enum name or index.<br />
+The EnumKeys must have the same order and count as Enum array.<br />
+
+<!-- OnGetEnumKeys -->
+<a name="OnGetEnumKeys"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>string</i>
+   <h4>OnGetEnumKeys</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>enum</b>)</s>
+</div>
+Called to get EnumKeys attribute dynamically. Returns <b>enumkeys</b> or new enum keys list.<br />
+
+<!--  FilterOff -->
+<a name="IFilterOff"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;Filter cell></b> <i>string</i>
+   <h4>FilterOff</h4> <s>[' ']</s>
+</div>
+You can set <b>FilterOff</b> to existing value or index to use this item to clear filter.<br />
+Or you can set it to <u>not</u> existing value to show the FilterOff value as the "clear filter" item caption.<br />
+<i>If the Enum/Radio uses number indexes, the index is automatically shifted to let the list to be the same as in the other cells!</i><br />
+
+<!--  FilterEnumKeys -->
+<a name="CellFilterEnumKeys"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Filter cell></b> <i>bool</i>
+   <h4>FilterEnumKeys</h4> <s>[0]</s>
+</div>
+If set to <b>0</b> it filters by Enum string.<br />
+If set to <b>1</b> it filters by Enum value, by key or index.<br />
+
+<!--  IndexEnum -->
+<a name="CfgIndexEnum"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>IndexEnum</h4> <s>[0]</s>
+</div>
+If the number cell values will be taken as index to Enum (from 0) or as value from Enum. 0 - value, 1 - index.<br />
+Only for ambiguity cases - when Enum contains a number or when changed from empty or null value.<br />
+In all other cases it is chosen according to the actual value.<br />
+<i>It is ignored when set <a href="TypeEnum.htm#CEnumKeys">EnumKeys</a>.</i><br />
+
+<!--  CanEmpty -->
+<a name="CCanEmpty"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd 7.0</i></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>CanEmpty</h4> <s>[0]</s>
+</div>
+If the enum index can be empty, <i>only for enums set by index</i>.<br />
+If set to <b>1</b>, the cell value differs between 0 and "". It is by default set to filter.<br />
+<i>Since 7.0</i> it also controls behavior of the <a href="TypeEnum.htm#CClear">Clear</a> attribute, for <b>0</b> Clear sets the first value from Enum, for <b>1</b> it sets empty string.<br />
+
+<!--  EmptyValue -->
+<a name="CEmptyValue"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EmptyValue</h4> <s>[""]</s>
+</div>
+The string displayed when the enum text is empty. Useful especially for Range cells.<br />
+It is shown only for display, not in popup menu.<br />
+It is <u>not</u> escaped, it can contain HTML code.<br />
+
+<!-- Range -->
+<a name="CRange"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>Range</h4> <s>[0]</s>
+</div>
+If the cell accepts more values. Usable especially in <a href="Filter.htm#Filter">filter</a> cell.<br />
+<b>Enum</b> type can select more values from combo box. Defaults dialog supports selecting more values for any cell type.<br />
+<b>Radio</b> type can have checked more values at a time. <br />
+The chosen values in cell are separated by semicolon. 
+The characters '<b>;</b>' can be changed by &lt;Lang>&lt;Format ValueSeparator=';'&lt;/Lang><br />
+
+
+
+<!-----------------------------------------------------------------------  Related lists ------------------------------------------------->
+<a name="Related"></a>
+<h2>Related lists</h2>
+
+The Enum and Radio type lists can be related, one cell will have different lists for different values in another cell. Like Continent -> Country -> State -> Region -> City.<br />
+
+<!--  Related -->
+<a name="CRelated"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>Related</h4> <s></s>
+</div>
+The comma separated list of columns this Enum list is related to. The Enum list relies on values in these columns.<br />
+It defines dependent lists like Country -> State/County -> City.<br />
+The enumeration lists (<a href="TypeEnum.htm#CEnum">Enum</a>, <a href="TypeEnum.htm#CEnumKeys">EnumKeys</a>, <a href="TypeEnum.htm#CEditEnum">EditEnum</a> and <a href="TypeEnum.htm#CEnumMenu">EnumMenu</a> attributes) for the cell are chosen according to value(s) in Related columns from EnumA_B_C... attributes, where A,B,C are column values from cells in columns in Related list, in that order.<br />
+Use with <a href="TypeEnum.htm#CRefresh">Refresh</a> or <a href="TypeEnum.htm#CClear">Clear</a> attribute. When the attribute for the values does not exist, the original attribute without prefix is used.<br />
+<i>The postfixes are the exact values in the cells, if you use EnumKeys use the values from EnumKeys, if you use names from Enum, use these names and if you indexes to Enum, use the indexes.</i><br />
+Example <i>(B is related to A, C is related to B and also to A)</i><br />
+<div class="L1">
+<tt>
+&lt;C Name='A' Type='Enum' Clear='B,C' Enum='|One|Two'/><br />
+&lt;C Name='B' Type='Enum' Related='A' Clear='C' Enum0='|a|b|c' Enum1='|1|2'/><br />
+&lt;C Name='C' Type='Enum' Related='A,B' Enum0_0='...' Enum0_1='...' Enum0_2='...' Enum1_0='...' Enum1_1='...'/><br />
+</tt>
+</div> 
+ 
+<!--  Clear -->
+<a name="CClear"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>7.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>Clear</h4> <s></s>
+</div>
+Which cells to clear after value of the cell changes. Usually used with <a href="TypeEnum.htm#CRelated">Related</a> attribute.<br />
+The comma separated list of column names. The cells in the same row and in these columns will be cleared - their value set to "".<br />
+<i>Since 7.0</i> it is affected by <a href="TypeEnum.htm#CCanEmpty">CanEmpty</a> attribute, for <b>0</b> Clear sets the first value from Enum, for <b>1</b> it sets empty string.<br /> 
+
+<!--  Refresh -->
+<a name="CRefresh"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>Refresh</h4> <s></s>
+</div>
+Which cells to refresh after value of the cell changes. Usually used with <a href="TypeEnum.htm#CRelated">Related</a> attribute.<br />
+The comma separated list of column names. The cells in the same row and in these columns will be refreshed.<br />
+<i>Has sense only for index enums, for string enums use rather <a href="TypeEnum.htm#CClear">Clear</a>.</i><br />
+
+<!-----------------------------------------------------------------------  Enum specific  ------------------------------------------------->
+<a name="Enum"></a>
+<h2>Enum specific</h2>
+
+<!--  EditEnum -->
+<a name="CEditEnum"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>EditEnum</h4> <s></s>
+</div>
+A list of values for Enum type to display them in expanded combo when editing.<br />
+If it is missing it is used <a href="TypeEnum.htm#CEnum">Enum</a> array instead.<br />
+Useful to show different item names in cell and in expanded combo list.<br />
+ 
+<!-- OnGetEditEnum -->
+<a name="OnGetEditEnum"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetEditEnum</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>editenum</b>)</s>
+</div>
+Called to get EditEnum attribute dynamically. Returns <b>editenum</b> or new edit enum list.<br />
+
+<!--  EnumMenu -->
+<a name="CEnumMenu"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EnumMenu</h4> <s></s>
+</div>
+Full JSON definition of the list displayed on expanding combo to select Enum value(s).<br />
+It supports extended capabilities like submenus and collapsible sections.<br />
+It is more extended alternative to <a href="TypeEnum.htm#CEditEnum">EditEnum</a>.<br />
+The menu format is standard <a href="Menu.htm">TreeGrid menu</a>.<br /> 
+
+<!-- OnGetEnumMenu -->
+<a name="OnGetEnumMenu"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetEnumMenu</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>enummenu</b>)</s>
+</div>
+Called to get EnumMenu attribute dynamically. Returns <b>enummenu</b> or new enum menu list.<br />
+ 
+<!-- IntFormat -->
+<a name="CIntFormat"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>IntFormat</h4> <s></s>
+</div>
+A format when the Enum value is set to number that is out of range or does not exist in Enum / EnumKeys.<br />
+Useful for number types to show a name for first few values and the rest as normal formatted integer.<br />
+Example: <tt>Enum='|never|once|twice' IntFormat='###0 times'</tt><br />
+It should be used for read only cells. Works also for floating point numbers.<br />
+
+<!-- ShowEnumHeader -->
+<a name="CShowEnumHeader"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>ShowEnumHeader</h4> <s>[1]</s>
+</div>
+For <b>0</b> it does not show header for Enum popup list.<br />
+Use to display Enum type like Select type (or Button=Defaults). Set for the cell: <tt>Button="Defaults" Icon="" ShowEnumHeader="0"</tt><br />
+
+<!-----------------------------------------------------------------------  Radio specific  ------------------------------------------------->
+<a name="Radio"></a>
+<h2>Radio specific</h2>
+ 
+<!-- Wrap -->
+<a name="CWrap"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>Wrap</h4> <s>[0]</s>
+</div>
+How the items will be wrapped inside the cell.<br />
+<b>0</b> to show all items at one line, <b>1</b> to split items to more lines if needed, <b>2</b> to show every item at one line<br /> 
+
+<!-- RadioWrap -->
+<a name="CRadioWrap"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>RadioWrap</h4> <s>[1]</s>
+</div>
+If the individual radio cells content will be wrapped.
+ 
+<!-- RadioIcon -->
+<a name="CRadioIcon"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>11.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>type</i>
+   <h4>RadioIcon</h4> <s>[0]</s>
+</div>
+Icon displayed for buttons<br />
+<i>Since 11.0</i> it can be also first character separated array of strings as icon files for 0 and 1 value, e.g. <tt>RadioIcon="|Off.gif|On.gif"</tt><br /> 
+<div class="L1">
+There can be also two more icons for <tt>CanEdit='0'</tt> state, e.g. <tt>RadioIcon="|Off.gif|On.gif|OffRO.gif|OnRO.gif "</tt><br />
+Or it can contain icons for all items in the radio, e.g. <tt>RadioIcon="|Off1.gif|On1.gif|Off2.gif|On2.gif|Off3.gif|On3.gif|Off4.gif|On4.gif"</tt><br />
+There can be also one more set icons for <tt>CanEdit='0'</tt>, .e.g. <tt>RadioIcon="|Off1.gif|On1.gif|Off2.gif|On2.gif|Off3.gif|On3.gif|OffRO1.gif|On1RO.gif|Off2RO.gif|On2RO.gif|Off3RO.gif|On3RO.gif "</tt><br />
+</div>
+<b>0</b> - displays radio button images for normal cell or checkbox images for <a href="CellBasics.htm#CRange">Range</a> cell.<br />
+<b>1</b> - displays radio button images<br />
+<b>2</b> - displays checkbox images<br />
+<b>3</b> - displays &lt;input type='radio'> for normal cell or &lt;input type='checkbox'> for <a href="CellBasics.htm#CRange">Range</a> cell. <i>It is slower than displaying images.</i><br />
+<b>4</b> - displays &lt;input type='radio'>. <i>It is slower than displaying images.</i><br />
+<b>5</b> - displays &lt;input type='checkbox'>. <i>It is slower than displaying images.</i><br />
+<b>6</b> - <i>(new 11.0)</i> hides the icon, shows only the radio text<br />
+
+<!-- RadioRight -->
+<a name="CRadioRight"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>RadioRight</h4> <s>[0]</s>
+</div>
+If set to 1, displays the icon on the right instead of left.<br />
+
+<!-- RadioUncheck -->
+<a name="CRadioUncheck"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>RadioUncheck</h4> <s>[0]</s>
+</div>
+If the checked radio button can be unchecked to have all buttons empty - only for normal <u>non</u> <b>Range</b> cell.<br />
+
+<!-- RadioIconWidth -->
+<a name="CRadioIconWidth"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>RadioIconWidth</h4> <s>[18]</s>
+</div>
+Width in pixels of custom icons in <a href="TypeEnum.htm#CRadioIcon">RadioIcon</a> (if RadioIcon is set to array of strings).<br /> 
+
+<!-- Action ChangeRadioRight -->
+<a name="ActionsChangeRadioRight"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChangeRadioRight</h4>
+   <s>Attached to event <b>OnCtrlRight</b></s>
+</div>
+Selects item in radio, the right one next to the actually selected, cannot be used for Range cells.<br />
+
+<!-- Action ChangeRadioRightCycle -->
+<a name="ActionsChangeRadioRightCycle"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChangeRadioRightCycle</h4>
+   <s>Attached to event <b>OnEnter</b></s>
+</div>
+Selects item in radio, the right one next to the actually selected, cannot be used for Range cells.<br />
+For the last item checked checks the first item.<br />
+
+<!-- Action ChangeRadioLeft -->
+<a name="ActionsChangeRadioLeft"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChangeRadioLeft</h4>
+   <s>Attached to events <b>OnCtrlLeft</b></s>
+</div>
+Selects item in radio, the left one next to the actually selected, cannot be used for Range cells.<br />
+
+<!-- Action ChangeRadioLeftCycle -->
+<a name="ActionsChangeRadioLeftCycle"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChangeRadioLeftCycle</h4>
+   <s>Not attached to any event</s>
+</div>
+Selects item in radio, the left one next to the actually selected, cannot be used for Range cells.<br />
+For the first item checked checks the last item.<br />
+
+<!-- Action ChangeRadio -->
+<a name="ActionsChangeRadio"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChangeRadio</h4>
+   <s>Attached to event <b>OnClickEditRadio</b></s>
+</div>
+Selects item in radio, the one under mouse cursor<br />
+                                                        
+</div>
+</body>
+</html>

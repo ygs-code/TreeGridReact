@@ -1,0 +1,195 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Cursor</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Grid cursors - hover & focus</h1>
+<p>TreeGrid documentation</p>
+
+Specifies how the <b>actual</b> (<b>hovered</b>) row and cell and <b>focused</b> row and cells will be highlighted.<br />
+
+<!-- Hover -->
+<a name="CfgHover"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>Hover</h4> <s>[2] Saved to cookies, to not load it, set <tt><b>HoverLap</b>='1'</tt></s>
+</div>
+What to hover under mouse cursor. It can be changed by a user from configuration menu.<br />
+<b>0</b> - nothing, <b>1</b> - only cell color, <b>2</b> - full row and cell cursor<br />
+
+<!-- ShowDrag -->
+<a name="CfgShowDrag"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ShowDrag</h4> <s>[1] Saved to cookies, to not load it, set <tt><b>ShowDragLap</b>='1'</tt></s>
+</div>
+If shows dragged object under mouse cursor. The dragged row(s) or moved column(s).<br />
+It can be changed by a user in configuration menu.<br />
+
+<!-- AbsoluteCursors -->
+<a name="CfgAbsoluteCursors"></a>
+<div class="XML">
+   <u>new <b>6.0</b> chg <b>9.2</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>AbsoluteCursors</h4> <s>[5/0]</s>
+</div>
+How the focus and hover cursors will be managed, bit array.<br />
+<table>
+<tr><td style="width:90px;"><b>1</b>.bit (&amp;<b>1</b>)</td><td>If hover cursors are absolutely positioned</td></tr>
+<tr><td><b>2</b>.bit (&amp;<b>2</b>)</td><td>If focus cursors are absolutely positioned</td></tr>
+<tr><td><b>3</b>.bit (&amp;<b>4</b>)</td><td>If hover cursor does not display its row and cell border when hovering focus cursor. Useful when hover cursor is absolute and focus relative</td></tr>
+</table>
+<b>Relative</b> (<b>0</b>) - cursors are relatively positioned tags inside grid main tag. <b>Slower</b>. It should <u>not</u> cause any problems.<br />
+<b>Absolute</b> (<b>1</b>) - cursors are absolutely positioned tags inside document body. <b>Faster</b>. It can cause <b>problems</b> when grid is hidden or partially overflowed by some its parent.<br /> 
+<div class="L1">Absolute cursors also blinks when scrolling page or some grid parent tag (but not in grid itself).</div>
+<i>By default TreeGrid uses fast absolute cursors for hover and slow relative cursors for focus.</i><br />
+<i>Since 9.2 by default in Firefox are <u>not</u> used absolute cursors at all (<tt>AbsoluteCursors='0'</tt>), because they are remarkably slower in latest FF.</i><br />
+
+<!-- BorderCursors -->
+<a name="CfgBorderCursors"></a>
+<div class="XML">
+   <u>new <b>6.6</b> chg <b>11.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>BorderCursors</h4> <s>[1]</s>
+</div>
+If Border and Background hover and focus cursors are displayed.<br />
+<b>0</b> - Never, <b>1</b> - in all browsers (also in Safari, Chrome and Opera), <b>2</b> - only in fast browsers (IE and FF). <i>Since 10.0</i> also on iPad.<br />
+In runtime it has only two values <b>0</b> or <b>1</b>.<br />
+<i>Since 11.0. By default are the cursors for Opera, Safari and Google Chrome also <u>enabled</u>, because the newest versions of these browsers are enough fast.</i><br />
+
+<!-- SafariCursors -->
+<a name="CfgSafariCursors"></a>
+<div class="DEL">
+   <u>deleted <b>6.6</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SafariCursors</h4> <s>[0]</s>
+</div>
+Renamed to BorderCursors and values meaning changed.<br />
+
+<!-- FocusCellBorderCursor -->
+<a name="CfgFocusCellBorderCursor"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FocusCellBorderCursor</h4> <s>[0]</s>
+</div>
+Mouse cursor when above focused cell border. <b>0</b> - default, <b>1</b> - move, <b>2</b> - resize.<br />
+
+<!-- HoverRow -->
+<a name="IHoverRow"></a><a name="CHoverRow"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;I>&lt;C>&lt;cell></b> <i>string[ ]</i>
+   <h4>HoverRow</h4> <s>[...]</s>
+</div>
+How the whole row will be hovered. A list of comma separated keywords.<br />
+<table>
+<tr><td style="width:100px;"><b>Border</b></td><td>Border around the whole row.</td></tr>
+<tr><td><b>Background</b></td><td>Background over the whole row except the actual cell, it is done by opacity. <i><u>Not</u> for <b>Space</b> rows.</i></td></tr>
+<tr><td><b>Color</b></td><td>Background color for all cells in the row except the actual cell, it is computed color - it differs according to the actual row state and background. <i>Can <u>remarkably</u> slow down the hover!</i></td></tr>
+<tr><td><b>Class</b></td><td>N / A</td></tr>
+</table>
+Default value is "Background" for Header and Panel, "" for Space and "Border,Background" for all other rows.<br />
+
+<!-- HoverCell -->
+<a name="IHoverCell"></a><a name="CHoverCell"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;I>&lt;C>&lt;cell></b> <i>string[ ]</i>
+   <h4>HoverCell</h4> <s>[...]</s>
+</div>
+How the cell will be hovered. A list of comma separated keywords.<br />
+<table>
+<tr><td style="width:100px;"><b>Border</b></td><td>Border around the cell.</td></tr>
+<tr><td><b>Background</b></td><td>N / A</td></tr>
+<tr><td><b>Color</b></td><td>Cell background color, it is computed color - it differs according to the actual row state and background. <i>Can slightly slow down the hover!</i></td></tr>
+<tr><td><b>Class</b></td><td>Cell class for change text properties like font or color. <i>Can <u>remarkably</u> slow down the hover!</i></td></tr>
+</table>
+Default value is "Color" for Header, Panel and Space and "Border,Color" for all other cells.<br />
+
+<!-- FocusRow -->
+<a name="IFocusRow"></a><a name="CFocusRow"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b style="margin-left:-65px;width:160px;">&lt;I>&lt;C>&lt;cell>&lt;Root></b> <i>string[ ]</i>
+   <h4>FocusRow</h4> <s>[...]</s>
+</div>
+How the whole row will be focused. A list of comma separated keywords. Root is for not rendered pages.<br />
+<table>
+<tr><td style="width:100px;"><b>Border</b></td><td>Border around the whole row.</td></tr>
+<tr><td><b>Background</b></td><td>Background over the whole row except the actual cell, it is done by opacity. <i><u>Not</u> for <b>Space</b> rows.</i></td></tr>
+<tr><td><b>Color</b></td><td>Background color for all cells in the row except the actual cell, it is computed color - it differs according to the actual row state and background. <i>Can slow down the focus!</i></td></tr>
+<tr><td><b>Class</b></td><td>Cell class for all cells in the row except the actual cell, for change text properties like font or color. <i>Can <u>remarkably</u> slow down the focus!</i></td></tr>
+</table>
+Default value is "Background" for Header, "" for Space and "Border,Background" for all other rows.<br />
+
+<!-- FocusCell -->
+<a name="IFocusCell"></a><a name="CFocusCell"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>11.0</b></i></u> <b style="margin-left:-10px;width:160px;">&lt;I>&lt;C>&lt;cell>&lt;Root></b> <i>string[ ]</i>
+   <h4>FocusCell</h4> <s>[Border,Color,Class]</s>
+</div>
+How the cell will be focused. A list of comma separated keywords. Root is for not rendered pages.<br />
+<table>
+<tr><td style="width:100px;"><b>Border</b></td><td>Border around the cell.</td></tr>
+<tr><td><b>Background</b></td><td>N / A</td></tr>
+<tr><td><b>Color</b></td><td>Cell background color, it is computed color - it differs according to the actual row state and background.</td></tr>
+<tr><td><b>Class</b></td><td>Cell class for change text properties like font or color. <i>Can slightly slow down the focus!</i></td></tr>
+<tr><td><b>Corner</b></td><td><i>(new 11.0)</i> Bottom right corner point. For auto fill or other dragging rectangle features.</td></tr>
+<tr><td></td><td>It can be shown also in edit mode if set <tt>&lt;Cfg <a href="RowMove.htm#CfgDragEdit">DragEdit</a>/></tt></td></tr>
+</table>
+
+<!-- ColorCursor -->
+<a name="CColorCursor"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>ColorCursor</h4> <s>[0]</s>
+</div>
+If set, the column cell will be colored if the row has appropriate flag. Bit array.<br /> 
+<i>Only for left and right side columns. Only if permitted by <tt>&lt;Cfg <a href="#CfgColorCursor">ColorCursor</a>/></tt></i><br />
+<table>
+<tr><td style="width:50px;"><b>1</b>. bit</td><td style="width:50px;">&amp;<b>1</b></td><td>The row is hovered, it is <a href="Mouse.htm#ARow">ARow</a>.</td></tr>
+<tr><td><b>2</b>. bit</td><td>&amp;<b>2</b></td><td>The row is in focused range, inside <a href="Focus.htm#FRect">FRect</a>.</td></tr>
+<tr><td><b>3</b>. bit</td><td>&amp;<b>4</b></td><td>The row has focus, it is <a href="Focus.htm#FRow">FRow</a>.</td></tr>
+<tr><td><b>4</b>. bit</td><td>&amp;<b>8</b></td><td>The row or its cells are selected. It has set <a href="RowSelect.htm#ISelected">Selected</a> attribute.</td></tr>
+<tr><td><b>5</b>. bit</td><td>&amp;<b>16</b></td><td>Set it to columns with no other ColorCursor bits set to not show the row ColorCursor.</td></tr>
+</table>
+
+<!-- ColorCursor -->
+<a name="IColorCursor"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;I></b> <i>int</i>
+   <h4>ColorCursor</h4> <s>[0]</s>
+</div>
+If set, the row cell will be colored if the column has appropriate flag. Bit array.<br /> 
+<i>Only for fixed rows. Only if permitted by <tt>&lt;Cfg <a href="#CfgColorCursor">ColorCursor</a>/></tt>. Cannot be set to default row.</i><br />
+<table>
+<tr><td style="width:50px;"><b>1</b>. bit</td><td style="width:50px;">&amp;<b>1</b></td><td>The column is hovered, it is <a href="Mouse.htm#ACol">ACol</a>.</td></tr>
+<tr><td><b>2</b>. bit</td><td>&amp;<b>2</b></td><td>The column is in focused range, inside <a href="Focus.htm#FRect">FRect</a>.</td></tr>
+<tr><td><b>3</b>. bit</td><td>&amp;<b>4</b></td><td>The column has focus, it is <a href="Focus.htm#FCol">FCol</a>.</td></tr>
+<tr><td><b>4</b>. bit</td><td>&amp;<b>8</b></td><td>The column cells are selected. There is at least one row with cell attribute in this column with <tt><a href="RowSelect.htm#CellSelected">Selected</a> = 1</tt>.</td></tr>
+<tr><td><b>5</b>. bit</td><td>&amp;<b>16</b></td><td>Set it to row with no other ColorCursor bits set to not show the column ColorCursor.</td></tr>
+</table>
+
+<!-- ColorCursor -->
+<a name="CfgColorCursor"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ColorCursor</h4> <s>[0]</s>
+</div>
+Must be set to support the rows and columns attributes <b>ColorCursor</b>.<br /> 
+Bit array, set the bits to permit the bits in row and column attributes <b>ColorCursor</b>.<br />
+<table>
+<tr><td style="width:50px;"><b>1</b>. bit &nbsp;-</td><td style="width:50px;"><b>4</b>. bit</td><td>See row or column <a href="#CColorCursor">ColorCursor</a>.</td></tr>
+<tr><td><b>5</b>. bit</td><td>&amp;<b>16</b></td><td>If set, the cell will have set also special CSS class to control other style attributes than background color. It can slow down the action.</td></tr>
+</table>
+
+<!-- FocusWholeRow -->
+<a name="CfgColorCursor"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FocusWholeRow</h4> <s>[0]</s>
+</div>
+If set, does not show cursor for the cell, only for row.<br /> 
+For this case should be set also <tt>&lt;Cfg Editing='0'/></tt><br />
+
+</div>
+</body>	
+</html>

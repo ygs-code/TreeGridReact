@@ -1,0 +1,151 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <script>
+
+// Sample custom calculation function
+// Sums the seven days in a week. col is SUMX, where X is the week index
+function MySum(G,row,col){
+var D = ["SU","MO","TU","WE","TH","FR","SA"];
+col = col.slice(3);
+
+for(var i=0,sum=0;i<D.length;i++){
+   var n = Get(row,D[i]+"N"+col), v = Get(row,D[i]+"V"+col);
+   if(v && n) sum += v*n;
+   }
+return sum?sum:"";
+}
+
+   </script>
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+
+      /* Special styles for this example */
+      .Red { color:red; }
+      .Green { color:green; }
+      .Blue { color:blue; }
+      .Black { color:black; }
+      .White { color:gray; }
+      .Bold { font-weight:bold; }
+      .Big { font-size:15px; font-weight:bold; }
+      .Sep { border-color:transparent; background:none; }
+
+      /* Changes for inverse Black style */
+      .TBMain .Red { color:#F88; }
+      .TBMain .Green { color:#8F8; }
+      .TBMain .Blue { color:#88F; }
+      .TBMain .Black { color:#888; }
+      .TBMain .White { color:#FFF; }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>4. Default rows and columns</h1>
+   <h2>Predefined values for more rows and columns</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='04-Default_rows_and_columns.xml'>04-Default_rows_and_columns.xml</a></div>
+      <div class="Main" style='width:100%; height:500px;'>
+         <bdo Debug='check' Data_Url='04-Default_rows_and_columns.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li><h4>Default rows</h4><br />
+         <ul>
+         <li>See <a href="../../Doc/RowDefaults.htm">Default rows documentation</a>.</li>
+         <li>
+            Default row predefines all row attributes that the row does not explicitly set. Setting attribute to empty string overrides the default value.<br />
+            For example if set &lt;D Name='XXX' A='DefA' B='DefB'/> and &lt;I Def='XXX' A='RA' C='RC'/>, the row will have these three attributes A='RA' B='DefB' C='RC'
+         </li>
+         <li>
+            Every row in grid has set always <b>one</b> default row. The default row is set by the row attribute <h3>Def</h3>. <i>Unlike columns and defaults, the row Def attribute can contain only one item!</i><br />
+            If the row has not set Def attribute, its value is read from parent row <h3>CDef</h3> attribute. The CDef attribute is used also to set Def for all new children added to the parent.<br />
+            Default CDef value for root variable rows can be set by root <b>&lt;Root CDef="..."/></b> tag.<br />
+         </li>
+         <li>
+            If row has set neither Def nor its parent CDef, its default row is set to "<b>R</b>" for variable rows, "<b>Header</b>" for header rows, "<b>Fixed</b>" for other fixed rows and "<b>Solid</b>" for solid rows.<br /> 
+            The "R", "Header", "Fixed" and "Solid" defaults are defined in <a href="../../Grid/Defaults.xml">Grid/Defaults.xml</a>, but is possible to change them in any your XML.<br />
+            There is also one predefined default row <b>"Group"</b> that is used by default for all rows created by grouping, see <a href="../Tree/03-Grouping_rows.html">03-Grouping_rows</a> tutorial.<br />
+            And one default row <b>"CPage"</b> used for child rows created by MaxChildren settings, see <a href="../../Doc/TreePaging.htm#MaxChildren">Paging in tree - MaxChildren documentation</a>.<br />
+            <i>Note that Fixed and Group default rows inherit the "R" default row too (have Def='R'), but the Header, Solid and CPage default rows don't inherit anything (have Def='').</i>
+         </li>
+         <li>
+            The default rows are defined by <h3>&lt;D/></h3> tag in root <h3>&lt;Def> ... &lt;/Def></h3> tag.<br />
+            Every default row &lt;D> must have set its attribute <h3>Name</h3> to identify the default row. This value is used in row's <b>Def</b> and <b>CDef</b> attributes to link this default row.<br />
+            Default row can also define its <b>Def</b> attribute to inherit it from one or more other default rows. More items are comma separated. Default value for Def attribute is <b>"R"</b>, so by default all default rows inherit default row named <b>"R"</b>.
+         </li>
+         <li>
+            The &lt;D> tag can have also <b>child &lt;I></b> tags. When added new row of this default row, it will automatically get new created children as these defined &lt;I> tags.<br />
+            It is possible to have only one level of such &lt;I> children of default row. But the child &lt;I> tags can have set their Def attribute and if this default has also child rows, they are added too. In such way you can create many levels of children for one new row.<br /> 
+         </li>
+         <li>
+            Default row is used also for permissions when moving row to new parent. The row is accepted only if its Def attribute value is listed in the new parent row <b>AcceptDef</b> attribute.<br />
+            For more information see <a href="../Drag/01-Dragging_rows.html">01-Dragging_rows</a> tutorial.<br />
+         </li>
+         <li>
+            By <h4>API</h4> you can access the default row by <b>Grid.Def[<i>name</i>]</b>. It is possible to directly read and write the default row attributes like Grid.Def["R"].Color = "Red";<br />
+            The inheritance between two default rows (by the &lt;D Def/>) is resolved on grid start, so changing one default row attribute by API will <u>not</u> affect any other default row.<br />
+            Read the row attribute including the default value by global <b>Get</b> method or by grid methods <b>GetAttribute</b> or <b>GetValue</b>.<br />
+            You can get the row's default row object by <b>row.Def</b> and its name by <b>row.Def.Name</b>.<br />
+         </li>
+         </ul>
+      </li>
+      <li><h4>Default columns</h4><br />
+         <ul>
+            <li>See <a href="../../Doc/ColBasics.htm">Column basics documentation</a>.</li>
+            <li>
+            Default column predefines all column attributes that the column does not explicitly set. Setting attribute to empty string overrides the default value.<br />
+            For example if set &lt;D Name='XXX' Color='Red' Class='Blue'/> and &lt;C Def='XXX' Class='Green' CanEdit='0'/>, the column will have these three attributes Color='Green' Class='Blue' CanEdit='0'
+            </li>
+            <li>
+            Every column in grid has set one or more default columns. The default columns are set by the column attribute <h3>Def</h3>. More items are comma separated.<br />
+            If column has not set the Def attribute, its default column is <b>"C"</b>, only for Gantt type column it is <b>"Gantt"</b>. The "Gantt" default column inherits also the "C" column. <br /> 
+            The "C" and "Gantt" default columns are defined in <a href="../../Grid/Defaults.xml">Grid/Defaults.xml</a>, but is possible to change them in any your XML.<br />
+            </li>
+            <li>
+            The default columns are defined by <h3>&lt;D/></h3> tag in root <h3>&lt;DefCols> ... &lt;/DefCols></h3> tag.<br />
+            Every default column &lt;D> must have set its attribute <h3>Name</h3> to identify the default column. This value is used in column's <b>Def</b> attribute to link this default column.<br />
+            Default column can also define its <b>Def</b> attribute to inherit it from one ore more other default column. More items are comma separated. Default value for Def attribute is <b>"C"</b>, so by default all default columns inherit default column named <b>"C"</b>.
+            </li>
+            <li>
+            By <h4>API</h4> you <u>cannot</u> access the default columns <i>(unlike default rows)</i>. The default columns are processed on grid start, all columns read their not set attributes from default columns on start.<br />
+            To access column attribute use <b>GetAttribute</b> API method or directly by <b>Grid.Cols[<i>name</i>]</b>.
+            </li>
+            <li>
+            <i>Note, <b>Header</b> rows don't read their cell attributes from columns, only from the header row or its default row.</i><br />
+            </li>
+         </ul>
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialBasic\s*=\s*(\d+)/), TGIndex = 8;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridBasic4", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialBasic="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

@@ -1,0 +1,845 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Gantt zoom</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Gantt zoom</h1>
+<p>TreeGrid documentation</p>
+
+<!-----------------------------------------------------------------------  Zoom options ------------------------------------------------->
+<a name="Zoom"></a>
+<h2>Zoom options</h2>
+
+Attributes to control unit size and rounding for whole Gantt chart column.<br />
+
+<!-- GanttWidth -->
+<a name="CGanttWidth"></a>
+<div class="XML">
+   <u><i>upd <b>6.3</b></i></u> <b>&lt;C></b> <i>float</i>
+   <h4>GanttWidth</h4> <s>[18] Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='<b>1</b>'/></tt></s>
+</div>
+Width in pixels of one base unit set by <a href="#CGanttUnits">GanttUnits</a>.<br />
+It can be automatically increased for smooth zoom, see <a href="#CGanttSmoothZoom">GanttSmoothZoom</a>.<br /> 
+When <a href="GanttCalendars.htm#CGanttExclude">GanttExclude</a> dates are hidden, the GanttWidth is increased to have the same average unit width as with GanttExclude visible.<br />
+<i>Since 6.3 it can be floating point number and not only integer.</i><br />
+
+<!-- GanttUnits -->
+<a name="CGanttUnits"></a>
+<div class="XML">
+   <u>chg <b>14.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttUnits</h4> <s>['d']</s>
+</div>
+Base unit time, in these units is the Gantt chart shown, it can be <b>date units</b>:<br />
+<div class="L1">
+   '<b>ms</b>' - milliseconds, "<b>ms10</b>" - 10 milliseconds, "<b>ms100</b>" - 100 milliseconds,<br />
+   '<b>s</b>' - seconds, '<b>s2</b>' - 2 seconds, '<b>s5</b>' - 5 seconds, '<b>s10</b>' - 10 seconds, '<b>s15</b>' - 15 seconds, '<b>s30</b>' - 30 seconds,<br />
+   '<b>m</b>' - minutes, '<b>m2</b>' - 2 minutes, '<b>m5</b>' - 5 minutes, '<b>m10</b>' - 10 minutes, '<b>m15</b>' - quarters of hour, '<b>m30</b>' - halves of hour,<br />
+   '<b>h</b>' - hours, '<b>h2</b>' - 2 hours, '<b>h3</b>' - 3 hours, '<b>h6</b>' - quarters of day, '<b>h8</b>' - thirds of day, '<b>h12</b>' - halves of day,<br />
+   '<b>d</b>' - days, '<b>w</b>' - weeks (starting by <a href="TypeDate.htm#FormatFirstWeekDay">FirstWeekDay</a>), '<b>w0</b>' - weeks (starting by Sunday), '<b>w1</b>' - weeks (starting by Monday), '<b>w6</b>' - weeks (starting by Saturday),<br /> 
+   '<b>M</b>' - months, '<b>M2</b>' - <i>(new 10.0)</i> two months, '<b>M3</b>' - quarters of year, '<b>M4</b>' - <i>(new 10.0)</i> four months, '<b>M6</b>' - halves of year,<br />
+   '<b>y</b>' - years, '<b>y2</b>' - 2 years, '<b>y3</b>' - 3 years, '<b>y4</b>' - 4 years, '<b>y5</b>' - 5 years, '<b>y10</b>' - 10 years, '<b>y20</b>' - 20 years, '<b>y50</b>' - 50 years <i>(2-50 year is  new 10.0)</i><br />
+</div> 
+<i>Since 6.4</i> it can be also any number for <b>number units</b>, "<b>1</b>" as base number units, but it can be for example "0.5", "2", "10", "0.2", ...<br />
+To these units are all the dates rounded for display (but not dependency errors and other computing), if set <a href="#CGanttRoundUnits">GanttRoundUnits</a>.<br />
+To these units are also rounded all box resizing and moving changes (but not the resulted dates themselves), if <u>not</u> set <a href="#CGanttDragUnits">GanttDragUnits</a>.<br />
+<i>Since 6.3 it is never used for Gantt calculations, only for display.</i><br />
+<i>Since 10.0</i> it is possible to define also any <b>custom units</b>, even with variable length, by global API function <a href="#AddGanttUnits">AddGanttUnits</a>.<br />
+<i>Prior to 14.0.10 the "w" was starting on Sunday, "w1" in Hirji started on Saturday and "w0" and "w6" did not exist.</i>
+
+<!-- GanttDragUnits -->
+<a name="CGanttDragUnits"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttDragUnits</h4> <s>[ ]</s>
+</div>
+Round units for dragging. To these units is the dragging resize or move change rounded. If not set, it is rounded to actual <a href="#CGanttUnits">GanttUnits</a>.<br />
+The values are the same as <a href="#CGanttUnits">GanttUnits</a>.<br />
+For example date "1/1/2000 10:00" moved by 60 hours for units 'd' (days), the change will be rounded to 48 hours and the result will be "1/3/2000 10:00".<br />
+
+<!-- GanttRoundUnits -->
+<a name="CGanttRoundUnits"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttRoundUnits</h4> <s>[0]</s>
+</div>
+For <b>1</b> rounds all objects in chart except Run and Points to actual GanttUnits. It is default behavior in TreeGrid prior 8.0.<br />
+For <b>0</b> it does not round any date and displays the objects exactly where they are. The minimal object width is usually 6 pixels.<br />
+
+<!-- GanttNewStart -->
+<a name="CGanttNewStart"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttNewStart</h4> <s></s>
+</div>
+The rounding start date for newly created main bars and rounding date of newly created objects (starting main bar Milestone, starting constraints, Flag, Point).<br />
+To this date part will be the new date rounded within <a href="#CGanttUnits">GanttUnits</a>.<br />
+For example for <tt>GanttUnits='d' GanttNewStart='1/1/2000 8:00'</tt> all newly created tasks will start at 8:00.<br />
+<i>Remember, for editing Date type cell you can set <a href="TypeDate.htm#CDefaultDate">DefaultDate</a> for the cell to predefine missing parts of the date.</i><br />
+
+<!-- GanttNewEnd -->
+<a name="CGanttNewEnd"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttNewEnd</h4> <s></s>
+</div>
+The rounding end date for newly created main bars and rounding date of newly created objects (ending main bar Milestone, ending constraints)<br />
+To this date part will be the new date rounded within <a href="#CGanttUnits">GanttUnits</a>.<br />
+For example for <tt>GanttUnits='d' GanttNewEnd='1/1/2000 17:00'</tt> all newly created tasks will end at 17:00.<br />
+<i>Remember, for editing Date type cell you can set <a href="TypeDate.htm#CDefaultDate">DefaultDate</a> for the cell to predefine missing parts of the date.</i><br />
+
+<!-- GanttChartRound -->
+<a name="CGanttChartRound"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttChartRound</h4> <s></s>
+</div>
+Gantt chart time rounding, to these units will be rounded the first and the last date for the whole chart, possible values are the same as <a href="#CGanttUnits">GanttUnits</a>.<br />
+The rounding never shrinks the chart width.<br /> 
+
+<!-- GanttRound -->
+<a name="CGanttRound"></a>
+<div class="DEL">
+   <u>deleted <b>6.3</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttRound</h4> <s>['m']</s>
+</div>
+Used always <a href="#CGanttUnits">GanttUnits</a>.<br />
+Base unit time rounding, to these units will be all dates rounded, possible values are the same as <a href="#CGanttUnits">GanttUnits</a>.<br />
+It can be set also to empty string to not to round. In this case the same start and due dates will produce no bar at all.<br />
+
+<!-- GanttFlowRound -->
+<a name="CGanttFlowRound"></a>
+<div class="DEL">
+   <u>deleted <b>6.3</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttFlowRound</h4> <s></s>
+</div>
+Used always <a href="#CGanttUnits">GanttUnits</a>.<br />
+Flow rounding, to these units will be all dates in <a href="GanttMain.htm#CGanttFlow">GanttFlow</a> rounded, possible values are the same as <a href="#CGanttUnits">GanttUnits</a>.<br />
+
+<!-- GanttPrintRound -->
+<a name="CGanttPrintRound"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttPrintRound</h4> <s></s>
+</div>
+Gantt chart time rounding when splitting chart to pages when printing.<br /> 
+To these units will be rounded the first and the last date for the chart parts, possible values are the same as <a href="#CGanttUnits">GanttUnits</a>.<br />
+
+<!-- PrintVisible -->
+<a name="CfgPrintVisible"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>PrintVisible</h4> <s>[0] Saved to cookies, to not load it, set <tt><b>PrintLap</b>='<b>1</b>'</tt></s>
+</div>
+<i>Cfg attribute!</i> If set, it prints only visible part of the actually scrolled / zoomed Gantt chart (horizontally).<br />
+It can be changed via print menu and is saved to cookies.<br />
+
+<!-- PrintGanttSplit -->
+<a name="CfgPrintGanttSplit"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>PrintGanttSplit</h4> <s>[1]</s>
+</div>
+If Gantt chart column can be split if it is wider than selected page by <a href="Print.htm#CfgPrintPageWidth">PrintPageWidth</a>.<br />
+
+<!-- PrintGanttSplitMin -->
+<a name="CfgPrintGanttSplitMin"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PrintGanttSplitMin</h4> <s>[100]</s>
+</div>
+Minimal size in pixels of printed part of Gantt when split by <a href="#CfgPrintGanttSplit">PrintGanttSplit</a>.<br />
+It affects the first and last page part of the printed Gantt.<br />
+
+<!-- AddGanttUnits -->
+<a name="AddGanttUnits"></a>
+<div class="API">
+   <u>new <b>10.0</b> <i>upd <b>14.1</b></i></u> <b>global func.</b> <i>void</i>
+   <h4>AddGanttUnits</h4>
+   <s>(<i>string</i> <b>units</b>, <i>int</i> <b>width</b>, <i>int</i> <b>exactwidth</b> = null)</s>
+</div>
+Adds new <a href="#CGanttUnits">GanttUnits</a> to the TreeGrid.<br /> 
+It is global function, it can (and should) be called after TreeGridcode (GridE.js file) is loaded, even before any grid is created.<br />
+The new units can be used like standard Gantt units in GanttUnits, GanttDataUnits, GanttHeader, GanttBackground and so on.<br />
+The new units <u>cannot</u> be used to define GanttExclude and Gantt calendars.<br />
+<b>units</b> is the units name that will be used, e.g. in GanttUnits.<br />
+<b>width</b> is the units length in milliseconds. For units with variable length must be set to average length.<br />
+<b>exactwidth</b> is the exact units length in milliseconds. It is usually the same as <b>width</b> or null for units with variable length.<br />
+For units with variable length (e.g. months or years) or units not starting on 1/1/1970 (e.g. weeks) or if set <tt>GMT='0'</tt> must be defined <a href="#OnIncDate">OnIncDate</a> and <a href="#OnRoundDate">OnRoundDate</a> API events.<br />
+<i>Since 14.1</i> if used <a href="Files.htm#GridEDJs">GridED.js</a> on demand script instead of GridE.js static script, the function downloads the <b>GridE.js</b> asynchronously and next add the Gantt units.<br />
+<br />
+
+Example how to define <b><span style="color:red;">fiscal year</span></b> starting on April (for different month change the two 3 in the OnRoundDate). Use it like <tt>GanttHeader1="<b>yf</b>#yyyy" GanttSize="<b>yf</b>"</tt>.<br />
+<tt>
+AddGanttUnits("yf",86400000*365.2425,null);<br />
+Grids.OnRoundDate = function(G,d,t){ if(t=="yf") { d = new Date(d); d.setUTCHours(0,0,0,0); d.setUTCFullYear(d.getUTCFullYear()-(d.getUTCMonth&lt;<b>3</b>?1:0),<b>3</b>,1); return d-0; } }<br />
+Grids.OnIncDate = function(G,d,t,c){ if(t=="yf") { d = new Date(d); d.setUTCFullYear(d.getUTCFullYear()+c); return d-0; } }<br />
+Grids.OnGetGanttHeader = function (G,val,index,date,nextdate,units,width,partial,col){ if(units=='yf') return DateToString(date,'yyyy') + " - " + DateToString(nextdate,'yyyy'); return val; }<br />
+</tt>
+
+<!-- OnRoundDate -->
+<a name="OnRoundDate"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>int</i>
+   <h4>OnRoundDate</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>date</b>, <i>string</i> <b>units</b>)</s>
+</div>
+Called to round the date to the start of the custom Gantt units. See <a href="#AddGanttUnits">AddGanttUnits</a> for example of usage.<br />
+<b>date</b> is a date in milliseconds since 1/1/1970. <b>units</b> is the custom defined units.<br />
+Return the rounded date in milliseconds since 1/1/1970 or Date object.<br /> 
+This event can be called also for standard Gantt units, so for all other units than the custom ones return null.<br />
+<i>The event is called many times, so the code in the event must be very fast.</i><br />
+
+<!-- OnIncDate -->
+<a name="OnIncDate"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>int</i>
+   <h4>OnIncDate</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>date</b>, <i>string</i> <b>units</b>, <i>int</i> <b>count</b>)</s>
+</div>
+Called to increase the date by given count of custom Gantt units. See <a href="#AddGanttUnits">AddGanttUnits</a> for example of usage.<br />
+<b>date</b> is a date in milliseconds since 1/1/1970. <b>units</b> is the custom defined units.<br />
+<b>count</b> is a count of the units to increase / decrease the date by. It can be negative. It is always integer.<br />
+The increased date must <u>not</u> be rounded, it should preserve all other parts (e.g. increasing 5/6/2000 10:15 by 10 years will be 5/6/2010 10:15)<br />
+Return the changed date in milliseconds since 1/1/1970 or Date object.<br /> 
+This event can be called also for standard Gantt units, so for all other units than the custom ones return null.<br />
+<i>The event is called many times, so the code in the event must be very fast.</i><br />
+
+<!---------------------------------------------------------  Chart size limits ------------------------------------------------->
+<a name="Size"></a>
+<h2>Chart size limits</h2>
+
+<!-- GanttSize -->
+<a name="CGanttSize"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttSize</h4> <s></s>
+</div>
+Limits the size of the chart to this unit. The values are the same as the <a href="#CGanttUnits">GanttUnits</a>.<br />
+For example <tt>GanttSize='M'</tt> shows always Gantt chart for one month.<br />
+This value can be used to show only part of the chart or for paging in Gantt chart using <b>side pager</b> <tt><a href="Pager.htm#Gantt">Type='Gantt'</a></tt>.<br />
+If set to <b>empty string</b>, it tries to show the whole chart. Also moving Gantt object outside the visible range will resize the visible range. <i>It is default behavior in grid prior 9.0.</i><br />
+If set to <b>0</b>, it tries to show the whole chart, moving Gantt object outside the visible range never resizes the visible range.<br />
+
+<!-- GanttSizeLeft -->
+<a name="CGanttSizeLeft"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttSizeLeft</h4> <s></s>
+</div>
+Count of GanttUnits added before <a href="#CGanttSize">GanttSize</a> range, to show it from previous range.<br />
+
+<!-- GanttSizeRight -->
+<a name="CGanttSizeRight"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttSizeRight</h4> <s></s>
+</div>
+Count of GanttUnits added after <a href="#CGanttSize">GanttSize</a> range, to show it from next range.<br />
+
+<!-- GanttSizeFit -->
+<a name="CGanttSizeFit"></a>
+<div class="XML">
+   <u>new <b>9.2</b> <i>upd <b>12.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttSizeFit</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, it resizes / shrinks the Gantt chart for the selected GanttSize to the space for the Gantt chart.<br />
+<i>(Since 12.0)</i> If set to <b>2</b>, it only resizes, but does not shrink the Gantt chart.<br />
+It calculates and modifies <a href="#CGanttWidth">GanttWidth</a> attribute only.<br />
+<i>(Since 10.0)</i> If set for <tt>GanttSize=""</tt> or <tt>"0"</tt>, it shrinks the chart to show only the Gantt objects also on zoom change.<br />
+<i>Since 12.0</i> its behavior is affected by <a href="#CGanttZoomFit">GanttZoomFit</a> attribute.<br />
+
+<!-- GanttFitVisible -->
+<a name="CGanttFitVisible"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttFitVisible</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, only visible rows are used to specify Gantt width (for <tt>GanttSize='0'</tt> or <tt>GanttSize=''</tt> and fit width for <tt>GanttSizeFit='1'</tt> or <tt>GanttZoom=''</tt> or action ZoomFit).<br />
+<div class="L1">If set to <b>1</b>, it also resizes Gantt after applying filter. But <u>not</u> after calling API ShowRow / HideRow.</div>
+If set to <b>3</b>, it behaves like <b>1</b> and also ignores GanttBase and GanttFinish when calculating GanttWidth.<br />
+
+<!-- GanttChartMinStart -->
+<a name="CGanttChartMinStart"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttChartMinStart</h4> <s></s>
+</div>
+All dates before will never be displayed in the chart. It can be date string or integer.<br />
+If set GanttChartMinStart and GanttChartMaxStart to the same value, the chart will always start here, except width limits.<br />
+Replaced GanttMin<br />
+
+<!-- GanttChartMaxStart -->
+<a name="CGanttChartMaxStart"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttChartMaxStart</h4> <s></s>
+</div>
+The chart will always start at least at this date or before. It can be date string or integer.<br />
+
+<!-- GanttChartMaxEnd -->
+<a name="CGanttChartMaxEnd"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttChartMaxEnd</h4> <s></s>
+</div>
+All dates after will never be displayed in the chart. It can be date string or integer.<br />
+If set GanttChartMinEnd and GanttChartMaxEnd to the same value, the chart will always end here, except width limits.<br />
+Replaced GanttMax<br />
+
+<!-- GanttChartMinEnd -->
+<a name="CGanttChartMinEnd"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttChartMinEnd</h4> <s></s>
+</div>
+The chart will always end at least at this date or after. It can be date string or integer.<br />
+
+<!-- GanttMin -->
+<a name="CGanttMin"></a>
+<div class="DEL">
+   <u>renamed <b>6.4</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttMin</h4> <s></s>
+</div>
+Replaced by GanttChartMinStart<br />
+
+<!-- GanttMax -->
+<a name="GanttMax"></a>
+<div class="DEL">
+   <u>renamed <b>6.4</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttMax</h4> <s></s>
+</div>
+Replaced by GanttChartMaxEnd<br />
+
+<!-- GanttLeft -->
+<a name="CGanttLeft"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttLeft</h4> <s>[0]</s>
+</div>
+A count of empty base units that will be displayed before the whole Gantt chart<br />
+If set GanttChartMinStart, objects cannot be moved or resized before GanttChartMinStart+GanttLeft*GanttUnits.<br />
+
+<!-- GanttRight -->
+<a name="CGanttRight"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRight</h4> <s>[0]</s>
+</div>
+A count of empty base units that will be displayed after the whole Gantt chart<br />
+If set GanttChartMaxEnd, objects cannot be moved or resized after GanttChartMaxEnd-GanttRight*GanttUnits.<br />
+
+<!-- MinWidth -->
+<a name="CMinWidth"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>int</i>
+   <h4>MinWidth</h4> <s></s>
+</div>
+Minimal width of the column in pixels.<br />
+<i>It can be automatically decreased, if the whole Gantt in actual zoom between GanttChartMinStart and GanttChartMaxEnd is smaller than the MinWidth.</i><br />
+
+<!-- MaxWidth -->
+<a name="CMaxWidth"></a>
+<div class="XML">
+   <u>new <b>6.3</b> <i>upd <b>10.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>MaxWidth</h4> <s>[10000/1193049]</s>
+</div>
+Maximal width of the column in pixels.<br />
+If the zoom level is too high and the Gantt chart reaches this limit, there is displayed only part of the chart and the rest can be displayed only by unzoom.<br />
+<i>Maximal width for IE7 and IE8/9 quirks mode is 178957 pixels, except if used <a href="#CGanttPaging">GanttPaging</a>. Old versions of Opera were limited by 23000 pixels.</i><br />
+<i>Maximal width for IE in <a href="#CGanttPaging">GanttPaging</a> is 1193049 for IE8 strict mode, 1342177 for IE8 quirks mode and 1533918 for other IE versions. Other browsers are not limited.</i><br />
+The MaxWidth can be automatically overflown if one unit of <a href="#CGanttChartRound">GanttChartRound</a> x <a href="#CGanttWidth">GanttWidth</a> is wider than the MaxWidth (except the maximums in IE browsers).<br />
+Default MaxWidth is 10000 except for <a href="#CGanttPaging">GanttPaging</a> that is 1193049 <i>(since 10.0)</i>.<br />
+
+<!---------------------------------------------------------  Zoom selection ------------------------------------------------->
+<a name="ZoomList"></a>
+<h2>Zoom selection</h2>
+
+Attributes to specify and change zoom level for whole Gantt chart column.<br />
+<br />
+
+The individual zoom levels can be defined globally by root &lt;<b>Zoom</b> tag  and individual &lt;<b>Z</b> tags <i>(since 6.4)</i> or for the specified Gantt column by <b>GanttZoomList</b>.<br />
+Example:<br />
+<tt>
+&lt;Cols><br />
+<div class="L1">&lt;C ... GanttZoom="weeks" ... /> ...</div>
+&lt;/Cols><br />
+&lt;Zoom><br />
+<div class="L1">
+   &lt;Z Name='weeks' GanttUnits='w' GanttChartRound='M' GanttHeader1='w#%d'/><br />
+   &lt;Z Name='days'  GanttUnits='d' GanttChartRound='w' GanttHeader1='d#%d'/><br />
+   &lt;Z Name='hours' GanttUnits='h' GanttChartRound='d' GanttHeader1='h#HH:'/></br>
+</div>
+&lt;/Zoom><br />
+</tt>
+<br />
+OR<br />
+<br />
+<tt>
+&lt;Cols>
+<div class="L1">&lt;C ... GanttZoom="weeks" GanttZoomList="[</td></tr>
+   { Name:'weeks',GanttUnits:'w',GanttChartRound:'M',GanttHeader1:'w#%d' },<br />
+   { Name:'days',GanttUnits:'d',GanttChartRound:'w',GanttHeader1:'d#%d' },<br />
+   { Name:'hours',GanttUnits:'h',GanttChartRound:'d',GanttHeader1:'h#HH:' }<br />
+   ]" ... /> ...<br />
+</div>
+&lt;/Cols><br />
+</tt>
+
+<!-- <Z> -->
+<a name="ZoomZ"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Zoom></b> <i></i>
+   <h4>&lt;Z></h4> <s></s>
+</div>
+&lt;Z> tag defines individual one Gantt zoom level.<br />
+It can be placed in root &lt;Zoom> tag.<br />
+It can have set its <b>Name</b> attribute to display in SelectGanttZoom Type dialog and to access by GanttZoom attribute.<br />
+Every &lt;Z> tag can contain individual settings for Gantt attributes from <a href="#Zoom">Zoom options</a>, <a href="GanttDisplay.htm#Header">Header</a>, <a href="GanttDisplay.htm#Background">Background</a>.<br />
+After the zoom level is selected, all the attributes are set to the Gantt column and Gantt chart is recalculated.<br />
+To use smooth zoom in / zoom out the list of &lt;Z> tags inside &lt;Zoom> must be sorted according to zoom size, from smallest zoom size up.<br />
+Zoom size is specified by <a href="#CGanttUnits">GanttUnits</a> and <a href="#CGanttWidth">GanttWidth</a> attributes.<br />
+It is possible to set different zoom settings for case the <a href="GanttCalendars.htm#CGanttExclude">GanttExclude</a> is active by items with suffix <b>Ex</b>, like <tt>... GanttWidth:18,GanttWidth<b>Ex</b>:22 ...</tt><br />
+
+<!-- Name -->
+<a name="ZName"></a>
+<div class="XML">
+   <u>new <b>6.4</b> <i>upd <b>12.0</b></i></u> <b>&lt;Z></b> <i>string</i>
+   <h4>Name</h4> <s></s>
+</div>
+Name of the zoom level. It will be used by GanttZoom attribute, in the SelectGanttZoom combo and in GanttMenu zoom items.<br />
+<i>(Since 12.0)</i> The zoom Name can be replaced in SelectGanttZoom and in GanttMenu by localized text in 
+&lt;Lang>&lt;Zoom name1='text1' name2='text2' ... />&lt;/Lang><br />
+
+<!-- GanttZoomList -->
+<a name="CGanttZoomList"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttZoomList</h4> <s></s>
+</div>
+A list of predefined zoom levels in JSON format. It contains an array of individual objects as zoom levels.<br /> 
+<i>It can be used instead of global &lt;Zoom> tag when there are more Gantt columns in grid, or if JSON format is preferred by the developer.</i><br />
+Every object has set its <b>Name</b> attribute to display in SelectGanttZoom Type dialog.<br />
+Every object can contain individual settings of attributes from <a href="#Zoom">Zoom options</a>, <a href="GanttDisplay.htm#Header">Header</a>, <a href="GanttDisplay.htm#Background">Background</a>.<br />
+After the zoom level is selected, all the attributes are set to the Gantt column and Gantt chart is recalculated.<br />
+To use smooth zoom in / zoom out the list must be sorted according to zoom size, from smallest zoom size up.<br />
+Zoom size is specified by <a href="#CGanttUnits">GanttUnits</a> and <a href="#CGanttWidth">GanttWidth</a> attributes.<br />
+It is possible to set different zoom settings for case the <a href="GanttCompute.htm#CGanttExclude">GanttExclude</a> is active by items with suffix <b>Ex</b>, like <tt>... GanttWidth:18,GanttWidth<b>Ex</b>:22 ...</tt><br />
+
+<!-- GanttZoom -->
+<a name="CGanttZoom"></a>
+<div class="XML">
+   <u>new <b>6.3</b> chg <b>9.1</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttZoom</h4> <s>Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='<b>1</b>'/></tt></s>
+</div>
+Name of the actually selected or predefined item from GanttZoomList.<br />
+<i>(Since 9.1)</i> If set to empty string, it fits the zoom to fill the whole available width, it calls action <a href="#ActionsZoomFit">ZoomFit</a>.<br />
+
+<!-- GanttZoomDate -->
+<a name="CGanttZoomDate"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttZoomDate</h4> <s>[ ]</s>
+</div>
+Date to scroll to in Gantt for given zoom.<br />
+Can be date string in English format or count of milliseconds since 1/1/1970.<br />
+
+<!-- GanttZoomDateAlign -->
+<a name="CGanttZoomDateAlign"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttZoomDateAlign</h4> <s>["Center"]</s>
+</div>
+Where the <a href="#CGanttZoomDate">GanttZoomDate</a> will be shown, can be <b>Left</b>, <b>Center</b>, <b>Right</b>. Case insensitive.<br />
+
+<!-- GanttSmoothZoom -->
+<a name="CGanttSmoothZoom"></a>
+<div class="XML">
+   <u>new <b>6.3</b> <i>upd <b>13.2</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttSmoothZoom</h4> <s>[1]</s>
+</div>
+If the chosen zoom level unit width (<a href="#CGanttWidth">GanttWidth</a>) attribute can be increased to display exactly the selected range.<br />
+For zoom by dragging.<br />
+<i>(Since 10.0)</i> If set to <b>2</b> it increases the GanttWidth except in the last zoom level and does not shrink it in the first zoom.<br />
+<i>(Since 13.2)</i> If set to <b>3</b> it works as 2, but also for zoom fit.<br />
+
+<!-- GanttZoomChange -->
+<a name="CGanttZoomChange"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttZoomChange</h4> <s>[0]</s>
+</div>
+How will behave changing zoom level.<br />
+<b>0</b> - Actual view size will be preserved for <tt>GanttSize=""</tt> and <tt>"0"</tt><br />
+<b>1</b> - Actual view size will be reset for <tt>GanttSize=""</tt> and <tt>"0"</tt><br />
+
+<!-- GanttZoomUndo -->
+<a name="CGanttZoomUndo"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttZoomUndo</h4> <s>[1]</s>
+</div>
+Which zoom changes will be added to undo. It does <b>not</b> affect zoom changes done by pager, see Pager <a href="Pager.html#PZoomUndo">ZoomUndo</a><br />
+<b>0</b> - No zoom change is added to zoom undo<br />
+<b>1</b> - Zoom changes done mouse, zooming to chosen date, date ranges and zoom fit are added zoom undo<br />
+<b>2</b> - All zoom changes are added to zoom undo, including zoom in, zoom out and simple change zoom.<br />
+
+<!-- GanttZoomFit -->
+<a name="CGanttZoomFit"></a>
+<div class="XML">
+   <u>new <b>10.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttZoomFit</h4> <s>[0]</s>
+</div>
+Controls action <a href="#ActionsZoomFit">ZoomFit</a> and <i>since 12.0</i> also <a href="#CGanttSizeFit">GanttSizeFit</a>. Bit array.. Bit array.<br />
+<table>
+<tr><td style="width:120px;">1. + 2. bit, &3</td><td><b>0</b> - fits the Gantt into actual width of the column section where the Gantt column is or to <a href="CGanttZoomFitWidth">GanttZoomFitWidth</a>.</td></tr>
+<tr><td></td><td><b>1</b> - fits the Gantt into maximal width of the column section where the Gantt column is. See <a href="GridSize.htm#Widths">Widths of individual column sections</a>.</td></tr> 
+<tr><td></td><td><b>2</b> - fits the Gantt into minimal width of the column section where the Gantt column is. See <a href="GridSize.htm#Widths">Widths of individual column sections</a>.</td></tr>
+<tr><td></td><td><b>3</b> - reserved</td></tr>
+<tr><td><b>3</b>. bit, &4</td><td>Reduces the section available width by other column widths in the section, if any. 4 replaces <a href="#ActionsZoomFitAll">ZoomFitAll</a> action.</td></tr>
+<tr><td><b>4</b>. bit, &8</td><td>Ignores side texts set by <tt><a href="GanttMain.htm#CGanttShowHtml">GanttShowHtml</a> = 3</tt> and <tt><a href="GanttRun.htm#CGanttRunShowHtml">GanttRunShowHtml</a> = 3</tt>.</td></tr>
+</table>
+
+<!-- GanttZoomFitWidth -->
+<a name="CGanttZoomFitWidth"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttZoomFitWidth</h4> <s>[0]</s>
+</div>
+Fixed width to fit the Gantt by <a href="#CGanttZoomFit">GanttZoomFit</a>. Useful if set <a href="GridSize.htm#CfgNoVScroll">NoVScroll</a> or <a href="GridSize.htm#CfgMaxVScroll">MaxVScroll</a>.
+
+<!-- Type -->
+<a name="SpaceCellType"></a>
+<a name="SelectGanttZoom"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>Type</h4> <s>Type="<h4>SelectGanttZoom</h4>"</s>
+</div>
+Special combo box to select zoom level defined by <a href="#CGanttZoomList">GanttZoomList</a>. It displayed and changes <a href="#CGanttZoom">GanttZoom</a> attribute.<br />
+It presets these cell attribute: <tt>Type="Html" Button="Defaults" Defaults=<i>GanttZoomList</i> OnChange=<i>change GanttZoom</i></tt><br /> 
+
+<!-- Sync -->
+<a name="CfgSync"></a>
+<div class="XML">
+   <u>new <b>8.1</b> <i>upd <b>11.0</b></i></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>Sync</h4> <s></s>
+</div>
+What settings to synchronize among selected grids - among all grids with the same <a href="MasterDetail.htm#CfgSyncId">SyncId</a> value.<br />
+Comma separated list of keywords, case insensitive.<br />
+<b>All</b> (substitution for Sort,Filter,Group,Search,Cols,Style), <b>Sort</b>, <b>Filter</b>, <b>Group</b>, <b>Search</b>, <b>Cols</b> (size, visibility and position),<br /> 
+<b>Sec</b> (<i>new 9.3</i>, width of column section), <b>Horz</b> (horizontal scroll), <b>Horz0</b>, <b>Horz1</b>, <b>Horz2</b> (<i>new 11.0</i>, horizontal scroll of individual section, 0 left, 1 mid, 2 right), <b>Vert</b> (vertical scroll),<br />
+<b>Style</b> (<i>new 9.0</i>, CSS style), <b>Zoom</b> (<i>new 9.3</i>, Gantt zoom level and width)<br />
+For synchronizing Gantt charts by Zoom the Gantt should have the same width by setting the same GanttSize. All the grids should have the same Sync value to be synchronized in both ways.<br />
+For more information see <a href="MasterDetail.htm#Synchronizing">Synchronizing grids</a>.<br />
+
+<!-- ChangeZoom -->
+<a name="ChangeZoom"></a>
+<div class="API">
+   <u>new <b>6.3</b></u> <b>API method</b> <i>bool</i>
+   <h4>ChangeZoom</h4>
+   <s>(<i>string</i> <b>Name</b>)</s>
+</div>
+Changes actual zoom level (<a href="#CGanttZoom">GanttZoom</a>) to item Name from <a href="#CGanttZoomList">GanttZoomList</a> and refreshes Gantt chart.<br />
+Returns true for success, false for error.<br />
+
+<!-- ZoomTo -->
+<a name="ZoomTo"></a>
+<div class="API">
+   <u>new <b>6.3</b> <i>upd <b>10.0</b></i></u> <b>API method</b> <i>bool</i>
+   <h4>ZoomTo</h4>
+   <s>(<i>Date</i> <b>start</b>, <i>Date</i> <b>end</b>, <i>int</i> <b>width</b> = null)</s>
+</div>
+Selects appropriate zoom to display date range from <b>start</b> to <b>end</b> to be wide <b>with</b> pixels.<br />
+If the <b>width</b> is null, it is the maximal visible space available for Gantt chart within actual Main tag.<br />
+If required, it also scrolls the Gantt column to show the given range.<br />
+<i>(Since 10.0)</i> The width can be set negative to use null width increased by this number of pixels.<br />
+Returns true for success, false for error.<br />
+
+<!-- ScrollToDate -->
+<a name="ScrollToDate"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ScrollToDate</h4>
+   <s>(<i>Date</i> <b>date</b>, <i>string</i> <b>align</b> = "Center")</s>
+</div>
+Scrolls to given date. <b>align</b> can be "<b>Left</b>", "<b>Center</b>", "<b>Right</b>". Case insensitive.<br />
+If the date is not displayed because of actual zoom level, it shows the appropriate part of the chart, but never changes zoom level.<br />
+
+<!-- ExtendGantt -->
+<a name="ExtendGantt"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ExtendGantt</h4>
+   <s>(<i>int</i> <b>count</b>, <i>string</i> <b>units</b>)</s>
+</div>
+Extends Gantt chart by given <b>count</b> of <b>units</b>. If <b>count</b> is negative, extends left side, otherwise extends right side.<br />
+
+<!-- CanZoomIn -->
+<a name="CanZoomIn"></a>
+<div class="API">
+   <u>new <b>6.3</b></u> <b>API method</b> <i>bool</i>
+   <h4>CanZoomIn</h4>
+   <s>( )</s>
+</div>
+Returns true if the actual <a href="#CGanttZoom">GanttZoom</a> value is <u>not</u> the last from <a href="#CGanttZoomList">GanttZoomList</a><br />
+
+<!-- CanZoomOut -->
+<a name="CanZoomOut"></a>
+<div class="API">
+   <u>new <b>6.3</b></u> <b>API method</b> <i>bool</i>
+   <h4>CanZoomOut</h4>
+   <s>( )</s>
+</div>
+Returns true if the actual <a href="#CGanttZoom">GanttZoom</a> value is <u>not</u> the last from <a href="#CGanttZoomList">GanttZoomList</a><br />
+
+<!-- OnZoom -->
+<a name="OnZoom"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnZoom</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>zoom</b>, <i>int</i> <b>FirstDate</b>, <i>int</i> <b>LastDate</b>)</s>
+</div>
+Called after zoom level in chart changes or when the first or last displayed date changes (Gantt is scrolled to another window).<br />
+The zoom is name of actual zoom level.<br />
+The <b>FirstDate</b> is the first (left) date (in milliseconds) that is displayed in chart (regardless on scroll).<br />
+The <b>LastDate</b> is the last (right) date (in milliseconds) that is displayed in chart (regardless on scroll) <b>plus 1</b>.<br />
+
+<!-- GetZoomList -->
+<a name="GetZoomList"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>object[ ]</i>
+   <h4>GetZoomList</h4>
+   <s>(<i>string</i> <b>col</b>)</s>
+</div>
+Returns actual zoom levels list defined in &lt;<a href="#ZoomZ">Zoom</a>> tag or <a href="#CGanttZoomList">GanttZoomList</a> attribute.<br />
+Returns JavaScript Array of the individual zoom level objects (&lt;Z> tags).<br />
+It is possible to modify the individual zoom level attributes or even add or delete the individual zoom level objects.<br />
+The changes are shown only after change of zoom level, not in actual zoom level. To change actual zoom level settings, modify them directly in Gantt column and refresh the Gantt.<br />
+
+<!-- Action ZoomGantt -->
+<a name="ActionsZoomGantt"></a>
+<div class="ACT">
+   <u>new <b>6.3</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ZoomGantt</h4>
+   <s>Attached to <b>OnDragGanttHeader</b> event, can be attached also to <b>OnDragGantt</b></s>
+</div>
+Provides zoom by dragging functionality.<br />
+A user selects a range by mouse dragging to be zoomed into.<br />
+
+<!-- Action PinchZoomGantt -->
+<a name="ActionsPinchZoomGantt"></a>
+<div class="ACT">
+   <u>new <b>12.1</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PinchZoomGantt</h4>
+   <s>Attached to <b>OnDrag2GanttHeader</b> event, can be attached also to <b>OnDrag2Gantt</b></s>
+</div>
+Zooms or unzooms Gantt chart by pinch gesture on touch screen.
+
+<!-- Action UndoZoom -->
+<a name="ActionsUndoZoom"></a>
+<div class="ACT">
+   <u>new <b>6.3</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>UndoZoom</h4>
+   <s>Attached to <b>OnRightClickGanttHeader</b> event</s>
+</div>
+Switches back to previously chosen zoom level by <a href="#ActionsZoomGantt">ZoomGantt</a> action or <a href="#ZoomTo">ZoomTo</a> method.<br /> 
+It can be called more times to go back in the queue.<br />
+
+<!-- Action ZoomIn -->
+<a name="ActionsZoomIn"></a>
+<div class="ACT">
+   <u>new <b>6.3</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ZoomIn</h4>
+   <s>Attached to <b>OnClickGanttHeader</b> event</s>
+</div>
+Chooses next zoom level from <a href="#CGanttZoomList">GanttZoomList</a>.<br />
+
+<!-- Action ZoomOut -->
+<a name="ActionsZoomOut"></a>
+<div class="ACT">
+   <u>new <b>6.3</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ZoomOut</h4>
+   <s>Attached to <b>OnRightClickGanttHeader</b> event</s>
+</div>
+Chooses previous zoom level from <a href="#CGanttZoomList">GanttZoomList</a>.<br />
+
+<!-- Action ZoomFit -->
+<a name="ActionsZoomFit"></a>
+<div class="ACT">
+   <u>new <b>6.3</b> <i>upd <b>10.0</b></i></u> <b>&lt;Actions></b> <i></i>
+   <h4>ZoomFit</h4>
+   <s>Not attached to any event</s>
+</div>
+Chooses zoom level to show the whole Gantt chart without horizontal scrolling.<br />
+<i>(Since 9.1)</i> It is also called on start when set <tt>GanttZoom=""</tt>.<br />
+<i>(Since 10.0)</i> Its functionality is controlled by <a href="#CGanttZoomFit">GanttZoomFit</a> attribute.<br /> 
+
+<!-- Action ZoomFitAll -->
+<a name="ActionsZoomFitAll"></a>
+<div class="DEL">
+   <u>new <b>6.3</b> deleted <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ZoomFitAll</h4>
+   <s>Not attached to any event</s>
+</div>
+Replaced by <a href="#ActionsZoomFit">ZoomFit</a> and <tt><a href="#CGanttZoomFit">GanttZoomFit</a> = 4</tt>.<br />
+
+<!-- Action ZoomHeader -->
+<a name="ActionsZoomHeader"></a>
+<div class="ACT">
+   <u>new <b>6.3</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ZoomHeader</h4>
+   <s>Attached to OnClickGanttHeader event</s>
+</div>
+Zooms to the exact header unit under mouse cursor if the cursor is above header.<br />
+
+<!-- Action ZoomBar -->
+<a name="ActionsZoomBar"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ZoomBar</h4>
+   <s>Not attached to any event</s>
+</div>
+Zooms to fit the actual bar (main, run)<br />
+
+<!-- Action ZoomAll -->
+<a name="ActionsZoomAll"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ZoomAll</h4>
+   <s>Not attached to any event</s>
+</div>
+Zooms to fit all the objects in the Gantt cell (main, run, flags, points, constraints)<br />
+
+<!---------------------------------------------------------  Paging in Gantt ------------------------------------------------->
+<a name="Paging"></a>
+<h2>Paging in Gantt</h2>
+
+<h5>Vertical paging (rows)</h5>
+Rows in TreeGrid with Gantt chart can be paged vertically like in normal tree / grid.<br />
+It can use <a href="Paging.htm">root rows paging</a>, <a href="TreePaging.htm">child paging</a> and <a href="TreePaging.htm#ChildParts">child parts</a>.<br />
+Also <a href="PagingServer.htm">server paging</a> and <a href="PagingServer.htm#ChildPaging">server child paging</a> is supported for Gantt chart grids with few restrictions. Dependencies cannot be linked between tasks on different pages or child pages. The Gantt size cannot be calculated according to its content.<br />
+
+<h5>Horizontal paging by side pager</h5>
+It is possible to set the Gantt chart to show only part of its range and switch among the parts by API or by one or more <b>side pager</b> <tt><a href="Pager.htm#Gantt">Type='Gantt'</a></tt>.<br />
+
+<h5>Horizontal paging by scroll</h5>
+Render only visible (due horizontal scroll) part of Gantt chart.<br />
+
+<!-- GanttPaging -->
+<a name="CGanttPaging"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttPaging</h4> <s>[0]</s>
+</div>
+If set, permits paging in Gantt by horizontal scroll.<br />
+
+<!-- GanttPagingFixed -->
+<a name="CGanttPagingFixed"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttPagingFixed</h4> <s>[6]</s>
+</div>
+What will be paged in Gantt chart, bit mask. Used only if set <tt><a href="#CGanttPaging">GanttPaging</a>='1'</tt><br />
+If the bit is set to <b>0</b>, the part is rendered for the whole Gantt chart. It will slow the Gantt initial rendering. Also showing too many items can slow down the grid responses or even throw JS errors, especially in IE.<br /> 
+If the bit is set to <b>1</b>, the part is rendered only to Gantt page and is re-rendered for every page change. It can slow down the page rendering.<br />
+The variable rows are paged always. By default are paged Foot rows and Background.<br />
+<table>
+<tr><td style="width:120px;">1. bit (&<b>1</b>)</td><td>Head rows with Gantt header. If set to 0, the individual header rows can be paged by <a href="#CGanttHeaderPaging1">GanttHeaderPaging1</a>...X attributes.</td></tr>
+<tr><td></td><td>It is recommended to display the first header with large units fully and next headers with small units paged.</td></tr>
+<tr><td>2. bit (&<b>2</b>)</td><td>Foot rows. <i>If the Gantt header is also in Foot rows, both the Head and Foot bits (&3) must be set the same.</i></td></tr>
+<tr><td>3. bit (&<b>4</b>)</td><td>GanttBackground in variable rows. Background in fixed rows is controlled by the bits above.</td></tr>
+</table>
+
+<!-- GanttHeaderPaging1 -->
+<a name="CGanttHeaderPaging1"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttHeaderPaging1<i>, ...,</i> GanttHeaderPagingX</h4> <s>[0]</s>
+</div>
+If the header will be paged.<br />
+Used only if <u>not</u> set the first bit of <a href="#CGanttPagingFixed">GanttPagingFixed</a>.<br />
+Useful to display fully only header(s) with large units to identify the position and the rest of headers (with small) display only inside actual page.<br />
+
+<!-- GanttPageWidth -->
+<a name="CGanttPageWidth"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>type</i>
+   <h4>GanttPageWidth</h4> <s>["200%"]</s>
+</div>
+Width of the Gantt page in pixels (e.g. "2000") or in percent (e.g. "200%").<br /> 
+The percentage is of width of the actual visible columns section (the section with the horizontal scrollbar). It should be equal to or greater than 100%.<br />
+
+<!-- GanttPageInit -->
+<a name="CGanttPageInit"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttPageInit</h4> <s>[2000]</s>
+</div>
+Initial width of the Gantt area to calculate <a href="#CGanttPageWidth">GanttPageWidth</a> when the grid is not rendered yet. In pixels.<br /> 
+Can be set to 0 to render the Gantt page after the grid is rendered.<br />
+
+<!-- MaxWidth -->
+<a name="CMaxWidth"></a>
+<div class="XML">
+   <u>new <b>6.3</b> <i>upd <b>10.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>MaxWidth</h4> <s>[10000/1193049]</s>
+</div>
+Maximal width of the column in pixels.<br />
+If the zoom level is too high and the Gantt chart reaches this limit, there is displayed only part of the chart and the rest can be displayed only by unzoom.<br />
+<i>Maximal width for IE7 and IE8/9 quirks mode is 178957 pixels, except if used <a href="#CGanttPaging">GanttPaging</a>. Old versions of Opera were limited by 23000 pixels.</i><br />
+<i>Maximal width for IE in <a href="#CGanttPaging">GanttPaging</a> is 1193049 for IE8 strict mode, 1342177 of IE8 quirks mode and 1533918 of other IE versions. Other browsers are not limited.</i><br />
+The MaxWidth can be automatically overflown if one unit of <a href="#CGanttChartRound">GanttChartRound</a> x <a href="#CGanttWidth">GanttWidth</a> is wider than the MaxWidth (except the maximums in IE browsers).<br />
+Default MaxWidth is 10000 except for <a href="#CGanttPaging">GanttPaging</a> that is 1193049 <i>(since 10.0)</i>.<br />
+
+<!-- OnGanttPage -->
+<a name="OnGanttPage"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>type</i>
+   <h4>OnGanttPage</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>col</b>, <i>int[]</i> <b>size</b>, <i>bool</i> <b>zoom</b>, <i>TRow</i> <b>dragrow</b>)</s>
+</div>
+Called before new Gantt page is rendered.<br />
+<b>size</b> is an array [<b>left</b>, <b>width</b>, <b>dragleft</b>, <b>dragwidth</b>]:<br />
+<div class="L1"><b>left</b> is position of the Gantt page in pixels, the <b>width</b> is width of the Gantt page in pixels.</div>
+<div class="L2">Use <a href="GanttAPI.htm#GetGanttDate">GetGanttDate</a> API method to convert the <b>left</b> or <b>left</b>+<b>width</b> to dates.</div>
+<div class="L1"><b>dragleft</b> and <b>dragwidth</b> are the position and width of Gantt page during dragging Gantt object.</div>
+<div class="L2">Use if changing data in the event for <b><i>server paging</i></b>. At least the <b>dragrow</b> should contain all data from this window and not from <b>left</b>, <b>width</b> window.</div>
+<div class="L2">If no dragging, they are the same as <b>left</b>, <b>width</b>. Use <a href="GanttAPI.htm#GetGanttDate">GetGanttDate</a> API method to convert the <b>dragleft</b> or <b>dragleft</b>+<b>dragwidth</b> to dates.</div>
+It is possible to change the <b>left</b> and <b>width</b> values to render different page. The left and width are values as returned from <a href="#UpdateGanttPage">UpdateGanttPage</a>.<br />
+It is possible to return <b>true</b> to not render the Gantt page now, e.g. for asynchronous downloading data. In this case <tt><a href="#RenderGanttPage">RenderGanttPage</a>(col, size[0], size[1])</tt> must be called later.<br />
+It is possible to return <b>false</b> to always render the Gantt page now, even if set <tt><b>zoom</b> = true</tt>.<br />
+Return <b>null</b> or <b>zoom</b> to render the Gantt page only if set <tt><b>zoom</b> = false</tt>.<br />
+<b>zoom</b> is true if called on start or on zoom change, actual left scroll is always 0 in this case.<br />
+<br />
+
+It is possible to change the source Gantt data in the OnGanttPage to simulate <b><i>server paging</i></b>.<br /> 
+If set <b>dragrow</b>, you cannot delete old data from the Gantt by deleting the <b>dragrow</b>, because it contains source data being dragged. You have to add the new data to the <b>dragrow</b> cells instead.<br />
+<b>dragrow</b> is set to source row when the OnGanttPage is called during dragging in Gantt chart.<br />
+
+<!-- RenderGanttPage -->
+<a name="RenderGanttPage"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>void</i>
+   <h4>RenderGanttPage</h4>
+   <s>(<i>string</i> <b>col</b>, <i>int</i> <b>left</b>, <i>int</i> <b>width</b>)</s>
+</div>
+Renders actual Gantt page on given position.<br />
+Call it when OnGanttPage returned true or called <a href="#UpdateGanttPage">UpdateGanttPage</a>.<br />
+ 
+<!-- UpdateGanttPage -->
+<a name="UpdateGanttPage"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>inf[ ]</i>
+   <h4>UpdateGanttPage</h4>
+   <s>(<i>string</i> <b>col</b>)</s>
+</div>
+Calculates new Gantt page according to actual scroll position and returns [left,width] as position and width in pixels.<br />
+It is called automatically after horizontal scroll is changed.<br />
+You can call it to update the Gantt page immediately. There must be called also <a href="#RenderGanttPage">RenderGanttPage</a> after the UpdateGanttPage.<br />
+
+</div>
+</body>
+</html>

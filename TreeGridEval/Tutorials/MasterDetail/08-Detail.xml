@@ -1,0 +1,26 @@
+<Grid>
+   <Cfg Sync='All' SyncId='DetailNested' CfgId='DetailNested' SyncStyle='1' MainCol='ADDRESS' Undo='1' FullId='1' NumberId='1' IdChars='0123456789' Style='White' Size='Low'/>
+   <Cfg AddFocusColEmpty='ADDRESS'/> <!-- Automatically focuses this column when added new row from master grid -->
+   <Cfg CopyPasteTree='3' CopyCols='2'/> <!-- Copies & pastes rows with children and all columns, including hidden, because of data in detail grids -->
+   <Def>
+
+      <!--  The default row for all detail grid parents -->
+      <D Name='DETAILDETAIL' DetailCol='ADDRESS' DetailLayout='08-DetailDetail.xml' Spanned='1' ADDRESSSpan='2' CanExport='2'
+         Expanded='0' CanExpand='0' CanFilter='0' CDef='DETAILDETAILROW' AcceptDef='DETAILDETAILROW'>
+         <I REMARK='new remark'/>
+      </D>
+
+      <!-- The default row for rows in detail grid -->
+      <D Name='DETAILDETAILROW' CDef='' AcceptDef=''/>
+   </Def>
+   <Cols>
+      <C Name='id' Type='Text' Width='60' Format='||||\$|g|-' CanCopyPaste='0'/>
+      <C Name='ADDRESS' Type='Lines' VarHeight='2' RelWidth='1' MinWidth='100'/>
+      <C Name='NOTE' Type='Lines' Width='100' VarHeight='2'/>
+      <C Name='REMARK' Type='Lines' Visible='0' CanHide='0'/> <!-- Detail grid column, defined here for Copy & Paste -->
+   </Cols>
+   <Header id='ID' MenuName='Header'/>
+   <Root CDef='DETAILROW' AcceptDef='DETAILROW'/>
+   <MenuCfg ShowPanel='0'/>
+   <Panel Copy='1'/>
+</Grid>

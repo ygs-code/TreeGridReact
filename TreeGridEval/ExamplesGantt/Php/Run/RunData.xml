@@ -1,0 +1,34 @@
+<Grid>
+<Body>
+<B>
+<I id="AR1" Def="Task" T="Group 1" S="">
+<I id="AR2" Def="R" T="Task 1" S="05/18/2008" R="8,box,One normal box with tooltip,,Tooltip for the box"/>
+<I id="AR3" Def="R" T="Task 2" S="05/14/2008" R="8,,Normal boxes with length: %n;;2,,%n;;4,,%n;;5,,%n days;;1,,%n;;2,,%n" GGanttRunFormat=""/>
+<I id="AR4" Def="R" T="Task 3" S="05/14/2008" R="8,,Normal boxes with time: %d;;2,,%d;;4,,%d;;5,,time %d;;1,,%d;;2,,%d" GGanttRunFormat="hhh:mm"/>
+<I id="AR5" Def="R" T="Task 4" S="05/12/2008" R="6,,Not adjacent boxes;2,empty;3;1,empty;4;1,empty;3;0,empty;2;2,empty;1;2,empty,Empty;4"/>
+<I id="AR6" Def="R" T="Task 5" S="05/15/2008" R="6,,Joined boxes;3;4;5;2;3;4"/>
+<I id="AR7" Def="R" T="Task 6" S="05/12/2008" R="7,,Joined boxes with spaces;2,nbsp;3;1,nbsp;4;1,nbsp;5;2;3,nbsp,Empty;3"/>
+</I>
+<I id="AR8" Def="Task" T="Group 2" S="">
+<I id="AR9" Def="R" T="Task 1" S="05/16/2008" R="2,end,Start;;6,Box,Task with start;3;;2;;2,empty;2;7,empty;2"/>
+<I id="AR10" Def="R" T="Task 2" S="05/16/2008" R="6,Box,Task with end;3;;2;;4,empty;2;5,empty;2;;2,end,End"/>
+<I id="AR11" Def="R" T="Task 3" S="05/16/2008" R="2,end,Start;;6,Box,Task with both;3;;2;;6,empty;2;3,empty;2;;2,end,End"/>
+<I id="AR12" Def="R" T="Task 4" S="05/16/2008" R="2,bound,Start;;9,Box,Task with fixed start and end;;2;;8,empty;2;1,empty;2;;2,bound,End"/>
+</I>
+<I id="AR13" Def="Task" T="Group 3" S="">
+<I id="AR14" Def="R" T="Task 1" S="05/12/2008" R="4,,Fixed boxes;1,empty;2,fixed,Fixed;1,empty;3;1,empty;2;1,empty;3,Left,Fixed left;1,empty;2;1,empty;4,Right,Fixed right;1,empty;2"/>
+<I id="AR15" Def="R" T="Task 2" S="05/12/2008" R="4,,Solid boxes;2,empty;3,solid,Solid;1,empty;4,solid,Solid;1,empty;3;0,empty;2,solid,Solid;2,empty;1;2,empty;4,solid,Solid"/>
+<I id="AR16" Def="R" T="Task 3" S="05/12/2008" R="7,,Errors - overlaying boxes;2,empty;3,,1.;-2;3,,2. Error;2,empty;5,,3.;-4;3,,4. Error;5,empty;5,,5.;-6;3,,6. Error;2,empty;3,,7. Error"/>
+</I>
+<I id="AR17" Def="Task" T="Group 4" S="">
+<I id="AR18" Def="R" T="Task 1" S="05/12/2008" R="6,,Boxes with classes;;2,,Red,Red;;2,,Blue,Blue;;2,,Green,Green;1,empty;3,,Fuchsia,Fuchsia;;2,,Aqua,Aqua;;2,,Lime,Lime;1,empty;3,,Maroon,Maroon;;2,,Navy,Navy;;2,,Olive,Olive;1,empty;4,,Custom 1,Custom1"/>
+<I id="AR19" Def="R" T="Task 2" S="05/12/2008" R="6,,Boxes with classes;;3,,Orange,Orange;1,empty;2,,Purple,Purple;;2,,Silver,Silver;1,empty;2,,Teal,Teal;;3,,Yellow,Yellow;1,empty;2,,Black,Black;;2,,Gray,Gray;;2,,White,White;1,empty;4,,Custom 2,Custom2"/>
+<I id="AR20" Def="R" T="Task 3" S="05/12/2008" R="6,,Classes for spaces;2,empty,,Yellow;3;1,empty,,Yellow;4;1,empty,,Yellow;3;0,empty,,Yellow;2;2,nbsp,,Silver;1;2,empty,Empty,Lime;4"/>
+<I id="AR21" Def="R" T="Task 4" S=""/>
+</I>
+<I id="AR22" Def="Task" T="Group 5" S="">
+<I id="AR23" Def="R" T="Task 1" S="05/12/2008" R="5/12/2008,5/17/2008,,Independent boxes;5/18/2008,5/19/2008,,1;5/23/2008,5/23/2008,,2;5/25/2008,5/28/2008,,3;5/31/2008,6/4/2008,,4;6/7/2008,6/11/2008,,5" SCanEdit="0" GGanttRunSave="3" GGanttRunError="sort" GGanttRunAdjustResize="error" GGanttRunAdjustSlide="error" GGanttRunAdjustCopy="error"/>
+</I>
+</B>
+</Body>
+</Grid>

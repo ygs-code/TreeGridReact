@@ -1,0 +1,90 @@
+<Grid>
+   <Cfg id="GanttSimple" MainCol="T"/> <!-- Displays tree in column T (Task / Subtask) -->
+   <Cfg FullId="1" NumberId="1" IdChars="0123456789"/> <!-- Controls generation of new row ids -->
+   <Cfg MaxHeight="1"/> <!-- Resizes the grid to the whole page -->
+   <Cfg LimitScroll="23" MinBodyRows="6"/>  <!-- Responsive design, for small windows sets NoVScroll and NoHScroll -->
+   <Cfg ScrollLeftLap="0"/> <!-- Saves horizontal scroll in Gantt to cookies -->
+   <Cfg MinLeftWidth="200" MinMidWidth="530"/> <!-- Reserves width for the Gantt chart -->
+   <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Simple Gantt example printed page %3 from %6&lt;/center>"/> <!-- Sample page header for printing -->
+   <Cfg PrintPagePostfix="&lt;center class='%9' style='margin-top:%0px;width:%7px'>Page %1 horizontally from %4 , page %2 vertically from %5&lt;/center>"/>  <!-- Sample page footer for printing -->
+   <Cfg DefaultDate="5/1/2008"/> <!-- Default date in calendar for empty date -->
+   <Cfg CopyPasteTree="4"/> <!-- Copies and pastes the row tree structure -->
+   <Actions OnCtrlC="Copy,ClearSelection,0" OnCtrlX="Exclude,ClearSelection,0"/> <!-- Clears selection of rows when they are copied to clipboard, to not paste to them -->
+   <Head>
+      <Filter idVisible="0" DDefaults="|*RowsAll" TTip="Filters only subtasks"/>    <!-- Adds filter row -->
+   </Head>
+   <Def>
+      <D Name="R" DefParent="Task"/> <!-- When the standard leaf row gets it first child, changes it to Task row -->
+
+      <D Name="Task" DefEmpty="R"/> <!-- When the parent summary row looses its last child, changes it to R row -->
+      <D Name="Task" Expanded="1" Calculated="1" CalcOrder="S,E,C,G"/> <!-- Group of task calculates summary of the tasks -->
+      <D Name="Task" SFormula="minimum(min('S'),min('E'))"/> <!-- Gets the first start date from its children -->
+      <D Name="Task" EFormula="maximum(max('S'),max('E'))"/> <!-- Gets the last end date from its children -->
+      <D Name="Task" CFormula="ganttpercent('S','E','d')"/> <!-- Calculates average task completion from its children -->
+      <D Name="Task" DButton=""/> <!-- Cannot change dependency of group task -->
+      <D Name="Task" CanFilter="2"/> <!-- Does not filter the groups, hides them only if no child is visible -->
+      <D Name="Task" GGanttClass="Group" GGanttIcons="1" GGanttEdit="0" GGanttHover="0"/> <!-- Gantt setting specific for Group rows, changes colors and restrict changes by a user -->
+   </Def>
+   <DefCols>
+      <D Name="C" CaseSensitive="0"/> <!-- Ignores case when it sorts, groups and filters -->
+   </DefCols>
+   <Panel Copy="7"/> <!-- Shows Add/Copy icon on left side panel -->
+   <LeftCols>
+      <C Name="id" Width="60" Type="Text" CanEdit="0"/> <!-- Row id, informational column -->
+      <C Name="T" Width="170" Type="Text"/> <!-- Column Task / Section-->
+      <C Name="S" Width="80" Type="Date" Format="[y!=2008]yyyy, MMM dd;MMM dd"/> <!-- Column Start date-->
+      <C Name="E" Width="80" Type="Date" Format="[y!=2008]yyyy, MMM dd;MMM dd"/> <!-- Column End Date -->
+      <C Name="C" Width="90" Type="Float" Format="##.##\%;;0\%"/> <!-- Column Complete -->
+      <C Name="D" Width="80" Type="Text" Button="Defaults" Defaults="|*RowsColid*VariableDef" Range="1"/> <!-- Column dependencies (Next) -->
+      <C Name="X" Visible="0" Type="Int"/> <!-- Hidden column to store disabled / locked state to save or export it -->
+    </LeftCols>
+   <Cols>
+      <!-- Gantt chart column -->
+      <C Name="G" Type="Gantt"/>
+      <C Name="G" GanttStart="S" GanttEnd="E" GanttComplete="C" GanttDescendants="D" GanttDisabled="X"/> <!-- Defines the source columns for the Gantt chart -->
+      <C Name="G" GanttUnits="d" GanttWidth="22" GanttChartRound="w" GanttRight="1"/> <!-- Defines the Gantt zoom -->
+      <C Name="G" GanttLastUnit="d"/> <!-- The end date is the last day -->
+      <C Name="G" GanttHeader1="w#dddddd MMMM yyyy" GanttHeader2="d#ddddd"/> <!-- Defines Gantt header for the zoom -->
+      <C Name="G" GanttBackground="w#1/6/2008~1/6/2008 0:01"/> <!-- Visualy separates the weeks by vertical line -->
+      <C Name="G" GanttEdit="Main,Dependency"/> <!-- Only the tasks can dependencies can be modified -->
+      <C Name="G" GanttSlack="1"/> <!-- Calculates critical path -->
+      <C Name="G" GanttCorrectDependenciesFixed="1"/> <!-- Never moves the changed task, rather moves all others -->
+   </Cols>
+   <Header id="ID" T="Task" S="Start" E="End" C="Complete" G="Gantt" D="Next"/> <!-- Column captions -->
+   
+   
+   <!-- Use the next setting to fix the Gantt structure to two levels - Task / Data -->
+   <!--Root CDef="Task" AcceptDef="Task"/>
+   <Def>
+      <D Name="Task" CDef="R" AcceptDef="R"/>
+      <D Name="R" CDef="" AcceptDef=""/>
+   </Def-->
+
+   <Solid>
+      <Topbar id='Project' Space='0' Panel='0' Cells='Base,Finish,Sep,Dep'
+            
+            BaseType='Date' BaseCanEdit='1' BaseWidth='100' BaseUndo='1' BaseLeft='5'
+            BaseLabel='Start date'
+            BaseFormat="ddd M/d/yyyy"
+            BaseEditFormat='M/d/yyyy'
+            BaseFormula='Grid.GetGanttBase()'
+            BaseOnChange='Grid.SetGanttBase(Value,2);'
+            BaseHtmlPrefixFormula='Grid.Cols.G.GanttBase===""?"&lt;span style=&apos;color:gray;&apos;>":"&lt;span>"'
+            BaseHtmlPostfix='&lt;/span>'
+            BaseTip='Starting date of the whole project.&lt;br>No task should start before it.&lt;br>It is also used when correcting dependencies.'
+              
+            FinishType='Date' FinishCanEdit='1' FinishWidth='100' FinishUndo='1' FinishLeft='5'
+            FinishLabel='Finish date'
+            FinishFormat="ddd M/d/yyyy"
+            FinishEditFormat='M/d/yyyy'
+            FinishFormula='Grid.GetGanttFinish()-24*60*60*1000'
+            FinishOnChange='Grid.SetGanttFinish(Value+24*60*60*1000);'
+            FinishHtmlPrefixFormula='Grid.Cols.G.GanttFinish===""?"&lt;span style=&apos;color:gray;&apos;>":"&lt;span>"'
+            FinishHtmlPostfix='&lt;/span>'
+            FinishTip='Finish date of the whole project.&lt;br>If grayed, it is calculated from the last task.&lt;br>It is used to calculate critical path.'
+
+            SepType='Html' SepRelWidth='1' SepCanFocus='0'
+            DepFormula="ganttdependencyerrors(null,1)" DepOnClick="CorrectAllDependencies" DepTip="Click to correct the dependencies"
+            />
+   </Solid>
+</Grid>

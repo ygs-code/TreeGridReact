@@ -1,0 +1,228 @@
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Adding columns</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Column adding and copying</h1>
+<p>TreeGrid documentation</p>
+
+
+<!-- ColAdding -->
+<a name="CfgColAdding"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ColAdding</h4>
+   <s>[0]</s>
+</div>
+If it is possible to add new columns to grid, bit array for the column sections.<br />
+<b>1</b> - middle columns, <b>2</b> - right columns, <b>4</b> - left columns. Set to 7 for all sections.<br />
+<i>By default it is disabled!</i><br />
+
+<!-- ColCopying -->
+<a name="CfgColCopying"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ColCopying</h4>
+   <s>[7]</s>
+</div>
+If it is possible to copy (duplicate) columns in grid, bit array for the column sections.<br />
+<b>1</b> - middle columns, <b>2</b> - right columns, <b>4</b> - left columns.<br />
+It is disabled if set <a href="#ColAdding">ColAdding</a>='0'.<br />
+<i>By default it is enabled, but copying is disabled due default ColAdding='0'!</i><br />
+
+<!-- CanCopy -->
+<a name="CCanCopy"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>CanCopy</h4>
+   <s>[2/1/0]</s>
+</div>
+If the column can be copied. <b>0</b> - no, <b>1</b> - inside its section, <b>2</b> also outside its section.<br />
+By default it is <b>0</b> for Panel, Index, Gantt and ConstWidth columns, <b>1</b> for columns added by AutoCols, and <b>2</b> for all other columns.<br />
+
+<!-- AddCols -->
+<a name="AddCols"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>TCol[]</i>
+   <h4>AddCols</h4>
+   <s>(<i>string[]</i> <b>cols</b>, <i>string</i> <b>tocol</b>, <i>bool</i> <b>right</b>, <i>bool</i> <b>empty</b> = 0, <i>bool</i> <b>focus</b> = 0)</s>
+</div>
+Adds or copies one or more columns to grid.<br />
+<b>cols</b> can be an array of columns to be copied. <br />
+Or the <b>cols</b> can be a number of new columns to add.<br />
+<b>tocol</b> is column next to place the new columns, left if <b>right</b> is 0 or right if <b>right</b> is 1.<br />
+Or the <b>tocol</b> can be a column section (0 - left, 1 middle, 2 right) where to place the new columns. To beginning, if <b>right</b> is 0, or to end, if <b>right</b> is 1.<br />
+If <b>empty</b> is 1, copies the columns empty or with the <a href="CellEdit.htm#CfgEditAttrsEmpty">EditAttrsEmpty</a> if set.<br />
+If <b>focus</b> is 1, focuses the new columns in the same row(s) as the original focus.<br />
+Returns the new added columns.<br />
+
+<!-- OnColsAdd -->
+<a name="OnColsAdd"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnColsAdd</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string[]</i> <b>cols</b>, <i>string</i> <b>tocol</b>, <i>bool</i> <b>right</b>, <i>bool</i> <b>empty</b>)</s>
+</div>
+Called when new or copied columns are added to grid. Return true to suppress the action.<br />
+It is called from <a href="#AddCols">AddCols</a> method and the parameters are the same.<br />
+
+<!-- AddCol -->
+<a name="AddCol"></a>
+<div class="API">
+   <u>chg <b>7.0</b></u> <b>API method</b> <i>TCol</i>
+   <h4>AddCol</h4>
+   <s>(<i>string</i> <b>col</b>, <i>int</i> <b>sec</b>, <i>int</i> <b>pos</b>, <i>object</i> <b>param</b>, <i>bool</i> <b>show</b> = 0, <i>string</i> <b>type</b> = "Text", <i>string</i> <b>caption</b> = col)</s>
+</div>
+Adds one new column to the table.<br />
+<b>col</b> is column name, <b>sec</b> is section of columns (0 - left, 1 - mid, 2 - right), <b>pos</b> is column position in its section (from 0). -1 for the last column.<br />
+<b>param</b> <i>(new in 7.0)</i> is an object with all parameters like for &lt;C> tag, to preset them in the column, for example <tt>{ Width:100, Type:"Lines", CanSort:0 }</tt><br />
+<i>Before 7.0 version the <b>param</b> was integer and specified column <b>width</b>, it is still supported, but not recommended.</i><br />
+for <tt><b>show</b> = 1</tt> is column displayed in table, for <tt><b>show</b> = 0</tt> it is hidden and can be displayed by ShowCol method.<br />
+<b>type</b> is set column Type attribute (just for backward compatibility, it can be set in param), <b>caption</b> is string displayed in all headers for this column.<br />
+New column will have default values from <tt>&lt;D <a href="ColBasics.htm#DNameC">Name</a>='C'></tt>.<br /> 
+Returns new column or null if column with given name already exists.<br />
+
+<!-- AddCol -->
+<a name="ActionsAddCol"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>AddCol <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonAddCol</b> and used in Toolbar AddCol and Panel <a href="CellBasics.htm#CMenu">Menu</a></s>
+</div>
+Adds one new column left to the actual or focused column.
+
+<!-- AddColNext -->
+<a name="ActionsAddColNext"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>AddColNext <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Adds one new column right to the actual or focused column.
+
+<!-- AddColEnd -->
+<a name="ActionsAddColEnd"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>AddColEnd</h4>
+   <s>Attached to <b>OnClickButtonAddCol</b> and used in Toolbar AddCol <a href="CellBasics.htm#CMenu">Menu</a></s>
+</div>
+Adds one new column on the end of variable columns section.<br />
+It always creates brand new column and ignores <a href="CellEdit.htm#CfgEditAttrsEmpty">EditAttrEmpty</a> attribute.<br />
+
+<!-- AddCols -->
+<a name="ActionsAddCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>AddCols <i>...F</i></h4>
+   <s>Not attached to any event, but used in Toolbar AddCol <a href="CellBasics.htm#CMenu">Menu</a></s>
+</div>
+Adds the same number of new columns as actually focused columns, left to actual column or focused range.
+
+<!-- AddColsNext -->
+<a name="ActionsAddColsNext"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>AddColsNext <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Adds the same number of new columns as actually focused columns, right to actual column or focused range.
+
+<!-- AddSelectedCols -->
+<a name="ActionsAddSelectedCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>AddSelectedCols <i>...F</i></h4>
+   <s>Not attached to any event, but used in Toolbar AddCol <a href="CellBasics.htm#CMenu">Menu</a></s>
+</div>
+Adds the same number of new columns as actually selected columns, left to the actual or focused column.
+
+<!-- AddSelectedColsNext -->
+<a name="ActionsAddSelectedColsNext"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>AddSelectedColsNext <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Adds the same number of new columns as actually selected columns, right to the actual or focused column.
+
+<!-- CopyCol -->
+<a name="ActionsCopyCol"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CopyCol <i>...F</i></h4>
+   <s>Not attached to any event, but used in Toolbar AddCol <a href="CellBasics.htm#CMenu">Menu</a></s>
+</div>
+Copies actual or focused column to the left side of itself.
+
+<!-- CopyColNext -->
+<a name="ActionsCopyColNext"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CopyColNext <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Copies actual or focused column to the right side of itself.
+
+<!-- CopyCols -->
+<a name="ActionsCopyCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CopyCols <i>...F</i></h4>
+   <s>Not attached to any event, but used in Toolbar AddCol <a href="CellBasics.htm#CMenu">Menu</a></s>
+</div>
+Copies all focused columns to the left side of actual column or the focused range.
+
+<!-- CopyColsNext -->
+<a name="ActionsCopyColsNext"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CopyColsNext <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Copies all focused columns to the right side of actual column or the focused range.
+
+<!-- CopySelectedCols -->
+<a name="ActionsCopySelectedCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CopySelectedCols <i>...F</i></h4>
+   <s>Not attached to any event, but used in Toolbar AddCol <a href="CellBasics.htm#CMenu">Menu</a></s>
+</div>
+Copies all selected columns to the left side of actual or focused column.
+
+<!-- CopySelectedColsNext -->
+<a name="ActionsCopySelectedColsNext"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CopySelectedColsNext <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Copies all selected columns to the right side of actual or focused column.
+
+<!-- Action ColCopy -->
+<a name="ActionsColCopy"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ColCopy</h4>
+   <s>Attached to <b>OnCtrlDragHeader</b>, can be attached only to <b>OnDrag...</b> event</s>
+</div>
+Starts copying column by mouse dragging.<br />
+The columns can be copied inside Header or placed to DropCols cells.<br />
+
+
+<!-- Action ColCopySelected -->
+<a name="ActionsColCopySelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ColCopySelected</h4>
+   <s>Attached to <b>OnCtrlDragHeader</b>, can be attached only to <b>OnDrag...</b> event</s>
+</div>
+Starts copying selected columns by mouse dragging. Fails if actual column is not selected. <br />
+The columns can be copied only inside Header. Ignores <a href="ColPosition.htm#CBlock">Block</a> attributes.<br />
+
+</div>
+</body>	
+</html>

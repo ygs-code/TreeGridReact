@@ -1,0 +1,135 @@
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+   </head>
+   <body>
+      <style>
+         /* Examples shared styles */
+         .ExampleHeader { font:normal 16px Arial; color:blue; }
+         .ExampleHeader b { color:#800; }
+         .ExampleHeader i { color:black; font-style:normal; font-weight:bold; }
+         .ExampleHeader u { text-decoration:none; color:#0B0; font-weight:bold; padding:0px 2px 0px 2px; }
+         .ExampleName { font:bold 30px Arial; padding:5px 0px 5px 0px; }
+         .ExampleShort { font:italic 15px Arial; margin-bottom:10px; padding-top:5px; }
+         .ExampleDesc { margin:0px 5px 0px 5px; }
+         .ExampleErr { margin:50px auto 10px auto; padding:5px; line-height:30px; border:1px solid black; color:red; width:800px; text-align:center; display:none; }
+         .ExampleBorder { margin:0px 5px 15px 5px; clear:both; zoom:1; }
+         .ExampleDesc ul { padding:0px 0px 0px 15px; margin:10px 0px 0px 0px; }
+         .ExampleDesc li { padding-bottom:8px; line-height:18px; }
+         .ExampleDesc h4 { display:inline; font:bold 15px Arial; line-height:20px; padding-left:6px; padding-right:6px; background:#87DAE5; border:1px solid #888; color:black; margin:0px; font-style:normal; }
+      </style>
+      <center class="ExampleHeader"><script>document.write(location.href.replace(/(.*)(\/ExamplesPDF\/)([^\/_]+)_([^\/_]+)\/([^\/]+)$/,"$2<b>$3</b>_<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+      <center class="ExampleName">Complex grid - PDF Export</center>
+      <div class="ExampleErr">
+         <script> if(location.protocol=="file:") document.write("<style>.ExampleDesc, .ExampleBorder {display:none;} .ExampleErr { display:block; } </style>"); </script>
+         Do <b>not</b> run this file locally!<br />Run it from your local or remote web http server where is installed IIS and ASP.NET (1.0, 1.1, 2.0, 3.0, 3.5, 4.0, 4.5, ...).<br>
+      </div>
+      <div class="ExampleBorder">
+         <div class="ExampleMain" style="width:100%;height:530px;">
+            <bdo Debug="problem" 
+               Layout_Url="FirstDef.xml" 
+               Data_Url="FirstData.xml"
+               Export_Url="../Export.aspx"
+               ExportPDF_Url="../ExportPdf.aspx" ExportPDF_Type="Settings,Expanded,Selected,Changes" ExportPDF_Param_Source="First/FirstExportPDF.html"
+               ></bdo>
+         </div>
+      </div>
+      <div class="ExampleDesc">
+         <button onclick='Grids[0].ActionExportPDF();'>Print to PDF</button>
+         <button onclick='Grids[0].ActionPrint();'>Print to printer</button>
+         <button onclick='Grids[0].ExportFormat="xlsx"; Grids[0].ActionExport()'>Export to XLSX</button>
+         <button onclick='Grids[0].ExportFormat="xls"; Grids[0].ActionExport()'>Export to old XLS (XHTML)</button>
+         <button onclick='Grids[0].ExportFormat="csv"; Grids[0].ActionExport()'>Export to CSV</button>
+      </div>
+      <script>
+// -----------------------------------------------------------------------------------------
+Grids.OnClickButtonExport = function(G){ Grids[0].Source.Export.Type=""; Grids[0].ActionExport(); return true; } // Clears the type if set by the Export XLS/CSV button
+// -----------------------------------------------------------------------------------------
+// Shows months May and June in the year 2019 only
+Grids.OnUpdated = function(G){ G.FilterDateRange('D','1/1/2019~1/1/2020','Year',0); G.SetFilter('Month','{5:1,6:1}[(new Date(D)).getUTCMonth()+1]','D',0); }
+
+// -----------------------------------------------------------------------------------------
+// Used if Formula to count unique customers
+function CountUnique(G,Rows,col){
+for(var i=0,O={},cnt=0;i<Rows.length;i++) if(Get(Rows[i],"X")){
+   var v = Get(Rows[i],col);
+   if(!O[v]) { cnt++; O[v] = 1; }
+   }
+return cnt;
+}
+// -----------------------------------------------------------------------------------------
+// Custom event for searching
+// Searches in orders with specified items
+Grids.OnRowSearch = function(G,row,col,found,F,type){
+if(type || G.SearchDefs!="") return found; // Only for "in orders with items" and default call
+if(row.Def.Name=="Data") return -1;        // Only for orders
+for(var r=row.firstChild;r;r=r.nextSibling) { 
+	var found = F(r,col,1);                 // calls F(r,col,type=1)
+	if(!(found<=0)) return found; 
+	}
+return 0;
+}
+// -----------------------------------------------------------------------------------------
+// Creates popup right click menu to manipulate the row
+Grids.OnGetMenu = function(G,row,col,M){
+if(row.Fixed||M) return null;
+var I = [], M = {Items:I}, ident = row.Def.Name=="Node" ? " order":" product";
+I[I.length] = {Name:"Del",Text:(row.Deleted?"Undelete":"Delete")+ident};
+I[I.length] = {Name:"Sel",Text:(row.Selected?"Deselect":"Select")+ident};
+I[I.length] = {Name:"Cpy",Text:"Copy"+ident};
+if(row.firstChild) I[I.length] = {Name:"CpyTree",Text:row.Def.Name=="Node"?"Copy order with products":"Copy product with items"};
+
+if(row.Def.Name=="Node") {
+   I[I.length] = {Name:"AddOrder",Text:"Add new order"};
+   I[I.length] = {Name:"InsItem",Text:"Add new product"};
+   }
+else I[I.length] = {Name:"AddItem",Text:"Add new product"};
+if(row.firstChild) I[I.length] = {Name:"Exp",Text:(row.Expanded?"Collapse":"Expand") + (row.Def.Name=="Node"?" order":" product")};
+if(row.Def.Name=="Node") I[I.length] = {Name:"Check",Text:Get(row,'X')?"Uncheck Used":"Check Used"};
+return M;
+}
+// -----------------------------------------------------------------------------------------
+// Called after selecting item in the popup right click menu
+Grids.OnContextMenu = function(G,row,col,N){
+switch(N){
+   case "Del" : G.DeleteRow(row); break;
+   case "Sel" : G.SelectRow(row); break;
+   case "Cpy" : G.CopyRow(row,null,row); break;
+   case "CpyTree" : G.CopyRows([row],null,row,1); break;
+   case "AddItem" : G.ActionAddRow(); break;
+   case "InsItem" : G.ActionAddChildEnd(); break;
+   case "AddOrder" : G.ActionAddRow(); break;
+   case "Exp" : if(row.Expanded) G.Collapse(row); else G.Expand(row); break;
+   case "Check" : G.SetValue(row,"X",!Get(row,'X'),1); break;
+   }
+}
+// -----------------------------------------------------------------------------------------
+// Called when NoVScroll / NoHScroll is set automatically due small window size, disables the checkbox for manual change of NoVScroll / NoHScroll
+Grids.OnLimitScroll = function(G,clr,noh,nov){ 
+G.SetAttribute(G.Rows.Group,"Win","CanEdit",clr,1); 
+var tip = clr?"Disable grid scrollbars and use page scrollbars":"Used page scrollbars because browser window is too small to show this example with its own scrollbars";
+G.SetAttribute(G.Rows.Group,"Win","Tip",tip,1); 
+G.SetAttribute(G.Rows.Group,"WinLabelRight","Tip",tip,1); 
+}
+// -----------------------------------------------------------------------------------------
+// Called after changed language to reset currency and recalculate grid
+Grids.OnLanguageFinish = function(G,code){ 
+var row = G.Rows.Fix3;
+G.SetValue(row,"C",Get(row,Get(row,"D")+"Rate"),1);
+}
+// -----------------------------------------------------------------------------------------
+      </script>
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGPDFCS\s*=\s*(\d+)/), TGIndex = 1024;
+         if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunPdfCSFirst", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGPDFCS="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGPDFUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGPDFUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedPdf"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+   </body>
+</html>

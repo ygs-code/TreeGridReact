@@ -1,0 +1,25 @@
+<Grid>
+   <Cfg id='CalcEdit' NoVScroll="1" NoHScroll="1"/>
+   <Cols>
+      <C Name='C' Type='Enum' Enum='|White|Yellow|Lime|Aqua' Formula='Row.Color' OnChange='Row.Color=Value;Grid.ColorRow(Row);' CanEdit='1'/>
+      <C Name='D' Type='Bool' Formula='Row.CanDelete!=0' OnChange='Row.CanDelete=Value;Grid.RefreshCell(Row,"Panel");' CanEdit='1'/>
+      <C Name='E' Type='Bool' Formula='Row.XCanEdit?1:0' OnChange='Row.XCanEdit=Value;Grid.ColorCell(Row,"X");' CanEdit='1'/>
+      <C Name='X' Type='Int' Formula='Y*Y' OnChange='Grid.SetValue(Row,"Y",Value,1);' CanEdit='1'/>
+      <C Name='Y' Type='Int' CanEdit='0'/>
+   </Cols>
+   <Header X='X=X&#xb2; (stored in Y)' E='Can edit X' C='Color row' D='Can delete row' Y='Y (hidden)'/>
+   <Body>
+      <B>
+         <I Y='1' Color='Lime'/>
+         <I Y='4' Color='White' CanDelete='0'/>
+         <I Y='8' XCanEdit='0' Color='White'/>
+         <I Y='3' Color='White'/>
+         <I Y='10' Color='Aqua'/>
+         <I Y='9' XCanEdit='0' Color='White' CanDelete='0'/>
+      </B>
+   </Body>
+   <Toolbar
+      Cells='E,Reload,Export,Add,Columns,Cfg'
+      EType='Bool' ELabelRight='Editing' EFormula='Grid.Editing' EOnChange='Grid.Editing=Value;Grid.Rerender();' ECanEdit='1'/>
+      />
+</Grid>

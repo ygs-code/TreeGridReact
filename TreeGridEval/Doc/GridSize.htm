@@ -1,0 +1,979 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Grid size and scroll</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Grid size and scroll</h1>
+<p>TreeGrid documentation</p>
+
+Describes how to control width and height of the whole grid and when and how to scroll its content.<br />
+                                                                                                         
+<!-----------------------------------------------------------------------  Default behavior ------------------------------------------------->
+<a name="Default"></a>
+<h2>Default behavior</h2>
+
+By default TreeGrid is rendered into its <a href="Create.htm#MainTag">main div tag</a> and does <u>not</u> change its size. The main tag should have set its height and width style attributes, otherwise grid sets them to 100%.<br />
+In strict mode the main tag height attribute should be set to fixed height if it can affect body height, otherwise grid automatically sets <tt>&lt;Cfg <a href="#CfgMaxVScroll">MaxVScroll</a>='2000'/></tt>.<br /> 
+If the grid content is smaller than the main tag, there is shown empty space inside the main tag, if the grid is bigger than the main tag it shows its scrollbars.<br />
+The <a href="Create.htm#MainTag">main tag</a> has automatically set <b>overflow:hidden</b> and you must not change it.<br />
+When grid cannot show its content because it wider or higher than the main tag size, it shows error message "<i><b>Too small extents</b></i>". To not show the message, set <tt>&lt;Lang>&lt;Text <b>ExtentErr</b>=""/>&lt;/Lang></tt>.<br />
+When grid cannot show its content horizontally, it first tries to minimize all fixed columns and Pager that have <tt><b>CanResize</b>='1'</tt> to their <b>MinWidth</b>. If it is not enough, it hides all fixed columns and Pager that have <tt><b>CanHide</b>='1'</tt>.<br />
+
+<!-- ExactSize -->
+<a name="CfgExactSize"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ExactSize</h4> <s>[1]</s>
+</div>
+If the size of grid is computed according to the real main tag size.<br />
+For <b>1</b> it preserves also percentage width inside tables and similar layouts.<br />
+Set it to <b>0</b> for large tables when grid becomes slow when updating layout.<br />
+<i>If used external objects like Flash or SilverLight  in grid cells, it should be set to 0.</i><br />
+
+<!-- OnSizeError -->
+<a name="OnSizeError"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnSizeError</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>width</b>, <i>int</i> <b>height</b>)</s>
+</div>
+Called when the grid cannot be rendered due too small size of the main tag.<br />
+Solve this problem by changing grid content or resizing the main tag, call <a href="#Update">Update</a>() and return true.<br />
+<b>width</b> is the available width in pixels, negative means error.<br />
+<b>height</b> is the available height in pixels, negative means error.<br />
+
+<!-----------------------------------------------------------------------  Maximize grid width and height  ------------------------------------------------->
+<a name="Maximize"></a>
+<h2>Maximize grid width and height</h2>
+
+To fill the whole main tag by grid content set <tt>&lt;<b>Cfg <a href="#CfgConstHeight">ConstHeight</a>='1' <a href="#CfgConstWidth">ConstWidth</a>='1'</b>/></tt> or use some row with <tt>&lt;I <b>RelHeight</b>='1'/></tt> and column with <tt>&lt;C <b>RelWidth</b>='1'/></tt>.<br />
+To fill the whole window by main tag set <tt>&lt;<b>Cfg <a href="#CfgMaxHeight">MaxHeight</a>='1' <a href="#CfgMaxWidth">MaxWidth</a>='1'</b>/></tt>, <strong>ensure that your page layout fulfills all requirements for the <a href="#CfgMaxHeight">MaxHeight</a> attribute!</strong><br /> 
+You can set minimal size of the main tag by <tt>&lt;<b>Cfg <a href="#CfgMinTagHeight">MinTagHeight</a>='...' <a href="#CfgMinTagWidth">MinTagWidth</a>='...'</b>/></tt>, maximal size of the main tag by <tt>&lt;<b>Cfg <a href="#CfgMaxTagHeight">MaxTagHeight</a>='...' <a href="#CfgMaxTagWidth">MaxTagWidth</a>='...'</b>/>.</tt><br />
+
+<!-- ConstHeight -->
+<a name="CfgConstHeight"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ConstHeight</h4> <s></s>
+</div>
+If set to <b>1</b>, updates height of grid to fill whole <a href="Create.htm#MainTag">main tag</a>. It does not modify main tag height, see <a href="#CfgMaxHeight">MaxHeight</a>.<br />
+<i>It is ignored when set <tt><a href="#CfgNoVScroll">NoVScroll</a> = '1'</tt>.</i><br />
+In fact it adds to grid new special row <tt>&lt;<a href="RowSpace.htm">Space</a> <a href="RowHeight.htm#IRelHeight">RelHeight</a>='1' Space='2' Kind='Fill'/></tt>. This row is positioned between body and foot section.<br />
+To better control this space, you can add this &lt;Space> row by yourself instead of using ConstHeight attribute.<br />
+If grid already contains some row with <a href="RowHeight.htm#IRelHeight">RelHeight</a> attribute set, the ConstHeight attribute is ignored.<br />
+<b style="color:red;">!</b> <i>If you use ConstHeight, do <u>not</u> set height of <a href="Create.htm#MainTag">main tag</a> in percent.</i> <b style="color:red;">!</b><br />
+
+<!-- ConstWidth -->
+<a name="CfgConstWidth"></a>
+<div class="XML">
+   <u>chg <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ConstWidth</h4> <s>[5]</s>
+</div>
+If set, it adds new white ConstWidth column to middle or right section to resize grid content to main tag width. It does not modify main tag width, see <a href="#CfgMaxWidth">MaxWidth</a>.<br />
+It add the column <tt>&lt;C Name="<b>_ConstWidth</b>" <a href="ColWidth.htm#CConstWidth">ConstWidth</a>='1' Def="ConstWidth"/></tt> with also disabled all standard features like sorting, filtering or dragging.<br />
+The column uses CSS class GxCellEmpty for all cells except header, here uses GxCellHeaderEmpty<br />
+<table>
+<tr><td style="width:70px;"><b>0</b></td><td>No column added</td></tr>
+<tr><td><b>1</b></td><td>The column is placed between middle and right section, into right section if there is some column, otherwise to the middle section.</td></tr>
+<tr><td><b>2</b></td><td>The column is always placed to the right end of middle section.</td></tr>
+<tr><td><b>3</b></td><td><i>(new 7.0)</i> The column is placed to the right end of right section if exists, otherwise to the middle section.</td></tr>
+<tr><td><b>4</b></td><td><i>(new 7.0)</i> It resizes the grid content to show at least Columns and Cfg buttons on toolbar.</td></tr>
+<tr><td></td><td>If the toolbar is hidden or it does not contain the buttons, it does nothing. Column position is the same as <b>3</b>.</td></tr>
+<tr><td><b>5</b></td><td><i>(new 13.0)</i> It resizes the grid content to show all space cells. Column position is the same as <b>3</b>.</td></tr>
+<tr><td><b>6</b></td><td><i>(new 13.0)</i> Like <b>5</b>, but shows cells up to <a href="CellStyle.htm#SpaceCellLastVisible">LastVisible</a> only, if defined.</td></tr>
+<tr><td><b>10</b> - <b>9999</b></td><td><i>(new 7.0)</i> It resizes the grid content maximally to this pixel value, if less than main tag width. Column position is the same as <b>3</b>.</td></tr>
+<tr><td></td><td>Useful to not hide some buttons on toolbar (e.g. Columns visibility menu), when grid is too narrow due hidden many columns</td></tr>
+<tr><td></td><td>For example <tt>ConstWidth="500"</tt> ensures the Toolbar will be at least 500px wide, but when the grid columns together are wider than 500px, it does <u>not</u> resize the grid any more.</td></tr>
+</table>
+<i>It is ignored when set <tt><a href="#CfgNoHScroll">NoHScroll</a>='1'</tt>.</i><br />
+<i>If you permit users to hide all columns you should ensure that the columns menu will be still accessible, the simplest way is to set appropriate ConstWidth.</i><br />
+
+<!-- MaxHeight -->
+<a name="CfgMaxHeight"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MaxHeight</h4> <s></s>
+</div>
+If set, updates height of <a href="Create.htm#MainTag">main tag</a> to fill the whole window. It does <u>not</u> modify grid content height, see <a href="#CfgConstHeight">ConstHeight</a>.<br />
+It cannot be used when <a href="#CfgResizingMain">ResizingMain</a> is set to 1 or 3 (vertical resizing).<br />
+Is possible to have more grids on page (vertically) with MaxHeight set, in this case their height is computed as ratio of their MaxHeight value or as percentage, see <a href="#CfgMaxHeightPercent">MaxHeightPercent</a>.<br />
+<i>
+To let grid maximize its main tag to window height, on your page there must <u>not</u> be:<br />
+<div class="L1">
+a) any <u>parent</u> tag (in hierarchy from grid to &lt;body>) with <b>overflow</b> set to <b>hidden</b>, <b>auto</b> or <b>scroll</b>.<br />
+b) any <u>parent</u> tag (in hierarchy from grid to &lt;body>) with <b>position:absolute</b>.<br />
+c) any tag (except tags included in tag with not visible overflow or absolute position) with <b>height</b> set to <b>percentage</b> (like height:100%).<br />
+</div>
+</i>
+
+<!-- MaxHeightPercent -->
+<a name="CfgMaxHeightPercent"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>MaxHeightPercent</h4> <s></s>
+</div>
+If the <a href="#CfgMaxHeight">MaxHeight</a> attribute is set in percentage or as ratio<br />
+<b>0</b> - the <a href="#CfgMaxHeight">MaxHeight</a> is ratio of the sum of all these tags in the <a href="#CfgMaxHeightParent">MaxHeightParent</a> or body - the tags always fill exactly the whole <a href="#CfgMaxHeightParent">MaxHeightParent</a> or body<br />
+<div class="L1">e.g. two grids with <tt>MaxHeight='20'</tt> and <tt>MaxHeight='30'</tt> will be high 20/(20+30) = 0.4 and 30/(20+30) = 0.6</div>
+<b>1</b> - the <a href="#CfgMaxHeight">MaxHeight</a> is % of 100%, the 100% is the <u>remaining</u> height in the <a href="#CfgMaxHeightParent">MaxHeightParent</a> or body<br />
+<div class="L1">e.g. two grids with <tt>MaxHeight='20'</tt> and <tt>MaxHeight='30'</tt> will be high 20% and 30% and there will be empty space with 50% remaining height.</div>
+
+<!-- MaxHeightReserved -->
+<a name="CfgMaxHeightReserved"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MaxHeightReserved</h4> <s></s>
+</div>
+This height will be reserved empty in the <a href="#CfgMaxHeightParent">MaxHeightParent</a> or body, in pixels.<br />
+This space will be always empty when applying <a href="#CfgMaxHeight">MaxHeight</a>.<br />
+
+<!-- MaxHeightParent -->
+<a name="CfgMaxHeightParent"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>MaxHeightParent</h4> <s></s>
+</div>
+Offset parent to calculate the height according to, when applying <a href="#CfgMaxHeight">MaxHeight</a>. The id of the tag.<br />
+If it not set, the offset parent is document.body or the nearest parent tag with overflow set or absolute position.<br /> 
+<i>The parent must have set <u>fixed</u> height except the &lt;body>!</i><br />
+
+<!-- SetMaxHeight -->
+<a name="SetMaxHeight"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>void</i>
+   <h4>SetMaxHeight</h4> <s>(<i>int</i> <b>value</b>)</s>
+</div>
+Sets <a href="#CfgMaxHeight">MaxHeight</a> to the <b>value</b>. 
+Call <a href="#Update">Update</a>(); after the change.<br />
+
+<!-- MaxWidth -->
+<a name="CfgMaxWidth"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>MaxWidth</h4> <s></s>
+</div>
+If set to <b>1</b>, updates width of <a href="Create.htm#MainTag">main tag</a> to fill the whole parent tag or body. It does <u>not</u> modify grid width, see <a href="#CfgConstWidth">ConstWidth</a>.<br />
+It cannot be used when <a href="#CfgResizingMain">ResizingMain</a> is set to 2 or 3 (horizontal resizing).<br />
+Now it just sets width of main tag to 100%.<br />
+<i>The main tag should not have set any padding, border or margin, if required, set them to some parent tag.</i><br />
+
+<!-- MinTagHeight -->
+<a name="CfgMinTagHeight"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MinTagHeight</h4> <s></s>
+</div>
+Minimal height of <a href="Create.htm#MainTag">main tag</a> in pixels. This value is used when main tag is shrunk because of resizing by user or when applying <a href="#CfgMaxHeight">MaxHeight</a> attribute.<br />
+It is also used when main tag has set percentage height in style, <i>but in this case it does not restore the percentage height when tag can be higher!</i><br />
+
+<!-- MinTagWidth -->
+<a name="CfgMinTagWidth"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MinTagWidth</h4> <s></s>
+</div>
+Minimal width of <a href="Create.htm#MainTag">main tag</a> in pixels. This value is used when main tag is shrunk because of resizing by user or when applying <a href="#CfgMaxWidth">MaxWidth</a> attribute.<br />
+It is also used when main tag has set percentage width in style.<br />
+
+<!-- MaxTagHeight -->
+<a name="CfgMaxTagHeight"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MaxTagHeight</h4> <s></s>
+</div>
+Maximal height of <a href="Create.htm#MainTag">main tag</a> in pixels. This value is used when main tag is enlarged because of resizing by user or when applying <a href="#CfgMaxHeight">MaxHeight</a> attribute.<br />
+It is also used when main tag has set percentage height in style, <i>but in this case it does not restore the percentage height when tag can be higher!</i><br />
+
+<!-- MaxTagWidth -->
+<a name="CfgMaxTagWidth"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MaxTagWidth</h4> <s></s>
+</div>
+Maximal width of <a href="Create.htm#MainTag">main tag</a> in pixels. This value is used when main tag is enlarged because of resizing by user or when applying <a href="#CfgMaxWidth">MaxWidth</a> attribute.<br />
+It is also used when main tag has set percentage width in style.<br />
+
+<!-----------------------------------------------------------  Update size according to the content  ------------------------------------------------->
+<a name="NoScroll"></a>
+<h2>Update size according to the content</h2>
+
+To shrink or enlarge the main tag according to grid content. set <tt>&lt;<b>Cfg <a href="#CfgNoVScroll">NoVScroll</a>='1' <a href="#CfgNoHScroll">NoHScroll</a>='1'</b>/></tt>.<br /> 
+To shrink or enlarge the main tag up to specific size only, set <tt>&lt;<b>Cfg <a href="#CfgMaxVScroll">MaxVScroll</a>='...' <a href="#CfgMaxHScroll">MaxHScroll</a>='...'</b>/></tt>, when grid content reaches this maximum, it shows its scrollbars.<br />
+To use your own scrolling behavior set <tt>&lt;<b>Cfg <a href="#CfgNoScroll">NoScroll</a>='1'</b>/></tt>. There will be used scrollbars of parent tag with overflow set or window scrollbars.<br />
+
+<!-- NoVScroll -->
+<a name="CfgNoVScroll"></a>
+<div class="XML">
+   <u><i>upd <b>13.0</b></i></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>NoVScroll</h4> <s></s>
+</div>
+If set to 1, the TreeGrid always resizes vertically the <a href="Create.htm#MainTag">main tag</a> to show the entire grid.<br />
+When set, a user cannot resize the main tag vertically (<a href="#CfgResizingMain">ResizingMain</a> ignores 1 or 3). It disables all <a href="RowHeight.htm#IRelHeight">RelHeight</a> rows and <a href="#CfgConstHeight">ConstHeight</a>.<br />
+<i>Since 13.0</i> it works also with <a href="Paging.htm#CfgPaging">Paging</a>, <a href="#TreePaging.htm#CfgChildParts">ChildParts</a> and <a href="Paging.htm#CfgAutoPages">AutoPages</a>.<br />
+
+<!-- NoHScroll -->
+<a name="CfgNoHScroll"></a>
+<div class="XML">
+   <u><i>upd <b>13.0</b></i></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>NoHScroll</h4> <s></s>
+</div>
+If set to 1, the TreeGrid always resizes horizontally the <a href="Create.htm#MainTag">main tag</a> to show the entire grid.<br />
+When set, a user cannot resize the main tag horizontally (<a href="#CfgResizingMain">ResizingMain</a> ignores 2 or 3). It also disables all <a href="ColWidth.htm#CRelWidth">RelWidth </a>columns and <a href="#CfgConstWidth">ConstWidth</a>.<br />
+<i>Since 13.0</i> it works also with <a href="ColPaging.htm#CfgColPaging">ColPaging</a>, <a href="http://www.treegrid.com/Doc/GanttZoom.htm#CGanttPaging">GanttPaging</a> and <a href="ColPaging.htm#CfgAutoColPages">AutoColPages</a>.<br />
+
+<!-- MaxVScroll -->
+<a name="CfgMaxVScroll"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MaxVScroll</h4> <s></s>
+</div>
+If set, resizes vertically the <a href="Create.htm#MainTag">main tag</a> tag to show the entire grid, but only up to the specified size in pixels. Grid behaves in this way:<br /> 
+When grid content is higher than this maximum, it sets the main tag height to the maximum and shows vertical scrollbar.<br /> 
+When grid content is smaller than this maximum, it shrinks the main tag to accommodate the grid only.<br /> 
+When set, it disables all <a href="RowHeight.htm#IRelHeight">RelHeight</a> rows and <a href="#CfgConstHeight">ConstHeight</a>.<br />
+
+<!-- MaxHScroll -->
+<a name="CfgMaxHScroll"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MaxHScroll</h4> <s></s>
+</div>
+If set, resizes horizontally the <a href="Create.htm#MainTag">main tag</a> to show the entire grid, but only up to the specified size in pixels. Grid behaves in this way:<br /> 
+When grid content is wider than this maximum, it sets the main tag width to the maximum and shows horizontal scrollbar.<br /> 
+When grid content is smaller than this maximum, it shrinks the main tag to accommodate the grid only.<br /> 
+When set, it disables all <a href="ColWidth.htm#CRelWidth">RelWidth</a> columns and <a href="#CfgConstWidth">ConstWidth</a>.<br />
+
+<!-- OnResizeMain -->
+<a name="OnResizeMain"></a>
+<div class="API">
+   <u>chg <b>7.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnResizeMain</h4> <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+<i>Since 7.0</i> the event is called also when resizing main tag by NoVScroll, NoHScroll, MaxVScroll and MaxHScroll. But <u>not</u> by NoScroll.<br />
+
+<!-- LimitScroll -->
+<a name="CfgLimitScroll"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>LimitScroll</h4> <s>[0]</s>
+</div>
+When set, it sets <a href="#CfgNoVScroll">NoVScroll</a> and / or <a href="#CfgNoHScroll">NoHScroll</a>, if there is not enough room to display the grid readable. Bit array.<br />
+It is applied after <a href="CellStyle.htm#CfgShrinkStyleSize">ShrinkStyleSize</a>.<br />
+<b>1</b>. bit <b>&1</b> - Horizontal limit. Sets <a href="#CfgNoHScroll">NoHScroll</a> if the width of any column section is lower than the
+<a href="GridSize.html#CfgMinLeftWidth">MinLeftWidth</a> / <a href="GridSize.html#CfgMinMidWidth">MinMidWidth</a> / <a href="GridSize.html#CfgMinRightWidth">MinRightWidth</a> value. <br />
+<b>2</b>. bit <b>&2</b> - Vertical limit. Sets <a href="#CfgNoVScroll">NoVScroll</a> if the height of visible variable rows count is smaller than <a href="CellStyle.htm#CfgMinBodyRows">MinBodyRows</a> value. <br />
+<b>3</b>. bit <b>&4</b> - Space width limit. Sets <a href="#CfgNoHScroll">NoHScroll</a> if any Space row does not display all its cells fully because too small grid width. The columns must be wider than all the space rows or <a href="#CfgConstWidth">ConstWidth</a> or RelWidth column must be defined.<br />
+<b>4</b>. bit <b>&8</b> - <i>Reserved</i> <br />
+<b>5</b>. bit <b>&16</b> - If set, sets always both <a href="#CfgNoVScroll">NoVScroll</a> and <a href="#CfgNoHScroll">NoHScroll</a>. <br />
+
+<!-- OnLimitScroll -->
+<a name="OnLimitScroll"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>int</i>
+   <h4>OnLimitScroll</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>bool</i> <b>clear</b>, <i>bool</i> <b>nohscroll</b>, <i>bool</i> <b>novscroll</b>)</s>
+</div>
+Called before changed <a href="#CfgNoHScroll">NoHScroll</a> or <a href="#CfgNoVScroll">NoVScroll</a> due <a hred="#CfgLimitScroll">LimitScroll</a>.<br />
+Return true to cancel the change. Return -1 to cancel the change and to not continue (in case the handler calls Update())<br />
+<b>clear</b> is set before NoHScroll / NoVScroll is set to false, <b>clear</b> is false before NoHScroll / NoVScroll is set to true.<br />
+<i>The handler should not change the grid layout (e.g. show / hide row / column), such action do in setTimeout.</i>
+
+<!-- UpdateLimitScroll -->
+<a name="UpdateLimitScroll"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API method</b> <i>void</i>
+   <h4>UpdateLimitScroll</h4> <s>(<i>bool</i> <b>noupdate</b> = 0)</s>
+</div>
+Recalculates scroll limits and if required changes NoVScroll / NoHScroll.<br />
+Call it if the scroll limits are not updated automatically, e.g. if some page content changes its height and makes more or less room for grid.<br />
+If set <b>noupdate</b> = 1 it does not update the limits immediately, but later in timeout.<br />
+
+<!-- ScrollParent -->
+<a name="CfgScrollParent"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>ScrollParent</h4> <s></s>
+</div>
+id of the tag that scrolls grid instead of Main tag if set <a href="#CfgNoVScroll">NoVScroll</a> or <a href="#CfgNoHScroll">NoHScroll</a>.<br />
+For API it is a HTML tag object.<br />
+If not set, the whole document body is used.<br />
+
+<!-- NoScroll -->
+<a name="CfgNoScroll"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>NoScroll</h4> <s></s>
+</div>
+If set to 1, does not use TreeGrid’s scrollbars. The <a href="Create.htm#MainTag">main tag</a> is always resized to accommodate exactly the grid content.<br />
+In this case are used scrollbars of parent tag with overflow set or browser window.<br />
+In this case the main tag has automatically set <b>overflow:visible</b> and it must not be changed.<br />
+
+<!-----------------------------------------------------------  Let a user to control the grid size  ------------------------------------------------->
+<a name="Resizing"></a>
+<h2>Let a user to control the grid size</h2>
+
+To let a user to resize main tag, set <tt>&lt;<b>Cfg <a href="#CfgResizingMain">ResizingMain</a>='3'</b>/></tt>.<br /> 
+The user will resize the main tag, but not the grid content, to update grid content to fill the resized main tag set <tt>&lt;<b>Cfg <a href="#CfgConstHeight">ConstHeight</a>='1' <a href="#CfgConstWidth">ConstWidth</a>='1'</b>/></tt>  or use some row with <tt>&lt;I <b>RelHeight</b>='1'/></tt> and column with <tt>&lt;C <b>RelWidth</b>='1'/></tt> .<br /> 
+You can set minimal permitted size of the main tag by <tt>&lt;Cfg <b><a href="#CfgMinTagHeight">MinTagHeight</a>='...' <a href="#CfgMinTagWidth">MinTagWidth</a>='...'</b>/></tt> and maximal size by <tt>&lt;<b>Cfg <a href="#CfgMaxTagHeight">MaxTagHeight</a>='...' <a href="#CfgMaxTagWidth">MaxTagWidth</a>='...'</b>/></tt>.<br />
+
+<!-- ResizingMain -->
+<a name="CfgResizingMain"></a>
+<div class="XML">
+   <u><i>upd <b>12.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ResizingMain</h4> <s><i>main tag extents are saved to cookies, avoid it by <tt>&lt;Cfg ResizingMainLap='1'/></tt></i></s>
+</div>
+If set, <a href="Create.htm#MainTag">main tag</a> can be resized by user by dragging by bottom right edge of toolbar.<br />
+<b>= 1</b> resizes vertically (height), <b>2</b> resizes horizontally (width), <b>3</b> resizes both sides.<br />
+If added <b>4</b>, it does not hide the table while resizing.<br />
+<i>(new 12.0)</i> If added <b>8</b> or <b>12</b>, it hides content also of other grids on page (<b>8</b> all grids with <a href="#CfgMaxHeight">MaxHeight</a> set, <b>12</b> all grids).<br />
+<i>(new 12.0)</i> If added <b>16</b>, it does not use LeftWidth / MidWidth / RightWidth when calculating minimal permitted width.<br />
+Extents of main tag are saved to cookies, to suppress it set <tt><b>ResizingMainLap</b>='<b>1</b>'</tt>.<br />
+Resizing height cannot be done when set <a href="#CfgMaxHeight">MaxHeight</a> or <a href="#CfgNoVScroll">NoVScroll</a>.
+If set <a href="#CfgMaxVScroll">MaxVScroll</a>, the main tag can be resized up to the grid content height.<br /> 
+Resizing width cannot be done when set <a href="#CfgMaxWidth">MaxWidth</a>, <a href="#CfgNoHScroll">NoHScroll</a>.
+If set <a href="#CfgMaxHScroll">MaxHScroll</a>, the main tag can be resized up to the grid content width.<br /> 
+
+If resizing main tag is permitted, it is also resized automatically if it cannot accommodate the grid (the fixed sections of grid are too high or wide), to preserve displaying "Too small extents" message.<br />
+
+<!-- Action GridResize -->
+<a name="ActionsGridResize"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GridResize</h4>
+   <s>Attached to <b>OnDragResize</b> and <b>OnDragButtonResize</b>, can be attached to <b>OnDrag...</b> events only</s>
+</div>
+Starts resizing main tag by mouse.<br />
+
+<!-- Action GridResizeDefault -->
+<a name="ActionsGridResizeDefault"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GridResizeDefault</h4>
+   <s>Attached to <b>OnDblClickResize</b> and <b>OnDblClickButtonResize</b></s>
+</div>
+Resizes main tag back to its original size after it was resized by a user.<br />
+
+<!-- OnResizeMain -->
+<a name="OnResizeMain"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnResizeMain</h4> <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+Called after main tag is resized by a user.<br />
+<i>Since 7.0</i> the event is called also when resizing main tag by NoVScroll, NoHScroo, MaxVScroll and MaxHScroll. But <u>not</u> by NoScroll.<br />
+
+<!-----------------------------------------------------------  Widths of individual sections  ------------------------------------------------->
+<a name="Widths"></a>
+<h2>Widths of individual sections</h2>
+
+TreeGrid supports scrolling of all three column sections (left, mid, right).<br />
+By default is scrolled only the middle (variable) section. Only if the grid cannot accommodate the other section, they are scrolled too.<br /><br />
+
+<h6>The algorithm to show scrollbars for sections</h6>
+1) If there is enough space to show all columns in their original widths, no scrollbar is shown. The widths of sections cannot be resized by a user.<br />
+2) If there is no room to show all columns, the sections are resized to their Width (LeftWidth/MidWidth/RightWidth).<br /> 
+<div class="L1">
+If section has not set its width, it is not resized.<br /> 
+The sections are resized in the order <a href="#CfgSectionShrinkOrder">SectionShrinkOrder</a>, by default: Mid, Right, Left. So first is resized the middle section to its Width, if there is still no room it continues with right and next width the left one.<br />
+</div>
+3) If there is still no room, the sections <u>without</u> Width are resized to their MinWidth (MinLeftWidth/MinMidWidth/MinRightWidth). Still in the same order.<br />
+4) If there is still no room, the sections <u>with</u> Width are resized to their MinWidth. Still in the same order.<br />
+5) If there is still no room and vertical pager is displayed, the pager is resized to its MinWidth. <i>Since 11.0 the order of points 4 and 5 was changed.</i><br />
+6) If there is still no room, all sections are resized to their border width only (few pixels). Still in the same order.<br />
+7) If there is still no room, the "Too small grid size" message is shown and the grid is disabled.<br />
+
+<a name="Synchronize"></a>
+<h6>Synchronize sections widths among more grids</h6>
+a) If the grids have the same columns, do in all the affected grids:<br />
+<div class="L1">
+Set <tt>&lt;Cfg <a href="MasterDetail.htm#CfgSync">Sync</a>="<b>sec</b>,<b>cols</b>,<b>style</b>"/></tt>, optionally add "<b>horz</b>" to synchronize horizontal scroll, optionally add "<b>zoom</b>" to synchronize Gantt zoom.<br />
+Set the same values for &lt;Cfg> attributes LeftWidth, MidWidth, RightWidth, MinLeftWidth, MinMidWidth, MinRightWidth, SectionShrinkOrder in all the grids.<br />
+Ensure the TreeGrid main tags have the same widths.<br />
+</div>
+b) If the grids have different columns, do in all the affected grids:<br />
+<div class="L1">
+Set <tt>&lt;Cfg <a href="MasterDetail.htm#CfgSync">Sync</a>="<b>sec</b>,<b>style</b>"/></tt>, optionally add "<b>horz</b>" to synchronize horizontal scroll, optionally add "<b>zoom</b>" to synchronize Gantt zoom.<br />
+In every column section define one column as <tt>&lt;C <a href="ColWidth.htm#CConstWidth">ConstWidth</a>='1' <a href="ColWidth.htm#CRelWidthType">RelWidthType</a>='1'/></tt><br />
+Set the same values for &lt;Cfg> attributes LeftWidth, MidWidth, RightWidth, MinLeftWidth, MinMidWidth, MinRightWidth, SectionShrinkOrder in all the grids.<br />
+Optionally set <tt>&lt;Cfg LeftCanResize='4' RightCanResize='4'/></tt> to resize also sections without scrollbars.<br />
+Ensure the TreeGrid main tags have the same widths.<br />
+</div>
+
+<!-- WideHScroll -->
+<a name="CfgWideHScroll"></a>
+<div class="XML">
+   <u>new <b>6.5</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>WideHScroll</h4> <s>[0]</s>
+</div>
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>All three column sections can be scrolled, depending on their ...Width attributes presets.</td></tr>
+<tr><td></td><td>If the sections are wider than grid, the sections are shrunk and their scrollbars are shown. The section order is [middle,right,left].</td></tr>
+<tr><td>&nbsp;</td><td></td></tr>
+
+<tr><td><b>1</b></td><td>There is only one horizontal scrollbar spanned for all three column sections and controls only the middle section.</td></tr>
+<tr><td></td><td>Only the middle section can be scrolled.</td></tr>
+<tr><td></td><td><i>It was default and only behavior in versions prior to 6.5</i></td></tr>
+<tr><td></td><td>If left and right fixed columns are wider than the grid, "Too small grid size" message is displayed and grid is disabled. No column resize/hide is done unlike versions below 6.5!</td></tr>
+</table>
+
+<!-- ShortHScroll -->
+<a name="CfgShortHScroll"></a>
+<div class="DEL">
+   <u>deleted <b>6.5</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ShortHScroll</h4> <s></s>
+</div>
+<i>Replaced by WideHScroll</i><br />
+If set to 1, the horizontal scrollbar is displayed only below variable columns. It is just visual effect.<br />
+
+<!-- LeftWidth -->
+<a name="CfgLeftWidth"></a>
+<div class="XML">
+   <u>new <b>6.5</b> <i>upd <b>12.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>LeftWidth</h4> <s>Saved to cookies, avoid it by <tt>&lt;Cfg <b>SectionWidthLap</b>='1'/></tt></s>
+</div>
+Expected maximal width (in pixels) of the left columns section.<br />
+If the section content becomes wider, scrollbar is shown.<br />
+It can be changed when resizing section, see <a href="#CfgLeftCanResize">LeftCanResize</a>.<br />
+<i>Since 12.0</i> if set to 0, it is set to width of all left columns (for RelWidth columns used MinWidth or 0).<br />
+
+<!-- MidWidth -->
+<a name="CfgMidWidth"></a>
+<div class="XML">
+   <u>new <b>6.5</b> <i>upd <b>12.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MidWidth</h4> <s>Saved to cookies, avoid it by <tt>&lt;Cfg <b>SectionWidthLap</b>='1'/></tt></s>
+</div>
+Expected maximal width (in pixels) of the middle (variable) columns section.<br />
+If the section content becomes wider, scrollbar is shown.<br />
+It can be changed when resizing section, see <a href="#CfgLeftCanResize">LeftCanResize</a> or <a href="#CfgRightCanResize">RightCanResize</a>.<br />
+<i>Since 12.0</i> if set to 0, it is set to width of all variable columns (for RelWidth columns used MinWidth or 0).<br />
+
+<!-- RightWidth -->
+<a name="CfgRightWidth"></a>
+<div class="XML">
+   <u>new <b>6.5</b> <i>upd <b>12.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RightWidth</h4> <s>Saved to cookies, avoid it by <tt>&lt;Cfg <b>SectionWidthLap</b>='1'/></tt></s>
+</div>
+Expected maximal width (in pixels) of the right columns section.<br />
+If the section content becomes wider, scrollbar is shown.<br />
+It can be changed when resizing section, see <a href="#CfgRightCanResize">RightCanResize</a>.<br />
+<i>Since 12.0</i> if set to 0, it is set to width of all right columns (for RelWidth columns used MinWidth or 0).<br />
+
+<!-- MinLeftWidth -->
+<a name="CfgMinLeftWidth"></a>
+<div class="XML">
+   <u>new <b>6.5</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MinLeftWidth</h4> <s>[50]</s>
+</div>
+Expected minimal width (in pixels) of the left columns section.<br />
+The section is not shrunk below this limit, except all other sections reached their minimal width and grid horizontal space is still too small.<br />
+
+<!-- MinMidWidth -->
+<a name="CfgMinMidWidth"></a>
+<div class="XML">
+   <u>new <b>6.5</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MinMidWidth</h4> <s>[50]</s>
+</div>
+Expected minimal width (in pixels) of the middle (variable) columns section.<br />
+The section is not shrunk below this limit, except all other sections reached their minimal width and grid horizontal space is still too small.<br />
+
+<!-- MinRightWidth -->
+<a name="CfgMinRightWidth"></a>
+<div class="XML">
+   <u>new <b>6.5</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MinRightWidth</h4> <s>[50]</s>
+</div>
+Expected minimal width (in pixels) of the right columns section.<br />
+The section is not shrunk below this limit, except all other sections reached their minimal width and grid horizontal space is still too small.<br />
+
+<!-- SectionResizing -->
+<a name="CfgSectionResizing"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SectionResizing</h4> <s>[1]</s>
+</div>
+If and how the column sections can be resized. Individual section resizing permissions are set by <a href="#CfgLeftCanResize">LeftCanResize</a> and <a href="#CfgRightCanResize">RightCanResize</a>.<br />
+<b>0</b> - No resizing is permitted, regardless on LeftCanResize / RightCanResize settings,<br />
+<b>1</b> - Resizing can be done by dragging vertical splitter shown between the sections <i>(new 9.2)</i>.<br />
+<b>2</b> - Resizing can be done by dragging small vertical splitters between horizontal scrollbars <i>(default behavior prior 9.2)</i>.<br />
+
+<!-- LeftCanResize -->
+<a name="CfgLeftCanResize"></a>
+<div class="XML">
+   <u style="width:155px;">new <b>6.5</b> chg <b>9.2</b> <i>upd <b>11.0</b></i></u> <b style="width:65px;">&lt;Cfg></b> <i>int</i>
+   <h4>LeftCanResize</h4> <s>[1]</s>
+</div>
+When and how the edge between left and middle column section can be moved.<br />
+<b>0</b> - Never<br />
+<b>1</b> - Only if the <a href="#CfgLeftWidth">LeftWidth</a> is set and there is scrollbar in left or middle section.<br />
+<b>2</b> - <i>(new 9.2)</i> Always when there is scrollbar in left or middle section.<br /> 
+<b>3</b> - <i>(new 9.2)</i> Always when there is scrollbar in any section (left, middle, right). The right section width can be also changed if the middle section cannot be resized enough.<br />
+<b>4</b> - <i>(new 11.0)</i> Even if there is no scrollbar and the sections have defined some column with <tt><a href="ColWidth.htm#CRelWidth">RelWidth</a>='1'</tt> or <tt><a href="ColWidth.htm#CConstWidth">ConstWidth</a>='1'</tt> and  <tt><a href="ColWidth.htm#CRelWidthType">RelWidthType</a>='1'</tt><br /> 
+The resizing changes <a href="#CfgLeftWidth">LeftWidth</a> and <a href="#CfgMidWidth">MidWidth</a>, (for <b>3</b> and <b>4</b> also <a href="#CfgRightWidth">RightWidth</a>).<br />
+The section can be caught and dragged by the place between left and middle scrollbar.<br />
+Sections cannot be resized below their Min...Width and above sum of their column widths.<br />
+
+<!-- RightCanResize -->
+<a name="CfgRightCanResize"></a>
+<div class="XML">
+   <u style="width:155px;">new <b>6.5</b> chg <b>9.2</b> <i>upd <b>11.0</b></i></u> <b style="width:65px;">&lt;Cfg></b> <i>bool</i>
+   <h4>RightCanResize</h4> <s>[1]</s>
+</div>
+When and how the edge between right and middle column section can be moved.<br />
+<b>0</b> - Never<br />
+<b>1</b> - Only if the <a href="#CfgRightWidth">RightWidth</a> or <a href="#CfgMidWidth">MidWidth</a> is set and there is scrollbar in right or middle section.<br />
+<b>2</b> - <i>(new 9.2)</i> Always when there is scrollbar in right or middle section.<br /> 
+<b>3</b> - <i>(new 9.2)</i> Always when there is scrollbar in any section (left, middle, right). The left section width can be also changed if the middle section cannot be resized enough.<br />
+<b>4</b> - <i>(new 11.0)</i> Even if there is no scrollbar and the sections have defined some column with <tt><a href="ColWidth.htm#CRelWidth">RelWidth</a>='1'</tt> or <tt><a href="ColWidth.htm#CConstWidth">ConstWidth</a>='1'</tt> and <tt><a href="ColWidth.htm#CRelWidthType">RelWidthType</a>='1'</tt>.<br /> 
+The resizing changes <a href="#CfgRightWidth">RightWidth</a> and <a href="#CfgMidWidth">MidWidth</a>, (for <b>3</b> and <b>4</b> also <a href="#CfgLeftWidth">LeftWidth</a>).<br />
+The section can be caught and dragged by the place between right and middle scrollbar.<br />
+Sections cannot be resized below their Min...Width and above sum of their column widths.<br />
+
+<!-- SectionShrinkOrder -->
+<a name="CfgSectionShrinkOrder"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>SectionShrinkOrder</h4> <s>["mid,right,left"]</s>
+</div>
+In this order the column sections are shrunk if there is no room for them. See <a href="#Widths">the resizing algorithm</a>.<br />
+Can be any combination of words left, mid, right; case insensitive.<br />
+
+<!-- Action SectionResize -->
+<a name="ActionsSectionResize"></a>
+<div class="ACT">
+   <u>new <b>6.5</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SectionResize</h4>
+   <s>Mouse dragging action, only for <b>OnDrag...</b> event</s>
+</div>
+Starts resizing column section by mouse.<br />
+By default is the action attached to <b>OnDragHScrollLeft</b> (left/middle scrollbar), <b>OnDragHScrollRight</b> (middle/right scrollbar).<br />
+
+<!-- OnSectionResize -->
+<a name="OnSectionResize"></a>
+<div class="API">
+   <u>new <b>6.5</b></u> <b>API event</b> <i>void</i>
+   <h4>OnSectionResize</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>section</b>, <i>int</i> <b>widthchange</b>)</s>
+</div>
+Called when section (0 - left, 1 -  middle, 2 - right) is resized by a user.<br />
+It can be called more times during resizing column by a user, for every change.<br />
+
+<!-- OnAfterSectionResize -->
+<a name="OnAfterSectionResize"></a>
+<div class="API">
+   <u>new <b>6.5</b></u> <b>API event</b> <i>void</i>
+   <h4>OnAfterSectionResize</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>section</b>)</s>
+</div>
+Called after section (0 - left, 1 - middle, 2 - right) is resized by a user. It is called only once.<br />
+
+<!-----------------------------------------------------------  Other scrolling attributes and API  ------------------------------------------------->
+<a name="Other"></a>
+<h2>Other scrolling attributes and API</h2>
+
+<!-- CustomScroll -->
+<a name="CfgCustomScroll"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>CustomScroll</h4> <s>[0]</s>
+</div>
+Type of scrollbars used in grid. It affects only the base vertical and horizontal scrollbars scrolling the whole grid section.<br />
+<b>0</b> - standard browser scrollbar<br />
+<b>1</b> - normal style scrollbar, <b>2</b> - big style scrollbar, <b>3</b> - small (simple) style scrollbar<br />
+<b>4</b> - hidden (no) scrollbars, you can assign action <a href="#ActionsScroll">Scroll</a> to some drag event to scroll on drag. Scrolling is also possible by mouse wheel or by focus by arrow keys.<br />
+<i>Custom scrollbars are <u>not</u> suitable for very large grids with many rows or columns, because the custom scrollbar step is too big for them.</i><br />
+
+<!-- TouchScroll -->
+<a name="CfgTouchScroll"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>TouchScroll</h4> <s>[1]</s>
+</div>
+Type of scrollbars used in grid only on touchpad, e.g. on <b>iPad</b>. It affects only the base vertical and horizontal scrollbars scrolling the whole grid section.<br />
+<i>It changes value of <a href="#CfgCustomScroll">CustomScroll</a> for tablets only.</i><br />
+<b>0</b> - standard browser scrollbar<br />
+<b>1</b> - normal style scrollbar, <b>2</b> - big style scrollbar, <b>3</b> - small (simple) style scrollbar<br />
+<b>4</b> - hidden (no) scrollbars, you can assign action <a href="#ActionsScroll">Scroll</a> to some drag event to scroll on drag. Scrolling is also possible by mouse wheel or by focus by arrow keys.<br />
+
+<!-- ScrollAction -->
+<a name="CfgScrollAction"></a>
+<div class="XML">
+   <u>new <b>7.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ScrollAction</h4> <s>[ ]</s>
+</div>
+<i>For tablets only.</i><br />
+<i>Since 12.0 it is deprecated to control the tablets by one finger.</i><br />
+Predefines behavior of scrolling action (DragXRow and DragXGrid). When set, users can change this setting also via configuration menu.<br />
+By default it is empty to not modify the &lt;Actions> settings.<br />
+<b>0</b> - No scroll action, scrolling can be done only by scrollbars.<br />
+<b>1</b> - Scroll by one finger, it replaces default iPad screen move.<br />
+<b>2</b> - Scroll by two fingers, it replaces default iPad zooming, it is default grid behavior.<br />
+<b>3</b> - Scroll by three fingers, it replaces grid row dragging.<br />
+
+<!-- MomentumScroll -->
+<a name="CfgMomentumScroll"></a>
+<div class="XML">
+   <u>new <b>12.0</b> <i>upd <b>12.1</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MomentumScroll</h4> <s>[1]</s>
+</div>
+<i>For tablets only.</i><br />
+If set, uses momentum scrolling on WebKit tablets by -webkit-overflow-scrolling: touch;<br />
+If set, it always disables the <a href="#ActionsScrollAuto">ScrollAuto</a> action and uses default tablet scrolling.<br />
+The momentum scrolling scrolls also when finger is out the tablet, until it is stopped by next touch.<br />
+<i>Since 12.1</i> if set to <b>2</b> disables the momentum scrolling if some TreeGrid dialog is opened to avoid Safari bug that scrolls the grid behind the dialog. <i>The value <b>2</b> can slightly slow down the dialog display and old iOS it blinks.</i><br />
+<i>Since 12.1</i> if set to <b>3</b> it behaves like <b>2</b> on Safari 8+ and like <b>1</b> on older Safari.<br />
+
+
+<!-- CustomHScroll -->
+<a name="CfgCustomHScroll"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>CustomHScroll</h4> <s>[0]</s>
+</div>
+Presets different value of <a href="#CfgCustomScroll">CustomScroll</a> for horizontal scrollbar(s).<br />
+
+<!-- HideHScroll -->
+<a name="CfgHideHScroll"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>HideHScroll</h4> <s></s>
+</div>
+If set to 1, the horizontal scrollbar is not visible and it cannot be used by a user to scroll the grid horizontally.<br /> 
+All other scrolling ways (by focus, by API) are still possible like the scrollbar is visible.<br />
+It can be used to hide the scrollbar and provide custom way for horizontal scrolling, e.g. some buttons.<br />
+<i>Since 7.0</i> it sets <tt><a href="#CfgCustomHScroll">CustomHScroll</a> = '4'</tt><br />
+
+<!-- ShowHScroll -->
+<a name="CfgShowHScroll"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ShowHScroll</h4> <s></s>
+</div>
+If set to <b>1</b>, the horizontal scrollbar(s) is still visible even if it is not required.<br />
+
+<!-- ShowVScroll -->
+<a name="CfgShowVScroll"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ShowVScroll</h4> <s></s>
+</div>
+If set to <b>1</b>, the vertical scrollbar is still visible even if it is not required.<br /> 
+It automatically sets <tt>&lt;Cfg <a href="#CfgConstHeight">ConstHeight</a>='1'/></tt> if not set and no RelHeight row exists. Ignored when set <a href="#CfgNoVScroll">NoVScroll</a> or <a href="#CfgMaxVScroll">MaxVScroll</a>.<br />
+Set it to 1 if there are many columns with <a href="ColWidth.htm#CRelWidth">RelWidth</a> and showing / hiding vertical scrollbar slows down the grid, especially for tree.<br />
+
+<!-- RoundVScroll -->
+<a name="CfgRoundVScroll"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RoundVScroll</h4> <s></s>
+</div>
+If set, to this will be all vertical scroll steps rounded.<br />
+For example set it to 18, if your rows are 18 pixels high (default in many styles) to scroll always to the whole rows.<br />
+
+<!-- NoScrollAfterExpand -->
+<a name="CfgNoScrollAfterExpand"></a>
+<div class="XML">
+   <u>chg <b>7.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>NoScrollAfterExpand</h4> <s>[1]</s>
+</div>
+If set to <b>0</b>, TreeGrid scrolls down if the children are not shown all.<br />
+If set to <b>1</b>, when expanding row, does not scroll into view the row's children - the icon always stays under mouse cursor.<br />
+<i>Since 7.0</i> the default value is <b>1</b>.
+
+<!-- WheelFixed -->
+<a name="CfgWheelFixed"></a>
+<div class="XML">
+   <u>new <b>13.2</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>WheelFixed</h4> <s>[5]</s>
+</div>
+If mouse wheel scrolls the grid body if mouse is above other grid section.<br />
+<b>0</b> - never, <b>1</b> - also if above Head or Foot section, <b>2</b> - also if above inner space row (Space=1,2),
+<b>3</b> - also if above other space row (Space=0,3,4), <b>4</b> - also if above outer space row (Space=-1,5),
+<b>5</b> - also if above side pager, <b>6</b> - also if above outside space (with Tag set).<br />
+
+<!-- PositionFixed -->
+<a name="CfgPositionFixed"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>PositionFixed</h4> <s>[0]</s>
+</div>
+Set it to <b>1</b> if the grid is placed in tag with CSS position:fixed;<br />
+
+<!-- Action Scroll -->
+<a name="ActionsScroll"></a>
+<div class="ACT">
+   <u>new <b>7.0</b> chg <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>Scroll</h4>
+   <s>Attached to <b>OnRightDragRow</b>, can be attached only to <b>OnDrag...</b> events</s>
+</div>
+Starts scrolling grid section (columns or rows) under mouse cursor. Scrolls in both directions.<br />
+See also <a href="#CfgCustomScroll">CustomScroll</a> and <a href="#CfgTouchScroll">TouchScroll</a> attributes.<br />
+<i>Since 13.0</i> if set <a href="#CfgNoHScroll">NoHScroll</a> or <a href="#CfgNoVScroll">NoVScroll</a> it scrolls the whole window or <a href="#CfgScrollParent">ScrollParent</a>.<br />
+
+<!-- Action ScrollHorz -->
+<a name="ActionsScrollHorz"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ScrollHorz</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> events</s>
+</div>
+Starts scrolling grid columns section under mouse cursor. Scrolls horizontally.<br />
+If set <a href="#CfgNoHScroll">NoHScroll</a> it scrolls the whole window or <a href="#CfgScrollParent">ScrollParent</a>.<br />
+
+<!-- Action ScrollVert -->
+<a name="ActionsScrollVert"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ScrollVert</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> events</s>
+</div>
+Starts scrolling grid variable rows section if it is under mouse cursor. Scrolls vertically.<br />
+If set <a href="#CfgNoVScroll">NoVScroll</a> it scrolls the whole window or <a href="#CfgScrollParent">ScrollParent</a>.<br />
+
+<!-- Action ScrollAuto -->
+<a name="ActionsScrollAuto"></a>
+<div class="ACT">
+   <u>new <b>10.0</b> chg <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ScrollAuto</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> events</s>
+</div>
+Starts scrolling grid section (columns or rows) under mouse cursor. Scrolls in both directions.<br />
+If the scrolling shift is too small, it does nothing and permits default action.<br /> 
+Use with NoVScroll or NoHScroll to have default scroll in one direction and TreeGrid scroll in the other direction.<br />
+For example on iPad set <tt>&lt;Cfg NoVScroll='1'/> &lt;Actions OnDrag1Row="ScrollAuto"/></tt> to use default vertical scroll for whole page and horizontal scroll for individual column sections (e.g. Gantt chart).<br />
+<i>Since 12.0</i> it is not attached to any event by default to use default scrolling behavior. You can attach it to <b>OnDrag1Row</b> and <b>OnDrag1Gantt</b> events for behavior prior to 12.0.<br />
+It is disabled on tablets if set <a href="#CfgMomentumScroll">MomentumScroll</a> (it is on by default).<br />
+
+<!-- Action ScrollTouch -->
+<a name="ActionsScrollTouch"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ScrollTouch</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> events</s>
+</div>
+The same action like <a href="#ActionsScrollAuto">ScrollAuto</a>, but in Gantt it works only if no Gantt object is focused.<br /> 
+To avoid unwanted scroll when misses the Gantt object while trying to drag it.<br />
+Usually used with <a href="RowMove.htm#CfgTouchClearFocused">TouchClearFocused</a> set to some short time.<br />
+
+<!-- OnScroll -->
+<a name="OnScroll"></a>
+<div class="API">
+   <u><i>upd <b>6.5</b></i></u> <b>API event</b> <i>void</i>
+   <h4>OnScroll</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>hpos1</b>, <i>int</i> <b>vpos</b>, <i>int</i> <b>oldhpos1</b>, <i>int</i> <b>oldvpos</b>, <i>int</i> <b>hpos0</b>, <i>int</i> <b>oldhpos0</b>, <i>int</i> <b>hpos2</b>, <i>int</i> <b>oldhpos2</b>)</s>
+</div>
+Called after body was scrolled<br />
+<i>hpos1</i> is new middle scrollLeft, <i>vpos</i> is new scrollTop, <i>oldhpos1</i> is original middle scrollLeft, <i>oldvpos</i> is original scrollTop, all in pixels.<br />
+<i>(new 6.5)</i> hpos0, oldhpos0, hpos2, oldhpos2 are values for left and right column section.<br />
+
+<!-- OnUpdate -->
+<a name="OnUpdate"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnUpdate</h4>
+   <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+Called after the grid layout was updated, called from <a href="#Update">Update</a> method.<br />
+Note that grid layout is updated after every change in grid and also if the main tag size is changed, so the OnUpdate can be called quite often.<br />
+The OnUpdate can be used e.g. to preserve displaying focused row after resize by: <tt>Grids.OnUpdate = function(G){ if(G.FRow) G.ScrollIntoView(G.FRow); }</tt><br />
+
+
+
+<!-- Update -->
+<a name="Update"></a>
+<div class="API">
+   <u>renamed <b>6.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>Update</h4>
+   <s>( )</s>
+</div>
+Updates grid layout, especially scrollbars.<br />
+Call it after all changes <u>inside</u> or <u>outside</u> the grid that affect grid size and are not recognized by the grid automatically or to update layout immediately after the change occurs.<br />
+Call it if you modify cell content directly without API and the cell changes its height. Or when you do some action that resizes <b>main tag</b>.<br />
+Returns true for success and false if grid cannot be shown and the error message "Too small extents" is displayed.<br />
+
+<!-- UpdatePos -->
+<a name="UpdatePos"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>UpdatePos</h4>
+   <s>( )</s>
+</div>
+Updates information about position and size of the parent tags - the absolute position of grid on page. Updates also all absolute cursor positions.<br />
+Call it after all changes <u>outside</u> the grid that affect grid <u>position</u> and/or <u>size</u> and are not recognized by the grid automatically or to update layout immediately after the change occurs.<br />
+Call it if you modify html page layout and grid <b>main tag</b> moves inside page flow to another position. Or when parent tag with overflow set (if any) resizes.<br />
+Call it especially when grid is placed inside tag with overflow set or grid does not show scrollbars (<tt>&lt;Cfg <a href="#CfgNoScroll">NoScroll</a>='1' or <a href="#CfgNoHScroll">NoHScroll</a>='1' or <a href="#CfgNoVScroll">NoVScroll</a>='1'/></tt>).
+
+<!-- ScrollIntoView -->
+<a name="ScrollIntoView"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>ScrollIntoView</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>pagepos</b> = null)</s>
+</div>
+Scrolls grid to show the cell [row,col].  The grid is scrolled as little as possible to show the cell.<br />
+If row represents a page set pagepos to expected row's position (index) at this page (when server paging used and page is not loaded yet).<br />
+If you want to scroll to exact position, you can use <a href="#SetScrollTop">SetScrollTop</a> and <a href="#GetRowTop">GetRowTop</a> methods.<br />
+
+<!-- GetShownRows -->
+<a name="GetShownRows"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API method</b> <i>TRow[ ]</i>
+   <h4>GetShownRows</h4>
+   <s>( )</s>
+</div>
+Returns an array of all rows actually visible by scroll.<br />
+
+<!-- GetShownCols -->
+<a name="GetShownCols"></a>
+<div class="API">
+   <u>new <b>6.0</b> <i>upd <b>6.5</b></i></u> <b>API method</b> <i>TRow[ ]</i>
+   <h4>GetShownCols</h4>
+   <s>(<i>int</i> <b>sec</b> = 1)</s>
+</div>
+Returns an array of all column names actually visible by scroll.<br />
+<i>(new 6.5)</i> The <b>sec</b> is column section (0 - left, 1 - middle, 2 - right)<br />
+
+<!-- ScrollLeft -->
+<a name="CfgScrollLeft"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ScrollLeft</h4> <s><i>Can be saved to cookies if set <tt>&lt;Cfg ScrollLeftLap='0'/></tt></i></s>
+</div>
+Initial horizontal scroll of middle (variable) columns, in pixels.<br />
+
+<!-- LeftScrollLeft -->
+<a name="CfgLeftScrollLeft"></a>
+<div class="XML">
+   <u>new <b>6.5</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>LeftScrollLeft</h4> <s><i>Can be saved to cookies if set <tt>&lt;Cfg ScrollLeftLap='0'/></tt></i></s>
+</div>
+Initial horizontal scroll of left columns, in pixels.<br />
+
+<!-- RightScrollLeft -->
+<a name="CfgRightScrollLeft"></a>
+<div class="XML">
+   <u>new <b>6.5</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RightScrollLeft</h4> <s><i>Can be saved to cookies if set <tt>&lt;Cfg ScrollLeftLap='0'/></tt></i></s>
+</div>
+Initial horizontal scroll of right columns, in pixels.<br />
+
+<!-- GetScrollLeft -->
+<a name="GetScrollLeft"></a>
+<div class="API">
+   <u>new <b>6.0</b> <i>upd <b>6.5</b></i></u> <b>API method</b> <i>int</i>
+   <h4>GetScrollLeft</h4>
+   <s>(<i>int</i> <b>sec</b> = 1)</s>
+</div>
+Returns actual horizontal scroll of body, in pixels.<br />
+<i>(new 6.5)</i> The sec is column section (0 - left, 1 - middle, 2 - right)<br />
+
+<!-- SetScrollLeft -->
+<a name="SetScrollLeft"></a>
+<div class="API">
+   <u>new <b>6.0</b> <i>upd <b>6.5</b></i></u> <b>API method</b> <i>int</i>
+   <h4>SetScrollLeft</h4>
+   <s>(<i>int</i> <b>pos</b>, <i>int</i> <b>sec</b> = 1)</s>
+</div>
+Sets new horizontal scroll of body, in pixels.<br />
+<i>(new 6.5)</i> The <b>sec</b> is column section (0 - left, 1 - middle, 2 - right)<br />
+
+<!-- GetColLeft -->
+<a name="GetColLeft"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API method</b> <i>int</i>
+   <h4>GetColLeft</h4>
+   <s>(<i>string</i> <b>col</b>)</s>
+</div>
+Returns position of column within its section, in pixels<br />
+The return value can be used to <a href="#SetScrollLeft">SetScrollLeft</a> method to scroll exactly to the column.<br />
+
+<!-- GetBodyWidth -->
+<a name="GetBodyWidth"></a>
+<div class="API">
+   <u>new <b>6.2</b> <i>upd <b>6.5</b></i></u> <b>API method</b> <i>int</i>
+   <h4>GetBodyWidth</h4>
+   <s>(<i>int</i> <b>sec</b> = 1)</s>
+</div>
+Returns inner width of the variable columns area (clientWidth of the body).<br />
+Can be used width GetColLeft and GetScrollLeft to compute exact visibility and position of some variable column.<br />
+<i>(new 6.5)</i> The <b>sec</b> is column section (0 - left, 1 - middle, 2 - right)<br />
+
+<!-- GetBodyScrollWidth -->
+<a name="GetBodyScrollWidth"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>int</i>
+   <h4>GetBodyScrollWidth</h4>
+   <s>(<i>int</i> <b>sec</b> = 1)</s>
+</div>
+Returns scroll width of the given columns area - sum of all visible columns Width in the given area.<br />
+
+<!-- ScrollTop -->
+<a name="CfgScrollTop"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ScrollTop</h4> <s><i>Can be saved to cookies if set <tt>&lt;Cfg ScrollTopLap='0'/></tt></i></s>
+</div>
+Initial vertical scroll of body, in pixels.<br />
+
+<!-- GetScrollTop -->
+<a name="GetScrollTop"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API method</b> <i>int</i>
+   <h4>GetScrollTop</h4>
+   <s>( )</s>
+</div>
+Returns actual vertical scroll of body, in pixels.<br />
+
+<!-- SetScrollTop -->
+<a name="SetScrollTop"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API method</b> <i>int</i>
+   <h4>SetScrollTop</h4>
+   <s>(<i>int</i> <b>pos</b>)</s>
+</div>
+Sets new vertical scroll of body, in pixels.<br />
+
+<!-- GetRowTop -->
+<a name="GetRowTop"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API method</b> <i>int</i>
+   <h4>GetRowTop</h4>
+   <s>(<i>TRow</i> <b>row</b>)</s>
+</div>
+Returns position of variable row or page within body, in pixels.<br />
+The return value can be used to <a href="#SetScrollTop">SetScrollTop</a> method to scroll exactly to the row.<br />
+
+<!-- GetBodyHeight -->
+<a name="GetBodyHeight"></a>
+<div class="API">
+   <u>new <b>6.2</b></u> <b>API method</b> <i>int</i>
+   <h4>GetBodyHeight</h4>
+   <s>( )</s>
+</div>
+Returns inner height of the variable rows area (clientHeight of the body).<br />
+Can be used width GetRowTop and GetScrollTop to compute exact visibility and position of some variable row.<br />
+
+<!-- GetBodyScrollHeight -->
+<a name="GetBodyScrollHeight"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>int</i>
+   <h4>GetBodyScrollHeight</h4>
+   <s>( )</s>
+</div>
+Returns scroll height of the body - sum of heights of all pages.<br />
+
+<!-- Rendering -->
+<a name="Rendering"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>bool</i>
+   <h4>Rendering</h4>
+   <s>[0]</s>
+</div>
+If grid is rendering now.<br /> 
+You should <u>not</u> call any API function that modifies TreeGrid HTML while it is rendering (or <b>Loading</b>).<br />
+You can set Rendering to true, if you plan to show or hide many rows to speed up the action. After finish, you need set Rendering to false and call function <a href="#Update">Update</a> to update grid layout.<br />
+
+</div>
+</body>	
+</html>

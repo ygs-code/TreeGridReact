@@ -1,0 +1,90 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Text types</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Type Auto - automatic type</h1>
+<p>TreeGrid documentation</p>
+
+<i style="color:red;">Included only in <b>Sheet</b> component.</i><br />
+<br />
+<b>Auto</b> type is automatic type, the resulted type is chosen according to the cell value and <a href="#CFormat">Format</a>. <br />
+It chooses from text (<a href="TypeText.htm">Lines</a>), number (<a href="TypeNumber.htm">Float</a>) and date (<a href="TypeDate.htm">Date</a>). <br />
+If the <b>Format</b> is not set, the value is shown as is, if the value can be converted to number, it is right aligned, otherwise it is left aligned.<br />
+If the <b>Format</b> is set and the value is a string, it is formatted according to date or number format text part - if the text format part is not defined, the text is displayed as is. It is always left aligned.<br />
+If the <b>Format</b> contains <a href="TypeDate.htm#CFormat">date format</a>, the number value is formatted as date.<br />
+If the <b>Format</b> is set and does not contain <a href="TypeDate.htm#CFormat">date format</a>, the number value is formatted as number.<br />
+<br />
+Entered value and value in input data is converted to number or date, if it is possible.<br />
+If converted to date, the appropriate standard format is chosen according to the entered date/time 
+(chooses from short: d, h, H, j, J, m, y, long: D, l, L, k, K, M, Y, time: t, T, i, I).<br />
+
+<!-- Type -->
+<a name="CType"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"] <tt>Type = "Auto"</tt></s>
+</div>
+To define Auto type, set column or cell attribute Type to "<b>Auto</b>".<br />
+
+<!-- Format -->
+<a name="CFormat"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>Format</h4> <s></s>
+</div>
+The <b>Auto</b> type supports <a href="TypeNumber.htm#CFormat">number format</a>, <a href="TypeDate.htm#CFormat">date format</a> and '<b>@</b>' as plain text.<br /> 
+<i>It does <b>not</b> support TreeGrid Text format.</i><br />
+The Format specifies the value type, see the <a href="#CType">Type</a> attribute.
+
+<!-- FormatSet -->
+<a name="CellFormatSet"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;cell></b> <i>bool</i>
+   <h4>FormatSet</h4> <s></s>
+</div>
+It is set to 1 if the cell has <a href="#CFormat">Format</a> and the format was chosen or entered by a user or loaded from data.<br />
+
+<!-- FormatTextPrefix -->
+<a name="FormatTextPrefix"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Format></b> <i>string</i>
+   <h4>TextPrefix</h4> <s>[']</s>
+</div>
+Starting cell value by this character forces its auto type to text.<br />
+This first character is not displayed in the cell. It is ignored in editable formulas. Default is apostrophe.<br />
+In <b>Auto</b> type it forces to always display the value as string.<br />
+
+<!-- FormatExactNumbers -->
+<a name="FormatExactNumbers"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Format></b> <i>int</i>
+   <h4>ExactNumbers</h4> <s>[0]</s>
+</div>
+If preserves numbers in strings as strings in Auto type, if exact number representation would change if converted to number.<br />
+<b>0</b> - preserves none, all number strings are converted to numbers, "0123" => 123, "123 " => 123, "12345678901234567890" => 12345678901234567000 and "1e3" => 1000.<br />
+<b>1</b> - preserves only leading zeros. Preserves "0123" => "0123", but converts the others: "123 " => 123, "12345678901234567890" => 12345678901234567000 and "1e3" => 1000<br />
+<b>2</b> - preserves all except leading and trailing spaces. Preserves "0123" => "0123", "12345678901234567890" => "12345678901234567890" and "1e3" => "1e3", but converts "123 " => 123.<br />
+<b>3</b> - preserves complete string including spaces. Preserves "0123" => "0123", "123 " => "123 ", "012345678901234567890" => "12345678901234567890" and "1e3" => "1e3".<br />
+<i>If the number contains spaces inside in input data, the value is always string, e.g. "12 3" will be "12 3". On editing the spaces inside are preserved only for ExactNumbers=<b>3</b>.</i>
+
+<!-- ExcelDates -->
+<a name="CfgExcelDates"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ExcelDates</h4> <s>[0]</s>
+</div>
+<b>0</b> - all dates in grid are integer numbers as count of milliseconds since 1/1/1970.<br />
+<b>1</b> - all dates in grid are floating numbers as count of days since 1/1/1900. <i>Cannot be used with Gantt chart</i><br />
+It affects everything, input data and output data if dates are numbers and all dates for API.<br />
+Setting to 1 is useful especially if importing <b>xlsx</b> file with dates.<br />
+Setting to 1 sets also all dates to GMT by &lt;Format GMT='1'/>.<br />
+<i>Due internal implementation the setting is shared among all grids on page!</i>
+
+</div>
+</body>
+</html>

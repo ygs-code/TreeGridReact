@@ -1,0 +1,87 @@
+<Grid>
+   <Cfg id="FilterTree" NoHScroll="1" IdChars="0123456789" NumberId="1" SuppressCfg="1" MainCol="A" FullId="1"/>
+   <Cfg StandardFilter="2" ColorFilter="2"/>
+   <Cols>
+      <C Name="id" Width="80"/>
+      <C Name="A" Type="Text" CaseSensitive="0" Width="500"/>
+      <C Name="B" Type="Text" Width="120"/>
+   </Cols>
+   <Def>
+      <D Name="R" DefParent="Node"/>
+      <D Name="Node" DefEmpty="R" xColor="#EFE"/>
+   </Def>
+   <Head>
+      <Filter ARange="1" AButton="Defaults" ADefaults="|*FilterOff|*RowsAll" A="one;two;seven;ten" AFilter="1" ACanEdit="0" ANoColor="3"/>
+   </Head>
+   <Solid>
+      <Tabber Cells="SHOW,CHILD,HIDE,EXHIDE,EXCHILD,LEAF,EMPTY,NODE"
+         SHOWButtonText="Show all found"                            SHOWOnCheck="Grid.StandardFilter = 2; Grid.Def.R.CanFilter = 1; Grid.Def.Node.CanFilter = 1; Grid.FilterHideParents = 2; Grid.DoFilter();" SHOW="1" SHOWTip="Shows all rows that satisfy the filter condition&lt;br>Shows also all parents that contain some visible children"
+         CHILDButtonText="Show all found&lt;br>with children"      CHILDOnCheck="Grid.StandardFilter = 3; Grid.Def.R.CanFilter = 1; Grid.Def.Node.CanFilter = 1; Grid.FilterHideParents = 2; Grid.DoFilter();" CHILDTip="Shows all rows that satisfy the filter condition&lt;br>Shows also all parents that contain some visible children&lt;br>Shows also all children of parents that satisfy the filter condition"
+         HIDEButtonText="Hide all&lt;br>not found"                  HIDEOnCheck="Grid.StandardFilter = 1; Grid.Def.R.CanFilter = 1; Grid.Def.Node.CanFilter = 1; Grid.FilterHideParents = 2; Grid.DoFilter();" HIDETip="Hides all rows that don't satisfy the filter condition&lt;br>Hides all children (even satisfying the filter condition) if their parent does not satisfy the filter condition"
+         EXHIDEButtonText="Show&lt;br>only found"                 EXHIDEOnCheck="Grid.StandardFilter = 1; Grid.Def.R.CanFilter = 1; Grid.Def.Node.CanFilter = 1; Grid.FilterHideParents = 1; Grid.DoFilter();" EXHIDETip="Shows all rows that satisfy the filter condition&lt;br>Hides all rows that don't satisfy filter condition"
+         EXCHILDButtonText="Show only found&lt;br>with children" EXCHILDOnCheck="Grid.StandardFilter = 3; Grid.Def.R.CanFilter = 1; Grid.Def.Node.CanFilter = 1; Grid.FilterHideParents = 1; Grid.DoFilter();" EXCHILDTip="Shows all rows that satisfy the filter condition&lt;br>Hides all rows that don't satisfy filter condition&lt;br>Shows all children of parents that satisfy the filter condition"
+         LEAFButtonText="Filter leaf"                               LEAFOnCheck="Grid.StandardFilter = 2; Grid.Def.R.CanFilter = 1; Grid.Def.Node.CanFilter = 0; Grid.FilterHideParents = 2; Grid.DoFilter();" LEAFTip="Hides only leaf nodes (nodes without children) that don't satisfy the filter condition&lt;br>All parents are always shown, even without visible children"
+         EMPTYButtonText="Filter leaf&lt;br>empty"                 EMPTYOnCheck="Grid.StandardFilter = 2; Grid.Def.R.CanFilter = 1; Grid.Def.Node.CanFilter = 2; Grid.FilterHideParents = 2; Grid.DoFilter();" EMPTYTip="Hides only leaf nodes (nodes without children) that don't satisfy the filter condition&lt;br>Hides also parents with all children hidden"
+         NODEButtonText="Filter only&lt;br>parents"                 NODEOnCheck="Grid.StandardFilter = 1; Grid.Def.R.CanFilter = 0; Grid.Def.Node.CanFilter = 1; Grid.FilterHideParents = 2; Grid.DoFilter();" NODETip="Hides only parents that don't satisfy the filter condition&lt;br>All leaf nodes of visible parents are always visible"
+         />
+   </Solid>
+   <Header id="id"/>
+   <Toolbar Scales="0" Sort="0" Debug="0" Help="0" Formula="'Found &lt;b>'+Grid.FilterCount+'&lt;/b> results'" FormulaLeft="5"/>
+   <Body>
+      <B>
+         <I Def="Node" id="1" A="one">
+            <I Def="Node" id="1" A="one">
+               <I id="1" A="one" B="leaf"/>
+               <I id="2" A="two" B="leaf"/>
+               <I id="3" A="three" B="leaf"/>
+            </I>
+            <I Def="Node" id="2" A="two">
+               <I id="1" A="one" B="leaf"/>
+               <I id="2" A="two" B="leaf"/>
+               <I id="3" A="three" B="leaf"/>
+            </I>
+            <I Def="Node" id="3" A="three">
+               <I id="1" A="one" B="leaf"/>
+               <I id="2" A="two" B="leaf"/>
+               <I id="3" A="three" B="leaf"/>
+            </I>
+         </I>
+         <I Def="Node" id="2" A="two">
+            <I Def="Node" id="1" A="four">
+               <I id="1" A="seven" B="leaf"/>
+               <I id="2" A="eight" B="leaf"/>
+            </I>
+            <I id="2" A="four"/>
+            <I Def="Node" id="3" A="five">
+               <I id="1" A="six" B="leaf"/>
+               <I id="2" A="eight" B="leaf"/>
+            </I>
+         </I>
+         <I Def="Node" id="3" A="three">
+            <I Def="Node" id="1" A="three">
+               <I Def="Node" id="1" A="six">
+                  <I id="1" A="ten" B="leaf"/>
+               </I>
+            </I>
+            <I id="2" A="four" B="leaf"/>
+            <I Def="Node" id="3" A="five">
+               <I id="1" A="five" B="leaf"/>
+               <I id="2" A="six" B="leaf"/>
+               <I Def="Node" id="3" A="seven">
+                  <I Def="Node" id="1" A="six">
+                     <I id="1" A="nine" B="leaf"/>
+                  </I>
+                  <I id="2" A="eight" B="leaf"/>
+               </I>
+            </I>
+         </I>
+      </B>
+   </Body>
+   <Media>
+      <M Style="TB">
+         <Def>
+            <D Name="Node" Color="#131"/>
+         </Def>
+      </M>
+   </Media>
+</Grid>

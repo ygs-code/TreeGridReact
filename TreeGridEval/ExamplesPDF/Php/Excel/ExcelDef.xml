@@ -1,0 +1,234 @@
+<Grid>
+   <!--- Grid configuration -->
+   <Cfg id="Excel"/>          <!-- Base grid name-->
+   <Cfg SuppressCfg="1"/>     <!-- Does not save configuration to cookies -->
+   <Cfg Style="White"/>       <!-- Presets White style that is modified to look as the MS Excel -->
+   <Cfg Size="Mini"/>         <!-- Minimal size with row height 20px -->
+   <Cfg AutoIdPrefix="" />    <!-- The row ids are generated automatically, here clears the default auto id prefix to be the ids just numbers from 1 -->
+   <Cfg SuppressMessage="3"/> <!-- Suppresses all messages, including page messages -->
+   <Cfg PrintAddCSS="Excel.css"/> <!-- URL of CSS style added when sheet is printed -->
+   <Cfg PrintVarHeight="1"/>  <!-- Checks all rows for their heights when printing, see also column VarHeight -->
+   <Cfg PrintConstWidth='2'/> <!-- If printed to more pages vertically, resizes the last column in the printed section to fill the page width -->
+   <Cfg LimitScroll="23" MinBodyRows="10"/>  <!-- Responsive design, for small windows sets NoVScroll and NoHScroll -->
+   <Cfg Overlay="2"/>         <!-- Permits column attribute Overlay and updates borders in overlaid cells -->
+   <Cfg ImportAction="3"/>    <!-- Shows Import button on toolbar and permits dropping xlsx to grid to open it here -->
+   <Cfg Hover="0"/>           <!-- Does not highlight row and cell under mouse cursor, can be changed in configuration -->
+   <Cfg RoundNumbers="5" RoundNumbersDigits="7"/>    <!-- Rounds not formatted numbers to seven significant digits for display -->
+   <Cfg EditHtml="3"/>        <!-- Edits Html cells as text only -->
+   <Cfg ExcelDates="1"/>      <!-- All dates in grid are float numbers as count of days since 1/1/1900 -->
+   <Cfg ExportType="Hidden,Hide,Outline,FixedRows,FixedCols,TextType"/> <!-- Export xlsx setting to be as closed as possible to input xlsx -->
+   <Cfg Language='EN'/>       <!-- Presets English language and shows the Languages combo -->
+   <Cfg ColAdding='1' ColDeleting='1'/>       <!-- Permits adding new columns to and deleting columns from the sheet, because it is disabled by default for standard grids -->
+
+   <!-- Automatic column and row pages -->   
+   <Cfg Paging="2" AutoPages="1" PageLength="10" MaxPages="3" RemoveUnusedFixed="0" RemoveAutoPages="1"/> <!-- Defines automatic row pages -->
+   <Pager Visible="0"/> <!-- Hides the side pager that is shown for paging by default -->
+   <Cfg ColPaging="2" AutoColPages="1" ColPageLength="10" ColPageMin="0" MaxColPages="3" ColPagingFixed="0" RemoveAutoColPages="1"/> <!-- Defines automatic column pages -->
+
+   <!-- Defines row and column indexes -->
+   <Cfg RowIndex="Index" RowIndexType="6"/> <!-- Creates number RowIndex with all variable rows except deleted -->
+   <Cfg ColIndex="Header" ColIndexType="6" ColIndexChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ"/> <!-- Creates letter ColIndex with all variable columns except deleted  -->
+
+   <!--- Formula editing -->
+   <Cfg FormulaEditing="1"/> <!-- Permits formula editing; Uploads the formula in the cell value, not in EFormula attribute -->
+   <Cfg FormulaChanges="0"/> <!-- Does not mark values calculated by formula as Changed -->
+   <Cfg FormulaType="7"/> <!-- Calculates all rows and columns  -->
+   <Cfg DragEdit="2" /> <!-- Permits dragging during editing to choose cell ranges in formula -->
+   <Cfg FormulaRelative="1"/> <!-- Cell references can be absolute or relative. Cell references in formulas in data xml in/out are in standard notation -->
+   <Cfg FormulaLocal="0"/> <!-- Formula names in xml in/out are not localized English format -->
+   <Cfg FormulaResults="31"/> <!-- Cells with error formulas are marked red and error message is shown; the formula results are checked against cell restrictions; the null and NaN results are not permitted  -->
+   <Cfg FormulaCircular="6"/> <!-- Circular cell references in formulas are restricted with error message -->
+   <Cfg EditErrorsMessageTime="0"/> <!-- How long the formula and edit error message will be shown, 0 means until OK is clicked -->
+   <Cfg FormulaAddParenthesis="1"/> <!-- Tries to adds ')' to the end of formula when editing resulted to incorrect formula -->
+   <DefCols> <D Name="C" FormulaSuggest="6"/> </DefCols>  <!-- For every column generates suggest list of all available formula functions to use in formula editing -->
+   <Actions OnDragHeader="ChooseColsReplaceAll OR ColMoveSelected OR ColMove" OnCtrlDragHeader="ChooseColsInsert OR ColCopySelected OR ColCopy"/> <!-- Dragging header during formula edit will choose the columns to the range -->
+
+   <!-- Dynamic format -->
+   <Cfg DynamicFormat="1"/> <!-- Permits changing cell format dynamically by users -->
+   <Cfg AutoCalendar="1"/> <!-- Does not show date button for Date type, but shows calendar when editing date cell -->
+
+   <!-- Settings for cell span, borders and mass changes -->
+   <Cfg EditAttrs=",EFormula,Type,Format,EditFormat,CanEdit,Span,RowSpan,BorderTop,BorderRight,BorderBottom,BorderLeft,Wrap,Align,VAlign,Rotate,Color,TextColor,TextStyle,TextSize,TextFont,TextShadow,TextShadowColor"/> <!-- What will be affected by mass change like clear or move focus; the first empty item means value -->
+   <Cfg DynamicSpan="2"/> <!-- Permits dynamic spanning and splitting spanned cells -->
+   <Cfg DynamicBorder="2"/> <!-- Permits dynamic change of cell borders for all cells -->
+   <Cfg SpannedBorder="3"/> <!-- Update border in spanned cells to better displayed -->
+   <Cfg BorderType="0"/> <!-- Set borders only in visible, not deleted cells -->
+   <Cfg SelectHidden="0"/> <!-- Select only visible, not deleted cells -->
+   <Cfg MoveFocusType="11"/> <!-- Ignore span in cells when moving focused range by dragging -->
+
+   <!-- Other settings often set in the sheets -->
+   <Cfg Undo="79"/> <!-- Permits undoing all actions, including scroll -->
+   <Cfg EnterMode="1"/> <!-- Enter moves cursor down -->
+   <Cfg FocusRect="31"/> <!-- Permits focusing cell range, shows the corner, hides focused cursor for the whole row, shows relative color for focused cell, permits move and copy the focused range by dragging. -->
+   <Cfg SelectingCells="3"/> <!-- Permits selecting cells and row/columns independently -->
+   <Cfg SelectingFocus="1"/> <!-- Automatically selects the focused cells and clears all other selected cells on focus change -->
+   <Cfg AutoFillType="31"/>  <!-- Permits auto filling numbers and strings, also from one cell, shrinking range clears the rest -->
+   <Actions OnDel="ClearSelectedCellsF OR ClearCellF"/> <!-- Clears the selected cells -->
+   
+   <!-- Settings for copying and pasting cells via clipboard -->
+   <Cfg CopyCols="0"/> <!-- Copy only focused cells -->
+   <Cfg CopyPasteHidden="3"/> <!-- Copies and pastes also hidden rows and columns -->
+   <Cfg ExcludeClear="1"/> <!-- CtrlX clears the copied cells -->
+   <Cfg PasteCols="5"/> <!-- Pastes to focused cell range or to focused and next columns-->
+   <Cfg PasteFocused="11"/> <!-- Pastes to focused cell range or to focused and next rows -->
+
+   <!-- Dynamic style -->
+   <Cfg DynamicStyle="1"/> <!-- Permits to set and change the style attributes for individual cells -->
+
+   <!-- Cell popup menu to manipulate cells and their styles -->
+   <Cfg Menu="{Items:[
+      {Name:'Display',Menu:1,Items:'|ShowRowAbove|ShowRowBelow|ShowRows|ShowAllRows|-|HideRow|HideRows@2|HideSelectedRows@2|-|ShowColLeft|ShowColRight|ShowCols|ShowAllCols|-|HideCol|HideCols@2|HideSelectedCols@2'},
+      {Name:'Manipulate',Menu:1,Items:'|AddRow|AddRows@2|AddSelected@2|-|CopyRow|CopyRows|CopySelected|-|RemoveRow|RemoveRows|RemoveSelected|-|AddCol|AddCols@2|AddSelectedCols@2|-|CopyCol|CopyCols|CopySelectedCols|-|RemoveCol|RemoveCols|RemoveSelectedCols'},
+      {Name:'Edit',Menu:1,Items:'|SetEditable|SetReadOnly|SetPreview|ClearEditable|-|SetEditableSelected|SetReadOnlySelected|SetPreviewSelected|ClearEditableSelected|-|SetEditableRow|SetReadOnlyRow|SetPreviewRow|ClearEditableRow|-|SetEditableCol|SetReadOnlyCol|SetPreviewCol|ClearEditableCol'},
+      {Name:'Clear',Menu:1,Items:'|ClearCell|ClearValue|ClearStyle|-|ClearSelectedCells|ClearSelectedValues|ClearSelectedStyles'},
+      {Name:'Format',Menu:1,Items:'|ChooseFormat|ChooseFormatSelected|SetFormat|SetFormatSelected'},
+      {Name:'Span',Menu:1,Items:'|SplitCell|SplitSelected|SpanSelected'},
+      {Name:'Border',Menu:1,Items:'|SetBorder|SetSelectedBorders|ClearBorder|ClearSelectedBorders|-|ChooseBorderStyle|ChooseBorderEdge|ChooseBorderColor|-|ChooseSelectedBordersStyle|ChooseSelectedBordersEdge|ChooseSelectedBordersColor'},
+      {Name:'Style',Menu:1,Items:'|BoldOn|BoldOff|BoldOnSelected|BoldOffSelected|-|ItalicOn|ItalicOff|ItalicOnSelected|ItalicOffSelected|-|UnderlineOn|UnderlineOff|UnderlineOnSelected|UnderlineOffSelected|-|StrikeOn|StrikeOff|StrikeOnSelected|StrikeOffSelected|-|OverlineOn|OverlineOff|OverlineOnSelected|OverlineOffSelected|-|SmallCapsOn|SmallCapsOff|SmallCapsOnSelected|SmallCapsOffSelected|-|NoTextStyle|NoTextStyleSelected'},
+      {Name:'Font',Menu:1,Items:'|SetTextFont|NoTextFont|ChooseTextFont|-|SetTextFontSelected|NoTextFontSelected|ChooseTextFontSelected|-|SetTextSize|NoTextSize|ChooseTextSize|-|SetTextSizeSelected|NoTextSizeSelected|ChooseTextSizeSelected'},
+      {Name:'Color',Menu:1,Items:'|SetTextColor|NoTextColor|ChooseTextColor|-|SetTextColorSelected|NoTextColorSelected|ChooseTextColorSelected|-|SetColor|NoColor|ChooseColor|-|SetColorSelected|NoColorSelected|ChooseColorSelected'},
+      {Name:'Shadow',Menu:1,Items:'|SetTextShadow|NoTextShadow|ChooseTextShadow|-|SetTextShadowSelected|NoTextShadowSelected|ChooseTextShadowSelected|-|SetTextShadowColor|NoTextShadowColor|ChooseTextShadowColor|-|SetTextShadowColorSelected|NoTextShadowColorSelected|ChooseTextShadowColorSelected'},
+      {Name:'Align',Menu:1,Items:'|AlignLeft|AlignRight|AlignCenter|NoAlign|-|AlignLeftSelected|AlignRightSelected|AlignCenterSelected|NoAlignSelected|-|VAlignTop|VAlignBottom|VAlignMiddle|NoVAlign|-|VAlignTopSelected|VAlignBottomSelected|VAlignMiddleSelected|NoVAlignSelected'},
+      {Name:'Direction',Menu:1,Items:'|RotateLeft|RotateRight|NoRotate|-|RotateLeftSelected|RotateRightSelected|NoRotateSelected|-|WrapOn|WrapOff|NoWrap|-|WrapOnSelected|WrapOffSelected|NoWrapSelected'},
+      ]}"/>
+   <Cfg ShowMenuSingle="1"/> <!-- shows menu also with single option instead of doing it immediately -->
+   <Cfg HideMenuUnused="1"/> <!-- Hide unused child items, disable parent items with no child items -->
+   <Actions OnRightClick="ShowPopupMenu OR ShowNoMenu"/> <!-- Shows the popup menu for any right click to the grid -->
+
+   <!--- Other settings for the Sheet example -->
+   <Cfg ConstWidth="0"/>      <!-- The grid never shrinks so much to use cost width -->
+   <Cfg MaxHeight="1"/>       <!-- Maximizes the main tag height. Use it only in simple pages like this one. On complex pages it can cause various problems -->
+   <Cfg ColMoving="0"/>       <!-- Cannot change order of the columns -->
+   <Cfg SelectClass="0"/>     <!-- Marks selected cells only by background color, does not apply CSS class to speed up the selecting -->
+   <Cfg ColorCursor="15"/>    <!-- Highlights actual mouse position, focus and selection in top header and left id column -->
+   <Cfg StaticCursor="1"/>    <!-- Does not remove the focus from cells when grid loses key focus -->
+   <Cfg DragEdit="2" />       <!-- Permits dragging during editing to choose cell ranges in formula -->
+   <Cfg EditSelect="4"/>      <!-- Does not select cell text on start editing -->
+   <Cfg TabStop="0"/>         <!-- The tab key does go inside and outside the grid from / to other control on page -->
+   <Cfg AcceptEnters="6"/>    <!-- When editing, Enter finishes editing and Ctrl/Shift/Alt puts new line (LF) into text -->
+   <Cfg PrintPaddingHeight="20" PrintPaddingWidth="10"/> <!-- Reserved space for PrintPagePrefix / Postfix a and for default body margin and padding -->
+   <Cfg PrintPaddingHeightFirst="50"/> <!-- Reserved space for sample header printed only to the first page -->
+   <MenuPrint HideUnused="2"/> <!-- Hides all columns and rows from print menu, because they are always exported -->
+   <Lang> <MenuColumns ColsCaption="Print headers"/> </Lang> <!-- Renames the Choose columns caption, because there is only one column and one row -->
+   <MenuExport HideUnused="2"/> <!-- Hides all columns and rows from export menu, because they are always exported -->
+   <MenuCfg ShowDeleted="0" AutoSort="0" SortClick="0" ShowDrag="0" ShowPanel="0" ShowPager="0"/>
+   
+   <!-- Grid mouse and key action schema -->
+   <Actions OnDragRow="ChooseCellsReplaceAll OR FocusCells"/>   <!-- Focus cells area by mouse dragging; during editing choose cells range -->
+   <Actions OnDrag1Row="ChooseCellsReplaceAll OR FocusCells"/>  <!-- Focus cells area on tablet by dragging focused cell -->
+   <Actions OnMouseOverEditable="Grid.MouseCursor('url(aero_prec.cur),default')"/> <!-- Shows custom mouse cursor (the Excel cross) over all data cells -->
+   <Actions OnEnterEdit='AcceptEdit AND TabDownEdit,1' OnEnter='TabDownEdit' OnShiftEnter='TabUpEdit'/> <!-- Enter moves the cursor down (with shift up) inside the focused area or forever for single cell -->
+
+   <Def>
+      <!-- Default row for all rows with cells (data and header) -->
+      <D Name="R" Height="20" MinHeight="20"/>  <!-- Sets minimal default height of all rows to 20 pixels --> 
+      
+      <D Name="R" FocusRow="" FocusCell="Border,Color,Class,Corner"/> <!-- Does not color focused row, but colors and sets border to focused cells and cell areas -->
+      <D Name="R" NoColorState="1"/>            <!-- Does not color changes cells and rows -->
+      <D Name="R" VAlign="Bottom"/>             <!-- Default vertical align is bottom -->
+      <D Name="R" CanResize="2"/>               <!-- Can resize empty rows smaller than standard row height -->
+
+      <!-- Default row for all space rows without cells (toolbars) -->
+      <D Name="Solid" HoverCell=""/>            <!-- Does not color the cells under mouse cursor -->
+
+   </Def>
+
+   <DefCols>
+      <!-- Default column for all columns in data rows (but not in header) -->
+      <D Name="C" Type="Auto"/>                 <!-- Default type of all data cells in grid is set to auto --> 
+      <D Name="C" Width="64"/>                  <!-- Default width of all columns is 64 pixels -->
+      <D Name="C" CanPrint="1"/>                <!-- Prints the column if visible -->
+      <D Name="C" CanExport="2"/>               <!-- Exports the column always, even if hidden, and does not show it in export menu -->
+      <D Name="C" MenuName=""/>                 <!-- It does not show it in print and export menu  -->
+      <D Name="C" Edit="{OnChange:CellChanged}"/> <!-- When editing, calls the CellChanged custom function after every change in the input text -->
+      <D Name="C" Overlay="3"/>                 <!-- Permits wide values to overlay next empty cells -->
+      <D Name="C" Wrap="0"/>                    <!-- Default wrap of cells is off -->
+      <D Name="C" VarHeight="1" VarHeightType="7"/> <!-- When printing, all cells except empty, numbers and simple texts will be checked for their height -->
+   </DefCols>
+
+   <LeftCols>
+      <!-- Left fixed column with row numbers. It is named id to show row id attribute -->
+      <C Name="Index" Def="Index"/>                <!-- Uses default for the RowIndex column -->
+      <C Name="Index" Align="Center"/>             <!-- The numbers are horizontally centered -->
+      <C Name="Index" Width="28"/>                 <!-- Width of the column in pixels -->
+      <C Name="Index" HoverCell="Color"/>          <!-- Colors the cell under mouse cursor -->
+      <C Name="Index" Resizing="1"/>               <!-- Permits resizing rows by dragging top or bottom edge of cells in this column -->
+      <C Name="Index" ColorCursor="31"/>           <!-- Colors the cell if the row contains some focused or selected cells or it is hovered by mouse -->
+      <C Name="Index" MenuName="Row numbers"/>     <!-- Under this name is the column shown in print and other columns menus-->
+      <C Name="Index" CanPrint="2"/>               <!-- The column is printed on every horizontal page, not only on the first one -->
+      <C Name="Index" CanExport="0"/>              <!-- The column is not exported to XLS -->
+      <C Name="Index" OnClickContent="FocusWholeRow"/>    <!-- Focus the whole row on click to the cell -->
+      <C Name="Index" CanHide="0"/>                <!-- Index cannot be hidden by users -->
+   </LeftCols>
+
+   <!-- Top fixed header with column names. It is TreeGrid default header -->
+   <Header IndexVisible=""/>                    <!-- Hides cell value in the top left cell -->
+   <Header IndexClass="HEADERINDEX"/>           <!-- Custom CSS class for the top left cell to change the cell look to MS Excel like -->
+   <Header IndexButton="Empty"/>                <!-- Side button to focus the whole grid -->
+   <Header IndexOnClickSide="FocusWholeGrid"/>  <!-- Focus the whole grid on click to the top left cell -->
+   <Header Align="Center"/>                     <!-- All the header cell values are horizontally centered -->
+   <Header SortIcons="2"/>                      <!-- Hides the TreeGrid sorting icons -->
+   <Header Height="19"/>                        <!-- The header height is 19 pixels -->
+   <Header HoverRow="" HoverCell="Color" />     <!-- Does not color the whole row on mouse hover, but colors the cell under mouse -->
+   <Header ColorCursor="31"/>                   <!-- Colors the header cell if the column contains some focused or selected cells or it is hovered by mouse -->
+   <Header OnClick="FocusWholeCol"/>            <!-- Focus the whole column on click to the cell -->
+   <Header CanExport="0"/>                      <!-- The header is not exported to XLS -->
+   <Header MenuName="Column letters"/>          <!-- Under this name is the row shown in print and other columns menus-->
+   <Header CanHide="0"/>                        <!-- Header cannot be hidden by users -->
+
+   <Panel Visible="0" CanHide="0"/>             <!-- Hides TreeGrid default row panel, it cannot be shown by users -->
+
+   <Solid>
+      <!-- Top toolbar with control buttons -->
+      <Toolbar id="Toolbar" Cells05="Win" TextIndentWidth="50" SizeWidth="50"
+         WinType="Bool" WinLabelRight="Window scroll" WinCanEdit="1" WinFormula="Grid.NoVScroll?1:0" WinTip="Disable grid scrollbars and use page scrollbars" WinCanPrint="0" WinCanFocus="0"
+         WinOnChange="Grid.NoVScroll = Value; Grid.NoHScroll = Value; if(!Value) { Grid.MainTag.style.width='100%'; Grid.MainTag.style.height='600px'; } document.body.style.margin=Value?'0px':''; Grid.SetMaxHeight(!Value); Grid.Rows.Tabber.Space = Value?'0':4; Grid.Render();"
+         /> <!-- Adds cell Window Scroll-->
+      <Toolbar id="Toolbar" Space="0" Calc="0" Columns="0" Add="0" Repaint="0"/>
+
+      <!-- Two smaller ones -->
+      <Toolbar id="Toolbar1" Kind="Toolbar1" Mirror="Toolbar" Cells40Sheet="" Visible="0" CanHide="0"/>
+      <Toolbar id="Toolbar2" Kind="Toolbar2" Mirror="Toolbar" Cells05="" Cells20Data="" Cells30Manipulate="" Cells60Cfg="" Cells70Styles="" Visible="0" CanHide="0"/>
+
+      <!-- The second top bar with focus and edit cell -->
+      <Topbar id="OUT" Cells="FOCUS,EDIT" Space="0" MaxHeight="16" CanResize="2" CanFocus="2" CanPrint="0" NoFormat="2" NoStyle="2" NoBorder="2"
+         OnDblClick="1" OnMouseOverEditable="CursorText,1"
+         FOCUSType="Text" FOCUSOnClick="AcceptEdit,StartEditCellEmpty,1" FOCUSEdit="{}" FOCUSOnEnter="AcceptEdit"
+         EDITType="Text" EDITRelWidth="1" EDITLeft="24" OnClick="AcceptEdit,StartEditCell,1" EDITEdit="{OnChange:EditChanged}" EDITResizing="1"
+         />
+
+      <Tabber id="Tabber" Space="4" Cells="Sheets,New" SheetsType="Sheets" SheetsWidth="-1" SheetsMinEditWidth="50" SheetsMaxWidth="150" NewButton="Html" NewButtonText="+" NewClass="TabNewSheet" NewOnClick="AddSheet" SpaceWrap="1" NewLeft="20" NewTip="Add new sheet"/>
+   </Solid>
+
+   <!-- Changes in TreeGrid language texts -->
+   <Lang>
+      <Text PrintCaption="Print options" ExportCaption="Export options"/> <!-- Captions in print and export/export pdf menus -->
+      <Format NaN="#Error"/> <!-- Incorrect formula -->
+   </Lang>
+
+   <!-- Splits the toolbar for smaller displays -->
+   <Media>
+      <M MaxWidth="1330">
+         <Rows>
+            <I id="Toolbar" Visible="0" CanHide="0"/>
+            <I id="Toolbar1" Visible="1" CanHide="1"/>
+            <I id="Toolbar2" Visible="1" CanHide="1"/>
+         </Rows>
+      </M>
+      <M Size="Big">
+         <Rows>
+            <I id="OUT" MaxHeight="20"/>
+         </Rows>
+      </M>
+      <M Size="Giant">
+         <Rows>
+            <I id="OUT" MaxHeight="30"/>
+         </Rows>
+      </M>
+   </Media>
+
+   <!-- Translations of example control texts to other languages -->
+   <Languages>
+      <L Code='-EN' Layout_Url='ExcelLang.xml'/>
+   </Languages>
+</Grid>

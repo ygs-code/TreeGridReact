@@ -1,0 +1,615 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Pagers</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Pagers</h1>
+<p>TreeGrid documentation</p>
+
+<!---------------------------------------------------  Side pager  ------------------------------------------------------------>
+<a name="SidePager"></a>
+<h2>Side pager</h2>
+
+The side pager is defined by &lt;<b>P</b>> tag placed to &lt;<b>Pagers</b>> tag, e.g. <tt>&lt;Grid>&lt;Pagers>&lt;P Type='Pages'/>&lt;P ... />&lt;/Pagers>&lt;/Grid></tt>.<br />
+There can be more side pagers in grid, placed on right (default) or left side.<br />
+<i>The side pagers are defined since 9.0, prior this version there was only one pager defined by &lt;Pager> tag.</i><br /><br />
+
+If used root paging (<tt>&lt;Cfg Paging='1'</tt> or <tt>'2'</tt> or <tt>'3'</tt>/>), there is defined default pager by <tt>&lt;Grid>&lt;Pager Name='Pager' Type='Pages'>&lt;/Grid></tt><br />
+<i>To not use the default pager for paging set <tt>&lt;<b>Pager Type</b>=""/></tt>.</i><br />
+
+<!-- Name -->
+<a name="PName"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;P></b> <i>string</i>
+   <h4>Name</h4> <s>[ ]</s>
+</div>
+Name of the pager. by this name is the pager accessible by API in Pagers. Also redefining &lt;P> tag with the existing Name will update already existing pager.<br />
+
+<!-- Type -->
+<a name="PType"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;P></b> <i>string</i>
+   <h4>Type</h4> <s>[ ]</s>
+</div>
+Type of pager. It controls, what will be displayed in the pager, it can be:<br />
+<table>
+  <tr><td style="width:90px;"><b>Pages</b></td><td>Pager for root pages, defined by &lt;Cfg Paging/></td></tr> 
+  <tr><td><i><b>Columns</b></i></td><td><i>Pager for columns, defined by &lt;Cfg ColPaging/> (not yet implemented)</i></td></tr>
+  <tr><td><b>Gantt</b></td><td>Pager for Gantt zoom, defined by <tt>&lt;C Type='Gantt' GanttPageSize/></tt></td></tr>
+  <tr><td><b>Custom</b></td><td>Custom pager, it is filled and controlled by custom API events.</td></tr>   
+</table>
+
+<!-- Left -->
+<a name="PLeft"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;P></b> <i>bool</i>
+   <h4>Left</h4> <s>[0]</s>
+</div>
+For <b>0</b> it shows the pager on the right grid side.<br />
+For <b>1</b> it shows the pager on the left grid side.<br />
+If there are more pagers defined on the same side, they are shown in the order they are defined in &lt;Pagers> tag.<br />
+
+<!-- Visible -->
+<a name="PVisible"></a>
+<div class="XML">
+   <u></u> <b>&lt;P></b> <i>bool</i>
+   <h4>Visible</h4> <s>[1] Saved to cookies, to avoid it, set <tt>&lt;P <b>VisibleLap</b>='1'/></tt></s>
+</div>
+If pager is visible. Pager can be visible only if Cfg.<a href="Paging.htm">Paging</a> > 0 and Cfg.<a href="#CfgNoPager">NoPager</a> = 0.<br /> 
+A user can select pager visibility from configuration menu (except if set <tt><a href="#PCanHide">CanHide</a>='0'</tt>).
+
+<!-- CanHide -->
+<a name="PCanHide"></a>
+<div class="XML">
+   <u></u> <b>&lt;P></b> <i>bool</i>
+   <h4>CanHide</h4> <s>[0]</s>
+</div>
+If pager is displayed in columns menu and can be hidden or displayed by a user from this menu.<br /> 
+If set to <b>1</b>, the pager can be also hidden automatically if there is no room for it, to preserve displaying "Too small extents" message.<br />
+This attribute does not affect displaying and hiding pager from configuration menu (you can control it by &lt;MenuCfg ShowPager/> instead)<br />
+
+<!-- Caption -->
+<a name="PCaption"></a>
+<div class="XML">
+   <u></u> <b>&lt;P></b> <i>string</i>
+   <h4>Caption</h4> <s></s>
+</div>
+Pager header caption.<br />
+
+<!-- Width -->
+<a name="PWidth"></a>
+<div class="XML">
+   <u></u> <b>&lt;P></b> <i>int</i>
+   <h4>Width</h4> <s>[100]	Saved to cookies, to avoid it, set <tt>&lt;P <b>WidthLap</b>='1'/></tt></s>
+</div>
+Pager width in pixels. A user can resize the pager by dragging its right side, unless it has <tt><a href="#PCanResize">CanResize</a>='0'</tt>.<br />
+
+<!-- MinWidth -->
+<a name="PMinWidth"></a>
+<div class="XML">
+   <u></u> <b>&lt;P></b> <i>int</i>
+   <h4>MinWidth</h4> <s>[20]</s>
+</div>
+Minimal width of pager in pixels. This restriction is applied when a user resizes the pager or the pager is resized automatically when main tag width is too small.<br />
+
+<!-- CanResize -->
+<a name="PCanResize"></a>
+<div class="XML">
+   <u></u> <b>&lt;P></b> <i>bool</i>
+   <h4>CanResize</h4> <s></s>
+</div>
+If pager can be resized by a user.<br /> 
+If set to <b>1</b>, pager can also be resized if there is no room for it, to preserver displaying "Too small extents" message.<br />
+
+<!-- Hover -->
+<a name="PHover"></a>
+<div class="XML">
+   <u></u> <b>&lt;P></b> <i>bool</i>
+   <h4>Hover</h4> <s>[1]</s>
+</div>
+If page will be highlighted under mouse cursor.<br />
+
+<!-- NoPager -->
+<a name="CfgNoPager"></a>
+<div class="DEL">
+   <u>deleted <b>9.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>NoPager</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, grid does not render any pager, regardless of settings in &lt;Pagers> or &lt;Pager> tag.<br />
+
+<!-- OnClickPagerPage -->
+<a name="OnClickPagerPage"></a>
+<div class="API">
+   <u>new <b>9.0</b> <i>upd <b>10.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnClickPagerPage</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>object</i> <b>Pager</b>, <i>type</i> <b>Page</b>, <i>type</i> <b>Page2</b>, <i>bool</i> <b>Active</b>)</s>
+</div>
+Called on click to pager page.<br /> 
+<b>Pager</b> is the API object for &lt;P> tag.<br />
+<b>Page</b> is the object for the page related to the Pager <a href="#PType">Type</a>.<br /> 
+  <div class="L1">
+  For "<b>Pages</b>" is the TRow object as the page.<br /> 
+  For "<b>Gantt</b>" is the first date in the zoom.<br />
+  For "<b>Custom</b>" is the page index from 0.<br />
+  </div class="L1">
+<b>Page2</b> <i>(since 10.0)</i> is the last date in the "<b>Gantt</b>" page.<br />
+<b>Active</b> <i>(since 10.0)</i> is true if the "Gantt" page is already selected in the chart. False means <a href="#PClick">Click</a>, true means <a href="#PDblClick">DblClick</a>.<br />
+
+<!-- OnGetPageName -->
+<a name="OnGetPageName"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetPageName</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>object</i> <b>Pager</b>, <i>type</i> <b>Page</b>, <i>string</i> <b>Name</b>)</s>
+</div>
+Called when generating the HTML for individual pager pages.<br />
+<b>Name</b> is the default name to show.<br />
+Return new HTML name or <b>Name</b>.<br />
+See <a href="#OnClickPagerPage">OnClickPagerPage</a> for other attributes description.<br />
+
+<!-- OnGetPageTip -->
+<a name="OnGetPageTip"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetPageTip</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>object</i> <b>Pager</b>, <i>type</i> <b>Page</b>, <i>string</i> <b>Tip</b>, <i>string</i> <b>Drag</b>)</s>
+</div>
+Called when showing tip for pager page under mouse cursor.<br />
+<b>Tip</b> is default tip to show.<br />
+<b>Drag</b> is drag action name when dragging is active, otherwise null.<br />
+Return new tip or <b>Tip</b>.<br />
+See <a href="#OnClickPagerPage">OnClickPagerPage</a> for other attributes description.<br />
+
+<!-- UpdatePager -->
+<a name="UpdatePager"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>UpdatePager</h4>
+   <s>( )</s>
+</div>
+Re-renders all pagers, including horizontal (space) pagers.<br />
+
+<!-- Action ScrollPager -->
+<a name="ActionScrollPager"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ScrollPager</h4>
+   <s>Mouse dragging action, only for <b>OnDragPager</b> event</s>
+</div>
+Starts scrolling side pager under mouse cursor. Only for touchpads (e.g. on iPad).<br />
+By default is the action attached to <b>OnDrag2Pager</b> for scrolling with two fingers.<br />
+
+<!-- Pagers -->
+<a name="Pagers"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b>API variable</b> <i>object[ ]</i>
+   <h4>Pagers</h4>
+   <s></s>
+</div>
+An array of side pager objects. It has length property as count of the pagers.<br />
+The pagers can be accessible by the index or by the pager.Name.<br />
+The pager object has properties like all the &lt;P> attributes.<br />
+
+<!---------------------------------------------------  Side pager type Pages  ------------------------------------------------------------>
+<a name="Pages"></a>
+<h2>Side pager type Pages</h2>
+<p class="H2">Pager for root pages (&lt;Cfg Paging>)</p>
+
+<!-- Type -->
+<a name=""></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;P></b> <i>string</i>
+   <h4>Type <span style="font-size:70%;font-weight:normal;">= "<span style="font-weight:bold;">Pages</span>"</span></h4> <s></s>
+</div>
+Pager for root pages, defined by &lt;Cfg Paging/><br />
+
+<!-- MaxColumns -->
+<a name="PMaxColumns"></a>
+<div class="XML">
+   <u></u> <b>&lt;P></b> <i>int</i>
+   <h4>MaxColumns</h4> <s>[3]</s>
+</div>
+Maximum of sorting columns to be listed in page names, can be set to 0 - 3.<br />  
+If set to 0, the pages are always named "Page" + index.<br />
+
+<!-- MaxChars -->
+<a name="PMaxChars"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;P></b> <i>int</i>
+   <h4>MaxChars</h4> <s></s>
+</div>
+Maximal count of characters in the page names, if both bounds are presents.
+
+<!-- MaxCharsSingle -->
+<a name="PMaxCharsSingle"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;P></b> <i>int</i>
+   <h4>MaxCharsSingle</h4> <s></s>
+</div>
+Maximal count of characters in the page names, if single cell value is present.
+
+<!-- PageNameValue -->
+<a name="CellPageNameValue"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cell></b> <i>string</i>
+   <h4>PageNameValue</h4> <s></s>
+</div>
+Cell value used for creating page names in side pager, see also <a href="#OnGetPageNameValue">OnGetPageNameValue</a> event.<br />
+
+<!-- OnGetPageNameValue -->
+<a name="OnGetPageNameValue"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>string</i>
+   <h4>OnGetPageNameValue</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>val</b>)</s>
+</div>
+Called to get value used for creating page names in side pager <b>val</b> is predefined value, return <b>val</b> or new value.<br />
+
+<!-- OnSetPageName -->
+<a name="OnSetPageName"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnSetPageName</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>page</b>)</s>
+</div>
+Called when are being (re)generated page names for side pager after sorting or grouping.<br />
+<b>page</b> is given page, read and set its properties <b>page.Name</b> (HTML, page name displayed in pager) and <b>page.Title</b> (text, tooltip for page item on pager).<br />
+
+<!-- Pager -->
+<a name="Pager"></a>
+<div class="DEL">
+   <u>deleted <b>9.0</b></u> <b>API variable</b> <i>object</i>
+   <h4>Pager</h4> <s></s>
+</div>
+Pager settings, from XML node &lt;<a href="Pager.htm">Pager</a>>.<br />
+
+<!---------------------------------------------------  Side pager type Gantt  ------------------------------------------------------------>
+<a name="Gantt"></a>
+<h2>Side pager type Gantt</h2>
+<p class="H2">Pager for Gantt zooms (&lt;C GanttPageSize>)</p>
+
+<!-- Type -->
+<a name=""></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;P></b> <i>string</i>
+   <h4>Type <span style="font-size:70%;font-weight:normal;">= "<span style="font-weight:bold;">Gantt</span>"</span></h4> <s></s>
+</div>
+Pager for Gantt zoom, defined by <tt>&lt;C Type='Gantt' GanttPageSize/></tt><br />
+
+<!-- PageSize -->
+<a name="PPageSize"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;P></b> <i>string</i>
+   <h4>PageSize</h4> <s></s>
+</div>
+Sets size of the page in pager. If not set, the page size is set by column <a href="#CGanttSize">GanttSize</a>.<br />
+If set neither &lt;P PagerSize/> nor &lt;C GanttSize/> nor &lt;C xxxPageSize/>, the pager does not show any page.<br />
+The values are the same as <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a>.<br />
+
+<!-- xxxPageSize -->
+<a name="CxxxPageSize"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>xxxPageSize</h4> <s></s>
+</div>
+<i><a href="#PPageSize">PageSize</a> can be set also in Gantt column instead of the pager &lt;P> tag. The advantage is that it can be set different for every zoom level.</i><br />
+<i>The <b>xxx</b> is the pager <a href="#PName">Name</a> attribute, e.g. for <tt>&lt;P Name='Test'/></tt> it will be <tt>&lt;C TestPageSize='...'/></tt></i><br />
+
+<!-- ChartSize -->
+<a name="PChartSize"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;P></b> <i>string</i>
+   <h4>ChartSize</h4> <s></s>
+</div>
+Sets size of the whole pager. The ChartSize unit should be bigger than PageSize / GanttSize.<br />
+The pager shows pages only from this date range.<br />
+The values are the same as <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a>.<br />
+<i>For example when set <tt>PageSize='d' ChartSize='M'</tt>, the pager shows all days from actual month in Gantt chart. Changing month in chart will regenerate the pager.</i><br />
+If the <b>ChartSize</b> is not set, the pager shows all dates from actual Gantt chart. The size of actual Gantt chart is calculated to show all items in the chart.<br />
+  <div class="L1">
+  Also <a href="GanttZoom.htm#CGanttChartMaxStart">GanttChartMaxStart</a> and other chart size constraints affect the chart size.
+  </div>
+If the <b>ChartSize</b> is set to <b>0</b>, the chart size is in range <a href="GanttZoom.htm#CGanttChartMinStart">GanttChartMinStart</a> - <a href="GanttZoom.htm#CGanttChartMaxEnd">GanttChartMaxEnd</a>, if set, otherwise it acts like the <tt>ChartSize=""</tt><br />
+
+<!-- xxxChartSize -->
+<a name="CxxxChartSize"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>xxxChartSize</h4> <s></s>
+</div>
+<i><a href="#PChartSize">ChartSize</a> can be set also in Gantt column instead of the pager &lt;P> tag. The advantage is that it can be set different for every zoom level.</i><br />
+<i>The <b>xxx</b> is the pager <a href="#PName">Name</a> attribute, e.g. for <tt>&lt;P Name='Test'/></tt> it will be <tt>&lt;C TestChartSize='...'/></tt></i><br /> 
+
+<!-- ChartPrev -->
+<a name="PChartPrev"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;P></b> <i>int</i>
+   <h4>ChartPrev</h4> <s></s>
+</div>
+Adds given number of pages in front of pages (from previous ChartSize period)<br />
+
+<!-- xxxChartPrev -->
+<a name="CxxxChartPrev"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>xxxChartPrev</h4> <s></s>
+</div>
+<i><a href="#PChartPrev">ChartPrev</a> can be set also in Gantt column instead of the pager &lt;P> tag. The advantage is that it can be set different for every zoom level.</i><br />
+<i>The <b>xxx</b> is the pager <a href="#PName">Name</a> attribute, e.g. for <tt>&lt;P Name='Test'/></tt> it will be <tt>&lt;C TestChartPrev='...'/></tt></i><br />
+
+<!-- ChartNext -->
+<a name="PChartNext"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;P></b> <i>int</i>
+   <h4>ChartNext</h4> <s></s>
+</div>
+Adds given number of pages after pages (from next ChartSize period)<br />
+
+<!-- xxxChartNext -->
+<a name="CxxxChartNext"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>xxxChartNext</h4> <s></s>
+</div>
+<i><a href="#PChartNext">ChartNext</a> can be set also in Gantt column instead of the pager &lt;P> tag. The advantage is that it can be set different for every zoom level.</i><br />
+<i>The <b>xxx</b> is the pager <a href="#PName">Name</a> attribute, e.g. for <tt>&lt;P Name='Test'/></tt> it will be <tt>&lt;C TestChartPrev='...'/></tt></i><br />
+
+<!-- Format -->
+<a name="PFormat"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;P></b> <i>string</i>
+   <h4>Format</h4> <s></s>
+</div>
+Formats the displayed page name. Formats starting date of the page.<br /> 
+If not set, the format is set by column <a href="#CxxxFormat">xxxFormat</a>.<br />
+The format is standard <a href="TypeDate.htm#CFormat">TreeGrid date / time format</a> string for date PageSize, or standard <a href="TypeNumber.htm#CFormat">TreeGrid number format</a> string for number PageSize.<br />
+It can contain two formats separated by semicolon. In this case it prints two formatted date, the second format formats ending date of the page (= starting date of the next page minus 1).<br />
+
+<!-- xxxFormat -->
+<a name="CxxxFormat"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>xxxFormat</h4> <s></s>
+</div>
+<i>Page <a href="#PFormat">Format</a> can be set also in Gantt column instead of the pager &lt;P> tag. The advantage is that it can be set different for every zoom level.</i><br />
+<i>The <b>xxx</b> is the pager <a href="#PName">Name</a> attribute, e.g. for <tt>&lt;P Name='Test'/></tt> it will be <tt>&lt;C TestFormat='...'/></tt></i><br />
+
+<!-- TipFormat -->
+<a name="PTipFormat"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;P></b> <i>string</i>
+   <h4>TipFormat</h4> <s></s>
+</div>
+Formats the displayed page tip (TITLE). Formats starting date of the page.<br /> 
+If not set, the format is set by column <a href="#CxxxTipFormat">xxxTipFormat</a>.<br />
+The format is standard <a href="TypeDate.htm#CFormat">TreeGrid date / time format</a> string for date PageSize, or standard <a href="TypeNumber.htm#CFormat">TreeGrid number format</a> string for number PageSize.<br />
+It can contain two formats separated by semicolon. In this case it shows two formatted date, the second format formats ending date of the page (= starting date of the next page minus 1).<br />
+
+<!-- xxxTipFormat -->
+<a name="CxxxTipFormat"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>xxxTipFormat</h4> <s></s>
+</div>
+<i>Page <a href="#PTipFormat">TipFormat</a> can be set also in Gantt column instead of the pager &lt;P> tag. The advantage is that it can be set different for every zoom level.</i><br />
+<i>The <b>xxx</b> is the pager <a href="#PName">Name</a> attribute, e.g. for <tt>&lt;P Name='Test'/></tt> it will be <tt>&lt;C TestTipFormat='...'/></tt></i><br />
+
+<!-- CaptionFormat -->
+<a name="PCaptionFormat"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;P></b> <i>string</i>
+   <h4>CaptionFormat</h4> <s></s>
+</div>
+Formats the displayed pager caption. Formats starting date of the pager (the first date of <a href="#PChartSize">ChartSize</a> or if not set, the first date in chart)<br />
+If not set, the format is set by column <a href="#CxxxCaptionFormat">xxxCaptionFormat</a>. If not set either it, it shows static <a href="#PCaption">Caption</a>.<br />
+The format is standard <a href="TypeDate.htm#CFormat">TreeGrid date / time format</a> string for date PageSize, or standard <a href="TypeNumber.htm#CFormat">TreeGrid number format</a> string for number PageSize.<br />
+It can contain two formats separated by semicolon. In this case it prints two formatted date, the second format formats ending date of the page (= starting date of the next page minus 1).<br />
+
+<!-- xxxCaptionFormat -->
+<a name="CxxxCaptionFormat"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>xxxCaptionFormat</h4> <s></s>
+</div>
+<i>Pager <a href="#PCaptionFormat">CaptionFormat</a> can be set also in Gantt column instead of the pager &lt;P> tag. The advantage is that it can be set different for every zoom level.</i><br />
+<i>The <b>xxx</b> is the pager <a href="#PName">Name</a> attribute, e.g. for <tt>&lt;P Name='Test'/></tt> it will be <tt>&lt;C TestCaptionFormat='...'/></tt></i><br />
+
+<!-- FirstZoom -->
+<a name="PFirstZoom"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;P></b> <i>string</i>
+   <h4>FirstZoom</h4> <s></s>
+</div>
+Name of the first zoom level to show the pager for.<br />
+If the actual zoom level will be lower (defined prior this zoom level in &lt;Zoom> array), the pager will be hidden.<br />
+If not set, the pager is shown for all zoom levels from start.<br />
+
+<!-- LastZoom -->
+<a name="PLastZoom"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;P></b> <i>string</i>
+   <h4>LastZoom</h4> <s></s>
+</div>
+Name of the last zoom level to show the pager for.<br />
+If the actual zoom level will be higher (defined after this zoom level in &lt;Zoom> array), the pager will be hidden.<br />
+If not set, the pager is shown for all zoom levels to end.<br />
+
+<!-- Click -->
+<a name="PClick"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;P></b> <i>int</i>
+   <h4>Click</h4> <s>[0]</s>
+</div>
+What to do on the page click, replaces the <b>ZoomToPage</b>. For special actions use <a href="#OnClickPagerPage">OnClickPagerPage</a> API event instead.<br />
+For <b>0</b> it scrolls to the page date.<br />
+For <b>1</b> it sets GanttSize to the PageSize and scrolls to the page date.<br />
+For <b>2</b> it changes zoom level to show exactly the page range in the chart, but does not change the GanttSize.<br />
+For <b>3</b> it sets GanttSize to the PageSize and changes zoom level to show exactly the page range in the chart.<br />
+For <b>4</b> <i>(new 10.0)</i> it chooses the (first) zoom level with the same GanttSize as the pager PageSize. It scrolls to previously displayed date if the GanttSize increased.<br />
+
+<!-- DblClick -->
+<a name="PDblClick"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;P></b> <i>int</i>
+   <h4>DblClick</h4> <s>[0]</s>
+</div>
+What to do on the page double click, replaces the <b>ZoomToPage</b>. For special actions use <a href="#OnClickPagerPage">OnClickPagerPage</a> API event instead.<br />
+The double click means a click to already active page.<br />
+The options are the same as for <a href="#PClick">Click</a>.<br />
+
+<!-- ZoomToPage -->
+<a name="PZoomToPage"></a>
+<div class="DEL">
+   <u>new <b>9.0</b> deleted <b>10.0</b></u> <b>&lt;P></b> <i>int</i>
+   <h4>ZoomToPage</h4> <s>[0]</s>
+</div>
+Replaced by <a href="#PClick">Click</a> and <a href="#PDblClick">DblClick</a>.<br />
+
+<!-- ShowUsedPages -->
+<a name="PShowUsedPages"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;P></b> <i>int</i>
+   <h4>ShowUsedPages</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, highlights all pages in the pager that contain some Gantt object (Main bar, Flow, Run, Flag, Point, Constraint). Constraints used only if set <tt>GanttShowConstraints='2'</tt>.<br />
+If set to <b>2</b>, works like 1, except it counts only edges of Main, Flow and Run bars. The Flag, Point and Constraints are counted the same as 1.<br />
+Used only if the pager size is equal or wider than actual zoom level (ChartSize>=GanttSize).<br />
+<i>Can slow down the chart if there are a lot of rows with many objects, especially Run boxes!</i><br />
+
+<!-- ShowExcludedPages -->
+<a name="PShowExcludedPages"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;P></b> <i>int</i>
+   <h4>ShowExcludedPages</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, highlights all pages that contain only excluded dates. Used only for page sizes equal or less than days (PageSize<='d').<br />
+Used only if the pager size is equal or wider than actual zoom level (ChartSize>=GanttSize).<br />
+
+<!-- ZoomUndo -->
+<a name="PZoomUndo"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;P></b> <i>bool</i>
+   <h4>ZoomUndo</h4> <s>[0]</s>
+</div>
+If set, adds the zoom change done by clicking to the pager page to the zoom undo to be undone by action UndoZoom.<br />
+
+<!-- GanttSize -->
+<a name="CGanttSize"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttSize</h4> <s></s>
+</div>
+Limits the size of the chart to this unit. The values are the same as the <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a>.<br />
+For example <tt>GanttSize='M'</tt> shows always Gantt chart for one month.<br />
+This value can be used to show only part of the chart or for paging in Gantt chart using <b>side pager</b> <tt><a href="Pager.htm#Gantt">Type='Gantt'</a></tt><br />
+If set to <b>empty string</b>, it tries to show the whole chart. Also moving Gantt object outside the visible range will resize the visible range. <i>It is default behavior in grid prior 9.0.</i><br />
+If set to <b>0</b>, it tries to show the whole chart, moving Gantt object outside the visible range never resizes the visible range.<br />
+In API, the Grid.Cols[gantt_col].GanttSize contains actually selected page size in the grid.<br />
+
+<!-- GanttSizeLeft -->
+<a name="CGanttSizeLeft"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttSizeLeft</h4> <s></s>
+</div>
+Count of GanttUnits added before <a href="#CGanttSize">GanttSize</a> range, to show it from previous range.<br />
+
+<!-- GanttSizeRight -->
+<a name="CGanttSizeRight"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttSizeRight</h4> <s></s>
+</div>
+Count of GanttUnits added after <a href="#CGanttSize">GanttSize</a> range, to show it from next range.<br />
+
+<!---------------------------------------------------  Side pager type Custom  ------------------------------------------------------------>
+<a name="Custom"></a>
+<h2>Side pager type Custom</h2>
+<p class="H2">Custom pager controlled by API events</p>
+
+<!-- Type -->
+<a name=""></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;P></b> <i>string</i>
+   <h4>Type <span style="font-size:70%;font-weight:normal;">= "<span style="font-weight:bold;">Custom</span>"</span></h4> <s></s>
+</div>
+Custom pager controlled by API events.<br />
+Use the pager API events to control the individual pages: <a href="#OnGetPageName">OnGetPageName</a>, <a href="#OnGetPageTip">OnGetPageTip</a>, <a href="#OnClickPagerPage">OnClickPagerPage</a>.<br />
+
+<!-- OnGetPagesCount -->
+<a name="OnGetPagesCount"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b>API event</b> <i>int</i>
+   <h4>OnGetPagesCount</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>object</i> <b>Pager</b>)</s>
+</div>
+Called to get count of items to show on custom pager.<br />
+
+<!---------------------------------------------------  Pager cell with navigation buttons and edit  ------------------------------------------------------------>
+<a name="SimplePager"></a>
+<h2>Pager cell with navigation buttons and edit</h2>
+
+<!-- Type -->
+<a name="TypePager"></a>
+<div class="XML">
+   <u></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>Type <span style="font-size:70%;font-weight:normal;">= "<span style="font-weight:bold;">Pager</span>"</span></h4> <s></s>
+</div>
+Displays control buttons <b>PagerFirst</b>, <b>PagerPrevious</b>, <b>PagerNext</b>, <b>PagerLast</b> and editable cell with page number and number of pages named <b>PagerEdit</b>.<br />
+This cell is replaced by the mentioned buttons and the editable cell and no longer exists for API.<br />
+You can set also attributes of the new cells, for example <tt>PagerEditWidth='100'</tt> or <tt>PagerNextOnClick='MyActionNext()'</tt><br />
+<strong>Due its internal implementation, the Pager Type cell is available only in <b>Extended API</b>.</strong><br />
+
+<!---------------------------------------------------  Pager cell as list of page indexes  ------------------------------------------------------------>
+<a name="ListPager"></a>
+<h2>Pager cell as list of page indexes</h2>
+
+<!-- Type -->
+<a name="TypePages"></a>
+<div class="XML">
+   <u></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>Type <span style="font-size:70%;font-weight:normal;">= "<span style="font-weight:bold;">Pages</span>"</span></h4> <s></s>
+</div>
+Displays all page numbers as links to the pages. Displays horizontal scrollbar if required.<br />
+You can set cell attribute <tt><b>RelWidth='1'</b></tt> to show the cell on the whole row.<br />
+You can set also cell attribute <tt><b>Wrap='1'</b></tt> to not show the horizontal scrollbar.<br />
+
+<!-- Count -->
+<a name="CellCount"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Space cell></b> <i>int</i>
+   <h4>Count</h4> <s>[0]</s>
+</div>
+Maximal count of page links displayed in <b>Pages</b> type cell.<br />
+The Pages type cell displays actual page + up to Count/2-1 links before actual page + up to Count/2 links after actual page + first page + last page + links for <a href="#CellStep">Step</a>.<br />
+
+<!-- Step -->
+<a name="CellStep"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Space cell></b> <i>int[ ]</i>
+   <h4>Step</h4> <s></s>
+</div>
+For <b>Pages</b> type cell. It contains one or more comma separated values to display only some page links outside the <a href="#CellCount">Count</a> range.<br /> 
+For example for <tt>Step='10'</tt> it displays pages 10, 20, 30, ...<br />
+For example for page 254 <tt>Count='10' Step='10,100'</tt> it displays pages 1, 100,200,210,220,230,240, 250,251,252,253,254,255,256,257,258,259,260, 270,280,290,300,400,500,600,...<br />
+When set cell attribute <tt><b>Wrap='2'</b></tt> the steps are displayed on own lines, the pager will be displayed on three lines. Otherwise the step links are separated by space.<br />
+<i>Remember, when used Step the count of links often changes when changes active page and the pager height can change too. You should set row <b>Height</b> attribute to maximal expected height of the pager to avoid grid flickering.</i><br />
+
+<!-- OnGetPageNumber -->
+<a name="OnGetPageNumber"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetPageNumber</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>number</b>)</s>
+</div>
+Called for <b>Pages</b> type for every page number to get the html displayed in the link for the page.<br />
+The <b>number</b> is displayed for the page. It starts from 1, so it is bigger by 1 than the related page index.<br />
+To get page object call <tt>grid.<a href="Paging.htm#GetPage">GetPage</a>(number-1);</tt><br />
+
+</div>
+</body>	
+</html>

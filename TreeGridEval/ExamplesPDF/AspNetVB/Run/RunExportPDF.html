@@ -1,0 +1,39 @@
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+   </head>
+   <body>
+      <style type="text/css">
+         .GMGanttCustom1In { background:#FDA; color:Blue; font:bold 11px Verdana; }
+         .GMGanttCustom1Out { border:1px dotted blue; padding:0px; }
+         .GMGanttCustom2In { background:url(../../Grid/Modern/Backgrounds.gif); color:white; font:italic 11px Verdana; }
+         .GMGanttCustom2Out { margin:0px; border:2px solid pink; padding:0px; }
+      </style>
+      <script>
+var BIE5 = navigator.appName.search("Microsoft")>=0 && document.compatMode!="CSS1Compat" && document.documentMode<10; // IE5 quirks mode
+// ------------------------------------------------------------------------------------
+// Returns custom Run bar content, only for row Custom
+Grids.OnGetGanttRunText = function(G,row,col,run,idx,text,width){
+if(row.id!="Custom") return text;
+var B = G.GetGanttRunBox(row,col,idx);
+var pad = BIE5? "" : "padding:1px;"; // In IE5 quirks mode is the height of text calculated with padding, so no padding is needed here
+return "<div style='border:1px solid black;padding:1px;'><div style='background:#EAA;padding-left:2px;float:right;font-size:20px;line-height:36px;width:17px;text-align:center;border-bottom-left-radius:10px;'>"+(idx/2+1)+"</div><div>"
+   + "<div style=\"background:#396;color:white;line-height:16px;"+pad+"\">&nbsp;"+DateToString(B.Start,"dddddd")+" - "+DateToString(B.End,"dddddd")+"</div>"
+   + "<div style=\"background:#369;color:white;line-height:16px;"+pad+"\">&nbsp;"+(B.Length/24/3600/1000)+" days </div>"
+   + "<div style=\"background:#963;color:yellow;line-height:16px;"+pad+"font-weight:bold;\">&nbsp;"+(B.Text?B.Text:"")+"</div>"
+   + "</div></div>";
+}
+// ------------------------------------------------------------------------------------
+      </script>
+      <div style="width:100%;height:90%;" id='GRID'>     
+         <script>
+
+// Url parameters: ?cfg_file&dpi&page_width_mm&page_height_mm&horizontal_margin_mm&vertical_margin_mm
+var param = location.search.slice(1).split("&");
+var bonus = param[0] ? AjaxCall(param[0]) : null; // Reads grid configuration and changes from temporary file
+PrintTreeGrid({Layout:{Url:"RunDef.xml",Bonus:bonus}, Data:{Url:"RunData.xml"}},"GRID",null,{Dpi:param[1],Width:param[2],Height:param[3],MarginWidth:param[4],MarginHeight:param[5]});
+
+         </script>
+      </div>
+   </body>
+</html>

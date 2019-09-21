@@ -1,0 +1,516 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Gantt API</title>
+</head>
+<body>
+<div class="Doc">
+    
+
+<h1>Gantt API</h1>
+<p>TreeGrid documentation</p>
+
+<i>To control Gantt chart you can use all standard <b>Extended API</b> methods and events for TreeGrid controlling, like <a href="RowAdd.htm#AddRow">AddRow</a>, <a href="RowDelete.htm#DeleteRow">DeleteRow</a>, <a href="CellEdit.htm#SetValue">SetValue</a> and so on.</i><br />
+You can change the data source values by API <a href="CellEdit.htm#SetValue">SetValue</a> method and the Gantt chart will be automatically recalculated.<br />
+Many changes in Gantt chart are mirrored to other columns (e.g. Ancestors/Descendants), call <a href="#CheckGantt">CheckGantt</a> before SetValue to check if the change is possible and also to update other Gantt columns accordingly.<br />
+
+<!-- OnGanttStart -->
+<a name="OnGanttStart"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnGanttStart</h4>
+   <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+<b>Event</b> called when Gantt chart is created for first time. Returns true to not create the Gantt chart (useful when it is already called <a href="#RefreshGantt">RefreshGantt</a>).<br />
+
+<!-- OnGanttChange -->
+<a name="OnGanttChange"></a>
+<div class="API">
+   <u style="font-size:10px;">new <b>9.2</b> chg <b>10.0</b> <i>upd <b>12.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnGanttChange</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>item</b>, <i>type</i> <b>new</b>, <i>type</i> <b>new2</b>, <i>type</i> <b>old</b>, <i>type</i> <b>old2</b>, <i>string</i> <b>action</b>)</s>
+</div>
+<b>Event</b> called <b>before</b> any item in Gantt chart has been changed by a user interaction in the Gantt.<br />
+Return true to cancel the change.<br />
+For the parameters see the <a href="#OnGanttChanged">OnGanttChanged</a> event below.<br />
+
+<!-- OnGanttChanged -->
+<a name="OnGanttChanged"></a>
+<div class="API">
+   <u style="font-size:10px;">new <b>6.0</b> chg <b>10.0</b> <i>upd <b>12.0</b></i></u> <b>API event</b> <i>void</i>
+   <h4>OnGanttChanged</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>item</b>, <i>type</i> <b>new</b>, <i>type</i> <b>new2</b>, <i>type</i> <b>old</b>, <i>type</i> <b>old2</b>, <i>string</i> <b>action</b>)</s>
+</div>
+<b>Event</b> called <b>after</b> any item in Gantt chart has been changed by a user interaction in the Gantt.<br />
+It is <u>not</u> called when the source cells are changed by edit - use here <a href="CellEdit.htm#OnAfterValueChanged">OnAfterValueChanged</a> event instead.<br /> 
+It is also <u>not</u> called when resources are assigned from popup dialog.<br />
+It is called after the change is applied.<br />
+<b>row</b>, <b>col</b> is the Gantt chart cell.<br />
+<b>item</b> is the changed part, can be: <b>MainX</b> (X is plan as empty or 1,2,3,...), <b>CompleteX</b>, <b>TextX</b>, <b>Flow</b>, <b>FlowText</b>, <b>Run</b>, <b>Constraint</b>, <b>Flags</b>, <b>FlagTexts</b>, <b>FlagIcons</b>, <b>Resources</b>, <b>Dependency</b>, <b>Lag</b><br />
+<br />
+
+<table>
+<tr><td style="width:170px;">
+For <b>Main</b> bar:</td><td>
+<b>new</b> = new Start date, <b>new2</b> = new End date or new Duration, <b>old</b> = old Start date, <b>old2</b> = old End date or duration, <b>action</b> = Move, Resize, Delete, DeleteAll, New, Correct<br />
+<i>Since 9.2</i>, the new2/old2 is duration if no GanttEnd column is defined, otherwise it is the end date.<br />
+<i>To better control the main bar change use <a href="GanttMain.htm#OnGanttMainChange">OnGanttMainChange</a> / <a href="GanttMain.htm#OnGanttMainChanged">OnGanttMainChanged</a> API events instead of OnGanttChange / OnGanttChanged.</i>
+</td></tr>
+<tr><td>For <b>Complete</b>:</td><td><b>new</b> = new Complete status, <b>old</b> = old Complete status, <b>action</b> = Change, DeleteAll</td></tr>
+<tr><td>For <b>Text</b>:</td><td><b>new</b> = new Main bar Text, old = <b>old</b> Main bar Text, <b>action</b> = Change, DeleteAll</td></tr>
+<tr><td>For <b>Resources</b>:</td><td><b>new</b> = new Resources text, <b>old</b> = old Resources text, <b>action</b> = Change <i>(<u>not</u> called for choosing resources from popup menu)</i>, DeleteAll</td></tr>
+<tr><td><s>For <b>Flow</b>:</s></td><td><s><b>new</b> = new Flow range, <b>old</b> = old Flow range, <b>action</b> = New, Delete, DeleteAll, Move, Resize</s> <i>removed 10.0</i></td></tr>
+<tr><td><s>For <b>FlowText</b>:</s></td><td><s><b>new</b> = new FlowText, <b>old</b> = old FlowText, <b>action</b> = Change, DeleteAll</s> <i>removed 10.0</i></td></tr>
+<tr><td>For <b>Run</b> bar:</td><td>
+   <b>new</b> = new Run value, <b>new2</b> = new RunStart, <b>old</b> = old Run value, <b>old2</b> = old RunStart value, <b>action</b> = Slide, Resize, Delete, DeleteAll, New, Move, MoveSource, Copy, Remove, RemoveSource
+   It is possible to parse the <b>new</b> and <b>old</b> run values by <a href="GanttRun.htm#GetGanttRun">GetGanttRun</a> method.<br />
+   <i>To better control changes in individual Run boxes use <a href="GanttRun.htm#OnGanttRunBoxChanged">OnGanttRunBoxChanged</a> and <a href="GanttRun.htm#OnGanttRunBoxNew">OnGanttRunBoxNew</a> events.</i>
+</td></tr>
+<tr><td>For <b>RunComplete</b>:</td><td><b>new</b> = new RunComplete status, <b>old</b> = old RunComplete status, <b>action</b> = Change, DeleteAll</td></tr>
+<tr><td>For <b>Flags</b>:</td><td><b>new</b> = new Flags, <b>old</b> = old Flags, <b>action</b> = Move, Delete, DeleteAll, New</td></tr>
+<tr><td>For <b>FlagTexts</b>:</td><td><b>new</b> = new FlagTexts, <b>old</b> = old FlagTexts, <b>action</b> = Delete, DeleteAll, New, Change</td></tr>
+<tr><td>For <b>FlagIcons</b>:</td><td><b>new</b> = new FlagIcons, <b>old</b> = old FlagIcons, <b>action</b> = Delete, DeleteAll, Change</td></tr>
+<tr><td>For <b>Points</b>:</td><td><b>new</b> = new Point or Point, <b>old</b> = old Points or Point, <b>action</b> = Move, Delete, DeleteAll, New</td></tr>
+<tr><td>For <b>Dependency</b>:</td><td>
+   <b>new</b> = new dependency row ids (descendants), <b>new2</b> = <i>(new 12.0)</i> the dependency object like returned by <a href="GanttCompute.htm#GetDependencies">GetDependencies</a>, <b>old</b> = old dependency row ids (descendants), <b>action</b> = New, Delete, Edit (<i>lag, called twice</i>)<br />
+</td></tr>
+<tr><td><s>For <b>Lag</b>:</s></td><td><s><b>new</b> = new DependencyLag value, <b>old</b> = old DependencyLag value, <b>action</b> = Change, Delete, DeleteAll </s><i>removed 10.0</i></td></tr>
+<tr><td>For <b>Constraint</b>:</td><td><b>new</b> = new Constraint value, <b>new2</b> = (new) ConstraintType, <b>old</b> = old Constraint value, <b>old2</b> = old ConstraintType for Change, <b>action</b> = New, Delete, Move, Change</td></tr>
+</table>
+
+<!-- OnGanttTip -->
+<a name="OnGanttTip"></a>
+<div class="API">
+   <u>new <b>6.4</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGanttTip</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>tip</b>, <i>object</i> <b>XY</b>, <i>string</i> <b>name</b>)</s>
+</div>
+Called to get a tip text for Gantt object to display it on mouse hover.<br />
+<b>tip</b> is the default tip text, return it or new tip.<br />
+<b>XY</b> are Gantt objects under mouse cursor returned by <a href="#GetGanttXY">GetGanttXY</a>.<br />
+<b>name</b> is the Gantt object name, can be: <b>Main</b>, <b>Milestone</b>, <b>Flow</b>, <b>Run</b>, <b>Flags</b>, <b>Points</b>, <b>Constraints</b>, <b>Dependency</b>.<br />
+
+<!-- OnStartDragGantt -->
+<a name="OnStartDragGantt"></a>
+<div class="API">
+   <u>new <b>9.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnStartDragGantt</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>name</b>, <i>int</i> <b>start</b>, <i>int</i> <b>end</b>, <i>int</i> <b>dir</b>, <i>object</i> <b>XY</b>, <i>string</i> <b>keyprefix</b>, <i>int</i> <b>clientX</b>, <i>int</i> <b>clientY</b>)</s>
+</div>
+Called on start dragging any object in Gantt chart except Run. For Run use <a href="GanttRun.htm#OnDragGanttRun">OnDragGanttRun</a> or <a href="GanttRun.htm#OnGanttRunDrop">OnGanttRunDrop</a> instead.<br />
+Return true to suppress dragging.<br />
+For parameters description see OnDragGantt event.<br />
+
+<!-- OnEndDragGantt -->
+<a name="OnEndDragGantt"></a>
+<div class="API">
+   <u>new <b>9.1</b> <i>upd <b>9.3</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnEndDragGantt</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>name</b>, <i>int</i> <b>start</b>, <i>int</i> <b>end</b>, <i>int</i> <b>oldstart</b>, <i>int</i> <b>oldend</b>, <i>int</i> <b>dir</b>, <i>object</i> <b>XY</b>, <i>string</i> <b>keyprefix</b>, <i>int</i> <b>clientX</b>, <i>int</i> <b>clientY</b>, <i>TRow</i> <b>ToRow</b>)</s>
+</div>
+Called on end dragging any object in Gantt chart except Run. For Run use <a href="GanttRun.htm#OnDragGanttRun">OnDragGanttRun</a> or <a href="GanttRun.htm#OnGanttRunDrop">OnGanttRunDrop</a> instead.<br />
+Return true to cancel the change.<br />
+For parameters description see OnDragGantt event.<br />
+
+<!-- OnDragGantt -->
+<a name="OnDragGantt"></a>
+<div class="API">
+   <u>new <b>9.1</b> <i>upd <b>9.3</b></i></u> <b>API event</b> <i>int</i>
+   <h4>OnDragGantt</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>name</b>, <i>int</i> <b>start</b>, <i>int</i> <b>end</b>, <i>int</i> <b>oldstart</b>, <i>int</i> <b>oldend</b>, <i>int</i> <b>dir</b>, <i>object</i> <b>XY</b>, <i>string</i> <b>keyprefix</b>, <i>int</i> <b>clientX</b>, <i>int</i> <b>clientY</b>, <i>TRow</i> <b>ToRow</b>)</s>
+</div>
+Called during dragging any object in Gantt chart except Run. For Run use <a href="GanttRun.htm#OnDragGanttRun">OnDragGanttRun</a> or <a href="GanttRun.htm#OnGanttRunDrop">OnGanttRunDrop</a> instead.<br />
+<b>row</b>, <b>col</b> is the Gantt cell.<br /> 
+<b>name</b> is the dragged Gantt object name, can be: <b>Main</b>, <b>Milestone</b>, <b>Flow</b>, <b>Run</b>, <b>Flags</b>, <b>Points</b>, <b>Constraints</b>.<br />
+<b>start</b>, <b>end</b> are new start and end dates of the Gantt object, as count of milliseconds since 1/1/1970. For milestone, flag, point and constraint is end the same as start.<br />
+<b>oldstart</b>, <b>oldend</b> are original start and end dates of the Gantt object.<br />
+<b>dir</b> is dragging direction, 1 left edge (resize), 2 right edge (resize), 3 both edges (move).<br />
+<b>step</b> is count of calling the OnDragGantt since dragging started. It is 0 for the first call.<br />
+<b>XY</b> is the dragged Gantt object returned by <a href="#GetGanttXY">GetGanttXY</a>.<br />
+<b>keyprefix</b> is prefix of shift keys: "Ctrl", "Alt", "Shift" and also mouse button "Right" or "Middle". The key is before the mouse, e.g. keyprefix='CtrlRight'.<br />
+<b>clientX</b>, <b>clientY</b> is mouse position on page.<br />
+<b>ToRow</b> <i>(since 9.3)</i> is the row under mouse cursor. Now only for flags can differ from the <b>row</b>.<br />
+Return <b>null</b> for normal behavior<br />
+Return <b>0</b> to suppress the last change<br />
+Return <b>false</b> to cancel dragging and restore original state<br />
+Return <b>true</b> to finish dragging and save this last change<br />
+
+<!-- OnStartDragGanttDependency -->
+<a name="OnStartDragGanttDependency"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>type</i>
+   <h4>OnStartDragGanttDependency</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>object</i> <b>XY</b>, <i>int</i> <b>color</b>, <i>bool</i> <b>start</b>, <i>string</i> <b>keyprefix</b>, <i>int</i> <b>clientX</b>, <i>int</i> <b>clientY</b>)</s>
+</div>
+Called on start dragging dependency.<br />
+<b>row</b>, <b>col</b> is actual Gantt cell where the dragging starts, <b>XY</b> is the Gantt object returned by <a href="#GetGanttXY">GetGanttXY</a> the dependency is being dragged from.<br />
+<b>color</b> is dependency color and shape (0-39) that will be assigned to the dependency during dragging. It can be different from final color according to the <a href="GanttCompute.htm#CGanttAssignDependencies">GanttAssignDependencies</a> value.<br />
+<b>start</b> is 1 if the dependency starts from the box start, 0 if dependency starts from the box finish.<br />
+<b>keyprefix</b> is prefix of shift keys: "Ctrl", "Alt", "Shift" and also mouse button "Right" or "Middle". The key is before the mouse, e.g. keyprefix='CtrlRight'.<br />
+<b>clientX</b>, <b>clientY</b> is mouse position on page.<br />
+Return <b>true</b> to suppress dragging. Return JavaScript array as [<b>color</b>, <b>start</b>] to change these values for the new dependency.<br />
+
+<!-- OnDragGanttDependency -->
+<a name="OnDragGanttDependency"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>type</i>
+   <h4>OnDragGanttDependency</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>object</i> <b>XYSrc</b>, <i>TRow</i> <b>torow</b>, <i>object</i> <b>XYDest</b>, <i>bool</i> <b>end</b>, <i>string</i> <b>keyprefix</b>, <i>int</i> <b>clientX</b>, <i>int</i> <b>clientY</b>)</s>
+</div>
+Called during dragging dependency.<br />
+<b>row</b>, <b>col</b> is source cell where dragging started. <b>XYSrc</b> is the Gantt object returned by <a href="#GetGanttXY">GetGanttXY</a> where dragging started.<br />
+torow is destination row (under mouse cursor), <b>XYDest</b> is the Gantt object returned by <a href="#GetGanttXY">GetGanttXY</a> under mouse cursor, can be null if there is no bar under mouse that accept dependencies.<br />
+<b>end</b> is 1 if the dependency points to the destination box start, 0 if dependency points to the destination box finish.<br />
+<b>keyprefix</b> is prefix of shift keys: "Ctrl", "Alt", "Shift" and also mouse button "Right" or "Middle". The key is before the mouse, e.g. keyprefix='CtrlRight'<br />
+<b>clientX</b>, <b>clientY</b> is mouse position on page.<br />
+Return <b>null</b> for normal behavior.<br />
+Return <b>-1</b> to not permit the dependency to attach to the destination bar. Ignored if there is no destination bar.<br />
+Return <b>0</b> to attach dependency to the destination bar finish. Ignored if there is no destination bar.<br />
+Return <b>1</b> to attach dependency to the destination bar start. Ignored if there is no destination bar.<br />
+Return <b>false</b> to cancel dragging and restore original state.<br />
+Return <b>true</b> to finish dragging and attach the dependency. Ignored if there is no destination bar.<br />
+
+<!-- OnEndDragGanttDependency -->
+<a name="OnEndDragGanttDependency"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnEndDragGanttDependency</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object[ ]</i> <b>New</b>, <i>object[ ]</i> <b>Old</b>)</s>
+</div>
+Called after finish dependency dragging.<br />
+<b>New</b> is an array of new dependencies that will be added, in format like <a href="GanttCompute.htm#GetDependencies">GetDependencies</a>. Now the array contains only one dependency.<br />
+<b>Old</b> is an array of old dependencies that will be deleted, in format like <a href="GanttCompute.htm#GetDependencies">GetDependencies</a>. In case the new dependency replaces other dependencies between the same bars.<br />
+It is possible to modify parameters in <b>New</b> array to add dependency with different parameters (e.g. lag or type).<br />
+It is possible to remove some item from <b>Old</b> to not remove these dependencies.<br />
+Return <b>true</b> to suppress adding the dependencies (and deleting the old). Return true also in case you added the dependencies in this event handler.<br />
+Return <b>false</b> for default behavior.<br />
+
+<!-- OnEndDragGanttRange -->
+<a name="OnEndDragGanttRange"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnEndDragGanttRange</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>d1</b>, <i>int</i> <b>d2</b>, <i>string</i> <b>action</b>)</s>
+</div>
+Called after dragging range in Gantt finishes. Usually in Gantt header. <br />
+<b>action</b> can be <b>ZoomGantt</b> (action <a href="GanttDisplay.htm#ActionsZoomGantt">ZoomGantt</a>) or <b>SelectRun</b> (action <a href="GanttRun.htm#ActionsSelectGanttRunRange">SelectGanttRunRange</a>).<br />
+Return new action or empty string to suppress the action.<br />
+
+<!-- RefreshGantt -->
+<a name="RefreshGantt"></a>
+<div class="API">
+   <u>chg <b>9.0</b> <i>upd <b>11.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>RefreshGantt</h4>
+   <s>(<i>int</i> <b>show</b> = 255, <i>string</i> <b>col</b> = null)</s>
+</div>
+Recalculates Gantt chart(s). Also shrinks chart to show only used date range.<br />
+<b>show</b> is binary mask of items to refresh <i>(since 9.0, prior to 9.0 it was always 1 as 255 or 0 as 254)</i>.<br />
+<div class="L1">
+   <b>&1</b> - if the changes will be displayed in chart. For 0 the grid needs to be rerendered.<br />
+   <b>&2</b> - if the width of Gantt will be recalculated. If the width of Gantt is changed, it also refreshes header and background.<br />
+   <b>&4</b> - if the GanttHeader and GanttBackground will be recalculated.<br />
+   <b>&8</b> - if the dependency settings will be recalculated for all tasks. If some of them changed, it refreshes all dependency lines in grid.<br />
+   <b>&16</b> - if all dependency lines in grid will be refreshed.<br />     
+   <b>&32</b> - if recalculates GanttSlack<br />
+   <b>&64</b> - if recalculates Gantt charts in all variable rows<br />
+   <b>&128</b> - if recalculates Gantt charts in all fixed rows<br />
+   <b>&256</b> - <i>(new 11.0)</i> clears GanttRun cache, reads all the runs again from the source strings<br />
+</div>
+For example <tt>RefreshGantt(179)</tt> means <tt>(1+2+16+32+128)</tt>, so it recalculates Gantt width, all dependency lines, slack and fixed rows and shows changes.<br />
+When <i>col</i> set, recalculates only chart in this column, otherwise recalculates all charts in grid.<br />
+Should be called after any Gantt option changes by API, e.g. for <b>zooming</b>.<br />
+
+<!-- GanttUpdate -->
+<a name="GanttUpdate"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API variable</b> <i>bool</i>
+   <h4>GanttUpdate</h4>
+   <s>[0]</s>
+</div>
+If set to <b>1</b>, temporary disables creating the Gantt. Requires call of <a href="#RefreshGantt">RefreshGantt</a> ( ).<br />
+Use to speed up some action, like: Grid.GanttUpdate = 1; /* do here some long updating action */; Grid.GanttUpdate = 0; Grid.RefreshGantt ( );<br />
+
+<!-- RefreshGanttDependencies -->
+<a name="RefreshGanttDependencies"></a>
+<div class="API">
+   <u><i>upd <b>7.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>RefreshGanttDependencies</h4>
+   <s>(<i>int</i> <b>show</b> = 1, <i>string</i> <b>col</b> = null)</s>
+</div>
+Recalculates and redraws Gantt chart dependencies, useful when some rows show / hide.<br />
+<i>(Since 7.0)</i> For <b>show</b> = 2 recalculates also all cell dependency inputs, use when some global dependency setting changes (e.g. GanttIncorrectDependencies).<br />
+
+<!-- Recalculate -->
+<a name="Recalculate"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>Recalculate</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>show</b> = 0)</s>
+</div>
+Re-calculates grid after given cell changes, according to cell's or row's parameter <a href="CellFormula.htm#IRecalc">Recalc</a>.<br /> 
+Always recalculates fixed calculated rows.<br />
+It recalculates also Gantt chart in that row, if any.<br />
+
+<!-- RecalculateRows -->
+<a name="RecalculateRows"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API method</b> <i>void</i>
+   <h4>RecalculateRows</h4>
+   <s>(<i>TRow[ ]</i> <b>rows</b>, <i>bool</i> <b>show</b> = 0)</s>
+</div>
+Recalculates given rows in given order.<br /> 
+Recalculates also Gantt chart in these rows. If the recalculation changes Gantt size, it refreshes whole Gantt chart.<br />
+It does <u>not</u> recalculate any other row (except the Gantt, see above), so if the calculation affects some other rows, they should be recalculated manually too.<br />
+<i>Remember, this function breaks CalcOrder in tree, as stated above!</i><br />
+To display the changes in grid call the function with the second parameter (<b>show</b>) as <b>1</b>.<br />
+The <b>rows</b> can be: a) array of TRow object, b) one TRow object, c) array of row ids (strings), d) one row id (string)<br />
+
+<!-- GetGanttXY -->
+<a name="GetGanttXY"></a>
+<div class="API">
+   <u>chg <b>10.0</b> <i>upd <b>12.0</b></i></u> <b>API method</b> <i>object</i>
+   <h4>GetGanttXY</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>x</b>, <i>int</i> </b>y</b>) or (<i>int</i> <b>clientX</b>, <i>int</i> <b>clientY</b>)</s>
+</div>
+Returns Gantt objects on given position. <i>x</i>, <i>y</i> is the position inside the cell.<br /> 
+Useful to provide some custom action on click or on drag or on hover<br />
+The <i>object</i> has set these properties when given tag is on the given position:<br />
+<div class="L1">
+   <table>
+   <tr> 
+      <td style="width:200px;"><i>string</i> <b>Type</b></td>
+      <td>type of the top most (hovered) object, can be: "<b>main</b>", "<b>run</b>", "<b>flags</b>", "<b>points</b>", "<b>constraints</b>", "<b>dependency</b>"<br /> 
+      <i>Since 10.0</i> it can be also "<b>line</b>" for GanttLines, GanttBase and GanttFinish.
+      </td>
+   </tr>
+   <tr><td></td><td></td></tr>
+   
+   <tr><td><i>HTMLElement</i> <b>Main</b></td><td> the <b>main bar</b> tag</td></tr>
+   <tr><td><i>int</i> <b>MainPlan</b></td><td><i>(new 10.0)</i> index (from 0) of the <i><b>Main</b></i> bar plan, see <a href="GanttMain.htm#CGanttCount">GanttCount</a>.</td></tr> 
+   <tr><td><i>int</i> <b>MainIndex</b></td><td>index (from 0) of the <i><b>Main</b></i> box when the bar is not continuous and more boxes exist in the cell</td></tr>
+   <tr><td><i>int</i> <b>MainType</b></td><td><i>(changed 10.0)</i> type of the <i><b>Main</b></i> tag, can be <b>null</b> (complete is null), <b>0</b> (not started part), <b>50</b> (incomplete part), <b>100</b> (complete part), <b>Milestone</b></td></tr>
+   <tr><td><i>int</i> <b>MainX</b></td><td>the X position inside the <i><b>Main</b></i> tag.</td></tr>
+   <tr><td><i>int</i> <b>MainIcon</b></td><td><i>(new 12.0)</i> the side icon, <b>0</b> none, <b>1</b> left, <b>2</b> right </td></tr>
+   <tr><td colspan="2">&nbsp;</td></tr>
+
+   <tr><td><s><i>HTMLElement</i> <b>Main2</b></td><td>the second <b>main bar</b> tag for incomplete tasks - the other part that is not on the given position. <i>(removed 10.0)</i><s></td></tr>
+   <tr><td><s><i>int</i> <b>MainPos</b></td><td>position of the <i><b>Main</b></i> tag - 0 alone, 1 left side, 2 - right side <i>(removed 10.0)</i><s></td></tr>
+   <tr><td><s><i>HTMLElement</i> <b>Flow</b></td><td>the real flow tag on given position <i>(removed 10.0)</i><s></td></tr>
+   <tr><td><s><i>HTMLElement</i> <b>Flow2</b></td><td>(new 6.4) the second real flow tag for incomplete tasks that is not on given position <i>(removed 10.0)</i><s></td></tr>
+   <tr><td><s><i>int</i> <b>FlowPos</b></td><td><i>(new 6.4)</i> position of the incomplete <i><b>Flow</b></i> tag - 0 alone, 1 left side, 2 - right side <i>(removed 10.0)</i><s></td></tr>
+   <tr><td><s><i>int</i> <b>FlowIndex</b></td><td>index (from 0) of the <i><b>Flow</b></i> tag when the flow is not continuous and more flow tags exists in the cell <i>(removed 10.0)</i><s></td></tr>
+   <tr><td><s><i>int</i> <b>FlowX</b></td><td>the X position inside the <i><b>Flow</b></i> tag <i>(removed 10.0)</i><s></td></tr>
+   <tr><td colspan="2">&nbsp;</td></tr>
+
+   <tr><td><i>HTMLElement</i> <b>Run</b></td><td>the continuous run tag on given position</td></tr>
+   <tr><td><i>int</i> <b>RunIndex</b></td><td>index (from 0) of the <i><b>Run</b></i> box inside its cell</td></tr>
+   <tr><td><i>int</i> <b>RunX</b></td><td>the X position inside the <i><b>Run</b></i> tag</td></tr>
+   <tr><td><i>int</i> <b>RunType</b></td><td>type of the Run box</td></tr>
+   <tr><td><i>string</i> <b>RunClass</b></td><td><i>(new 10.0)</i> class of the Run box</td></tr>
+   <tr><td><i>string</i> <b>RunId</b></td><td><i>(new 10.0)</i> id of the <i><b>Run</b></i> box, if set</td></tr>
+   <tr><td><i>string</i> <b>RunGroup</b></td><td><i>(new 10.0)</i> group of the <i><b>Run</b></i> box, if set</td></tr>
+   <tr><td><i>int</i> <b>RunState</b></td><td><i>(new 10.0)</i> state of the <i><b>Run</b></i> box, bit array:  1 - disabled, 2 locked, 4 selected, 8 added, 16 deleted, 32 moved, 64 resized, 128 changed.</td></tr>
+   <tr><td><i>string</i> <b>RunContainer</b></td><td><i>(new 13.0)</i> The top <i><b>Run</b></i> container, only if no box is on the position. If set, the Run and RunX are related to the container and RunIndex and the others are for the first box in the container.</td></tr>
+   <tr><td><i>string[]</i> <b>RunContainers</b></td><td><i>(new 13.0)</i> All <i><b>Run</b></i> containers, only if no box is on the position. The last one is the RunContainer.</td></tr>
+   <tr><td colspan="2">&nbsp;</td></tr>
+
+   <tr><td><i>HTMLElement</i> <b>Flag</b></td><td>the flag tag on given position</td></tr>
+   <tr><td><i>HTMLElement</i> <b>FlagText</b></td><td><i>(new 10.0)</i> the flag text tag on given position</td></tr>
+   <tr><td><i>int</i> <b>FlagIndex</b></td><td>index (from 0) of the <i><b>Flag</b></i> tag when the cell contains more flags</td></tr>
+   <tr><td><i>int</i> <b>FlagX</b></td><td>the X position inside the <i><b>Flag</b></i> tag.</td></tr>
+   <tr><td colspan="2">&nbsp;</td></tr>
+
+   <tr><td><i>HTMLElement</i> <b>Point</b></td><td><i>(new 6.4)</i> the point tag on given position</td></tr>
+   <tr><td><i>int</i> <b>PointIndex</b></td><td><i>(new 6.4)</i> index (from 0) of the <i><b>Point</b></i> tag when the cell contains more points</td></tr>
+   <tr><td><i>int</i> <b>Point X</b></td><td><i>(new 6.4)</i> the X position inside the <i><b>Point</b></i> tag.</td></tr>
+   <tr><td colspan="2">&nbsp;</td></tr>
+   
+   <tr><td><i>HTMLElement</i> <b>Constraint</b></td><td>the constraint tag on given position</td></tr>
+   <tr><td><i>int</i> <b>ConstraintX</b></td><td>the X position inside the <b>Constraint</b> tag.</td></tr>
+   <tr><td><i>string</i> <b>ConstraintType</b></td><td>can be "<b>MinStart</b>", "<b>MaxStart</b>", "<b>MinEnd</b>", "<b>MaxEnd</b>"</td></tr>
+   <tr><td colspan="2">&nbsp;</td></tr>
+
+   <tr><td>int <b>Line</b></td><td><i>(new 10.0)</i> Index of the line in GanttLines or -1 for GanttBase or -2 for GanttFinish</td></tr>
+   <tr><td>int <b>LineLeft</b></td><td><i>(new 10.0)</i> Left position in pixels</td></tr>
+   <tr><td>int <b>LineWidth</b></td><td><i>(new 10.0)</i> Width in pixels</td></tr>
+   <tr><td>int <b>LineStart</b></td><td><i>(new 10.0)</i> Line start date in milliseconds</td></tr>
+   <tr><td>int <b>LineEnd</b></td><td><i>(new 10.0)</i> Line end date if any, in milliseconds</td></tr>
+   <tr><td>string <b>LineClass</b></td><td><i>(new 10.0)</i> Line CSS class part</td></tr>
+   <tr><td>int <b>LineFlags</b></td><td><i>(new 10.0)</i> Flags of the line. &<b>1</b> -if the line is editable, &<b>2</b> - if the line can be placed on excluded dates, &<b>4</b> if the LineStart is end date</td></tr>
+   <tr><td colspan="2">&nbsp;</td></tr>
+   
+   <tr><td><i>string</i> <b>DependencyFrom</b></td><td><i>(new 10.0)</i> row id the dependency comes from</td></tr>
+   <tr><td><i>string</i> <b>DependencyFromBox</b></td><td><i>(new 10.0)</i> main bar plan number or run box id the dependency comes from</td></tr>
+   <tr><td><i>string</i> <b>DependencyTo</b></td><td><i>(new 10.0)</i> row id the dependency goes to</td></tr>
+   <tr><td><i>string</i> <b>DependencyToBox</b></td><td><i>(new 10.0)</i> main bar plan number or run box id the dependency goes to</td></tr>
+   <tr><td><i>string</i> <b>DependencyType</b></td><td><i>(new 10.0)</i> type of the dependency like fs, ss, sf, fs. Can be empty for fs.</td></tr>
+   <tr><td><i>int</i> <b>DependencyStart</b></td><td><i>(new 10.0)</i> Start date of the dependency, in milliseconds since 1/1/1970. It does not contain the lag.</td></tr>
+   <tr><td><i>int</i> <b>DependencyEnd</b></td><td><i>(new 10.0)</i> End date of the dependency, in milliseconds since 1/1/1970</td></tr>
+   <tr><td><i>int</i> <b>DependencyLag</b></td><td><i>(new 10.0)</i> Lag of the dependency start in milliseconds.</td></tr>
+   <tr><td><i>int</i> <b>DependencySpan</b></td><td><i>(new 10.0)</i> Maximal span of the dependency in milliseconds</td></tr>
+   <tr><td><i>int</i> <b>DependencyColor</b></td><td><i>(new 10.0)</i> Number of color / shape of the dependency, 0 - 40 or null</td></tr>
+   <tr><td colspan="2">&nbsp;</td></tr>
+
+   <tr><td><s><i>string</i> <b>DependencyStartLeft</b></td><td>list of ids of all rows that are connected from this left side. The ids are separated by Lang.ValueSeparator (';'' by default)</s> <i>(removed 10.0)</i></td></tr>
+   <tr><td><s><i>string</i> <b>DependencyStartRight</b></td><td>list of ids of all rows that are connected from this right side.</s> <i>(removed 10.0)</i></td></tr>
+   <tr><td><s><i>string</i> <b>DependencyEndLeft</b></td><td>list of ids of all rows that are connected to this left side.</s> <i>(removed 10.0)</i></td></tr>
+   <tr><td><s><i>string</i> <b>DependencyEndRight</b></td><td>list of ids of all rows that are connected to this right side.</s> <i>(removed 10.0)</i></td></tr>
+   </table>
+</div>
+
+<!-- GetGanttHeaderXY -->
+<a name="GetGanttHeaderXY"></a>
+<div class="API">
+   <u>new <b>8.0</b></u> <b>API method</b> <i>object</i>
+   <h4>GetGanttHeaderXY</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>x</b>, <i>int</i> <b>y</b>) or (<i>int</i> <b>clientX</b>, <i>int</i> <b>clientY</b>)</s>
+</div>
+Returns object for specific cell of Gantt header.<br />
+Useful to provide some custom action on click or on drag or on hover, for example to show special tip for header cell in OnTip event.<br />
+The <i>object</i> has set these properties:<br />
+<div class="L1">
+   int <b>Header</b> -index of the GanttHeader attribute, 1 - 5<br />
+   int <b>Start</b> - start date shown in the cell<br />
+   int <b>End</b> - start date of the next cell<br />
+   string <b>Units</b> - GanttUnits used in the cell, e.g. "d" or "w"<br />
+   int <b>X, Y</b> - click position relative to the cell in pixels<br />
+   int <b>X, Y</b> - click position relative to the cell in pixels<br />
+</div>
+
+<!-- CheckGantt -->
+<a name="CheckGantt"></a>
+<div class="API">
+   <u>new <b>6.3</b> chg <b>7.0</b></u> <b>API method</b> <i>type</i>
+   <h4>CheckGantt</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>val</b>)</s>
+</div>
+Checks if given cell can get value <b>val</b>, if it is correct for Gantt chart.<br />
+If the cell cannot be changed to val, it returns <b>false</b> and does <u>not</u> do any change.<br />
+If the value is correct, it returns the <b>val</b>.<br />
+In some cases <i>(since 7.0)</i> it can change the val (e.g. because of exclude settings), it returns the new value.<br />
+<i>If it does <u>not</u> return false, it has already done changes in grid, so the value must put into the cell.</i><br />
+It updates Gantt chart when the source column value changes to val (e.g. mirroring Ancestors / Descendants or End / Duration).<br />
+Call it before the cell change to know if it can be done and to provide required changes in Gantt chart.<br />
+This method is called automatically when the cell is changed by editing or from Gantt chart by a user.<br />
+It check circular dependencies, percentage complete, negative duration, End>Start.<br />
+The checking depends on <a href="GanttObjects.htm#CGanttCheck">GanttCheck</a> settings.<br />
+To set value to Gantt source cell by API use: <tt>val = grid.CheckGantt(row,col,val); if(val!==false) grid.<a href="CellEdit.htm#SetValue">SetValue</a>(row,col,val,1);</tt><br />
+
+<!-- OnCheckGantt -->
+<a name="OnCheckGantt"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API event</b> <i>type</i>
+   <h4>OnCheckGantt</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>newval</b>)</s>
+</div>
+Called to check new Gantt value after editing.<br />
+It is called for every cell, even for all not Gantt cells. Called only when Gantt chart defined and GanttCheck is not 0.<br />
+Return false to suppress the change and continue editing<br />
+Return true to permit the change without further default checking<br />
+Return null to default behavior<br />
+Return changed value to be used instead newval. The default checking will be still done for this changed value.<br />
+<b>newval</b> is new value for the cell, <b>col</b> is cell column, not Gantt column.<br />
+
+<!-- HasGantt -->
+<a name="HasGantt"></a>
+<div class="API">
+   <u>new <b>6.3</b></u> <b>API method</b> <i>bool</i>
+   <h4>HasGantt</h4>
+   <s>( )</s>
+</div>
+Returns true if in the grid exists Gantt column<br />
+
+<!-- HasDependencies -->
+<a name="HasDependencies"></a>
+<div class="API">
+   <u>new <b>6.3</b></u> <b>API method</b> <i>bool</i>
+   <h4>HasDependencies</h4>
+   <s>( )</s>
+</div>
+Returns true if the Gantt chart has defined some dependencies<br />
+
+<!-- GetGanttDate -->
+<a name="GetGanttDate"></a>
+<div class="API">
+   <u>new <b>6.3</b></u> <b>API method</b> <i>int</i>
+   <h4>GetGanttDate</h4>
+   <s>(<i>int</i> <b>pos</b>, <i>string</i> <b>col</b> = null)</s>
+</div>
+Returns exact date (as count of milliseconds) on the given position in chart, in pixels<br />
+
+<!-- GetGanttPos -->
+<a name="GetGanttPos"></a>
+<div class="API">
+   <u>new <b>6.3</b></u> <b>API method</b> <i>int</i>
+   <h4>GetGanttPos</h4>
+   <s>(<i>int</i> <b>pos</b>, <i>string</i> <b>col</b> = null)</s>
+</div>
+Returns position in chart, in pixels of the date (as count of milliseconds)<br />
+
+<!-- GanttUnitsDuration -->
+<a name="GanttUnitsDuration"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>int</i>
+   <h4>GanttUnitsDuration</h4>
+   <s>(<i>string</i> <b>units</b> = null, <i>string</i> <b>col</b> = null)</s>
+</div>
+Returns duration of given <b>units</b> as <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a> in milliseconds, e.g. for "m" returns 60000.<br />
+If <b>units</b> = null, returns duration for <a href="GanttCompute.htm#CGanttDataUnits">GanttDataUnits</a>.<br />
+If <b>units</b> = 0, returns duration for <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a>.<br />
+For special variable duration units like 'M', 'M3', 'M6' and 'y' returns average duration.<br />
+
+<!-- RoundGanttDate -->
+<a name="RoundGanttDate"></a>
+<div class="API">
+   <u>new <b>6.3</b> <i>upd <b>11.0</b></i></u> <b>API method</b> <i>int</i>
+   <h4>RoundGanttDate</h4>
+   <s>(<i>int</i> <b>date</b>, <i>int</i> <b>round</b>, <i>int</i> <b>base</b> = null, <i>string</i> <b>col</b> = null, <i>string</i> <b>units</b> = null, <i>TRow</i> <b>row</b> = null)</s>
+</div>
+Rounds and returns the given Gantt date (as count of milliseconds) according to the <b>round</b>.<br />
+<b>round</b> is bit array:<br />
+<div class="L1">
+   <b>1</b> - round to beginning of the unit, <b>2</b> - round to end of the unit,<br />
+   <b>4</b> - round to last work time before, <b>8</b> - round to first work time after<br />
+   <b>16</b> - like <b>1</b>, but after rounding to worktime, <b>32</b> - like <b>2</b>, but after rounding to worktime<br />
+   <b>48</b> - move back to original unit if it was moved to another because it had no work time<br />
+   <b>64</b> - input (date and base) is position in pixels instead of date, <b>128</b> - returns position in pixels instead of date<br />
+   <b>256</b> - <i>(new 11.0)</i> adds / subtracts GanttPage position for values 64 and 128.<br />
+</div>
+For example round = 1+4+32+128 rounds to beginning, next to workday before, next to end and returns position in pixels<br />
+<b>base</b> is base date (count of milliseconds), if set, to the resulted date is added difference between base and base rounded to units.<br />
+<b>units</b> can be set to any Gantt units like 'd' or 'h' or null for GanttUnits attribute.<br />
+<i>(new 8.0)</i> <b>row</b> is row object used to calculate worktime when the row has set custom GanttCalendar.<br />
+
+<!-- DiffGanttDate -->
+<a name="DiffGanttDate"></a>
+<div class="API">
+   <u>new <b>6.4</b> <i>upd <b>8.0</b></i></u> <b>API method</b> <i>int</i>
+   <h4>DiffGanttDate</h4>
+   <s>(<i>int</i> <b>start</b>, <i>int</i> <b>end</b>, <i>string</i> <b>units</b> = null, <i>string</i> <b>last</b> = null, <i>string</i> <b>col</b> = null, <i>TRow</i> <b>row</b> = null)</s>
+</div>
+Returns count of <b>units</b> between dates, in workdays.<br />
+<b>start</b> and <b>end</b> can be set set as count of millisecond or by English date string.<br />
+<b>units</b> are standard GanttDataUnits like 'd' or 'h'. If not set, GanttDataUnits are used.<br />
+<b>last</b> can be set to standard GanttDataUnits like 'd' or 'h' to add this unit to the end date. If set to <b>1</b>, one GanttDataUnits is added.<br />
+<b>col</b> - gantt column to use, if not set, the first gantt column in grid will be used.<br />
+If set holidays (GanttExclude) and the <b>units</b> are bigger than exclude units, it returns count of units that contain at least one work time unit.<br />
+<i>(new 8.0)</i> <b>row</b> is row object used to calculate worktime when the row has set custom GanttCalendar.<br />
+
+<!-- IncGanttDate -->
+<a name="IncGanttDate"></a>
+<div class="API">
+   <u>new <b>6.7</b> <i>upd <b>8.0</b></i></u> <b>API method</b> <i>int</i>
+   <h4>IncGanttDate</h4>
+   <s>(<i>int</i> <b>start</b>, <i>int</i> <b>dur</b>, <i>string</i> <b>units</b> = null, <i>bool</i> <b>beg</b> = false, <i>string</i> <b>col</b> = null, <i>TRow</i> <b>row</b> = null)</s>
+</div>
+Returns <b>start</b> date increased for <b>dur</b> count of <b>units</b>.<br /> 
+<b>start</b> can be set as count of millisecond or by English date string.<br />
+<b>dur</b> is count of <b>units</b> in workdays, without excluded dates. Can be negative to decrease the date.<br />
+<b>units</b> are standard GanttDataUnits like 'd' or 'h'. If not set, GanttDataUnits are used. Should <u>not</u> be 'M' and bigger units.<br />
+<b>beg</b> - if the resulted date is in holidays, for <b>0</b> it returns last work date before and for <b>1</b> first work date after.<br />
+<b>col</b> - gantt column to use, if not set, the first gantt column in grid will be used.<br />
+<i>(new 8.0)</i> <b>row</b> is row object used to calculate worktime when the row has set custom GanttCalendar.<br />
+
+</div>
+</body>	
+</html>

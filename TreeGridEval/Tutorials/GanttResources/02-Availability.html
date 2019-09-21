@@ -1,0 +1,115 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>2. Availability chart</h1>
+   <h2>Bar charts defined by a list of date ranges and count</h2>
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='02-Availability.xml'>02-Availability.xml</a></div>
+      <div class="Main" style='width:100%; height:1011px;'>
+         <bdo Debug='check' Data_Url='02-Availability.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li>
+         <h4>Definition</h4>
+         <ul>
+            <li>
+              The Availability chart is defined by attribute <h3>GanttAvailability</h3>.<br />
+              The Availability format is: <b>repeater1#date1a~date1b#count1;repeater2#date2a~date2b#count2;....</b>.<br />
+              The <b>date range</b> is range where the <b>count</b> of resources is available.
+              If set <b>repeater</b>, it repeats the date range every given time unit, e.g. "w" as week, "d" as day or "10" as 10 units in number chart.<br />
+            </li>
+            <li>
+               There are two possible Availability chart types, <b>work</b> and <b>material</b>. It is set by <h3>GanttAvailabilityType</h3>.<br />
+               (1) <b>work</b> is not consumed resource. Work resource is available only in defined range. <br />
+               (2) <b>material</b>, consumed resource. Material resource arrives on defined date and is available forever.<br />
+            </li>
+            <li>One cell can contain more charts defined by more GanttAvailability values, set GanttAvailability attribute to list of cells containing the Availability formats.</li>
+            <li>
+               The Availability chart sources can be simply summed up by formula function <b>sumrange</b>. Or by simple add formula plus semicolon like: "A+';'+B+";'+C".<br />
+               The chart sources can be also subtracted by summing them with negate sign add by <b>negav</b> Formula function.
+            </li>
+            <li>The Availability chart source can be created also as resource usage (of GanttResource value) by method <b>GetResourceUsage</b>.</li>
+            <li>The <b>GanttAvailability</b> attribute can have also special format to show various resource usage charts. See previous tutorial <b>Resources</b>.</li>
+            <li>It is possible to define more sets (groups) of availability charts by using <b>GanttAvailabilityGroups</b>. It changes all the GanttAvailability attribute names and defines them for every the group.</li>
+         </ul>
+      </li>
+      <li>
+         <h4>Bar position and size</h4>
+         <ul>
+            <li>The size and position of all or individual availability charts can be controlled by <b>GanttAvailabilityShift</b> and <b>GanttAvailabilityHeight</b>.</li>
+            <li>The more availability charts in one cell can be stacked vertically or horizontally by <b>GanttAvailabilityStack</b></li>
+            <li>
+               By default the upper and lower bound is the highest and smallest value in the one chart. 
+               It is possible to preset the bounds by <b>GanttAvailabilityMax</b> and <b>GanttAvailabilityMin</b>.
+            </li>
+            <li>The Availability bars can be rounded or split to GanttExclude parts, set the option by <b>GanttAvailabilityExclude</b>. It can be done only for Work resources.</li>
+            <li>The Availability bars can be split to selected date units by <b>GanttAvalilabilitySplit</b> and <b>GanttAvailabilityUnits</b>.</li>
+            <li>The adjacent ranges with the same value are automatically joined. To not do it, set <b>GanttAvailabilityJoin</b>="0".</li>
+            
+         </ul>
+      </li>
+      <li>
+         <h4>Display and look</h4>
+         <ul>
+            <li>
+               Every chart can have different color set by <h3>GanttAvailabilityClass</h3>.<br />
+               It is possible also have different colors for every bar or group of bars in one chart, depending on the bar height, it can be controlled dynamically in 
+               <b>OnGetAvailabilityClass</b> API event.<br />
+               The labels have the same color as the bars, or they can have one color defined by <b>GanttAvailabilityTextClass</b>.
+            </li>
+            <li>It is possible to show only texts, only bars or both, by <b>GanttAvailabilityShow</b></li>
+            <li>The label position regarding to the bars can be controlled for every availability chart by <b>GanttAvailabilityVPos</b> and <b>GanttAvailabilityHPos</b></li>
+            <li>To not overlay the labels hide some of them by setting higher value to <b>GanttAvailabilityTextWidth</b></li>
+         </ul>
+      </li>
+      <li>
+         <h4>Other</h4>
+         <ul>
+            <li>
+               The availability values can show summary in selected date ranges set by <b>GanttAvailabilitySum</b>.
+            </li>
+            <li>
+               It is possible to show also zero value boxes as a little height boxes by <b>GanttAvailabilityZero</b>.
+            </li>
+         </ul>
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialGantt\s*=\s*(\d+)/), TGIndex = 65536;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridResources2", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGantt="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

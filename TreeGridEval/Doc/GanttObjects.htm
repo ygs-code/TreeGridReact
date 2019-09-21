@@ -1,0 +1,506 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Gantt objects</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Gantt objects</h1>
+<p>TreeGrid documentation</p>
+
+The Gantt chart can be added to grid by defining column of type <b>Gantt</b> (<tt>&lt;<b>C Type</b>=<b>'Gantt' ...</b> /></tt>) and setting the other Gantt chart attributes.<br />
+The grid with Gantt column still supports all other functionality like normal grid (sorting, filtering, grouping, search, calculations, ...).<br />
+The Gantt chart is automatically created from the given values and is also automatically recalculated whenever some source value is changed.<br />
+The Gantt chart is also interactive, so a user can change the Gantt chart by mouse and it automatically updates the source data.<br />
+The Gantt chart sources are usually other columns where are stored the source data in cells. These cells can be also edited by a user and Gantt chart is automatically updated.<br />
+Predefined settings for Gantt column is in default column &lt;D Name='Gantt'/>, defined in Defaults.xml.<br />
+
+<!-----------------------------------------------------------------------  Gantt objects list ------------------------------------------------->
+<a name="List"></a>
+<h2>Gantt objects list</h2>
+
+The Gantt chart can show various objects, possibly all together in one cell:<br />
+<br />
+
+<h3>Gantt bars</h3>
+<i>Resizable, movable, support <b>dependencies</b>, <b>resources</b> and <b>percentage</b> completion</i><br />
+<i>Used as sources for Gantt chart calculations (e.g. correcting dependencies or calculate critical path)</i><br />
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttMain.htm">Main bar</a></b> & <b>milestone</b></td><td>Base Gantt chart task.</td></tr>
+<tr><td></td><td>One or more independent bars with different color, class, caption, tooltip and unique id. Supports also milestones.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttMain.htm#CGanttStart">GanttStart</a> (start date) and <a href="GanttMain.htm#CGanttEnd">GanttEnd</a> (due date) or by <a href="GanttMain.htm#CGanttStart">GanttStart</a> (start date) and <a href="GanttMain.htm#CGanttDuration">GanttDuration</a> (length) as one continuous bar. Or defined by <a href="GanttMain.htm#CGanttParts">GanttParts</a> as more discrete bars.</td></tr>
+<tr><td></td><td>Supports more tasks (plans) in one cell, the count of the plans is defined by <a href="GanttMain.htm#CGanttCount">GanttCount</a>. The plans are independent, can have their own dependencies, resources or percentage completion. Every task in individual plan can be discrete or continuous.</td></tr>
+</table>
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttRun.htm">Run bar</a></b> & <b>milestone</b></td><td>Extended Gantt chart task or more independent tasks in one cell.</td></tr>
+<tr><td></td><td>One or more independent bars with different color, class, caption, tooltip and unique id. Supports also milestones.</td></tr>
+<tr><td></td><td>It supports also many options for moving and resizing the boxes.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttRun.htm#CGanttRun">GanttRun</a> and optionally <a href="GanttRun.htm#CGanttRunStart">GanttRunStart</a>. Or can be defined as summary of child main bars, see <a href="GanttSummary.htm#RunMain">Editable Summary Run</a>.</td></tr>
+<tr><td></td><td>Can be used as complex planned task or more independent planned tasks.</td></tr>
+<tr><td></td><td>Or can be used to define <b>PERT</b> chart.</td></tr>
+<tr><td></td><td>Or it can be used for any other interactive bar chart.</td></tr>
+</table>
+<br />
+
+<h3>Gantt icons</h3>
+<i>Not resizable, but movable objects</i><br />
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttIcons.htm#Flag">Flag</a></b></td><td>One or more icons in the cell, on specified dates, with defined side text or tooltip. Supports custom icons and their changing.</td></tr>
+<tr><td></td><td>Usually used to attach some information and icon to selected date(s).</td></tr>
+<tr><td></td><td>Defined by <a href="GanttIcons.htm#CGanttFlags">GanttFlags</a>.</td></tr>
+<tr><td></td><td><i>Does <u>not</u>> affect any Gantt calculations, except width of the Gantt column.</i></td></tr>
+</table>
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttIcons.htm#Point">Point</a></b></td><td>One or more different movable bullets. With different icons, tooltip and edit permissions.</td></tr>
+<tr><td></td><td>Used usually in math charts to display various points on specified positions.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttIcons.htm#CGanttPoints">GanttPoints</a>.</td></tr>
+<tr><td></td><td><i>Does <u>not</u>> affect any Gantt calculations, except width of the Gantt column.</i></td></tr>
+</table>
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttCompute.htm#TaskConstraints">Constraint</a></b></td><td>Task constraints, specify limits where the Gantt bars (and optionally Gantt icons) can be moved or resized, used also for Gantt calculations.</td></tr>
+<tr><td></td><td>Four different constraints: <b>early start</b> (<a href="GanttCompute.htm#CGanttMinStart">GanttMinStart</a>), <b>late start</b> (<a href="GanttCompute.htm#CGanttMaxStart">GanttMaxStart</a>), <b>early end</b> (<a href="GanttCompute.htm#CGanttMinEnd">GanttMinEnd</a>) and <b>late end</b> (<a href="GanttCompute.htm#CGanttMaxEnd">GanttMaxEnd</a>).</td></tr>
+</table>
+<br />
+
+<h3>Static objects</h3>
+<i>Not movable, not resizable, completely inactive</i><br />
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttDisplay.htm#Mark">Mark</a></b></td><td>One or more dates or date ranges to highlight them. Can be different in every row and also input by a user.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttDisplay.htm#CGanttMark">GanttMark</a>.</td></tr>
+</table>
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttDisplay.htm#Mark">Availability</a></b> (Chart)</td><td>Availability or resource usage chart.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttResources.htm#CGanttAvailability">GanttAvailability</a>.</td></tr>
+</table>
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttCalendars.htm#Local">Local calendar</a></b></td><td>Gantt calendar - excluded dates (holidays). Marks these dates by different color.</td></tr>
+<tr><td></td><td>It is used in all Gantt calculations and is also possible to restrict start / end Gantt objects in these ranges.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttCalendars.htm#CGanttCalendar">GanttCalendar</a>.</td></tr>
+</table>
+<br />
+
+<h3>Global objects</h3>
+<i>Objects defined for the whole chart or between cells</i><br />
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttCompute.htm#Dependencies">Dependencies</a></b></td><td>Lines between two Gantt bars (Main or Run bars or their milestones). Even between different bars in one cell.</td></tr>
+<tr><td></td><td>The dependencies set relation between the tasks and are used in Gantt chart calculation (e.g. correcting dependencies or calculate critical path)</td></tr>
+<tr><td></td><td>The dependencies support edge <b>type</b> (ss,sf,fs,ff), <b>lag</b> and <b>float</b>.</td></tr>
+<tr><td></td><td>The dependencies can be added, deleted and changed dynamically by mouse or keyboard.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttCompute.htm#CGanttDescendants">GanttDescendants</a> and / or <a href="GanttCompute.htm#CGanttAncestors">GanttAncestors</a>.</td></tr>
+</table>
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttCompute.htm#ProjectConstraints">Start line</a></b></td><td>Vertical line through all cells that specifies start of the whole project. It can be set, deleted or moved.</td></tr>
+<tr><td></td><td>It is used in Gantt calculations, when correcting dependencies. It can work also as constraint.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttCompute.htm#CGanttBase">GanttBase</a>.</td></tr>
+</table>
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttCompute.htm#ProjectConstraints">Finish line</a></b></td><td>Vertical line through all cells that specifies end of the whole project. It can be set, deleted or moved.</td></tr>
+<tr><td></td><td>It is used in Gantt calculations, when correcting critical path. It can work also as constraint.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttCompute.htm#CGanttFinish">GanttFinish</a>.</td></tr>
+</table>
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttDisplay.htm#Header">Header</a></b></td><td>One or more Gantt header (up to 5), can be placed above or below (or both) the Gantt chart in fixed rows.</td></tr>
+<tr><td></td><td>Shows the individual dates in given format or numbers in math chart.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttDisplay.htm#CGanttHeader1">GanttHeader1</a> - GanttHeader5.</td></tr>
+</table>
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttDisplay.htm#Background">Background</a></b></td><td>Background lines or rectangles vertically through all cells to mark and highlight some dates or date ranges in the chart.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttDisplay.htm#CGanttBackground">GanttBackground</a>.</td></tr>
+</table>
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttCalendars.htm#Global">Global calendar</a></b></td><td>Gantt calendar - excluded dates (holidays). Marks these dates by different color. The dates can be also hidden from the chart.</td></tr>
+<tr><td></td><td>It is used in all Gantt calculations and is also possible to restrict start / end Gantt objects in these ranges.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttCalendars.htm#CGanttExclude">GanttExclude</a>.</td></tr>
+</table>
+<br />
+
+<h3>Features</h3>
+<i>They are not visible objects, they are listed here just for completion</i><br />
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttResources.htm">Resources</a></b></td><td>Information assigned to any Gantt bar (Main or Run bar or milestone).</td></tr>
+<tr><td></td><td>Used for calculating task prices and Availability chart.</td></tr>
+<tr><td></td><td>It is possible also to display resources chart as inner text, side text or tooltip for Gantt bar.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttResources.htm#CGanttResources">GanttResources</a>.</td></tr>
+</table>
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttCompute.htm#critical">Critical path</a></b></td><td>Gantt chart can calculate slack value for all tasks and mark tasks on or beyond critical path.</td></tr>
+<tr><td></td><td>The Gantt bar on critical path is highlighted.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttCompute.htm#CGanttSlack">GanttSlack</a>.</td></tr>
+</table>
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttSummary.htm#Summary">Summary tasks</a></b></td><td>Gantt chart can show various summary tasks calculated from their children.</td></tr>
+<tr><td></td><td>The can be movable, resizable and with dependencies.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttSummary.htm#CGanttSummary">GanttSummary</a> as Main bar or <a href="GanttSummary.htm#CGanttRunSummary">GanttRunSummary</a> as Run bar.</td></tr>
+</table>
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttZoom.htm">Zoom</a></b></td><td>Zoom levels, possible from milliseconds to years. Smooth zoom available. Zooming by mouse dragging or clicking to date.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttZoom.htm#CGanttZoom">GanttZoom</a>.</td></tr>
+</table>
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttMenu.htm">Menu</a></b></td><td>Popup menu for the Gantt cell with items available for the clicked Gantt object.</td></tr>
+<tr><td></td><td>Defined by <a href="GanttMenu.htm#CGanttMenu">GanttMenu</a>.</td></tr>
+</table>
+<br />
+
+<table>
+<tr><td style="width:200px"><b><a href="GanttAPI.htm">API</a></b></td><td>Gantt supports also various API methods and events to control end extend the Gantt chart from JavaScript.</td></tr>
+</table>
+<br />
+
+<!-----------------------------------------------------------------------  Display settings ------------------------------------------------->
+<a name="Display"></a>
+<h2>Display settings</h2>
+
+<!-- GanttOrder -->
+<a name="CGanttOrder"></a>
+<div class="XML">
+   <u>new <b>6.3</b> <i>upd <b>10.0</b></i></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttOrder</h4> <s>["Chart,Availability,Constraints,Run,Main,Mark,Dependency,Flags,Points"]</s>
+</div>
+Comma separated list of all Gantt objects to render, case insensitive.<br />
+The order of rendering the Gantt objects. The objects rendered later will overlay the previous objects in the same place.<br />
+<i>The <u>not</u> listed Gantt objects are never rendered.</i><br />
+It affects also accessibility (interactivity) of the objects, they are accessible in <u>reversed</u> order.<br />
+<i>Since 10.0</i> it can contain also the next main bars keywords <b>Main1</b>, <b>Main2</b>, <b>Main3</b>, ..., <b>Main10</b>. If missing, these keywords are automatically added after Main keyword if increased <a href="GanttMain.htm#CGanttCount">GanttCount</a>.<br />
+
+<!-- GanttTask -->
+<a name="CGanttTask"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttTask</h4> <s>["Main"]</s>
+</div>
+List of Gantt bars used as <b>Gantt tasks</b>, comma separated, case insensitive.<br />
+The Gantt tasks can have assigned <b>dependencies</b> and <b>resources</b>, can have percentage <b>completion</b>, can be <b>disabled</b> or <b>locked</b> and can have <b>manual</b> constraint.<br />
+<table>
+<tr><td style="width:200px">Permitted objects are</td><td><b>Main</b>, <b>Main1</b>, <b>Main2</b>,... <b>MainX</b> for individual main bar plans. The whole main bar in one plan (<u>not</u> its individual Parts) is used as Gantt task.</td></tr>
+<tr><td></td><td><b>All</b> for all main bar plans.</td></tr>
+<tr><td></td><td><b>Run</b> for whole run bars. The whole Run is used as Gantt task. <i>It should <u>not</u> be set with <b>Box</b>.</i></td></tr>
+<tr><td></td><td><b>Box</b> for individual Run boxes. Every Run box can be used as one Gantt task. The box must have set Id attribute to have assigned dependencies. <i>It should <u>not</u> be set with <b>Run</b>.</i></td></tr>
+</table>
+<i>It replaces deleted <b>GanttObject</b> and <b>GanttDependencyObjects</b> attribute.</i><br />
+
+<!-- SetGanttTask -->
+<a name="SetGanttTask"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>void</i>
+   <h4>SetGanttTask</h4>
+   <s>(<i>string</i> <b>value</b>, <i>string</i> <b>col</b> = null)</s>
+</div>
+Changes <a href="#CGanttTask">GanttTask</a> value by JavaScript. Requires next <a href="GanttAPI.htm#RefreshGantt">RefreshGantt</a> ( ) call.<br />
+<b>value</b> is new value to set to GanttTask, col is Gantt column or null for the first Gantt column in grid.<br />
+
+<!-- GanttObject -->
+<a name="CGanttObject"></a>
+<div class="DEL">
+   <u>new <b>6.4</b> deleted <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttObject</h4> <s>["Main"]</s>
+</div>
+Replaced by <a href="#CGanttTask">GanttTask</a>.<br />
+<i>Since 10.0 the dependencies and resources can be assigned to all Gantt tasks, not only to the first one in the cell.</i><br />
+
+<!-- GanttBottom -->
+<a name="CGanttBottom"></a>
+<div class="XML">
+   <u>new <b>10.0</b> chg <b>13.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttBottom</h4> <s>[<i>css</i>]</s>
+</div>
+If set to some number (including 0), it updates row height to show all Gantt objects fully plus given pixels.<br />
+<i>Since 13.0</i> if not set (default setting, changed from value 4 in <i>13.0</i>) it is read from actual CSS style.<br />
+It is space in pixels reserved below Gantt objects.<br />
+It changes row <a href="RowHeight.htm#IHeight">Height</a> attribute value. The calculated height cannot be less than minimal row height and higher than row <a href="RowHeight.htm#IMaxHeight">MaxHeight</a>.<br />
+It calculates the row height from:<br />
+<div class="L1">
+   Main bar or Run bar if it uses default height and position or if uses explicitly set height and position.<br />
+   Main milestone and Run milestone position and default milestone height. See <a href="#CGanttIconBottom">GanttIconBottom</a>.<br />
+   Run bar placed by <a href="GanttRun.htm#OnGetGanttRunRect">OnGetGanttRunRect</a>.<br />
+   Overlaid Run bar if it is shifted by <a href="GanttRun.htm#CGanttRunErrors">GanttRunErrorsShift</a>.<br />
+   Flag, Point or Constraint position and default object height. See <a href="#CGanttIconBottom">GanttIconBottom</a>.<br />
+</div>
+<i>It ignores:</i><br />
+<div class="L1">
+   <i>If the Run or Main bar height is higher than default box height due its html content</i><br />
+   <i>The Main and Run bar side html</i><br />
+</div>
+Set it to <b>empty string</b> to <u>not</u> update row height according to the Gantt objects height and position.<br />
+<i>Incompatible with RowSpan for the Gantt cell.</i><br />
+
+<!-- GanttIconBottom -->
+<a name="CGanttIconBottom"></a>
+<div class="XML">
+   <u>new <b>10.0</b> chg <b>13.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttIconBottom</h4> <s>[<i>css</i>]</s>
+</div>
+If it is not empty string, it is used instead of <a href="#CGanttBottom">GanttBottom</a> for Gantt icons (Flag, Point, Constraint).<br />
+<i>Since 13.0</i> if not set (default setting, changed from value 0 in <i>13.0</i>) it is read from actual CSS style.<br />
+It is used only if set GanttBottom.<br />
+
+<!-- GanttPagingUpdateHeight -->
+<a name="CGanttPagingUpdateHeight"></a>
+<div class="XML">
+   <u>new <b>13.2</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttPagingUpdateHeight</h4> <s>[1]</s>
+</div>
+If the row height is updated for <a href="#CGanttBottom">GanttBottom</a> even if the run boxes are outside Gantt page (for <a href="GanttZoom.htm#CGanttPaging">GanttPaging</a>).<br />
+It is applied only for run boxes, for other Gantt objects is the height updated always.<br />
+
+<!-- GanttTextOverlay -->
+<a name="CGanttTextOverlay"></a>
+<div class="XML">
+   <u>new <b>9.3</b> chg <b>13.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttTextOverlay</h4> <s>[0]</s>
+</div>
+For <b>0</b> it always shows all texts in Gantt through other objects (e.g. images or bar backgrounds).<br />
+For <b>1</b> it overlays the texts like any other Gantt objects by the next objects in the GanttOrder. <i>It can slow down bigger Gantt charts!</i><br />
+<i>Since 13.0</i> If set to <b>1</b> it also renders background in &lt;svg> to speed up the rendering. <br />
+Therefore the value <b>1</b> speeds grid with custom row calendars and / or with many colored exclude or background units. 
+But slows down Gantt with many main parts or run boxes per row.<br />
+
+<!-- GanttHoverIcons -->
+<a name="CGanttHoverIcons"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string[*]</i>
+   <h4>GanttHoverIcons</h4> <s></s>
+</div>
+A list of icons for hovering custom icons in Gantt chart - Main and Run milestones and stops, Flags, Points, Constraints<br />
+It is first character separated array of string pairs, the first string is replaced by the second string.<br /> 
+If more strings match the search, only the first string is replaced.<br />
+For example <tt>"|Test.gif|TestH.gif|.gif|Hover.gif"</tt> replaces Test.gif by TestH.gif and Custom.gif by CustomHover.gif.<br />
+
+<!-- GanttDragLine -->
+<a name="CGanttDragLine"></a>
+<div class="XML">
+   <u>new <b>10.0</b> <i>upd <b>11.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttDragLine</h4> <s>[1]</s>
+</div>
+If there will be shown vertical line(s) when dragging Gantt object to better see the destination dates.<br />
+<b>0</b> - no, <b>1</b> yes, but run only for slide, <b>2</b> yes, also on run move, left edge only, <b>3</b> <i>(new 11.0)</i> , yes, also on run move on both sides.<br />
+<i>The line is <u>not</u> shown if set <tt>&lt;Cfg ShowDrag='0'/></tt>.</i><br />
+
+<!-- GanttDragTip -->
+<a name="CGanttDragTip"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttDragTip</h4> <s>[0]</s>
+</div>
+If and how there will be shown tip for actual position when dragging Gantt object. Bit array.<br />
+<table>
+<tr><td style="width:50px;"><b>1</b>. bit</td><td style="width:30px;">&<b>1</b></td><td>There will be shown start date when moving GanttRun. Only for move, not for slide.</td></tr>
+<tr><td><b>2-3</b>. bit</td><td>&<b>6</b></td><td>There will be shown (<b>2</b>) start date or (<b>4</b>) end date or (<b>6</b>) both for moving any Gantt object. For moving icons and lines there is shown always only start date.</td></tr>
+<tr><td><b>4-5</b>. bit</td><td>&<b>24</b></td><td>There will be shown (<b>8</b>) edge date (start or end) or (<b>16</b>) duration or (<b>24</b>) both for resizing any Gantt run box.</td></tr>
+</table><br />
+
+<!-- GanttDragTipDateFormat -->
+<a name="CGanttDragTipDateFormat"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttDragTipDateFormat</h4> <s>[ ]</s>
+</div>
+Date format to display start and end of the Gantt item in <a href="#CGanttDragTip">GanttDragTip</a>.<br />
+It is the same format as for <a href="TypeDate.htm#CFormat">Date</a> type.<br />
+
+<!-- GanttDragTipDurationFormat -->
+<a name="CGanttDragTipDurationFormat"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttDragTipDurationFormat</h4> <s>[ ]</s>
+</div>
+Number format to display duration of the Gantt item in <a href="#CGanttDragTip">GanttDragTip</a>, the duration is shown in GanttDataUnits.<br />
+It is the same format as for <a href="TypeNumber.htm#CFormat"></a>Float type.<br />
+
+<!-- OnGanttDragTip -->
+<a name="OnGanttDragTip"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGanttDragTip</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>tip</b>, <i>object</i> <b>XY</b>, <i>int</i> <b>dir</b>, <i>int</i> <b>start</b>, <i>int</i> <b>end</b>, <i>int</i> <b>duration</b>, <i>int</i> <b>x</b>, <i>int</i> <b>y</b>)</s>
+</div>
+Called to get a tip text for Gantt object to display it on dragging like <a href="#CGanttDragTip">GanttDragTip</a>.<br />
+<b>tip</b> is the default tip text, return it or new tip.<br />
+<b>XY</b> are Gantt objects under mouse cursor on dragging start returned by <a href="GanttAPI.htm#GetGanttXY">GetGanttXY</a>.<br />
+<b>start</b> is actual start date in ms, <b>end</b> is actual end date in ms, <b>duration</b> is actual duration in ms. <b>end</b> and <b>duration</b> is null for GanttRun move.<br />
+<b>dir</b> is action: <b>1</b> resize left edge, <b>2</b> resize right edge, <b>3</b> move.<br />
+<b>x</b> is actual position in Gantt in pixels, <b>y</b> is vertical position in pixels. <b>x</b> and <b>y</b> is set for GanttRun move only.<br />
+
+<!-- GanttShift -->
+<a name="CGanttShift"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int[3]</i>
+   <h4>GanttShift</h4> <s>[3]</s>
+</div>
+How will be shifted Gantt icon in case two same icons are on the same place or too near.<br />
+It can contains one or three values, comma separated as <tt>[shiftX,shiftY,overX]</tt>, e.g. <tt>GanttShift="0,3,5"</tt> or <tt>GanttShift="2"</tt>.<br />
+<b>shiftX</b> - how much pixels will be shifted the next overlaid icon horizontally. It shifts the icons up to <b>shiftX</b> pixels distant.<br />
+<b>shiftY</b> - how much pixels will be shifted the next overlaid icon vertically. It shifts the icons up to <b>overX</b> pixels distant.<br />
+Affects Milestone (Main, Run), Flags, Points. For Run it works only if all the milestones are on the same vertical level. For Main it works only if the Parts are sorted by date.<br />
+
+<!-- TouchDragFocused -->
+<a name="CfgTouchDragFocused"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>TouchDragFocused</h4> <s>[2]</s>
+</div>
+<i>Only for touch screens. &lt;Cfg> attribute!</i><br />
+If set to <b>1</b>, it permits dragging only focused object (row, Gantt bar, Gantt icon or Gantt line).<br />
+If set to <b>2</b>, permits dragging focused cell, not only focused row. Gantt is the same as for <b>1</b>.<br />
+First tap on the object to focus it and next touch and move or resize it.<br /> 
+Similarly tap to empty space in Gantt chart and next touch and drag to create new bar.<br />
+It affects also showing Gantt menu - tap on the Gantt object and tap on it again to show the popup GanttMenu.<br />
+
+<!-- TouchDragFocusedDependency -->
+<a name="CfgTouchDragFocusedDependency"></a>
+<div class="XML">
+   <u>new <b>12.0</b> chg <b>12.1</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>TouchDragFocusedDependency</h4> <s>[2]</s>
+</div>
+<i>Only for touch screens. &lt;Cfg> attribute!</i><br />
+If set to <b>1</b>, it permits dragging dependency only from focused cell.<br />
+If set to <b>2</b>, it permits dragging dependency only from focused Gantt bar or milestone.<br />
+First tap on the cell or object to focus it and next touch and move to create the dependency.<br /> 
+<i>Since 12.1</i> the default value changed from 0 to 2.<br />
+
+<!-- TouchClearFocused -->
+<a name="CfgTouchClearFocused"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>TouchClearFocused</h4> <s>[0]</s>
+</div>
+<i>Only for touch screens. &lt;Cfg> attribute!</i><br />
+Time in milliseconds; after that time the focus from actually focused cell or Gantt object is cleared.<br />
+<b>0</b> means never.<br />
+
+<!-----------------------------------------------------------------------  Edit settings ------------------------------------------------->
+<a name="Edit"></a>
+<h2>Edit settings</h2>
+
+<!-- GanttEdit -->
+<a name="CGanttEdit"></a>
+<div class="XML">
+   <u style="width:140px;">renamed <b>10.0</b> <i>upd <b>13.0</b></i></u> <b>&lt;C> &lt;cell></b> <i style="width:80px;">string[ ]</i>
+   <h4>GanttEdit</h4> <s>["all"]</s>
+</div>
+Which Gantt objects can be edited / moved / changed / deleted / added by user. Comma separated list of flag names, case insensitive.<br />
+<strong>It does not affect editing values in the source cells</strong> <i>- use standard attributes like <a href="CellEdit.htm#CCanEdit">CanEdit</a> to restrict source cell editing.</i><br />
+<br />
+
+<table>
+<tr><td style="width:170px;"><b>All</b></td><td>All Gantt items are editable / movable.</td></tr>
+<tr><td><b>Main</b></td><td>Main bars and milestones can be created, deleted and modified directly in Gantt chart.<br />
+<i>(new 10.0)</i> Individual actions can be set by <b>MainMove</b>, <b>MainResize</b> (resize+split), <b>MainNew</b> (add+delete), <b>MainComplete</b>, <b>MainText</b>, <b>MainState</b> (disable, lock), <b>MainCorrect</b> (schedule).</td></tr>
+<tr><td><b>MainX</b></td><td><i>(new 10.0)</i> It can contain also the <b>Main1</b>, <b>Main2</b>, <b>Main3</b>, ... <b>MainX</b>.<br />
+The individual actions can be set by <b>MainXMove</b>, <b>MainXResize</b> (resize+split), <b>MainXNew</b> (add+delete), <b>MainXComplete</b>, <b>MainXText</b>, <b>MainXState</b> (disable, lock), <b>MainXCorrect</b> (schedule).</td></tr>
+<tr><td><b>Run</b></td><td>Run bars can be created, deleted and modified directly in Gantt chart.<br />
+<i>(new 10.0)</i> Individual actions for whole run can be set by <b>RunMove</b> (move+join), <b>RunResize</b> (resize+split), <b>RunNew</b> (add+delete), <b>RunComplete</b>, <b>RunText</b> (run text, type, tip, class), <b>RunState</b> (disable, lock, select), <b>RunCorrect</b> (schedule)<br />
+<i>(new 13.0)</i> Action for run container can be set by <b>RunContainer</b><br />
+The Run can be more controlled by its attributes for <a href="GanttRun.htm#Moving">moving and resizing</a>.</td></tr>
+<tr><td><b>Flags</b></td><td>Flags can be created, deleted, moved and modified directly in Gantt chart. <i>Since 10.0</i> individual actions can be set by <b>FlagsMove</b>, <b>FlagsNew</b> (add+delete), <b>FlagsText</b> (text+icon change).</td></tr>
+<tr><td><b>Points</b></td><td><i>(new 6.4)</i> Points can be created, deleted, moved and modified directly in Gantt chart. <i>Since 10.0</i> individual actions can be set by <b>PointsMove</b>, <b>PointsNew</b> (add+delete).</td></tr>
+<tr><td><b>Constraints</b></td><td><i>(new 6.3)</i> Constraints can be created, deleted and moved directly in Gantt chart. <i>Since 10.0</i> individual actions can be set by <b>ConstraintsMove</b>, <b>ConstraintsNew</b> (add+delete).</td></tr>
+<tr><td><b>Dependency</b></td><td>Dependency lines can be created, deleted or corrected directly in Gantt chart.<br />
+<i>(new 10.0)</i> Individual actions can be set by <b>DependencyNew</b> (create+delete), <b>DependencyCorrect</b> (moving related tasks, can be set individually also by <b>MainCorrect</b>, <b>MainXCorrect</b> and <b>RunCorrect</b>).</td></tr>
+<tr><td><b>DependencyTypes</b></td><td><i>(new 6.3)</i> Dependency type can be set by dragging to different bar edge (ss,sf,fs,ff). It does <u>not</u> hover the dependency as editable.</td></tr>
+<tr><td><b>DependencyLags</b></td><td><i>(new 6.3)</i> Dependency lag can be changed from menu. If set, dependency is hovered as editable, even if no other Dependency edit flag is set.</td></tr>
+<tr><td><b>Resources</b></td><td>Resources can be assigned or entered directly in Gantt chart.</td></tr>
+<tr><td><b>CriticalPath</b></td><td><i>(new 11.0)</i> Provides slack and critical path calculation even for not editable chart. It is set also when <tt>&lt;Cfg Editing="0"/></tt>.</td></tr>
+</table>
+<br />
+
+For example <tt>GanttEdit="Main,Main1Move,Main1Resize,Main2Move,Main2Complete,Run,FlagsMove,Constraints"</tt><br />
+<br />
+
+More control can be done by assigning actions to events. The default actions are attached in Defaults.xml:<br />
+<tt>OnDragGantt="ResizeGanttMain OR MoveGanttMainFirst OR ResizeGanttRun OR MoveGanttRun OR MoveGanttFlag OR MoveGanttPoint OR MoveGanttConstraint OR MoveGanttBase OR MoveGanttFinish OR CreateGanttBar OR DragGanttDependency"</tt><br />
+To attach special set of actions to inividual Gantt cell, define <tt>&lt;I ... xxxOnDragGantt="....,<b>1</b>" ... /></tt>, where the xxx is name of your Gantt column. See ",1", it ensures to not run the default actions from Defaults.xml.<br />
+For example <tt>&lt;I ... GANTTOnDrag="MoveGanttMain OR MoveGanttConstraint OR MoveGanttBase OR MoveGanttFinish OR DragGanttDependency"/></tt>,<br /> 
+permits only moving specified objects, but restricts resizing, deleting and creating new objects.<br />
+Remember, you can use <a href="RowDefaults.htm">Default rows</a> &lt;D> to assign the same actions to more cells at once.<br />
+<br />
+
+Use also <a href="GanttAPI.htm#OnCheckGantt">OnCheckGantt</a> event to control changes done by direct editing in source cells.<br /> 
+Use also <a href="GanttMenu.htm#CGanttMenu">GanttMenu</a> to specify popup Gantt menu items for given cell.<br />
+
+<!-- GanttCheck -->
+<a name="CGanttCheck"></a>
+<div class="XML">
+   <u>new <b>6.3</b> <i>upd <b>7.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttCheck</h4> <s>[4]</s>
+</div>
+Check if Gantt source cell change by a user edit is correct.<br />
+<b>0</b> - do nothing<br />
+<b>1</b> - restrict incorrect changes<br /> 
+<b>2</b> - alert warning and restrict incorrect changes<br />
+<b>3</b> - <i>(new 7.0)</i> automatically correct incorrect values<br />
+<b>4</b> - <i>(new 7.0)</i> alert warning and correct incorrect values<br />
+It checks all dates to be within constraints, circular dependencies, percentage complete, negative duration, End>Start<br />
+To set value to Gantt source cell by API use: <tt>val = grid.<a href="GanttAPI.htm#CheckGantt">CheckGantt</a>(row,col,val); if(val!==false) grid.<a href="CellEdit.htm#SetValue">SetValue</a>(row,col,val,1);</tt><br />
+
+<!-- GanttCheckTime -->
+<a name="CGanttCheckTime"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttCheckTime</h4> <s>[1000]</s>
+</div>
+Time in milliseconds, how long will be displayed alert message for <tt><a href="#CGanttCheck">GanttCheck</a> = '2'</tt> and '4'.<br />
+If set to <b>0</b>, the message will be shown forever with OK button.<br />
+If set to <b>1</b>, standard browser alert will be shown.<br />
+If set to negative number, the message will be shown for the (positive) time, but with OK button.<br />
+
+<!-- GanttHover -->
+<a name="CGanttHover"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttHover</h4> <s>[1]</s>
+</div>
+If the Gantt items under mouse cursor will be highlighted.<br />
+<b>0</b> - never, <b>1</b> - only when it is editable / movable, <b>2</b> - always<br />
+
+<!-- Action DeleteGanttAll -->
+<a name="ActionsShowHint"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttAll <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Deletes all Gantt items from the actual or focused Gantt cell, including all dependencies.<br />
+
+</div>
+</body>
+</html>

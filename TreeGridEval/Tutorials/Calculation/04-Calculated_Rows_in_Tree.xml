@@ -1,0 +1,36 @@
+<Grid>
+   <Cfg id='CalcTree' MainCol='N' NoVScroll="1" NoHScroll="1"/>
+   <Cols>
+      <C Name='N' Type='Text'/>
+      <C Name='X' Type='Int'/>
+      <C Name='Y' Type='Int'/>
+      <C Name='A' Type='Int' Formula='X*Y' Width='65'/>
+   </Cols>
+   <Header A='A=X*Y' SortIcons='2'/>
+   <Panel Select='0'/>
+   <Def>
+      <D Name='Tree' Calculated='1' NFormula='"count = "+count()' XFormula='sum()' XFormat='"sum = "0' YFormula='sum()' YFormat='"sum = "0' CalcOrder='N,X,Y,A'/>
+   </Def>
+   <Body>
+      <B>
+         <I Def='Tree'>
+            <I N='1-1' X='10' Y='1'/>
+            <I N='1-2' X='3' Y='4'/>
+         </I>
+         <I Def='Tree'>
+	         <I Def='Tree'>
+               <I N='2-1-1' X='12' Y='8' />
+               <I N='2-1-2' X='7' Y='-8'/>
+	         </I>
+            <I Def='Tree'>
+               <I N='2-2-1' X='2' Y='9'/>
+            </I>
+            <I N='2-1' X='3' Y='6' />
+            <I N='2-2' X='0' Y='5'/>
+         </I>
+      </B>
+   </Body>
+   <Foot>
+      <I Def='Tree'/>
+   </Foot>
+</Grid>

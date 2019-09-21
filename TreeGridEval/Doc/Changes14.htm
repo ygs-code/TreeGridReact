@@ -1,0 +1,107 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Version compatibility 14</title>
+</head>
+<body>
+<div class="Doc">
+   <h1>Upgrading custom Grid CSS style from TreeGrid 13.x to 14.x</h1>
+   <p>Splitting the Grid.css to new Grid.css and Dialog.css</p>
+   <ul>
+      <li>
+         Paste to left tag the original Grid.css from 13.x you used as a source for your custom CSS style.
+      </li>
+      <li>
+         Press Split... button and save (copy&amp;paste) the results to new files Grid13.css (left) and Dialog13.css (right) placed anywhere.
+      </li>
+      <li>
+         Paste to left tag your custom Grid.css from 13.x.
+      </li>
+      <li>
+         Press Split... button and save (copy&amp;paste) the results to Grid.css and Dialog.css in your custom style directory (replace your old Grid.css from 13.x).
+      </li>
+      <li>
+         Compare the saved Grid13.css and Dialog13.css with the TreeGrid <b>14.x</b> Grid.css and Dialog.css from the same style line by line.
+      </li>
+      <li>
+         Apply the changes between 13.x and 14.x original CSS to your custom Grid.css and Dialog.css.
+      </li>
+   </ul>
+   <table style="width:100%">
+      <tr style="height:30px;">
+         <td><b>Grid.css</b> - paste here the Grid.css 13.x and click Split button</td>
+         <td><b>Dialog.css</b></td>
+      </tr>
+      <tr style="height:30px;">
+         <td><button onclick="Split()">Split the Grid.css to Grid.css and Dialog.css</button></td>
+         <td></td>
+      </tr>
+
+      <tr>
+         <td style="width:50%">
+         <textarea id="Grid" style="width:100%;height:300px;"></textarea>
+         </td>
+         <td style="width:50%">
+         <textarea id="Dialog" style="width:100%;height:300px;"></textarea>
+         </td>
+      </tr>
+   </table>
+</div>
+<script>
+
+function Split(){
+var L = "@keyframes,@font-face,.GridDisabled,.GridDebugTag,.GridDebugTagMax,.GridDebugButtons,.GridDebugButtonsMax,.GridDebugButton,.GridDebugTitle,.GridDebugMark,.GridDebugStop,.GridDebugError,.GridDebugWarning,.GridDebugList,.GridDebugInfo";
+var E = "Main,Tiny,Small,Low,Normal,Wide,High,Big,Giant,Main \\*,Tiny \\*,Small \\*,Low \\*,Normal \\*,Wide \\*,High \\*,Big \\*,Giant \\*";
+var S = "HeaderFont,Message,MenuItemText,MenuControl,PickCell,Pick2CellM,Pick2CellY,DialogButton,DialogButtonHover,"
+      + "MenuHead,MenuOuter,MenuFoot,MenuEdit,MenuEditEdit,MenuEnum,MenuCaption,MenuLevel,MenuHorz MenuCaption,MenuSeparator,MenuHorz MenuSeparator,MenuVSeparator,MenuHover,MenuFocus,MenuFocusMenuHover,MenuHeader,"
+      + "PickMY,PickTableParent,Pick2TableParent,PickFooter,Pick2Footer,PickTimeCell,PickRowW,PickRowW PickCell,PickWN,PickWNE,PickOM,PickOMNE,PickSa,PickSu,PickSel,"
+      + "Pick2MSel,Pick2YSel,PickNow,PickNE,PickHover,Pick2MHover,Pick2YHover,PickSelHover,Pick2MSelHover,Pick2YSelHover,PickCell,Pick2CellM,Pick2CellY,Pick2Sep,"
+      + "Message,PageMessage,MessageButtons,ProgressButtons,Prompt,"
+      + "EditInput,EditTextarea,EditHeaderInput,EditHeaderTextarea,EditReadOnly,EditTextareaEditReadOnly,EditHeaderInputEditReadOnly,EditHeaderTextareaEditReadOnly,"
+      + "TipOuter,DragObject,EditInput,EditTextarea,EditTextarea,EditInput,EditNormalInput,EditNormalTextarea,EditHeaderInput,EditHeaderTextarea,"
+      + "EditFilterInput,EditFilterTextarea,EditInt,EditFloat,EditDate,EditRight,EditInt,EditFloat,EditDate,EditRight,EditInt,EditFloat,EditDate,EditRight,"
+      + "EditText,EditPass,EditTab,EditTab,EditTab,EditReadOnly,EditHeaderInputEditReadOnly,EditHeaderTextareaEditReadOnly,"
+      + "Disabled,DisabledHard,Message,MessageShadow,PageMessage,Prompt,ProgressMain,ProgressCaption,ProgressText,ProgressOuter,ProgressInner,MessageButtons,ProgressButtons,ProgressButton,MessageButton,ProgressButtonHover,MessageButtonHover,"
+      + "MenuMain,MenuStatic,MenuShadow,MenuOuter,MenuOuterTop,MenuMainTop,MenuMainBottom,MenuHeader,MenuHeaderTop,MenuHeaderBottom,"
+      + "MenuHead,MenuHeadText,MenuHorzOuter,MenuClose,MenuBody,MenuFoot,MenuButton,MenuButtonHover,MenuItem,MenuHover,MenuFocus,MenuFocusMenuHover,"
+      + "MenuCheckedIconLeft,MenuCheckedIconRight,MenuUncheckedIconLeft,MenuUncheckedIconRight,MenuCheckedRadioLeft,MenuCheckedRadioRight,MenuUncheckedRadioLeft,MenuUncheckedRadioRight,"
+      + "MenuCheckedColor,MenuUncheckedColor,MenuCursorIcon,MenuHoverIcon,MenuCursorIconRtl,MenuHoverIconRtl,MenuExpandedIcon,MenuCollapsedIcon,MenuNextIcon,MenuNextIconRtl,MenuNextIconDown,"
+      + "MenuItemText,MenuItemLeftHtml,MenuItemRightHtml,MenuItemIcon,MenuItemDisabled,MenuLevel,MenuEnumParent,MenuEnum,MenuEnumHeaderLeft,MenuEnumHeaderLeft,MenuEnumMain,"
+      + "MenuEditParent,MenuEdit,MenuEditParentPDFName,MenuEditParentExportName,MenuEditMulti,MenuEditEdit,MenuEditInput,MenuEditTextarea,MenuEditInt,MenuEditFloat,MenuEditDate,MenuEditText,"
+      + "MenuCaption,MenuSeparator,MenuHorz,MenuVSeparator,MenuSection,"
+      + "PickMain,PickShadow,PickOuter,PickBody,PickBody,PickHeader,PickHeaderBottom,PickHeaderTop,PickHead,PickFoot,PickClose,PickMY,PickMYDown,PickMYUp,PickMYRtl,PickBL,PickBR,"
+      + "PickTableParent,PickTable,PickRow,PickRowW,PickCell,PickWDN,PickHover,PickSelHover,PickWD,PickSa,PickSu,PickSel,PickNow,PickWDNE,PickSaNE,PickSuNE,PickSelNE,PickNowNE,PickOM,PickOMNE,"
+      + "PickWN,PickWNE,PickCell,PickWNE,PickNE,PickWD,PickSa,PickSu,PickSel,PickNow,PickOM,PickEmpty,PickHover,PickSelHover,"
+      + "Pick2TableParent,Pick2Table,Pick2Row,Pick2CellM,Pick2CellY,Pick2CellSep,Pick2SepH,Pick2M,Pick2Y,Pick2MSel,Pick2YSel,Pick2MHover,Pick2YHover,Pick2MSelHover,Pick2YSelHover,Pick2Sep,Pick2BL,Pick2BR,PickTimeCell,PickTime,"
+      + "PickFooter,Pick2Footer,PickButton,PickButtonHover,"
+      + "EditParent,Edit,EditInline,EditMulti,EnumControl,EnumInline,EnumHeader,MouseOrig,MouseDragObject,Focus,TipMain,TipOuter,TipBody,TipShadow,DragObject,"
+      + "Chart,ChartInner,ChartLayer,ChartAxisY,ChartAxisYLabel,ChartAxisYText,ChartAxisX,ChartAxisXLabel,ChartAxisXText,ChartCaption,"
+      + "ChartPoint,ChartPoint1,ChartPoint2,ChartPoint3,ChartPoint4,ChartPoint5,ChartPoint6,ChartPoint7,ChartPoint8,"
+      + "AnimateOverflow,AnimateTransparent,AnimateHidden,AnimateVisible,AnimateLeftTop,AnimateCenterTop,AnimateRightTop,AnimateLeftBottom,AnimateRightBottom,AnimateCenterBottom,AnimateLeftCenter,AnimateRightCenter,AnimateCenterCenter,Mark,"
+      + "Main b,Main i,Main em,Main s,Main .GridBold,Main .GridBlue,Main .GridRed,Main .GridGray";
+var Grid = document.getElementById("Grid"), Dialog = document.getElementById("Dialog");
+var I = Grid.value, G = [], D = []; 
+var p = I.match(/\.(\w+)Loaded/);
+if(!p) { alert("Paste the correct Grid.css to the left textarea"); return; }
+p = p[1];
+//S = new RegExp("\\b"+L.replace(/,/g,"\\b|\\b")+"\\b|\\."+p+S.replace(/,/g,"\\b|\\."+p)+"\\b|^\\s*\\."+p+E.replace(/,/g,"\\s*$|^\\s*\\."+p)+"\\s*$");
+S = new RegExp("\\W"+L.replace(/,/g,"\\W|\\W")+"\\W|\\."+p+S.replace(/,/g,"\\W|\\."+p)+"\\W|^\\s*\\."+p+E.replace(/,/g,"\\s*$|^\\s*\\."+p)+"\\s*$");
+I = I.split("\n");
+for(var i=0,c="";i<I.length;i++){
+   if(I[i].search(/\{[^\}]*\}/)<0) { c += I[i]+"\r\n"; continue; }
+   var o = I[i].indexOf("{"), l = I[i].slice(o), s = I[i].slice(0,o).split(/[,{]/), g = "", d = "";
+   for(var j=0;j<s.length;j++){
+      if((" "+s[j]+" ").search(S)>=0) d += (d ? "," : "") + s[j];
+      else g += (g ? "," : "") + s[j];
+      }
+   if(g) G.push(c+g+l);
+   if(d) D.push(c+d+l);
+   c = "";
+   }
+Grid.value = G.join("\r\n");
+Dialog.value = D.join("\r\n") + "\r\n\r\n/* Marks the style loaded; must be the last class in the file; @ Do not change */\r\n."+p+"DialogLoaded { border:1px solid black!important; }";
+}
+</script>   
+
+</body>
+</html>

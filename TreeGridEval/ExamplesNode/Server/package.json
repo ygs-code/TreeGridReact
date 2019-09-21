@@ -1,0 +1,13 @@
+{
+  "name": "TreeGridSQLite",
+  "version": "1.0.0",
+  "description": "Server side serving TreeGrid data from SQLite database and static files. Provides also PDF export.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "latest",
+    "puppeteer": "latest"
+  }
+}

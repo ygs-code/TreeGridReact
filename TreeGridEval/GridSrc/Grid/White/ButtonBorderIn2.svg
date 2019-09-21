@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 16 16">
+<g stroke="#999" stroke-dasharray="1,1">
+   <line x1="1" y1="1.5" x2="14" y2="1.5"/>
+   <line x1="1" y1="7.5" x2="14" y2="7.5"/>
+   <line x1="1" y1="13.5" x2="14" y2="13.5"/>
+   <line x1="1.5" y1="1" x2="1.5" y2="14"/>
+   <line x1="7.5" y1="1" x2="7.5" y2="14" stroke-dasharray="0"/>
+   <line x1="13.5" y1="1" x2="13.5" y2="14"/>
+</g>
+</svg>

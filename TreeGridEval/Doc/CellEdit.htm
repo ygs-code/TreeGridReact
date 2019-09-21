@@ -1,0 +1,1901 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Editing cells</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Cell editing and changing values</h1>
+<p class="H1">TreeGrid documentation</p>
+
+<!-----------------------------------------------------------------------  Horizontal spanning among columns ------------------------------------------------->
+<a name="CellEditability"></a>
+<h2>Cell editability</h2>
+
+<!-- Editing -->
+<a name="CfgEditing"></a>
+<div class="XML">
+   <u><i>upd <b>13.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>Editing</h4> <s>[1]</s>
+</div>
+If and how values of grid can be edited. It does <u>not</u> affect rows of Kind = Filter, Group, Search.<br />
+<br />
+
+<b>0 - read only</b><br />  
+Cells cannot be edited, cannot be switched to edit mode.<br /> 
+Bool and Radio types cannot be clicked. Enum type and Defaults list cannot be expanded.<br /> 
+The Date button is not displayed for Date type by default.<br />
+<br />
+<b>1 - editable</b><br /> 
+Cells can be edited. Default mode. The individual cell editability can be changed by their CanEdit attribute to 0 (read only) or 2 (preview).<br />
+Cells can be switched to edit mode and changed by user. Bool and Radio type can be changed by click.<br /> 
+Enum type and Default list can be expanded and value selected.<br />  
+The Date button is displayed for Date type by default (can be hidden by setting the Button="").<br />
+<br />
+<b>2 - preview</b><br />                                                                                   
+Cells cannot be changed, but they can be displayed in read only edit mode.<br />
+The cell cannot be previewed if it has set <tt>CanEdit='0'</tt> (read only). The <tt>CanEdit='1'</tt> does <u>not</u> change to editable!<br />
+Bool and Radio types cannot be clicked. Enum type and Defaults list cannot be expanded.<br /> 
+The Date button <u>is</u> displayed for Date type by default, but the calendar dialog displayed on click is in read only mode.<br /> 
+The preview mode is intended especially for multiline types (Lines) to let user to display the whole text and also select it and copy to clipboard.<br />
+<br />
+<b>3 - read only not grayed</b><br />
+<i>(new 13.0)</i> The same as <b>0</b>, but it is not grayed (similarly to <a href="CellStyle.htm#CfgColorState">ColorState</a> without 4. bit set).<br />
+The default mode is 1 (editable), you can switch all editable cells to <b>0</b> - read only or <b>2</b> - preview mode by setting the Editing attribute.
+
+<!-- Protected -->
+<a name="CfgProtected"></a>
+<div class="XML">
+   <u>new <b>14.1</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Protected</h4> <s></s>
+</div>
+If set to <b>1</b>, all cells that have not set <a href="#CCanEdit">CanEdit</a> explicitly (in cell, row or column or default) are not editable.<br />
+If set to <b>1</b>, exported xlsx sheet is protected without password.<br />
+If not set at all, it is automatically set on importing xlsx sheet according to if the xlsx sheet is protected or not.<br />
+
+
+
+<!-- CanEdit -->
+<a name="CCanEdit"></a>
+<div class="XML">
+   <u></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>int</i>
+   <h4>CanEdit</h4> <s>[0/1]</s>
+</div>
+If and how values in cells can be edited.<br /> 
+<b>0</b> - read only, <b>1</b> - editable, <b>2</b> - preview. See <a href="#CfgEditing">Editing</a> attribute.<br />
+<br />
+
+The routine to find out the cell editability checks these points in this order:<br />
+1) If editing is suppressed (<tt>&lt;Cfg <a href="#CfgEditing">Editing</a>='0'/></tt>) returns <b>0</b>, except the Row Kind is <a href="Filter.htm#Filter">Filter</a>, <a href="Group.htm#Group">Group</a>, <a href="Search.htm#Search">Search</a>.<br />
+2) If the cell is not focusable (<a href="Focus.htm#CCanFocus">CanFocus</a>='0') returns <b>0</b>, except the cell Type is <a href="TypeBool.htm">Bool</a> or <a href="TypeEnum.htm">Radio</a>.<br />
+3) Checks <u>cell</u> CanEdit, if it set, returns it.<br />
+4) Checks <u>row</u> CanEdit, if it set, returns it.<br />
+5) For <a href="Filter.htm#Filter">Filter</a> row returns <b>0</b> for Pass type and for columns with <a href="Filter.htm#CCanFilter">CanFilter</a>='0' otherwise returns <b>1</b>.<br />
+6) For calculated cell returns <b>0</b>.<br />
+7) Checks <u>column</u> CanEdit, if it set, returns it.<br />
+8) Returns <b>0</b> or <b>1</b> according to the cell <a href="CellBasics.htm#CCtype">Type</a>, default editable types are: Text, Lines, Int, Float, Date, Enum, Bool, Radio, Pass.<br />
+If point 3 - 8 returns 1 and set <tt>&lt;Cfg Editing='2'/></tt> returns 2.<br />
+After points 3 - 8 it calls OnCanEdit event to change the result dynamically.
+
+<!-- OnCanEdit -->
+<a name="OnCanEdit"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>int</i>
+   <h4>OnCanEdit</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>mode</b>)</s>
+</div>
+Called to check editability of the cell dynamically.<br />
+It is called in various situations, during rendering, before start edit, on mouse hover and so on.<br />
+This handler should be very fast and short.<br />
+The <b>mode</b> is preset editability, 0 - readonly, 1 - editable, 2 - preview.<br />
+Return new editability or the <b>mode</b>.
+
+<!-- CanEdit -->
+<a name="CanEdit"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>int</i>
+   <h4>CanEdit</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Checks if the cell can be edited, return 0 - read only, 1 - editable, 2 - preview.
+
+<!-- Action SetEditable... -->
+<a name="ActionsSetEditable"></a>
+<a name="ActionsSetEditableCells"></a>
+<a name="ActionsSetEditableSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetEditable</h4>,
+   <h4>SetEditableCells</h4>,
+   <h4>SetEditableSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets 1 to cell attribute <a href="#CCanEdit">CanEdit</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action SetEditableRow... -->
+<a name="ActionsSetEditableRow"></a>
+<a name="ActionsSetEditableSelectedRows"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetEditableRows</h4>,
+   <h4>SetEditableSelectedRows <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets 1 to row attribute <a href="#CCanEdit">CanEdit</a> in actual or focused row or in all selected rows.<br />
+
+<!-- Action SetEditableCol... -->
+<a name="ActionsSetEditableCol"></a>
+<a name="ActionsSetEditableSelectedCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetEditableCols</h4>,
+   <h4>SetEditableSelectedCols <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets 1 to column attribute <a href="#CCanEdit">CanEdit</a> in actual or focused column or in all selected columns.<br />
+
+<!-- Action SetReadOnly... -->
+<a name="ActionsSetReadOnly"></a>
+<a name="ActionsSetReadOnlyCells"></a>
+<a name="ActionsSetReadOnlySelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetReadOnly</h4>,
+   <h4>SetReadOnlyCells</h4>,
+   <h4>SetReadOnlySelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets 0 to <a href="#CCanEdit">CanEdit</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action SetReadOnlyRow... -->
+<a name="ActionsSetReadOnlyRow"></a>
+<a name="ActionsSetReadOnlySelectedRows"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetReadOnlyRows</h4>,
+   <h4>SetReadOnlySelectedRows <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets 0 to row attribute <a href="#CCanEdit">CanEdit</a> in actual or focused row or in all selected rows.<br />
+
+<!-- Action SetReadOnlyCol... -->
+<a name="ActionsSetReadOnlyCol"></a>
+<a name="ActionsSetReadOnlySelectedCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetReadOnlyCols</h4>,
+   <h4>SetReadOnlySelectedCols <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets 0 to column attribute <a href="#CCanEdit">CanEdit</a> in actual or focused column or in all selected columns.<br />
+
+<!-- Action SetPreview... -->
+<a name="ActionsSetPreview"></a>
+<a name="ActionsSetPreviewCells"></a>
+<a name="ActionsSetPreviewSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetPreview</h4>,
+   <h4>SetPreviewCells</h4>,
+   <h4>SetPreviewSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets 2 to <a href="#CCanEdit">CanEdit</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action SetPreviewRow... -->
+<a name="ActionsSetPreviewRow"></a>
+<a name="ActionsSetPreviewSelectedRows"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetPreviewRows</h4>,
+   <h4>SetPreviewSelectedRows <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets 2 to row attribute <a href="#CCanEdit">CanEdit</a> in actual or focused row or in all selected rows.<br />
+
+<!-- Action SetPreviewCol... -->
+<a name="ActionsSetPreviewCol"></a>
+<a name="ActionsSetPreviewSelectedCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetPreviewCols</h4>,
+   <h4>SetPreviewSelectedCols <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets 2 to column attribute <a href="#CCanEdit">CanEdit</a> in actual or focused column or in all selected columns.<br />
+
+<!-- Action ClearEditable... -->
+<a name="ActionsClearEditable"></a>
+<a name="ActionsClearEditableCells"></a>
+<a name="ActionsClearEditableSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearEditable</h4>,
+   <h4>ClearEditableCells</h4>,
+   <h4>ClearEditableSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets null to <a href="#CCanEdit">CanEdit</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action ClearEditableRow... -->
+<a name="ActionsClearEditableRow"></a>
+<a name="ActionsClearEditableSelectedRows"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearEditableRows</h4>,
+   <h4>ClearEditableSelectedRows <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets null to row attribute <a href="#CCanEdit">CanEdit</a> in actual or focused row or in all selected rows.<br />
+
+<!-- Action ClearEditableCol... -->
+<a name="ActionsClearEditableCol"></a>
+<a name="ActionsClearEditableSelectedCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearEditableCols</h4>,
+   <h4>ClearEditableSelectedCols <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets null to column attribute <a href="#CCanEdit">CanEdit</a> in actual or focused column or in all selected columns.<br />
+
+
+<!-----------------------------------------------------------------------  Defaults list ------------------------------------------------->
+<a name="Defaults"></a>
+<h2>Defaults list</h2>
+
+A list of predefined values for the cell to let a user to choose one or more of them.<br /> 
+Displayed on click to button or by API.<br />
+This list can be used also for <u>non</u> editable cells of any Type, it does <u>not</u> depend on <a href="#CCanEdit">CanEdit</a> settings.<br />
+<i>Since 9.2</i> it is possible to simulate Enum value/key pairs by <b>Html</b> type and its <a href="TypeHtml.htm#CFormat">Format</a> attribute.
+
+<!-- Button -->
+<a name="CButton"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Button</h4> <s>["Defaults"]</s>
+</div>
+To show right side button with Defaults list set <tt><a href="CellSideButton.htm#CButton">Button</a>="<b>Defaults</b>"</tt>.<br />
+It can be shown also by <tt><a href="CellSideButton.htm#CIcon">Icon</a>="<b>Defaults</b>"</tt>.<br />
+
+<!-- Defaults -->
+<a name="CDefaults"></a>
+<div class="XML">
+   <u>chg <b>6.0</b> <i>upd <b>9.2</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>Defaults</h4> <s></s>
+</div>
+A first character separated list of values to select to the cell. A user can choose one value from combo or even more values if <a href="CellBasics.htm#CRange">Range</a> is set.<br />
+Or it can be in standard <a href="Menu.htm">TreeGrid menu</a> format as complex menu with <b>sub levels</b>, <b>sub menus</b>, <b>columns</b> and so on.<br />
+It is used when set <tt><a href="CellSideButton.htm#CButton">Button</a>="Defaults"</tt> or <tt><a href="CellSideButton.htm#CIcon">Icon</a> = "Defaults"</tt> or <tt><a href="CellBasics.htm#CType">Type</a>="Select"</tt>. It can be used for cell of any <a href="CellBasics.htm#CType">Type</a>.<br />
+<i>To show a list of predefined values while <b>editing</b> use <a href="#CSuggest">Suggest</a> list instead.</i><br />
+Separator can be shown as item named '-'.<br />
+<br />
+
+<i>Since 9.2</i> the Defaults can be used with name/key pairs using new Format and EditFormat attributes structure for Text, Lines and Html types.<br />
+For example <tt>&lt;C Name="A" Button="Defaults" Defaults="|one|two|three" Format="{1:'one',2:'two',3:'three'}" EditFormat="{1:'one',2:'two',3:'three'}"/></tt> will show/edit strings one, two, three, but cell values will be 1,2,3.<br />
+<br />
+
+The list can contain special items starting with '*':
+<table>
+   <tr><td style="width:120px;"><b>*Date</b></td><td>After click on menu item it shows calendar to select date.</td></tr>
+   <tr><td><b>*Button</b></td><td>After click on menu item it calls <a href="CellSideButton.htm#OnButtonClick">OnButtonClick</a> user event for the cell.</td></tr>
+   <tr><td><b>*Default</b></td><td>Item contains default value for the cell (value from <a href="RowDefaults.htm">Def row</a>).</td></tr>   
+   <tr><td><b>*FilterOff</b></td><td>Switches off the filter operator, only for filter row.</td></tr>   
+   <tr><td><b>*All</b></td><td>Chooses all items for range.</td></tr>   
+   <tr><td><b>*None</b></td><td>Selects empty range.</td></tr>   
+   <tr><td><b>*Rows...</b></td><td>There will added more items containing values from other rows in this column according other settings:</td></tr>   
+</table>
+<table>
+  <tr><td style="width:60px;"></td><td style="width:120px;"><b>...Variable...</b></td><td>from variable rows (used also if no Fixed / All / Sibling is present)</td></tr>
+  <tr><td></td><td><b>...Fixed...</b></td><td>from fixed rows</td></tr>
+  <tr><td></td><td><b>...All...</b></td><td>from fixed and variable rows</td></tr>
+  <tr><td></td><td><b>...Sibling...</b></td><td>from sibling rows</td></tr>
+  <tr><td></td><td><b>...Def...</b></td><td>only from rows that have the same default (<a href="RowDefaults.htm">Def</a> attribute) as the row</td></tr>
+  <tr><td></td><td><b>...DefXXX*...</b></td><td><i>(since 7.0)</i> only from rows that have its default (<a href="RowDefaults.htm">Def</a> attribute) named XXX</td></tr>
+  <tr><td></td><td><b>...Visible...</b></td><td>only visible rows</td></tr>
+  <tr><td></td><td><b>...CanFilter...</b></td><td>(for <a href="Filter.htm#Filter">Filter</a> row) only rows that can be filtered according to this column</td></tr>
+  <tr><td></td><td><b>...n...</b></td><td>maximally n most frequent values</td></tr>
+  <tr><td></td><td><b>...ColXXX*...</b></td><td>values from another column, XXX is column name, from left must have prefix 'Col' and from right postfix '*'.</td></tr>
+  <tr><td></td><td><b>...Alphabet...</b></td><td><i>(new 6.1)</i> the menu items will be divided to submenus according to the first letter. Useful for long menus. See also <a href="#CfgDefaultsAlphabetWhite">DefaultsAlphabetWhite</a>.<br />
+                                                  The menu item name is defined by <tt>&lt;Lang>&lt;Text DefaultsAlphabet='%d ...'/></tt>, the %d will be replaced by the character.</td></tr>              
+</table>
+For example: <tt>"*RowsDef20"</tt> returns maximally 20 variable rows with the same default row.
+
+<!-- DefaultsServer -->
+<a name="CDefaultsServer"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>DefaultsServer</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, TreeGrid dynamically downloads the <a href="#CDefaults">Defaults</a> list from server side by &lt;treegrid> <a href="DataServerChanges.htm#Cell_Url">Cell_Url</a> settings before it displays it (after the button was clicked).<br />
+<br />
+<table>
+  <tr><td style="width:120px;">Example:</td><td>Let's have row MyRow with cell MyCol with Defaults button:<br /> 
+                                                <tt>&lt;I id='MyRow' MyColButton='Defaults' MyColDefaultsServer='1' ...</tt>
+</td></tr>
+  <tr><td></td><td>Set in your TreeGrid definition:<br /> 
+                    <tt>&lt;treegrid Cell_Url='myscript.jsp' Cell_Data='MyData' ...</tt>
+</td></tr>
+  <tr><td></td><td>And the myscript.jsp (or .aspx, .php) will get such XML in MyData property:<br /> 
+                    <tt>&lt;Grid> ... &lt;Body> &lt;B id='MyRow' Col='MyCol'/> &lt;/Body> &lt;/Grid></tt>
+</td></tr>
+  <tr><td></td><td>And the myscript should return XML to update the Defaults list in the appropriate row cell:<br /> 
+                    <tt>&lt;Grid> &lt;Changes> &lt;I id='MyRow' MyColDefaults='the prepared list'/> &lt;/Changes> &lt;/Grid></tt>
+</td></tr>
+</table>
+
+<!-- DefaultsAlphabetWhite -->
+<a name="CfgDefaultsAlphabetWhite"></a>
+<div class="XML">
+   <u>new <b>6.1</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>DefaultsAlphabetWhite</h4> <s>["!&quot;#$%&amp;'()*+,-./:;&lt;=>?@[\]^_{|}"]</s>
+</div>
+Characters ignored when grouping items by *Alphabet keyword in <a href="#CDefaults">Defaults</a>.
+
+<!-- DefaultsAlphabetMin -->
+<a name="CfgDefaultsAlphabetMin"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>DefaultsAlphabetMin</h4> <s>[0]</s>
+</div>
+Minimal count of the items starting by the same character to group them, by *Alphabet keyword in <a href="#CDefaults">Defaults</a>.<br /> 
+For example if set to 2, there will not be created sub menus with one item only.
+
+<!-- OnGetDefaults -->
+<a name="OnGetDefaults"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>string</i>
+   <h4>OnGetDefaults</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>defaults</b>)</s>
+</div>
+Called before displaying menu <a href="#CDefaults">Defaults</a> to get the list dynamically.<br /> 
+Returns original or modified defaults list.<br />
+Or return <b>null</b> to not show the list.
+
+<!-- OnShowDefaults -->
+<a name="OnShowDefaults"></a>
+<div class="API">
+   <u>new <b>6.3</b></u> <b>API event</b> <i>void</i>
+   <h4>OnShowDefaults</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>TMenu</i> <b>Menu</b>, <i>TPosition</i> <b>Pos</b>)</s>
+</div>
+Called before displaying menu <a href="#CDefaults">Defaults</a> to update the menu dynamically.<br /> 
+It can be used to do any modification in Menu, for example to sort or change position in Menu.Items array. See <a href="Menu.htm">Menu</a> documentation.
+
+<!-- ShowDefaults ...F -->
+<a name="ActionsShowDefaults"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowDefaults ...F</h4><s></s>
+</div>
+Displays dialog <a href="#CDefaults">Defaults</a> for the actual or focused cell. 
+
+<!-- ShowDefaultsMenu ...F -->
+<a name="ActionsShowDefaultsMenu"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowDefaultsMenu ...F</h4><s></s>
+</div>
+Displays dialog <a href="#CDefaults">Defaults</a> for the actual or focused cell. <br />
+Displays it even if the cell has no Button/Icon = "Defaults".<br />
+
+<!-- ShowDefaults -->
+<a name="ShowDefaults"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>ShowDefaults</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Displays dialog <a href="#CDefaults">Defaults</a> for given cell. 
+
+<!-- InDefaults -->
+<a name="InDefaults"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>InDefaults</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>val</b> = null, <i>string</i> <b>defaults</b> = null)</s>
+</div>
+Checks if the cell value or <b>val</b> is in its defaults list or in <b>defaults</b>.<br />
+Returns true if the list contains the value, false if the list does not contain the value and null if the defaults list is empty or not set.<br />
+Works for all formats of <a href="#CDefaults">Defaults</a> list.
+Can be used also to check <a href="#CSuggest">Suggest</a> list, if placed as <b>defaults</b> parameter.<br />
+
+<!-- GetDefaultsIndex -->
+<a name="GetDefaultsIndex"></a>
+<div class="API">
+   <u>new <b>6.0</b> <i>upd <b>14.0</b></i></u> <b>API method</b> <i>int</i>
+   <h4>GetDefaultsIndex</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>val</b> = null, <i>int</i> <b>range</b> = null)</s>
+</div>
+Returns index (from 0) of actual cell value inside its Defaults array.<br />
+Returns null if the value is not in the Defaults array or the Defaults array does not exits.<br />
+If set <b>val</b>, compares this value instead of the cell one.<br />
+<i>Since 14.0</i> if set <b>range</b> or the cell has set <a href="CellBasics.htm#CRange">Range</a> it returns all indexes for all values, semicolon separated. If set <b>range</b> = -1, it returns them as an array.<br />
+<i>Works only for simple defaults as first character separated array, without special items (*) and <u>not</u> as TreeGrid Menu.</i>
+
+<!-- GetDefaultsValue -->
+<a name="GetDefaultsValue"></a>
+<div class="API">
+   <u>new <b>6.0</b> <i>upd <b>14.0</b></i></u> <b>API method</b> <i>string</i>
+   <h4>GetDefaultsValue</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>index</b>, <i>int</i> <b>range</b>)</s>
+</div>
+Returns an item from Defaults array in the given position <b>index</b> (from 0).<br />
+Returns null if the index is outside defaults boundary or the Defaults array does not exits.<br />
+<i>Since 14.0</i> if set <b>range</b> or the cell has set <a href="CellBasics.htm#CRange">Range</a> it returns all values for all indexes, semicolon separated. If set <b>range</b> = -1, it returns them as an array.<br />
+<i>Works only for simple defaults as first character separated array, without special items (*) and <u>not</u> as TreeGrid Menu.</i>
+
+<!-----------------------------------------------------------------------  Suggest list (auto complete) ------------------------------------------------->
+<a name="Suggest"></a>
+<h2>Suggest list (auto complete)</h2>
+
+A list of predefined values for the cell and <b>actual input</b> to let a user to choose one of them.<br /> 
+Displayed while editing and updated whenever the input text changes.
+
+<!-- Suggest -->
+<a name="CSuggest"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>9.2</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>Suggest</h4> <s></s>
+</div>
+A list o values to suggest them to user while editing.<br />
+It contains all items that can be suggested for the cell.<br />
+The user will see only items that contain already entered part of the value in input. The searching is case insensitive.<br />
+<i>The Suggest can contain also the special items starting by * like <a href="#CDefaults">Defaults</a> menu.</i><br />
+<br />
+<i>Since 9.2</i> the Suggest can be used with name/key pairs using new Format and EditFormat attributes structure for Text and Lines types.<br />
+For example <tt>&lt;C Name="A" Suggest="|one|two|three" Format="{1:'one',2:'two',3:'three'}" EditFormat="{1:'one',2:'two',3:'three'}"/></tt> will show/edit strings one, two, three, but cell values will be 1,2,3.<br />
+If used <tt>SuggestType='Existing,...'</tt>, the above example should define <tt>Suggest="{Items:[{Name:1,Text:'one'},{Name:2,Text:'two'},{Name:3,Text:'three'}]}"</tt><br />
+<i>Due internal implementation no key can be equal to value, e.g. <tt>{a:'b',b:'c'}</tt>, the b cannot be both key and value.</i>
+
+<!-- SuggestType -->
+<a name="CSuggestType"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[]</i>
+   <h4>SuggestType</h4> <s></s>
+</div>
+Various settings for <a href="#CSuggest">Suggest</a> menu. Comma separated list of keywords, case insensitive:
+<table>
+  <tr><td style="width:120px;"><b>Replace</b></td><td>if set, replaces the actual edit input while changing selected item in the suggest menu by cursor keys</td></tr>
+  <tr><td><b>Start</b></td><td>if set, shows the suggest menu also on start editing for current value</td></tr>
+  <tr><td><b>StartAll</b></td><td><i>(new 11.0)</i> if set, shows the full suggest menu also on start editing</td></tr>
+  <tr><td><b>Empty</b></td><td>if set, shows the full suggest menu also for empty input value</td></tr>
+  <tr><td><b>All</b></td><td>if set, shows the full suggest menu always - it does not search the current input value</td></tr>
+  <tr><td><b>Case</b></td><td><i>(new 6.2)</i> if set, preserves case sensitivity, shows only items that contains the text in the same case</td></tr>
+  <tr><td><b>WhiteChars</b></td><td><i>(new 10.0)</i> uses <a href="Sort.htm#CWhiteChars">WhiteChars</a> cell attribute value for comparing</td></tr>
+  <tr><td><b>CharCodes</b></td><td><i>(new 10.0)</i> uses <a href="Sort.htm#CCharCodes">CharCodes</a> cell attribute value for comparing</td></tr>
+  <tr><td><b>Complete</b></td><td><i>(new 6.2)</i> auto completes the input value if there is only one value to suggest</td></tr>
+  <tr><td><b>Existing</b></td><td><i>(new 6.2)</i> accepts only values existing in the actual suggest menu</td></tr>
+  <tr><td><b>Begin</b></td><td><i>(new 6.2)</i> the suggested items must start with the value (otherwise the item is suggested if any its word starts with the value)</td></tr>
+  <tr><td><b>Search</b></td><td><i>(new 12.0)</i> the suggested items are searched in any place, not only in the word start (cannot be used with Begin)</td></tr>
+  <tr><td><b>Separator</b></td><td>
+  <i>(new 6.4)</i> after selecting suggested item for the last value, adds also <a href="#CSuggestSeparator">SuggestSeparator</a> to the end. 
+   Used only if set <a href="#CSuggestSeparator">SuggestSeparator</a>.<br />
+   <i>(since 12.1)</i> If SuggestSeparator contains Regex expression, it adds the first character from this Regex, so for this case the Regex should look like ";|[;,\s]" to add the ";".<br />
+  </td></tr>
+  <tr><td><b>BeforeSeparator</b></td><td><i>(new 12.0)</i> after selecting suggested item it places cursor before the next separator, if any. Used only if set <a href="#CSuggestSeparator">SuggestSeparator</a>.</td></tr>
+  <tr><td><b>Esc</b></td><td><i>(new 6.5)</i> escape hides the suggestion menu instead of cancelling editing</td></tr>
+  <tr><td><b>Arrows</b></td><td><i>(new 6.5)</i> in multiline edit the up/down arrows will be used in suggest menu. If not set, Ctrl + arrows control the suggest menu</td></tr>                        
+</table>
+
+<!-- SuggestDelay -->
+<a name="CSuggestDelay"></a>
+<div class="XML">
+   <u>new <b>6.2</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>SuggestDelay</h4> <s></s>     
+</div>
+Delay before the suggest menu is shown. If next key is pressed within this time, the menu is <u>not</u> shown for the previous text.
+
+<!-- SuggestMin -->
+<a name="CSuggestMin"></a>
+<div class="XML">
+   <u>new <b>6.2</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>SuggestMin</h4> <s></s>
+</div>
+Minimal count of characters in text to show the suggest menu for the text.
+
+<!-- SuggestSeparator -->
+<a name="CSuggestSeparator"></a>
+<div class="XML">
+   <u>new <b>6.4</b> <i>upd <b>12.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>SuggestSeparator</h4> <s></s>     
+</div>
+Set for range values separated by this separator.<br />
+If set, suggest is shown separately for the individual parts of the value. After choose suggest item, it replaces the part by the item and does not end editing.<br />
+To add the separator also to the end after item is selected like in MS Outlook, set <a href="#CSuggestType">SuggestType</a>, value <b>Separator</b>.<br />
+Default value is empty for normal cells, and ValueSeparator (semicolon by default) for Range cells.<br />
+It can be set also to "&amp#x0a;" for enter as separator in multiline cells.<br />
+<i>Since 12.0</i> it can be set to one character or to Regex expression for more separators (e.g. "[,\.;]" to separate by any of the ",.;".
+
+<!-- FormulaSuggest -->
+<a name="CFormulaSuggest"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>FormulaSuggest</h4> <s></s>
+</div>
+A list o values to suggest for <a href="CellEditFormula.htm">editable formula</a>, when the edited value starts by '='. Format is the same as <a href="#CSuggest">Suggest</a>.<br />
+Or it can be set to number to generate the suggest list for all available functions.<br />
+<b>1</b> - generates and shows only function names, 
+<b>2</b> - generates function name plus open brace,
+<b>4</b> - shows function names with braces, <b>6</b> = 2+4.
+
+<!-- FormulaSuggestType -->
+<a name="CFormulaSuggestType"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[]</i>
+   <h4>FormulaSuggestType</h4> <s>["BeforeSeparator"]</s>
+</div>
+Various settings for <a href="#CFormulaSuggest">FormulaSuggest</a> menu for <a href="CellEditFormula.htm">editable formula</a>. Format is the same as <a href="#CSuggestType">SuggestType</a>.
+
+<!-- FormulaSuggestDelay -->
+<a name="CFormulaSuggestDelay"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>FormulaSuggestDelay</h4> <s></s>     
+</div>
+Delay before the suggest formula menu is shown. If next key is pressed within this time, the menu is <u>not</u> shown for the previous text.
+
+<!-- FormulaSuggestMin -->
+<a name="CFormulaSuggestMin"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>FormulaSuggestMin</h4> <s></s>
+</div>
+Minimal count of characters in text to show the suggest formula menu for the text.
+
+<!-- FormulaSuggestSeparator -->
+<a name="CFormulaSuggestSeparator"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>FormulaSuggestSeparator</h4> <s>"[+\-*\/!%&|^<>=?:()\[\]{}"',~]+"</s>
+</div>
+Sets regex for all characters that separate the formula function names. Has the same format as <a href="#CSuggestSeparator">SuggestSeparator</a><br />
+By default it is set to all operator characters.
+
+<!-- OnSuggest -->
+<a name="OnSuggest"></a>
+<div class="API">
+   <u>new <b>6.0</b> <i>upd <b>12.0</b></i></u> <b>API event</b> <i>string</i>
+   <h4>OnSuggest</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>val</b>, <i>TMenu</i> <b>suggest</b>, <i>bool</i> <b>formula</b>)</s>
+</div>
+It is called whenever the value is changed by user while editing to get the appropriate defaults for the value.<br />
+The <b>val</b> is actual value, the suggest is the proposed <b>suggest</b> menu.<br />
+The <b>formula</b> <i>(new 12.0)</i> is true if called for <a href="#CFormulaSuggest">FormulaSuggest</a>.<br />
+Return new suggest string or the <b>suggest</b>. The returned suggest is not searched for the <b>val</b> again and is displayed always the whole.<br />
+The OnSuggest is <u>not</u> called when set <tt>SuggestServer='1'</tt>.
+
+<!-- SuggestServer -->
+<a name="CSuggestServer"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>SuggestServer</h4> <s></s>     
+</div>
+For dynamic loading the suggest menu list from server. It is <u>not</u> used for editable formula (<a href="#CFormulaSuggest">FormulaSuggest</a>).<br />
+If set to <b>1</b>, TreeGrid downloads the Suggest attribute setting from server side &lt;treegrid> <a href="DataServerChanges.htm#Cell_Url">Cell_Url</a> settings whenever a user changes the input value while editing.<br />
+The returned suggest is not searched for the <b>val</b> again and is displayed always the whole.<br />
+For example you can return for cell <tt>[row id='R1' col='Col1']</tt> such XML to change the Suggest menu:<br />
+<tt>&lt;Grid>&lt;Changes>&lt;I id='R1' Col1Suggest='|One|Two|Three'/>&lt;/Changes>clt;/Grid></tt><br />
+If you change from server also Format / EditFormat, you should set <tt>&lt;Changed Update='32'></tt> to not refresh the edited cell.
+
+<!-- OnGetSuggest -->
+<a name="OnGetSuggest"></a>
+<div class="API">
+   <u>new <b>6.2</b> <i>upd <b>12.0</b></i></u> <b>API event</b> <i>string</i>
+   <h4>OnGetSuggest</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>suggest</b>, <i>bool</i> <b>formula</b>)</s>
+</div>
+Called to get the complete <a href="#CSuggest">Suggest</a> attribute once on start editing.<br />
+The <b>formula</b> <i>(new 12.0)</i> is true if called for <a href="#CFormulaSuggest">FormulaSuggest</a>.
+
+<!-----------------------------------------------------------------------  Changing cell value ------------------------------------------------->
+<a name="ChangingValue"></a>
+<h2>Changing cell value</h2>
+
+<!-- Changed -->
+<a name="IChanged"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>bool</i>
+   <h4>Changed</h4> <s>[0] Uploaded to server, supports Undo</s>     
+</div>
+It is set to <b>1</b> when any cell value in the row has been changed. Which cell is specified by the cell's attribute <a href="#CellChanged">Changed</a>.<br />
+If the changed cell value is set back to its original value, the cell and row looses the Changed flag, except is set <tt>&lt;Cfg <a href="#CfgStoreOriginalValues">StoreOriginalValues</a>='0'</tt>.<br />
+After uploading changes to server or calling <a href="DataUpload.htm#AcceptChanges">AcceptChanges</a> the changed row just looses its state and becomes normal row.
+
+<!-- Changed -->
+<a name="CellChanged"></a>
+<div class="XML">
+   <u></u> <b>&lt;cell></b> <i>bool</i>
+   <h4>Changed</h4> <s>[0] Supports Undo</s>     
+</div>
+It is set to 1 when the cell value has been changed.
+
+<!-- Changed -->
+<a name="CNoChanged"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C>&lt;cell></b> <i>bool</i>
+   <h4>NoChanged</h4> <s>[0]</s>     
+</div>
+If set to <b>1</b>, the cell is never marked as <a href="#CellChanged">Changed</a> and the row <a href="#IChanged">Changed</a> is never set due changes in this cell.
+
+<!-- OnValueChanged -->
+<a name="OnValueChanged"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b>API event</b> <i>type</i>
+   <h4>OnValueChanged</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>val</b>, <i>type</i> <b>oldval</b>, <i>object</i> <b>errors</b>)</s>
+</div>
+Called before cell value is changed by a user input. It is called even if a user entered the same value.<br />
+This event is called when a user edited cell, selected item from Defaults or Enum list, selected date from calendar, clicked and changed Bool or Radio cell, dragged column to DropCols cells.<br />
+<i>Since 12.0</i> it is called also when more cells are changed by clearing cell range, moving or copying cell range, filling cell range or pasting to cells.<br />
+Use this event to change or update the entered value. To do some action after finish edit call <a href="#OnEndEdit">OnEndEdit</a> instead.<br /> 
+Return new value or the entered value <b>val</b>.<br />
+<i>Since 12.0</i> <b>oldval</b> is actual value in cell or its formula. Return it to <u>not</u> change the cell value at all.<br />
+<i>Since 12.0</i> The <b>errors</b> is set when called during some mass change, e.g. pasting, see <a href="CellEdit.htm#OnEditErrors">OnEditErrors</a> API event.
+
+<!-- OnAfterValueChanged -->
+<a name="OnAfterValueChanged"></a>
+<div class="API">
+   <u><i>upd <b>6.0</b></i></u> <b>API event</b> <i>void</i>
+   <h4>OnAfterValueChanged</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>val</b>)</s>
+</div>
+Called after cell value is changed by user edit, only if the value was changed to another.<br />
+Called before the changed value is shown in the cell.<br />
+Use this event to run code after cell value is modified.
+
+<!-- CaseSensitiveValues -->
+<a name="CCaseSensitiveValues"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>CaseSensitiveValues</h4> <s>[1]</s>     
+</div>
+If strings are stored case sensitive.<br />
+If set to 0, the input value is always converted to lower case.
+
+<!-- StoreOriginalValues -->
+<a name="CfgStoreOriginalValues"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>StoreOriginalValues</h4> <s>[1]</s>     
+</div>
+If all the cell values are stored before they are changed. If the values are stored and the cell value is set back to the original value, the row is marked back as not <a href="#IChanged">Changed</a>.<br />
+Set it to 0 just to save memory, if you don't need this behavior.
+
+<!-- SaveValues -->
+<a name="CfgSaveValues"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SaveValues</h4> <s>[0]</s>     
+</div>
+If set to <b>1</b>, saves all changed cell values of all rows to cookies.<br /> 
+It can be used only for very small grids their changes are not uploaded to server. Usually for grids that controls something on client side.<br />
+Remember, cookies are limited to 4096 bytes for the whole page, so use this setting only for very small static tables or use <a href="Cookie.htm#CfgPersistentCfg">PersistentCfg</a>.<br />
+Use the smallest row ids and column names as possible (the amount of space is used: (name+1)+id+value+2 bytes per row).<br />
+Also use it only for number tables or restrict input strings length by edit mask.
+
+<!-- SetValue -->
+<a name="SetValue"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>SetValue</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>val</b>, <i>bool</i> <b>refresh</b> = 0)</s>
+</div>
+Sets the cell value.<br />  
+The <b>val</b> should be already type of the cell, the Date type must be set as count of milliseconds and Int and Float type should be set as JavaScript Number.<br />
+Set <b>refresh</b> to true to display changes in grid or call <a href="CellBasics.htm#RefreshCell">RefreshCell</a> method.<br />
+This method updates all things around the setting value like calculations, master / detail, CopyTo, id, AutoUpdate and so on.<br />
+It does <u>not</u> call <a href="#OnValueChanged">OnValueChanged</a> / <a href="#OnAfterValueChanged">OnAfterValueChanged</a> events.<br />
+For synchronized Gantt cells (like Start/End/Duration or Descendants/Ancestors) call <a href="GanttApi.htm#CheckGantt">CheckGantt</a> before SetValue to update also the other Gantt cells.
+
+<!-- SetString -->
+<a name="SetString"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>SetString</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>val</b>, <i>bool</i> <b>refresh</b> = 0)</s>
+</div>
+Sets cell values as string in data xml format, the format affects especially Date type.<br /> 
+Set <b>refresh</b> to true to display changes in grid or call <a href="CellBasics.htm#RefreshCell">RefreshCell</a> method.<br />
+This method converts the string to value and calls <a href="#SetValue">SetValue</a>.
+
+<!-- Action OnChange -->
+<a name="OnChange"></a>
+<div class="ACT">
+   <u></u> <b>&lt;XML event></b> <i>void</i>
+   <h4>OnChange</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>,<i>TRow</i> <b>Row</b>, <i>string</i> <b>Col</b>, <i>TEvent</i> <b>Event</b>)</s>
+</div>
+Called as &lt;Actions> or cell event when cell value is changed.<br />
+Attach the action or any JavaScript code to the cell to be run on cell value change, like <tt>&lt;I ... Col1OnChange='alert("changed!")' ... /></tt><br />
+The new value can be got by Get(Row,Col).<br />
+It is called from <a href="#SetValue">SetValue</a>.
+
+<!-- Action OnSame -->
+<a name="OnSame"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;XML event></b> <i>void</i>
+   <h4>OnSame</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>,<i>TRow</i> <b>Row</b>, <i>string</i> <b>Col</b>, <i>TEvent</i> <b>Event</b>)</s>
+</div>
+Called as &lt;Actions> or cell event when cell value is edited and accepted, but <u>not</u> changed.<br />
+Attach the action or any JavaScript code to the cell to be run on cell value change, like <tt>&lt;I ... Col1OnChange='alert("changed!")' ... /></tt><br />
+The value can be got by Get(Row,Col).<br />
+It is <u>not</u> called from <a href="#SetValue">SetValue</a>, it is called only when the value was edited or selected by a user.
+
+<!-----------------------------------------------------------------------  Changing more cell values ------------------------------------------------->
+<a name="Mass"></a>
+<h2>Mass cell change</h2>
+Changing values and attributes of more editable cells at once.<br />
+<br />
+
+<table>
+<tr><td>Name</td><td>Action</td><td>API</td><td>Description</td></tr>
+<tr><td colspan="4"><i>Actions affected by <b>EditAttrs</b> and <b>EditErrors</b> and calling OnEditAttrs, OnValueChanged, OnAfterValueChanged and OnEditErrors</i></td></tr>
+<tr><td>"<b>Clear</b>"</td><td><a href="#ActionsClearCell">ClearCell</a> + 23 more</td><td><a href="#ClearRange">ClearRange</a></td><td><a href="#Clear">Clear cell or cell range</a>. Usually by pressing del key</td></tr>
+<tr><td>"<b>Copy</b>"</td><td><a href="Focus.htm#ActionsCopyFocus">CopyFocus</a> + 2 more</td><td><a href="Focus.htm#CopyRange">CopyRange</a></td><td><a href="Focus.htm#Move">Copy focused cell range</a>. Usually by mouse dragging</td></tr>
+<tr><td>"<b>Move</b>"</td><td><a href="Focus.htm#ActionsMoveFocus">MoveFocus</a> + 2 more</td><td><a href="Focus.htm#CopyRange">CopyRange</a></td><td><a href="Focus.htm#Move">Move focused cell range</a>. Usually by mouse dragging ("Copy"+"Clear")</td></tr>
+<tr><td>"<b>Fill</b>"</td><td><a href="Focus.htm#ActionsFocusFillRowCol">FocusFillRowCol</a> +6 more</td><td><a href="Focus.htm#FillRange">FillRange</a></td><td><a href="Focus.htm#Fill">Auto fill focused or dragged cell range</a>. Usually by mouse dragging</td></tr>
+<tr><td>"<b>Paste</b>"</td><td><a href="CopyPaste.htm#ActionsPaste">Paste</a></td><td></td><td><a href="CopyPaste.htm#Paste">Paste cell focused or selected range from clipboard</a></td></tr>
+<tr><td colspan="4"><i>Actions affected by <b>EditAttrs</b> only</i></td></tr>
+<tr><td>"<b>CopyRow</b>"</td>
+   <td><a href="RowAdd.htm#ActionsCopyRow">CopyRow</a> + 7 more<br />
+   <a href="RowAdd.htm#ActionsCopyTree">CopyTree</a> + 7 more</td>
+   <td><a href="RowAdd.htm#CopyRow">CopyRow</a><br /><a href="RowAdd.htm#CopyRows">CopyRows</a></td>
+   <td>Copying the whole row(s)<br />
+   By default, if no EditAttrs are set, copies all row and cell attributes.<br />
+   If EditAttrs is set, copies only these cell attributes, no other row and cell attributes.<br />
+   </td></tr>
+<tr><td>"<b>CopyCol</b>"</td>
+   <td><a href="ColAdd.htm#ActionsCopyCol">CopyCol</a> + 5 more<br />
+   <a href="ColAdd.htm#ActionsColCopy">ColCopy</a> + 1 more</td>
+   <td><a href="ColAdd.htm#AddCol">AddCol</a><br /><a href="ColAdd.htm#AddCols">AddCols</a></td>
+   <td>Copying the whole column(s)<br />
+   By default, if no EditAttrs are set, copies values and editable formulas and all column attributes.<br />
+   If EditAttrs is set, copies these cell attributes and also all column attributes.<br />
+   </td></tr>
+<tr><td colspan="4"><i>Actions affected by <b>EditAttrsEmpty</b> only</i></td></tr>
+<tr><td>"<b>AddRow</b>"</td>
+   <td><a href="RowAdd.htm#ActionsAddRow">AddRow</a> + 7 more<br />
+   <a href="RowAdd.htm#ActionsCopyEmpty">CopyEmpty</a> + 7 more</td>
+   <td><a href="RowAdd.htm#AddRow">AddRow</a><br /><a href="RowAdd.htm#AddRows">AddRows</a></td>
+   <td>Adding new row(s) above or below focused row(s).<br />
+   By default, if no EditAttrsEmpty are set, adds the row empty with only default attributes.<br />
+   If EditAttrsEmpty is set, copies also these cell attributes from the originally focused row(s).<br />
+   </td></tr>
+<tr><td>"<b>AddCol</b>"</td>
+   <td><a href="ColAdd.htm#ActionsAddCol">AddCol</a> + 6 more</td>
+   <td><a href="ColAdd.htm#AddCol">AddCol</a><br /><a href="ColAdd.htm#AddCols">AddCols</a></td>
+   <td>Copying the whole column(s)<br />
+   By default, if no EditAttrs are set, copies values and editable formulas and all column attributes.<br />
+   If EditAttrs is set, copies these cell attributes and also all column attributes.<br />
+   </td></tr>
+
+<tr><td colspan="4"><i>Actions affected by <b>EditErrors</b> and calling OnEditErrors</i></td></tr>
+<tr><td>"<b>Formula</b>"</td><td></td><td></td><td>Calculate <a href="CellEditFormula.htm">editable formulas</a> in all cells</td></tr>
+<tr><td>"<b>Validate</b>"</td><td><a href="#ActionsValidate">Validate</a></td><td></td><td> Validating all cell values against cell restrictions<br /> (only if Cfg <a href="#CfgValidate">Validate</a> contains flag <b>Messages</b>)</td></tr>
+</table>
+<br />
+<i><b>Adding to end</b>, <b>moving</b>, <b>deleting</b>, <b>resizing</b>, <b>filtering</b>, <b>grouping</b> and <b>searching</b> the whole row(s) and column(s) are <u>not</u> taken as mass change and do <u>not</u> use <b>EditAttrs</b> and <b>EditErrors</b>.</i><br />
+
+
+<!-- EditAttrs -->
+<a name="CfgEditAttrs"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>EditAttrs</h4>
+   <s>[...]</s>
+</div>
+Comma separated list of cell attribute names that will be changed by mass edit action.<br />
+<i>This list must contain item "<b>Value</b>" to change the cell value, otherwise the cell value is not changed.</i><br />
+To affect editable formulas include item "<b>EFormula</b>".<br />
+Include any cell attribute like <b>Type</b> or <b>Format</b> to be set. It is not possible to set any Gantt attributes.<br />
+Default value is "Value,EFormula,Span,RowSpan" for all actions except row copy. For row copy are copied all attributes by default.<br />
+The EditAttrs can be set directly before every mass action call to have different behavior for every mass action, e.g.
+&lt;Actions OnDel="Grid.EditAttrs='Value',ClearValues" OnCtrlDel="Grid.EditAttrs='Value,EFormula',ClearValues'"/>
+
+<!-- EditAttrsValue -->
+<a name="CfgEditAttrsValue"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>EditAttrsValue</h4>
+   <s>[...]</s>
+</div>
+<a href="#CfgEditAttrs">EditAttrs</a> used for changing value only. <br />
+By default it contains "Value,EFormula" if listed in <a href="#CfgEditAttrs">EditAttrs</a>.<br />
+
+<!-- EditAttrsStyle -->
+<a name="CfgEditAttrsStyle"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>EditAttrsStyle</h4>
+   <s>[...]</s>
+</div>
+<a href="#CfgEditAttrs">EditAttrs</a> used for changing all cell attributes except value.<br />
+By default it contains all attributes listed in <a href="#CfgEditAttrs">EditAttrs</a> except Value and EFormula.<br />
+
+<!-- EditAttrsEmpty -->
+<a name="CfgEditAttrsEmpty"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>EditAttrsEmpty</h4>
+   <s>[ ]</s>
+</div>
+<a href="#CfgEditAttrs">EditAttrs</a> used for added empty rows and columns. <br />
+By default the rows and columns are added empty. 
+If set the EditAttrsEmpty, it copies these attributes from source focused rows or columns like the rows or columns are being copied.<br />
+It affects adding rows below or above the actual or focused row, copying empty row tree structure and adding columns left or right to actual or focused column.<br />
+It does <u>not</u> affect adding row and column to the grid end.<br />
+
+<!-- OnEditAttrs -->
+<a name="OnEditAttrs"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>type</i>
+   <h4>OnEditAttrs</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>value</b>, <i>type</i> <b>oldvalue</b>, <i>type[]</i> <b>attrvalues</b>, <i>string[]</i> <b>attrnames</b>, <i>object</i> <b>errors</b>)</s>
+</div>
+Called when the cell value and / or its attributes is changed by some mass edit action, see them in the <a href="#Mass">Mass cell change</a>.<br />
+<b>value</b> is value to be set to the cell (including EFormula), <b>oldvalue</b> is actual value in the cell (including EFormula).<br />
+<b>value</b> is null when clearing the cell.<br />
+Return new value to be set to the cell or the <b>value</b> or the <b>oldvalue</b> to not change the value.<br />
+<b>attrvalues</b> are values that will be set to cell attributes their names are in <b>attrnames</b>. 
+It is possible to modify both the values in <b>attrvalues</b> and in <b>attrnames</b>.<br />
+For <b>errors</b> see <a href="CellEdit.htm#OnEditErrors">OnEditErrors</a> API event.
+
+<!-- EditErrors -->
+<a name="CfgEditErrors"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>EditErrors</h4>
+   <s>[2]</s>
+</div>
+If the mass changes are checked against cell restrictions and errors messages are shown for every the mass change error.<br />
+<b>0</b> - no check &amp; error, <b>1</b> check restrictions, but don't show error message, <b>2</b> check &amp; show message.<br />
+
+<!-- OnEditErrors -->
+<a name="OnEditErrors"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>type</i>
+   <h4>OnEditErrors</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object</i> <b>errors</b>)</s>
+</div>
+Called after mass cell change in grid is done, to process the errors.<br />
+The <b>errors</b> object has set these properties:<br />
+<table>
+<tr><td><b>Action</b></td><td colspan="2">as the mass edit action:</td></tr>
+<tr><td></td><td>"<b>Clear</b>"</td><td> for clear cell values (action <a href="#ActionsClearValue">ClearValues</a>)</td></tr>
+<tr><td></td><td>"<b>Move</b>"</td><td> for move cell range (action <a href="Focus.htm#ActionsMoveFocus">MoveFocus</a>)</td></tr>
+<tr><td></td><td>"<b>Copy</b>"</td><td> for copy cell range (action <a href="Focus.htm#ActionsCopyFocus">CopyFocus</a>)</td></tr>
+<tr><td></td><td>"<b>Fill</b>"</td><td> for <a href="Focus.htm#Fill">auto filling</a> cell values</td></tr>
+<tr><td></td><td>"<b>Paste</b>"</td><td> for <a href="CopyPaste.htm#Paste">pasting</a> values from clipboard</td></tr>
+<tr><td></td><td>"<b>Formula</b>"</td><td> for <a href="CellEditFormula.htm">editable formula calculation</a></td></tr>
+<tr><td></td><td>"<b>Validate</b>"</td><td> for action <a href="#ActionsValidate">Validate</a> (only if Cfg <a href="#CfgValidate">Validate</a> contains flag <b>Messages</b>)</td></tr>
+
+<tr><td><b>Errors</b></td><td colspan="2"> as JavaScript array of arrays as [[message1,row1,col1],[message2,row2,col2],...] of cells where the value was not set due cell restriction.</td></tr>
+<tr><td><b>Changes</b></td><td colspan="2"> as JavaScript array of arrays as [[message1,row1,col1],[message2,row2,col2],...] of cells where the value was modified due cell restriction.</td></tr>
+</table>
+<br />
+
+The <b>errors</b> object can be also modified by API events <a href="#OnValueChanged">OnValueChanged</a>, 
+<a href="#OnEditAttrs">OnEditAttrs</a>, <a href="Focus.htm#OnMoveFocusValue">OnMoveFocusValue</a>, 
+<a href="Focus.htm#OnAutoFillValue">OnAutoFillValue</a>, <a href="CopyPaste.htm#OnPasteValue">OnPasteValue</a>,
+<a href="#OnResultMask">OnResultMask</a>, <a href="#OnValidate">OnValidate</a> and <a href="CellEditFormula.htm#OnFormula">OnFormula</a>.<br />
+<br />
+The function can provide its own action to handle the errors and return <b>true</b>.<br />
+Or it can modify the <b>error</b> properties and return <b>false</b> to process them by TreeGrid.<br />
+
+<!-- EditErrorsMessageMax -->
+<a name="CfgEditErrorsMessageMax"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>EditErrorsMessageMax</h4>
+   <s>[10]</s>
+</div>
+Maximal count of edit error messages to display in the grid message dialog.<br />
+
+<!-- EditErrorsMessageTime -->
+<a name="CfgEditErrorsMessageTime"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>EditErrorsMessageTime</h4>
+   <s>[1000]</s>
+</div>
+How long, in milliseconds, the Message in errors object (see in <a href="CellEdit.htm#OnEditErrors">OnEditErrors</a>) will be displayed. <b>0</b> means forever.<br />
+
+<!-- OnEmptyRow -->
+<a name="OnEmptyRow"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnEmptyRow</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>)</s>
+</div>
+Called to find out if the row is empty, if it does not contain any the <a href="#CfgEditAttrs">EditAttrs</a> attribute value.<br />
+Return true if the row is empty, false if it is not empty.<br />
+Called to find the last row for save, export, print in <a href="Paging.htm#CfgAutoPages">AutoPages</a> and the last row to remove for <a href="Paging.htm#CfgRemoveAutoPages">RemoveAutoPages</a>.<br />
+
+<!-- OnEmptyCol -->
+<a name="OnEmptyCol"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnEmptyCol</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Called to find out if the column is empty, if it does not contain any the <a href="#CfgEditAttrs">EditAttrs</a> attribute value.<br />
+Return true if the column is empty, false if it is not empty.<br />
+Called to find the last column for save, export, print in <a href="ColPaging.htm#CfgAutoColPages">AutoColPages</a> and the last column to remove for <a href="ColPaging.htm#CfgRemoveAutoColPages">RemoveAutoColPages</a>.<br />
+
+<!-- GetLastDataRow -->
+<a name="GetLastDataRow"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>TRow</i>
+   <h4>GetLastDataRow</h4> <s>( )</s>
+</div>
+Returns last not empty root row in the grid according to the <a href="#CfgEditAttrs">EditAttrs</a>.
+
+<!-- GetLastDataCol -->
+<a name="GetLastDataCol"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>string</i>
+   <h4>GetLastDataCol</h4> <s>( )</s>
+</div>
+Returns last not empty column in the grid according to the <a href="#CfgEditAttrs">EditAttrs</a>.
+
+<!-----------------------------------------------------------------------  Clearing cells  ------------------------------------------------->
+<a name="Clear"></a>
+<h2>Clearing cells</h2>
+
+<!-- Action ClearCell -->
+<a name="ActionsClearCell"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearCell <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears value and all other <a href="#CfgEditAttrs">EditAttrs</a> attributes in the focused or actual cell.<br />
+Sets the cell value to default value or to 0 in Int, Float and Date types (if CanEmpty is not set) or to empty string.<br />
+Sets all the attribute values to null, so the default values are used. Only RowSpan and Span sets to 1.<br />
+
+<!-- Action ClearValue -->
+<a name="ActionsClearValue"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearValue <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears value and EFormula in the focused or actual cell. Or clears the attributes listed in <a href="#CfgEditAttrsValue">EditAttrsValue</a>.<br />
+Sets the cell value to default value or to 0 in Int, Float and Date types (if CanEmpty is not set) or to empty string.<br />
+
+<!-- Action ClearStyle -->
+<a name="ActionsClearStyle"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearStyle <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all attributes except value and EFormula in the focused or actual cell. Or clears the attributes listed in <a href="#CfgEditAttrsStyle">EditAttrsStyle</a><br />
+Sets all the attribute values to null, so the default values are used. Only RowSpan and Span sets to 1.<br />
+
+<!-- Action ClearCells -->
+<a name="ActionsClearCells"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearCells <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all focused cells like <a href="#ActionsClearCell">ClearCell</a>. Version without ...F fails if the actual cell is not focused. <br />
+
+<!-- Action ClearValues -->
+<a name="ActionsClearValues"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearValues <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears values in all focused cells like <a href="#ActionsClearValue">ClearValue</a>. Version without ...F fails if the actual cell is not focused. <br />
+
+<!-- Action ClearStyles -->
+<a name="ActionsClearStyles"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearStyles <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears attributes in all focused cells like <a href="#ActionsClearStyle">ClearStyle</a>. Version without ...F fails if the actual cell is not focused. <br />
+
+<!-- Action ClearSelectedCells -->
+<a name="ActionsClearSelectedCells"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearSelectedCells <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all selected cells like <a href="#ActionsClearCell">ClearCell</a>. Version without ...F fails if the actual cell is not selected. <br />
+
+<!-- Action ClearSelectedValues -->
+<a name="ActionsClearSelectedValues"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearSelectedValues <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears values in all selected cells like <a href="#ActionsClearValue">ClearValue</a>. Version without ...F fails if the actual cell is not selected. <br />
+
+<!-- Action ClearSelectedStyles -->
+<a name="ActionsClearSelectedStyles"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearSelectedStyles <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears attributes in all selected cells like <a href="#ActionsClearStyle">ClearStyle</a>. Version without ...F fails if the actual cell is not selected. <br />
+
+<!-- Action ClearRow -->
+<a name="ActionsClearRow"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearRow <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all cells in actual or focused row like <a href="#ActionsClearCell">ClearCell</a>.<br />
+
+<!-- Action ClearRowValues -->
+<a name="ActionsClearRowValues"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearRowValues <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears values in all cells in actual or focused row like <a href="#ActionsClearValue">ClearValue</a>.<br />
+
+<!-- Action ClearRowStyles -->
+<a name="ActionsClearRowStyles"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearRowStyles <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears attributes in all cells in actual or focused row like <a href="#ActionsClearStyle">ClearStyle</a>.<br />
+
+<!-- Action ClearSelectedRows -->
+<a name="ActionsClearSelectedRows"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearSelectedRows <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all cells in all selected rows like <a href="#ActionsClearCell">ClearCell</a>. Version without ...F fails if the actual row is not selected. <br />
+
+<!-- Action ClearSelectedRowsValues -->
+<a name="ActionsClearSelectedRowsValues"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearSelectedRowsValues <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears values in all cells in all selected rows like <a href="#ActionsClearValue">ClearValue</a>. Version without ...F fails if the actual row is not selected. <br />
+
+<!-- Action ClearSelectedRowsStyles -->
+<a name="ActionsClearSelectedRowsStyles"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearSelectedRowsStyles <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears attributes in all cells in all selected rows like <a href="#ActionsClearStyle">ClearStyle</a>. Version without ...F fails if the actual row is not selected. <br />
+
+<!-- Action ClearCol -->
+<a name="ActionsClearCol"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearCol <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all cells in actual or focused column like <a href="#ActionsClearCell">ClearCell</a>.<br />
+
+<!-- Action ClearColValues -->
+<a name="ActionsClearColValues"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearColValues <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears values in all cells in actual or focused column like <a href="#ActionsClearValue">ClearValue</a>.<br />
+
+<!-- Action ClearColStyles -->
+<a name="ActionsClearColStyles"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearColStyles <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears attributes in all cells in actual or focused column like <a href="#ActionsClearStyle">ClearStyle</a>.<br />
+
+<!-- Action ClearSelectedCols -->
+<a name="ActionsClearSelectedCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearSelectedCols <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all cells in all selected columns like <a href="#ActionsClearCell">ClearCell</a>. Version without ...F fails if the actual column is not selected. <br />
+
+<!-- Action ClearSelectedColsValues -->
+<a name="ActionsClearSelectedColsValues"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearSelectedColsValues <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears values in all cells in all selected columns like <a href="#ActionsClearValue">ClearValue</a>. Version without ...F fails if the actual column is not selected. <br />
+
+<!-- Action ClearSelectedColStyles -->
+<a name="ActionsClearSelectedColStyles"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearSelectedColStyles <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears attributes in all cells in all selected columns like <a href="#ActionsClearStyle">ClearStyle</a>. Version without ...F fails if the actual column is not selected. <br />
+
+<!-- Action ClearAll -->
+<a name="ActionsClearAll"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearAll</h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all cells in grid like <a href="#ActionsClearCell">ClearCell</a>.<br />
+
+<!-- Action ClearAllValues -->
+<a name="ActionsClearAllValues"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearAllValues</h4>
+   <s>Not attached to any event</s>
+</div>
+Clears values in all cells in grid like <a href="#ActionsClearValue">ClearValue</a>.<br />
+
+<!-- Action ClearAllStyles -->
+<a name="ActionsClearAllStyles"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearAllStyles</h4>
+   <s>Not attached to any event</s>
+</div>
+Clears attributes in all cells in grid like <a href="#ActionsClearStyle">ClearStyle</a>.<br />
+
+<!-- ClearRange -->
+<a name="ClearRange"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ClearRange</h4>
+   <s>(<i>type[]</i> <b>range</b>)</s>
+</div>
+Clears value and all other <a href="#CfgEditAttrs">EditAttrs</a> attributes in all cells in the given <b>range</b> as [TRow row1, string col1, TRow row2, string col2].<br />
+Sets the cell values to default value or to 0 in Int, Float and Date types (if CanEmpty is not set) or to empty string.<br />
+Sets all the attribute values to null, so the default values are used. Only RowSpan and Span sets to 1.<br />
+
+<!-----------------------------------------------------------------------  Editing cells  ------------------------------------------------->
+<a name="Editing"></a>
+<h2>Editing cells</h2>
+
+<!-- InEditMode -->
+<a name="CfgInEditMode"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>InEditMode</h4> <s>[2]</s>     
+</div>
+If the edit mode is started on click, on double click or on character key press.<br />
+It presets actions <b>OnDblClickCell</b>, <b>OnKey</b> and <b>OnBackspace</b>. You can modify these actions by yourself to get more options.<br />
+It is tested also in <a href="Focus.htm#ActionsFocusEdit">FocusEdit</a> action attached to <b>OnClickCell</b> by default.<br />
+<i>The default actions settings corresponds to <tt>InEditMode='2'</tt>, but without modifications of the event actions.</i>
+<table>
+  <tr><td style="width:70px;"><b>0</b></td><td>the edit mode is run only when user clicks to already focused editable cell or double clicks some editable cell or presses Enter or F2.</td></tr>
+  <tr><td><b>1</b></td><td>the edit mode is run when user clicks to any cell or presses character key or Enter, F2 or Backspace.</td></tr>
+  <tr><td><b>2</b></td><td>the edit mode is run when user clicks to already focused editable cell or double clicks some editable cell or presses character key or Enter, F2 or Backspace.</td></tr>
+</table>
+
+<!-- EnterMode -->
+<a name="CfgEnterMode"></a>
+<div class="XML">
+   <u>new <b>6.0</b> chg <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>EnterMode</h4> <s>[0]</s>     
+</div>
+The Enter key behavior, if and how it moves edit cursor.<br />
+It presets actions <b>OnEnter</b> and <b>OnEnterEdit</b>. You can modify these actions by yourself to get more options.<br />
+<table>
+<tr><td style="width:70px;"><b>0</b></td><td>Standard mode, Enter accepts value and do nothing else, no modification to OnEnter and OnEnterEdit.</td><tr>
+<tr><td><b>1</b></td><td>Enter starts editing cell below, it sets <tt>&lt;Action <b>OnEnterEdit</b>='AcceptEdit AND TabDownEdit,1' <b>OnEnter</b>='TabDownEdit'/></tt> <i>(chg 12.0)</i></td></tr>
+<tr><td><b>2</b></td><td>Enter starts editing cell below and on the last row adds new row and moves to it, it sets <tt>&lt;Action <b>OnEnterEdit</b>='AcceptEdit AND GoDownEditAdd,1' <b>OnEnter</b>='GoDownEditAdd'/></tt></td></tr>
+<tr><td><b>3</b></td><td>Enter starts editing cell right, it sets <tt>&lt;Actions <b>OnEnterEdit</b>='AcceptEdit AND TabRightEdit,1' <b>OnEnter</b>='TabRightEdit'/></tt></td></tr>
+<tr><td><b>4</b></td><td>Enter starts editing cell right and on the last row and cell adds new row and move to it, it sets <tt>&lt;Actions <b>OnEnterEdit</b>='AcceptEdit AND TabRightEditAdd,1' <b>OnEnter</b>='TabRightEditAdd'/></tt></td></tr>
+</table>
+<br />
+
+<i>To support also other cell types than the &lt;input> ones, e.g. Enum type, don't define the EnterMode, but implement it by API event OnEndEdit like:</i><br />
+<tt>Grids.OnEndEdit = function(G,row,col,save,val){ if(save) setTimeout(function(){ if(row!=G.FRow||col!=G.FCol) return; G.ActionTabRightEdit(); if(G.GetType(G.FRow,G.FCol)=="Enum") G.StartEdit(); },10); }</tt>
+
+<!-- AcceptEnters -->
+<a name="CfgAcceptEnters"></a>
+<div class="XML">
+   <u><i>upd <b>11.0</b></i></u> <b style="margin-left:-30px;margin-right:30px;">&lt;Cfg>&lt;C>&lt;cell></b> <i>int</i>
+   <h4>AcceptEnters</h4> <s>[0]</s>     
+</div>
+How the Enter key will be handled in <b>Lines</b> type and optionally in other type cells. Bit array.<br />
+For <b>0</b> the Enter key accepts changes and finishes editing.<br />
+For <b>1</b> the Enter key inputs LF character (&amp;#x0A). To finish editing is possible by Ctrl / Alt / Shift + Enter or Tab or click outside the cell.<br />
+For <b>2</b> <i>(new 11.0)</i> the Ctrl / Alt / Shift + Enter key inputs LF character (&amp;#x0A). To finish editing is possible by Enter or Tab or click outside the cell.<br />
+For <b>3</b> <i>(new 11.0)</i> the Enter and Ctrl / Alt / Shift + Enter key inputs LF character (&amp;#x0A). To finish editing is possible by Tab or click outside the cell.<br />
+For <b>4</b>, <b>5</b>, <b>6</b>, <b>7</b> <i>(new 11.0)</i> is the same as 0, 1, 2, 3, but it is used also for other types than Lines. If the entered value contains LF, the cell Type is set to Lines.
+
+<!-- EditSelect -->
+<a name="CfgEditSelect"></a>
+<div class="XML">
+   <u>new <b>11.0</b> <i>upd <b>13.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>EditSelect</h4> <s>[7]</s>     
+</div>
+If the cell value will be selected on start editing. Bit array.<br />
+<b>0</b> - no; <b>1</b> - on mouse action; <b>2</b> - on key action; <b>3</b> - always. 
++ <b>4</b> (<i>new 13.0</i>) also if edited tab button (usually sheet name).<br />
+If the value is not selected, the input caret is placed on mouse position or in the value end.
+
+<!-- EditHtml -->
+<a name="CfgEditHtml"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>EditHtml</h4> <s>[0]</s>     
+</div>
+If and how the Html Type cell will be edited.<br />
+<b>0</b> - As Html and only if the cell has explicitly set <a href="#CCanEdit">CanEdit</a>='1'.<br />
+<b>1</b> - As Html always except if the <a href="#CCanEdit">CanEdit</a> attribute is set to '0'.<br />
+<b>2</b> - As Text always except if the <a href="#CCanEdit">CanEdit</a> attribute is set to '0'.<br />
+<b>3</b> - Like <b>2</b>, but it asks before saving the value if the original value contained some Html code.<br />
+
+<!-- CancelUnchanged -->
+<a name="CCancelUnchanged"></a>
+<div class="XML">
+   <u>new <b>6.7</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>CancelUnchanged</h4> <s>[0]</s>     
+</div>
+If set to <b>1</b>, it does <u>not</u> save the value, if the entered string was <u>not</u> changed by a user.<br />
+It is intended to be used when the value is changed just by entering end leaving edit mode in the cell due EditFormat or DefaultDate settings.
+
+<!-- EditMode -->
+<a name="EditMode"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>bool</i>
+   <h4>EditMode</h4>
+   <s><strong>read only</strong></s>
+</div>
+If focused cell is being edited now.<br /> 
+It is set if the &lt;input> or &lt;textarea> is shown in grid or the Enum list is expanded.<br />
+It is set also if grid is in preview mode (the &lt;input> or &lt;textarea> is shown as read only).
+
+<!-- EditServer -->
+<a name="CEditServer"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>EditServer</h4> <s></s>     
+</div>
+For dynamic loading cell settings and content for editing the value.<br />
+If set to <b>1</b>, TreeGrid downloads the cell settings from server side by &lt;treegrid> <a href="DataServerChanges.htm#Cell_Url">Cell_Url</a> settings before it starts cell editing.<br />
+After the edit finishes, all the cell settings (but only this cell settings) are restored to original values before the new value is accepted or rejected.<br />
+The server response should contain the &lt;Changes> with attributes to change, only the actual cell settings should be changed.<br />
+For example you can return for cell <tt>[row id='R1' col='Col1']</tt> such XML to change the type for editing:<br />
+<tt>&lt;Grid>&lt;Changes>&lt;I id='R1' Col1Type='Enum' Col1Enum='|One|Two|Three'/>&lt;/Changes>&lt;/Grid></tt><br />
+It will change cell type to Enum and download Enum list from server side and let a user to select the value from it.
+
+<!-- OnStartEdit -->
+<a name="OnStartEdit"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnStartEdit</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Called before started editing of textual cell (in &lt;input> or &lt;textarea>) or before Enum list is expanded.<br />
+Return true to suppress editing.
+
+<!-- OnEndEdit -->
+<a name="OnEndEdit"></a>
+<div class="API">
+   <u>chg <b>6.0</b> <i>upd <b>10.0</b></i></u> <b>API event</b> <i>type</i>
+   <h4>OnEndEdit</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>save</b>, <i>type</i> <b>val</b>, <i>string</i> <b>raw</b>)</s>
+</div>
+Called before editing is finished in textual cell (in &lt;input> or &lt;textarea>) or before Enum list is closed. It is <u>not</u> called after change in Bool, Radio or Select type.<br />
+The <b>save</b> is 1 if a user accepted entered value, 0 if canceled editing. The <b>val</b> is entered or chosen value if <b>save</b> = 1. For <b>save</b>=0 is <b>val</b> null.<br /> 
+Return true to continue editing, only if <b>save</b> is 1. For <b>save</b> = 0 the finish cannot be suppressed.<br />
+To change edited value you should rather use event <a href="#OnValueChanged">OnValueChanged</a>, except you want to convert <b>raw</b> value to <b>val</b>. Also see <a href="#OnAfterValueChanged">OnAfterValueChanged</a> event.<br />
+<i>(Since 8.1)</i> The <b>raw</b> value is exact not converted string entered by a user. For Enum type is always the same as <b>val</b>.<br />
+<i>(Since 10.0)</i> You can return new value to be used instead of <b>val</b>. The return value type must be string or number, should be the same as type of <b>val</b>.<br />
+Use for custom converting the <b>raw</b> string value to the cell value. Only if <b>save</b> is 1.<br />
+You can return original value by Get(row,col) to ignore the input and finish editing.
+
+<!-- OnCustomStartEdit -->
+<a name="OnCustomStartEdit"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>type</i>
+   <h4>OnCustomStartEdit</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>val</b>, <i>HTMLElement</i> <b>cell</b>, <i>int</i> <b>width</b>)</s>
+</div>
+Use this event to create and manage your own editing control.<br />
+Called before starting editing to display the custom editing control.<br />
+<b>val</b> is formatted string to be displayed in edit control, <b>cell</b> is cell object that should be used as parent of the custom editing control, <b>width</b> is inner width of the cell.<br />
+If displayed custom editing control, return any nonull value - this value will be passed to <a href="#OnCustomEndEdit">OnCustomEndEdit</a> event to let you to delete the custom edit control.<br />
+<br />
+
+<i>For example to use ExtJS basic TextField editing component use such framework:</i><br />
+<tt>Grids.OnCustomStartEdit = function(G,row,col,val,cell,width){ var I = new Ext.form.TextField({ value: val }); I.render(cell); I.focus(); I.selectText(); return I; }</tt><br />
+<tt>Grids.OnCustomEndEdit = function(G,row,col,save,I){ var val = I.getValue(); I.destroy(); return val; }</tt>
+
+<!-- OnCustomEndEdit -->
+<a name="OnCustomEndEdit"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>string</i>
+   <h4>OnCustomEndEdit</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>save</b>, <i>type</i> <b>custom</b>)</s>
+</div>
+Use this event to delete your own editing control and save its value.<br />
+Called to finish editing by custom edit control returned by <a href="#OnCustomStartEdit">OnCustomStartEdit</a>.<br />
+<b>save</b> is 1 when value will be changed (user accepted editing), otherwise it will be ignored. <b>custom</b> is the object returned by <a href="#OnCustomStartEdit">OnCustomStartEdit</a>.<br />
+Return new value to save or null to not save even if <b>save</b> parameter is 1.
+
+<!-- OnGetInputValue -->
+<a name="OnGetInputValue"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetInputValue</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>val</b>)</s>
+</div>
+Called to convert or update cell value to string for input.<br />
+Called before the value is set to &lt;input> or &lt;textarea> on start edit.<br />
+Return converted or original value <b>val</b>.
+
+<!-- OnSetInputValue -->
+<a name="OnSetInputValue"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>string</i>
+   <h4>OnSetInputValue</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>val</b>)</s>
+</div>
+Called to convert or update input string back to cell value.<br />
+Called before OnValueChanged, but only for cells edited by &lt;input> or &lt;textarea><br />
+Return converted or original value <b>val</b>.
+
+<!-- StartEdit -->
+<a name="StartEdit"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>StartEdit</h4>
+   <s>(<i>TRow</i> <b>row</b> = null, <i>string</i> <b>col</b> = null, <i>bool</i> <b>empty</b> = 0, <i>bool</i> <b>test</b> = 0)</s>
+</div>
+Starts editing in the focused cell. The focused cell can be set grid.<a href="Focus.htm#Focus">Focus</a> ( ) and read by grid.<a href="Focus.htm#FRow">FRow</a>, grid.<a href="Focus.htm#FCol">FCol</a><br />
+Starts editing only in textual cell by &lt;input> or &lt;textarea> or shows Enum list.<br />
+<b>row</b>, <b>col</b> (<i>new 11.0</i>) can be set to edit different cell than actually focused cell.<br />
+If <b>empty</b> (<i>new 11.0</i>) is set to 1, clears the input cell value on start.<br />
+Returns true for success and false if fails.<br />
+<i>Since 12.0</i> if set test, does <u>not</u> do anything, just checks the possibility.<br />
+
+<!-- EndEdit -->
+<a name="EndEdit"></a>
+<div class="API">
+   <u><i>upd <b>6.0</b></i></u> <b>API event</b> <i>int</i>
+   <h4>EndEdit</h4>
+   <s>(<i>bool</i> <b>save</b>)</s>
+</div>
+Finishes / cancels editing in the edited focused cell.<br /> 
+If <b>save</b> is true, saves changed value, if <b>save</b> is 0, discards changes and restores original value.<br /> 
+Returns <b>1</b> if value has changed, 0 if value has not changed, <b>-1</b> to continue editing (editing cannot be finished, only for <tt><b>save</b> = 1</tt>), <b>null</b> for error (not in edit mode). 
+
+<!-- GetStringEdit -->
+<a name="GetStringEdit"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>string</i>
+   <h4>GetStringEdit</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Returns cell value as string for editing. If the cell contains <a href="CellEditFormula.htm#CellEFormula">EFormula</a>, it returns the <a href="CellEditFormula.htm#CellEFormula">EFormula</a> starting by '='.<br /> 
+
+<!-- SetStringEdit -->
+<a name="SetStringEdit"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>void</i>
+   <h4>SetStringEdit</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>value</b>, <i>bool</i> <b>timeout</b> = 1)</s>
+</div>
+Sets the cell value like it was entered in cell editing, if the <b>value</b> starts by '=', it sets cell <a href="CellEditFormula.htm#CellEFormula">EFormula</a>.<br />
+It starts editing, puts the value to the cell and finishes editing. So by default it is called in asynchronously in setTimeout.<br />
+To call it synchronously set <b>timeout</b> = 0, in this case it must <b>not</b> be called from TreeGrid event handler, especially not from OnEndEdit.<br />
+
+<!-- Action StartEdit -->
+<a name="ActionsStartEdit"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>StartEdit</h4>
+   <s>Attached to many events</s>
+</div>
+Starts editing focused cell.<br /> 
+It fails if the cell cannot be edited or there is no focused cell or some cell is already being edited.<br />
+By default it is attached to events OnClickCell, OnClickEnum, OnDblClickCell, OnKey, OnBackSpace, OnEnter, OnF2, 
+OnTabEdit, OnShiftTabEdit, OnTabEnum, OnShiftTabEnum, OnUpEdit, OnDownEdit.<br />
+See also <a href="#CfgInEditMode"</a>InEditMode</a> settings.
+
+<!-- Action StartEditEmpty -->
+<a name="ActionsStartEditEmpty"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>StartEditEmpty</h4>
+   <s>Attached to events <b>OnKey</b> and <b>OnBackspace</b></s>
+</div>
+Starts editing focused cell.<br /> 
+The same as <a href="#ActionsStartEdit">StartEdit</a>, but the cell value is always empty on start editing.
+
+<!-- Action StartEditCell -->
+<a name="ActionsStartEditCell"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>StartEditCell</h4>
+   <s>Not attached to any event</s>
+</div>
+Starts editing actual cell under mouse cursor.<br /> 
+It does <u>not</u> move the focus cursor, so the cell is edited outside the focus cursor.<br />
+It fails if the cell cannot be edited or there is no cell under mouse cursor or some cell is already being edited.
+
+<!-- Action StartEditCellEmpty -->
+<a name="ActionsStartEditCellEmpty"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>StartEditCellEmpty</h4>
+   <s>Not attached to any event</s>
+</div>
+Starts editing actual cell under mouse cursor.<br /> 
+The same as <a href="#ActionsStartEditCell">StartEditCell</a>, but the cell value is always empty on start editing.
+
+<!-- Action StartEditCellAccept -->
+<a name="ActionsStartEditCellAccept"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>StartEditCellAccept</h4>
+   <s>Attached to <b>OnClick</b> event to Toolbar cell <b>Size</b></s>
+</div>
+Starts editing actual cell under mouse cursor.<br />
+Finishes previous editing. If edited the same cell, does not start editing again.
+<br /> 
+
+<!-- Action StartEditCellEmptyAccept -->
+<a name="ActionsStartEditCellEmptyAccept"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>StartEditCellEmptyAccept</h4>
+   <s>Not attached to any event</s>
+</div>
+Starts editing actual cell under mouse cursor.<br /> 
+The same as <a href="#ActionsStartEditCellAccept">StartEditCellAccept</a>, but the cell value is always empty on start editing.
+<br /> 
+
+<!-- Action AcceptEdit -->
+<a name="ActionsAcceptEdit"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>AcceptEdit</h4>
+   <s>Attached to events <b>OnEnterEdit</b>, <b>OnCtrlEnterEdit</b>, <b>OnAltEnterEdit</b></s> 
+</div>
+Ends editing, saves changed value, returns true when editing was finished, even if value was not saved.<br />
+Changes are automatically accepted also by any change of focus by navigation actions - if you want to discard changes, call CancelEdit first.<br />
+It fails if the grid is not in edit mode or editing was not finished.
+
+<!-- Action CancelEdit -->
+<a name="ActionsCancelEdit"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>CancelEdit</h4>
+   <s>Attached to event <b>OnEscEdit</b></s> 
+</div>
+Cancels editing, discards changes, returns true when editing was finished.<br />
+It fails if the grid is not in edit mode or editing was not finished.
+
+<!-----------------------------------------------------------------------  Controlling INPUT tag by JavaScript  ------------------------------------------------->
+<a name="Input"></a>
+<h2>Controlling INPUT tag by JavaScript</h2>
+
+<!-- Edit -->
+<a name="CEdit"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Edit</h4> <s></s>     
+</div>
+JSON settings for inline editing. It contains JSON definition of <b>TEdit</b> object.
+
+<!-- OnStartEdit -->
+<a name="TEditOnStartEdit"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b>TEdit event</b> <i>void</i>
+   <h4>OnStartEdit</h4>
+   <s>( )</s>
+</div>
+Called when the TEdit object is created.<br />
+The TEdit object is accessible by <b>this</b>, the &lt;input> tag by <b>this.Tag</b>.<br />
+The grid is accessible by <b>this.Grid</b>, the actual cell by <b>this.Grid.Row</b> and <b>this.Grid.Col</b>.<br />
+Example: <tt>&lt;C Name="A" Edit=" { OnStartEdit: function() { this.Tag.className='MyInput'; } } "/></tt>
+
+<!-- OnChange -->
+<a name="TEditOnChange"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b>TEdit event</b> <i>void</i>
+   <h4>OnChange</h4>
+   <s>(<i>string</i> <b>Value</b>, <i>string</i> <b>Old</b>)</s>
+</div>
+Called after every change done while editing. Called for every key up or suggest select.<br />
+The <b>Value</b> is already shown in the input. <b>Old</b> is old value before change.<br />
+The TEdit object is accessible by <b>this</b>, the &lt;input> tag by <b>this.Tag</b>.<br />
+The grid is accessible by <b>this.Grid</b>, the actual cell by <b>this.Grid.Row</b> and <b>this.Grid.Col</b>.<br />
+Example: <tt>&lt;C Name="A" Edit=" { OnChange: function(V) { alert('Value '+V+' in column '+this.Grid.FCol); this.Tag.focus(); } } "/></tt>
+
+<!-- OnKeyDown -->
+<a name="TEditOnKeyDown"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b>TEdit event</b> <i>void</i>
+   <h4>OnKeyDown</h4>
+   <s>(<i>string</i> <b>key</b>, <i>Event</i> <b>event</b>, <i>bool</i> <b>handled</b>)</s>
+</div>
+Called after holding key down while editing.<br />
+It is called after functional keys like enter or esc are processed.<br />
+<b>key</b> is keyCode / charCode, <b>event</b> is standard JavaScript MouseEvent.<br />
+<b>handled</b> is true, if the event will be cancelled and the key will not be used in the input.<br />
+The TEdit object is accessible by <b>this</b>, the &lt;input> tag by <b>this.Tag</b>.<br />
+The grid is accessible by <b>this.Grid</b>, the actual cell by <b>this.Grid.Row</b> and <b>this.Grid.Col</b>.<br />
+Example: <tt>&lt;C Name="A" Edit=" { OnKeyDown: function(key,event) { if(key==65) CancelEvent(event); } } "/></tt> (restricts entering 'a' key)
+
+<!-----------------------------------------------------------------------  Input validation and restrictions  ------------------------------------------------->
+<a name="Validation"></a>
+<h2>Input validation and restrictions</h2>
+
+Editing masks can be used for any column type.<br />
+For column types <a href="TypeNumber.htm">Int</a>, <a href="TypeNumber.htm">Float</a> and <a href="TypeDate.htm">Date</a> are predefined default editing masks. These masks can be also changed using following attributes.
+
+<!-- Size -->
+<a name="CSize"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>Size</h4> <s></s>     
+</div>
+Maximal count of characters permitted to enter in &lt;input> tag, not used for &lt;textarea> (Lines type). For textarea implement EditMask or ResultMask.<br />
+It sets &lt;input maxLength/> attribute.
+
+<!-- EditMask -->
+<a name="CEditMask"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EditMask</h4> <s></s>     
+</div>
+Mask for editing. It can be any regular expression (JavaScript <b>RegExp</b> string).<br /> 
+This is mask is checked during editing. If a user presses a key, the resulted text is checked with the mask. If the new text does not pass the mask, the cell blinks and the previous text is restored.<br />
+The mask is checked by JavaScript <tt>text.search(EditMask)>=0</tt>.<br />
+Examples of editing masks: without spaces: <tt>"^\S*$"</tt>, only digits: <tt>"^\d*$"</tt>, only alphanum chars: <tt>"^\w*$"</tt>, max 10 digits: <tt>"^\d{0,10}$"</tt><br />
+<i>Remember, some validation should be done rather by <a href="#CResultMask">ResultMask</a>  to not complicate editing - you should for example permit empty string in EditMask even if the input is required - it can be rejected by <a href="#CResultMask">ResultMask</a>. Or structure validations like URL, email or telephone number should be fully tested by <a href="#CResultMask">ResultMask</a> and by <b>EditMask</b> just test only applicable characters.</i><br />
+<br />
+
+By EditMask you can also define some exact text structure and let user to change only some parts of it.<br />
+For example <tt>EditMask="^Src:.*\r?\nw\:\d{0,3},h\:\d{0,3};\sx\:\d{0,4},y\:\d{0,4}$"</tt><br /> 
+displays (in textarea, always on two rows):<br /> 
+<tt>Src:[text]<br />
+w:[int],h:[int]; x:[int],y:[int]</tt><br />
+where [...] are the only editable sections, <i>[text]</i> can contain any characters, <i>[int]</i> can contain only digits, max 3 or 4.<br />
+<br />
+<i>Remember, default cell value must always pass the EditMask, otherwise a user will not be possible to edit it.</i>
+
+<!-- MaskColor -->
+<a name="CMaskColor"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>MaskColor</h4> <s>['red']</s>     
+</div>
+The edit field blinks by this color, when user tried to write character conflicting with <a href="#CEditMask">EditMask</a>.<br />
+It can be color name or any other CSS color setting.
+
+<!-- Silent -->
+<a name="CfgSilent"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Silent</h4> <s>[1]</s>     
+</div>
+If set to 0, the grid beeps on error.<br />
+It is not supported on all browsers and also on some browsers it can be required a plugin to download.
+
+<!-- AcceptNaN -->
+<a name="CAcceptNaN"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>AcceptNaN</h4> <s>[1]</s>     
+</div>
+If the Int, Float or Date cell accepts entering incorrect value that cannot be converted to number or date.<br />
+What will be done if a user entered incorrect value: <br />
+<b>0</b> - continue editing, <b>1</b> - alert error and continue editing, <br />
+<b>2</b> - reject value and finish editing, <b>3</b> - reject value, finish editing and alert error,<br />
+<b>4</b> - accept value and change it to <a href="CAcceptNaNValue">AcceptNaNValue</a>, <b>5</b> - like 4 and alert error,<br />
+<b>6</b> - ask a user if to accept (and change) the value or continue editing,<br />
+<b>7</b> - ask a user if to accept (and change) the value or reject the change and finish editing,<br />
+<b>8</b> - ask a user if to reject the value and finish editing or continue editing.<br />
+
+<!-- AcceptNaNValue -->
+<a name="CAcceptNaNValue"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;C> &lt;cell></b> <i>type</i>
+   <h4>AcceptNaNValue</h4> <s>[0]</s>     
+</div>
+The value that will be used instead of NaN value for <a href="#CAcceptNaN">AcceptNaN</a> = 4, 5, 6, 7.<br />
+If set to "NaN" the JavaScript NaN will be used.<br />
+
+<!-- AcceptNaNText -->
+<a name="CAcceptNaNText"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>AcceptNaNText</h4> <s></s>     
+</div>
+The message text used for <a href="#CAcceptNaN">AcceptNaN</a> = 1, 3, 5, 6, 7.<br />
+
+<!-- AcceptNaNTime -->
+<a name="CAcceptNaNTime"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>AcceptNaNTime</h4> <s>[0]</s>     
+</div>
+<i>Cfg attribute!</i> How long, in ms, the <a href="#CAcceptNaN">AcceptNaN</a> = 1, 3, 5 message will be displayed. 0 means forever with OK button.<br />
+
+<!-- ResultMask -->
+<a name="CResultMask"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>ResultMask</h4> <s></s>     
+</div>
+Validation mask applied after finish editing or when validate cells on save. Syntax is the same as in <a href="#CEditMask">EditMask</a>.<br /> 
+When input value collides with ResultMask, the <a href="#CResultText">ResultText</a> alert message is displayed and editing continues.<br />
+Examples of result masks:<br />
+<table> 
+  <tr><td style="width:70px;"></td><td style="width:200px;">number range 0 - 255: </td><td>"^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$"</td></tr>
+  <tr><td></td><td>floating point number: </td><td>"^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$"</td></tr>
+  <tr><td></td><td>email address: </td><td>"^[\w\.\+%-]+@[A-Za-z0-9\.-]+\.[A-Za-z]{2,6}$"</td></tr>
+  <tr><td></td><td>credit card VISA:	</td><td>"^4[0-9]{12}(?:[0-9]{3})?$"</td></tr>
+  <tr><td></td><td>credit card MasterCard:	</td><td>"^5[1-5][0-9]{14}$"</td></tr>
+</table>
+
+<!-- ResultText -->
+<a name="CResultText"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>ResultText</h4> <s></s>     
+</div>
+Alert message displayed when value collides with <a href="#CResultMask">ResultMask</a>.<br />
+If not set (default), the alert message is not displayed and editing just continues without accepting the input.
+
+<!-- ResultMessage -->
+<a name="CResultMessage"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>ResultMessage</h4> <s></s>     
+</div>
+HTML message displayed as modal TreeGrid message when value collides with <a href="#CResultMask">ResultMask</a>.<br />
+If not set (default), the message is not displayed and editing just continues without accepting the input.<br />
+The message can be automatically hidden after <a href="#CResultMessageTime">ResultMessageTime</a> milliseconds.
+
+<!-- ResultMessageTime -->
+<a name="CResultMessageTime"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>ResultMessageTime</h4> <s></s>     
+</div>
+How long will be the <a href="#CResultMessage">ResultMessage</a> shown, in milliseconds.<br />
+If not set or set to 0, the message is shown forever with OK button to hide it.<br />
+If set to negative number, the message is shown for the (positive) time, but also with OK button to hide it.
+
+<!-- OnResultMask -->
+<a name="OnResultMask"></a>
+<div class="API">
+   <u><i>upd 12.0</i></u> <b>API event</b> <i>int</i>
+   <h4>OnResultMask</h4>
+   <s>(<i>TGrid</i> <b>grid</b>,<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>val</b>, <i>object</i> <b>error</b>)</s>
+</div>
+Called when entered value collides with <a href="#CResultMask">ResultMask</a>.<br />
+<table>
+  <tr><td style="width:70px;">Return </td><td><b>0</b> - alert ResultText message  and continue editing,</td></tr>
+  <tr><td></td><td><b>1</b> - don't alert the ResultText message and continue editing,</td></tr> 
+  <tr><td></td><td><b>2</b> - don't save value and finish edit,</td></tr> 
+  <tr><td></td><td><b>3</b> - save value and finish edit</td></tr>
+  <tr><td></td><td><b>4</b> - <i>(new 12.0)</i>save value, finish edit and set the cell Error attribute to ResultText</td></tr>
+</table>
+<b>error</b> object is set only when changing more cells at once, e.g. by pasting, see <a href="CellEdit.htm#OnEditErrors">OnEditErrors</a> API event.
+
+<!-- Validate -->
+<a name="CfgValidate"></a>
+<div class="XML">
+   <u>chg <b>6.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>Validate</h4> <s></s>     
+</div>
+If and how will be validated all result masks (<a href="#CResultMask">ResultMask</a>) before changes are uploaded to server on save. Comma separated list of keywords.<br />
+For custom validation you can use also <a href="#OnValidate">OnValidate</a> API event.<br />
+<table>
+  <tr><td style="width:120px;"><b>Added</b></td><td>Validates only added new rows, to ensure that all new added rows are filled correctly.</td></tr>
+  <tr><td><b>Changed</b></td><td><i>(Since 9.1)</i> Validates also changed rows, to ensure that all modified rows are filled correctly.</td></tr>
+  <tr><td><b>All</b></td><td>Validates all rows in grid, to ensure that all required inputs are filled correctly - it can be slow for large grids.</td></tr>
+  <tr><td><b>Confirm</b></td><td>On error displays confirm message and let a user to continue or not, otherwise it displays alert and cancels saving.</td></tr>
+  <tr><td><b>Focus</b></td><td>On error focuses the first invalid cell.</td></tr>
+  <tr><td><b>Edit</b></td><td>On error starts editing the first invalid cell.</td></tr>
+  <tr><td><b>Text</b></td><td>On error inserts <a href="#CResultText">ResultText</a> before ValidateText in alert or confirm message.</td></tr>
+  <tr><td><b>Messages</b></td><td><i>(new 12.0)</i> It shows all error messages in the dialog or confirm message. Ignores <b>Text</b> flag.<br />Processes the edit errors and shows them in the message, see <a href="CellEdit.htm#OnEditErrors">OnEditErrors</a> API event.</td></tr>    
+  <tr><td><b>NoError</b></td><td>Does not set <a href="#CellError">Error</a> attribute and color for invalid cells.</td></tr>    
+  <tr><td><b>Error</b></td><td><i>(new 12.0)</i> Takes as error all cells with <a href="#CellError">Error</a> attribute set.</td></tr>    
+</table>
+There must be set keyword <b>All</b> or <b>Added</b> to do the validation.<br />
+On error calls <a href="#OnValidateError">OnValidateError</a> event and displays alert or confirm message with <a href="#CfgValidateText">ValidateText</a> and colors invalid cells.<br />
+<i>Not used for AutoUpdate.</i>
+
+<!-- ValidateText -->
+<a name="CfgValidateText"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>ValidateText</h4> <s></s>     
+</div>
+Alert or confirm message displayed for error in validation on save.
+
+<!-- ValidateMessage -->
+<a name="CfgValidateMessage"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>ValidateMessage</h4> <s></s>     
+</div>
+Alert or confirm HTML message displayed by TreeGrid message for error in validation on save.<br />
+The message can be automatically hidden after <a href="#CfgValidateMessageTime">ValidateMessageTime</a> milliseconds.<br />
+If <a href="#CfgValidate">Validate</a> contains <b>Confirm</b> keyword, this message is shown in standard confirm dialog.
+
+<!-- ValidateMessageTime -->
+<a name="CfgValidateMessageTime"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ValidateMessageTime</h4> <s></s>     
+</div>
+How long will be the <a href="#CfgValidateMessage">ValidateMessage</a> shown, in milliseconds.<br />
+If not set or set to 0, the message is shown forever with OK button to hide it.<br />
+If set to negative number, the message is shown for the (positive) time, but also with OK button to hide it.
+
+<!-- Error -->
+<a name="CellError"></a>
+<div class="XML">
+   <u></u> <b>&lt;cell></b> <i>string</i>
+   <h4>Error</h4> <s></s>     
+</div>
+If set it means that the cell contains invalid value.<br /> 
+The cell is colored red and as tool tip is displayed the <b>Error</b> string.<br />
+The <b>Error</b> attribute is set by <a href="#CfgValidate">Validate</a> on save and it is cleared after cell value changed.<br />
+It can be returned also from server in on server validation. In this case the server should also clear it after successful upload in next response.
+
+<!-- OnValidate -->
+<a name="OnValidate"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnValidate</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>err</b>, <i>object</i> <b>errors</b>)</s>
+</div>
+It is called for every cell to validate its value on saving, only if set <a href="#CfgValidate">Validate</a> attribute.<br />
+The <b>err</b> is error result of ResultMask validation, if any, otherwise 0.<br />
+Return <b>0</b> ok, <b>1</b> error.<br />
+<i>(Since 12.0)</i>, for <b>errors</b> see <a href="CellEdit.htm#OnEditErrors">OnEditErrors</a> API event.<br />
+
+<!-- OnValidateError -->
+<a name="OnValidateError"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>int</i>
+   <h4>OnValidateError</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow[]</i> <b>row</b>, <i>string[]</i> <b>cols</b>)</s>
+</div>
+Called on validation error when saving. When set <a href="#CfgValidate">Validate</a> attribute. 
+<table>
+  <tr><td style="width:70px;">Return</td><td><b>0</b> - alert or confirm message and cancel or continue saving, depending on user confirmed the saving or not</td></tr>
+  <tr><td></td><td><b>1</b> - cancel saving, no alert shown</td></tr>  
+  <tr><td></td><td><b>2</b> - continue saving, no alert shown</td></tr>
+</table>  
+<b>rows</b> and <b>cols</b> are invalid cells that do not match their <a href="#CResultMask">ResultMask</a>.
+
+<!-- Action Validate -->
+<a name="ActionsValidate"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>Validate</h4>
+   <s>Attached to event <b>OnClickButtonSave</b></s>
+</div>
+Validates data according to settings in <a href="#CfgValidate">Validate</a>.
+
+<!-----------------------------------------------------------------------  Side checkbox  ------------------------------------------------->
+<a name="Check"></a>
+<h2>Side checkbox</h2>
+
+Checkbox displayed usually in tree in main column between tree and cell text.<br />
+It has two direct states <b>0</b> unchecked and <b>1</b> checked.<br />
+Parent row shows state of its children. It shows <b>1</b> checked if all children are checked, <b>0</b> unchecked if all children are unchecked and <b>2</b> unknown if there are both the checked and unchecked children.<br />
+On click to parent checkbox it changes all child values to <b>1</b> checked or <b>0</b> unchecked.<br />
+<br />
+
+If the cell is <u>not</u> editable, the icon is checked / unchecked by click to any part of the cell. To check / uncheck the icon still only by clicking to icon itself, set:<br />
+<tt>&lt;Actions OnClickSideCheck="" OnDblClickSideCheck=""/></tt> (to disable the original actions called for the whole cell click)<br />
+and to your column or cell add the actions like: <tt>&lt;C ... OnClickSide="Focus,SetChecked" OnDblClickSide="SetChecked" ... /></tt>
+<br /><br />
+To use the checkbox as simple on/off without checking its children set 
+<tt>
+&lt;Actions
+      OnClickSideCheck="Focus,Grid.SetAttribute(Row,Col,'Checked',!Is(Row,Col+'Checked'),1),1"
+      OnDblClickSideCheck=""
+      />
+</tt>.
+
+<!-- Icon -->
+<a name="CIcon"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Icon</h4> <s>["Check"]</s>     
+</div>
+To show left side checkbox set <a href="CellSideButton.htm#CIcon">Icon</a>="<b>Check</b>".<br />
+It can be set also as right side button by <a href="CellSideButton.htm#CButton">Button</a>="<b>Check</b>".
+
+<!-- Checked -->
+<a name="CellChecked"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;cell></b> <i>int</i>
+   <h4>Checked</h4> <s>[0]</s>     
+</div>
+Value for Icon="Check".<br />
+<b>0</b> - unchecked, <b>1</b> - checked, <b>2</b> - unknown<br />
+<br />
+
+To upload this value to server define new column <tt>&lt;C Name="XXXChecked" Visible="0" CanHide="0"/></tt>, where XXX is name of the column with the Icon="Check".
+
+<!-- Action SetChecked ...F -->
+<a name="ActionsSetChecked"></a>
+<div class="ACT">
+   <u>new <b>9.3</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetChecked ...F</h4>
+   <s>Attached to event <b>OnClickSideCheck</b></s>
+</div>
+Called on click to the Check icon, changes the Checked attribute / icon state to 0 / 1. It updates also all related parent and child Checked states.
+
+<!-- Action CheckIcon ...F -->
+<a name="ActionsCheckIcon"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CheckIcon ...F</h4>
+   <s>Not attached to any event</s>
+</div>
+Sets the focused or actual cell Checked attribute to 1, only if the cell has Icon="Check".  It updates also all related parent and child Checked states.<br />
+
+<!-- Action UncheckIcon ...F -->
+<a name="ActionsUncheckIcon"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>UncheckIcon ...F</h4>
+   <s>Not attached to any event</s>
+</div>
+Sets the focused or actual cell Checked attribute to 0, only if the cell has Icon="Check".  It updates also all related parent and child Checked states.<br />
+
+<!-- SetChecked -->
+<a name="SetChecked"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API method</b> <i>void</i>
+   <h4>SetChecked</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>value</b>)</s>
+</div>
+Changes the state of given Check icon / Checked attribute. It updates also all related parent and child Checked states.<br />
+If <b>row</b> is null, it changes all checkboxes in the column to the value. In this case value can be <b>0</b> or <b>1</b>.<br />
+<b>col</b> is the column with the Check icon / Checked attribute.<br />
+<b>value</b> can be <b>0</b> or <b>1</b> to set this value. If value is null, it changes the Checked state from <b>2</b> or <b>1</b> to <b>0</b> and from <b>0</b> to <b>1</b>. <b>value</b> should <b>not</b> be <b>2</b>.
+
+<!-- ResetChecked -->
+<a name="ResetChecked"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API method</b> <i>void</i>
+   <h4>ResetChecked</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Updates this checkbox value according to its children. Updates also the children in the deep levels.<br />
+Call it in OnLoaded like <tt>Grids.OnLoaded = function(G){ G.ResetChecked(); }</tt> if you want to specify only leaf rows' Checked value to '1' to calculate all the parent values.
+
+</div>
+</body>
+</html> 

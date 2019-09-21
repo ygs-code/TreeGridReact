@@ -1,0 +1,538 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Pivot tables</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Pivot tables</h1>
+<p>TreeGrid documentation</p>
+
+Grouping rows cells to two dimensional row and column tree.<br /><br />
+
+<i>How to create Pivot table.</i><br />
+1) First create the source (<b>master</b>) grid with layout and data. It should be plain grid without tree and any special functionality, to just show the data table.<br />
+  <div class="L2">
+  a) The master grid can be normally shown and updated after any change in the Pivot grid (see <a href="#CfgPivotUpdate">PivotUpdate</a>).<br />
+	b) Or the master grid can be hidden by <tt>&lt;bdo Hidden='1' ... ></tt> to show only the Pivot grid.<br />
+  </div>
+2) If you want to permit changes in the Pivot grid and upload them to server, define the Upload_Url and other saving attribute in the <b>master</b> grid.
+  <div class="L2">
+	a) Only the changes in master grid are uploaded to server, the Pivot grid is just a view, its changes are mirrored to the <b>master</b> grid.
+  </div>
+3) Define the Pivot grid only with partial layout, without Data_ source.<br />
+4) In the Pivot layout set the Pivot grid <a href="#CfgPivotMaster">PivotMaster</a> attribute to the master grid id.<br />
+5) Optionally in the Pivot layout<br /> 
+  <div class="L2">  
+  a) Set the <a href="#CfgPivotRows">PivotRows</a>, <a href="#CfgPivotCols">PivotCols</a> and <a href="#CfgPivotData">PivotData</a> attributes, if you want to create the Pivot on start from these columns in master grid<br />
+  b) Set the other Pivot attributes to control the Pivot grid creating<br />
+  c) Define custom columns and custom fixed and space rows to show some custom information, usually summaries<br />
+ 	d) Define default columns and rows to be used for the automatically created rows and columns<br />
+  </div>
+6) TreeGrid automatically creates the Pivot table data XML and reloads the Pivot grid<br />
+  <div class="L2">	
+  a) It creates column named MainCol to show the rows tree created from PivotRows, it sets it as the Pivot grid MainCol.<br />
+	b) It creates columns for PivotCols, one column for every different value combination in every row in all the PivotCols cells.
+    <div class="L2">    
+    The created column names are like <b>P</b>Value1_Value2_Value3_... where Value1 is value from the first column in PivotCols, ...<br />
+    All the Values are escaped by <a href="#PivotEscape">PivotEscape</a> method, similarly to standard escape function.<br />
+	  </div>
+  c) It creates columns for all the combinations of PivotData and PivotCols
+		<div class="L2">
+    The created column names are the parent name (from point b) plus "_" and one value from PivotData
+    </div>
+	d) It creates header rows with the column tree. The count of the header rows is the same as PivotCols length<br />
+	e) It creates row tree according to PivotRows (like normal grouping in TreeGrid according to the Group attribute)<br />
+    <div class="L2">
+    The row ids are like Value1$Value2$Value3$... where Value1 is value from the first column in PivotRows, ...<br />
+    </div>
+  </div>
+7) To dynamically change the pivot definition 
+	<div class="L2">
+  a) Set PivotRows, PivotCols and PivotData by API and call CreatePivot API method<br />
+	b) To permit users to choose the pivot source freely, define the source columns and pivot rows, columns and data as 4 DropCols cells.<br />
+	c) If you hide the master on pivot (<tt>PivotControlMaster='1'</tt>) you should define the control DropCols and button cells in both grids the same<br />
+  </div>
+8) Catching pivot creating events
+	<div class="L2">
+  a) Use standard events for loading like OnLoaded, OnReady, OnRenderFinish<br />
+	b) The pivot grid is loaded first time without data, with <tt>Grid.Source.Data.Data == null</tt>. In next calls the Data contains the pivot grid XML<br />
+	c) CreatePivot method calls its parameter func when the pivot grid is created and ready (not rendered yet)<br />
+  </div>
+
+<!-- PivotMaster -->
+<a name="CfgPivotMaster"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>PivotMaster</h4> <s></s>
+</div>
+id of the source grid from where it loads data rows.<br />
+The master grid can be also hidden (<tt>&lt;bdo Hidden='1' ... ></tt>) to show only the pivot grid.<br />
+PivotMaster is main attribute that defines the pivot relation.<br />
+
+<!-- PivotControlMaster -->
+<a name="CfgPivotControlMaster"></a>
+<div class="XML">
+   <u>new <b>9.2</b> <i>upd <b>9.3</b></i></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>PivotControlMaster</h4> <s>[0]</s>
+</div>
+If the pivot grid controls visibility of the master grid.<br />
+<table>
+  <tr><td style="width:50px;"><b>0</b></td><td>The visibility of pivot and master grids are independent</td></tr>
+  <tr><td></td><td>To not display the master grid set its <tt>&lt;bdo Hidden='1' ... ></tt></td></tr>
+  <tr><td></td><td>If the pivot settings are incomplete, the pivot grid is displayed empty.</td></tr>
+  <tr><td><b>1</b></td><td>The visibility of the pivot and master grids are controlled automatically to show only one grid at a time.</td></tr>
+  <tr><td></td><td>Define the main div tags of both grid in the same parent. Set the master grid's main tag as display:none.</td></tr>
+  <tr><td></td><td>Optionally define the Pivot row also in master grid to be used to set up the pivot grid.</td></tr>  
+  <tr><td></td><td>If the pivot settings are complete, the pivot grid is shown and the master grid is hidden.</td></tr>
+  <tr><td></td><td>If the pivot settings are incomplete, the pivot grid is hidden (its main tag has display:none) and the master grid is shown.</td></tr>
+  <tr><td></td><td><i>Since 9.3</i>, if permitted saving Pivot configuration to cookies, it saves the display state of both grids to cookies.</td></tr>  
+</Table>  
+
+<!-- PivotRows -->
+<a name="CfgPivotRows"></a>
+<div class="XML">
+   <u>new <b>9.2</b> <i>upd <b>9.3</b></i></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>PivotRows</h4> <s><i>Saved to cookies (since 9.3), avoid it by <tt><b>&lt;Cfg PivotLap='1'/></b></tt></i></s>
+</div>
+A comma separated list of column names from master grid that will be used for row groups.<br />
+Every the column name will create one row tree level.<br />
+
+<!-- PivotCols -->
+<a name="CfgPivotCols"></a>
+<div class="XML">
+   <u>new <b>9.2</b> <i>upd <b>9.3</b></i></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>PivotCols</h4> <s><i>Saved to cookies (since 9.3), avoid it by <tt><b>&lt;Cfg PivotLap='1'/></b></tt></i></s>
+</div>
+A comma separated list of column names from master grid that will be used for column groups.<br />
+Every the column name will create one column tree level.<br />
+
+<!-- PivotData -->
+<a name="CfgPivotData"></a>
+<div class="XML">
+   <u>new <b>9.2</b> <i>upd <b>9.3</b></i></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>PivotData</h4> <s><i>Saved to cookies (since 9.3), avoid it by <tt><b>&lt;Cfg PivotLap='1'/></b></tt></i></s>
+</div>
+A comma separated list of column names from master grid that will be used for data columns.<br />
+These columns usually contain numbers to be summed into parent column and row.<br />
+
+<!-- PivotExpanded -->
+<a name="CfgPivotExpanded"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;Cfg></b> <i>type</i>
+   <h4>PivotExpanded</h4> <s></s>
+</div>
+From which level the columns and rows will be expanded. It can be one number for both or two numbers comma separated as columns, rows.<br />
+For example "2,0" means the first two column levels will be expanded and all rows will be collapsed.<br />
+To expand all rows and columns set it to high number e.g. 100.<br />
+
+<!-- PivotMaxCols -->
+<a name="CfgPivotMaxCols"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PivotMaxCols</h4> <s>[100]</s>
+</div>
+Maximal count of visible columns in the pivot table.<br />
+If the created columns exceed this limit, appropriate levels are always collapsed by default and only one cell per header can be expanded on these levels.<br />
+It also sets FastColumns to 0, it slows down the expanding / collapsing, but speeds up the table rendering.<br />
+Maximal value is 500, it is because of hard limits for colSpan attribute value (1000) in the most browsers.<br />
+Higher value slows down the grid rendering.<br />
+
+<!-- PivotShowParent -->
+<a name="CfgPivotShowParent"></a>
+<div class="XML">
+   <u>new <b>9.2</b> <i>upd <b>9.3</b></i></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>PivotShowParent</h4> <s>[0] <i>Saved to cookies (since 9.3), avoid it by <tt><b>&lt;Cfg PivotLap='1'/></b></tt></i></s>
+</div>
+For <b>1</b> it shows all columns.<br /> 
+For <b>0</b> it hides expanded summary columns and shows the summary column only when it is collapsed.<br />
+
+<!-- PivotUpdate -->
+<a name="CfgPivotUpdate"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PivotUpdate</h4> <s>[3]</s>
+</div>
+If the second grid will be updated after the first grid is changed.<br />
+<b>0</b> - no change in master or pivot grid will be updated in the second grid<br />
+<b>1</b> - every change in pivot grid will be done in master grid. But no change in master grid will update the pivot grid.<br />
+<b>2</b> - every change in pivot grid will be done in master grid. Only changes in master grid that don't change pivot grid structure (do not require pivot recreate) are done in pivot grid.<br />
+<b>3</b> - Every change is mirrored in both grids. But change in master grid that requires recreating pivot grid must be confirmed by a user in confirm dialog.<br />
+<b>4</b> - Every change is mirrored in both grids. If required, the pivot grid is automatically recreated.<br />
+In pivot grid there cannot be changed summary cells.<br />
+
+<!-- PivotFilter -->
+<a name="CfgPivotFilter"></a>
+<div class="XML">
+   <u>new <b>9.2</b> <i>upd <b>9.3</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PivotFilter</h4> <s>[0] <i>Saved to cookies (since 9.3), avoid it by <tt><b>&lt;Cfg PivotLap='1'/></b></tt></i></s>
+</div>
+If and how will be created pivot values from filtered rows in master table.<br />
+<b>0</b> - The filtered rows will be ignored<br />
+<b>1</b> - The groups for filtered rows will be created, but the values from filtered rows will be ignored<br />
+<b>2</b> - The filtered rows will be used as normal rows<br />
+
+<!-- PivotFunc -->
+<a name="CfgPivotFunc"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>PivotFunc</h4> <s>["sumjoin"]</s>
+</div>
+Function used to summarize the values for pivot cell.<br />
+One pivot cell should contain all values from master grid rows data column, where the values in all columns PivotRows and PivotCols have appropriate (the same) value.<br />
+<table>
+<tr><td style="width:70px;"><b>sum</b></td><td>sums all the number values</td></tr>
+<tr><td><b>count</b></td><td>returns the count of the values</td></tr>
+<tr><td><b>join</b></td><td>all the values will be merged as strings, separated by ValueSeparator (semicolon by default)</td></tr>
+<tr><td><b>joinsum</b></td><td>all the values will be merged as strings, separated by ValueSeparator (semicolon by default), the same values will be counted and placed once as "count x value"</td></tr>
+<tr><td><b>sumjoin</b></td><td>sums all the values. If some value is neither number not empty string, it merges the values as <b>joinsum</b></td></tr>
+</table>
+The other actions with the values can be done in <a href="#OnPivotFunc">OnPivotFunc</a> API event.<br />
+
+<!-- PivotFuncXXX -->
+<a name="CfgPivotFuncXXX"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>PivotFuncXXX</h4> <s></s>
+</div>
+PivotFunc for particular PivotData column, the XXX is the pivot data column name.<br />
+For example <tt>&lt;Cfg PivotData= 'COUNT' PivotFuncCOUNT='count' PivotFuncNAMES='join'/></tt><br />
+If not set, <a href="#CfgPivotFunc">PivotFunc</a> is used.<br />
+
+<!-- OnPivotFunc -->
+<a name="OnPivotFunc"></a>
+<div class="API">
+   <u>new <b>9.2</b></u> <b>API event</b> <i>type</i>
+   <h4>OnPivotFunc</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>id</b>, <i>string</i> <b>col</b>, <i>TGrid</i> <b>master</b>, <i>TRow[ ]</i> <b>rows</b>, <i>type[ ]</i> <b>values</b>, <i>type</i> <b>result</b>)</s>
+</div>
+Called to calculate result of the pivot data cell.<br />
+<b>grid</b> is pivot grid, <b>master</b> is master grid.<br />
+<b>id</b> is the id of the pivot row that will contain or contains the value. It is full id that consists from the PivotRows value, separated by '$'.<br />
+<b>col</b> is the column in pivot grid that will contain or contains the value. It consist from the PivotCols values, separated by '$' and converted by PivotEscape<br />
+<b>rows</b> are all source rows in master grid from their values is created this cell.<br />
+<b>values</b> are all values from them the result can be calculated. Simply, the <b>values</b> are all values from master rows that have the same (actual) values in PivotRows and PivotCols columns.<br />
+<b>result</b> is actual result for the pivot cell calculated by actual PivotFunc.<br />
+
+<!-- PivotSumFormat -->
+<a name="CfgPivotSumFormat"></a>
+<div class="XML">
+   <u>new <b>13.1</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>PivotSumFormat</h4> <s></s>
+</div>
+<a href="TypeNumber.htm#CFormat">Format</a> for numbers resulted by <a href="#CfgPivotFunc">PivotFunc</a> sum / sumjoin.<br />
+
+<!-- Name -->
+<a name="CMainCol"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>string</i>
+   <h4>Name</h4> <s>= "<h4>MainCol</h4>"</s>
+</div>
+The column named "MainCol" is automatically created column that contains the row tree. It is set also as the grid MainCol (<tt>&lt;Cfg MainCol = "MainCol"/></tt>).<br />
+
+<!-- Name -->
+<a name="DName"></a>
+<div class="XML">
+   <u><i>upd <b>13.1</b></i></u> <b>&lt;C></b> <i>string</i>
+   <h4>Name</h4> <s></s>
+</div>
+You can control the created grouping rows and columns by the default rows and columns.<br />
+<i>The predefined default rows:</i><br />
+	<div class="L2">
+  "<b>PivotRow</b>" - defines all the leaf data rows in the Pivot grid (created from the last item in <a href="#CfgPivotRows">PivotRows</a>)<br />
+	"<b>PivotGroupRow</b>" - defines all the tree (group) rows in the Pivot grid (created from all items in <a href="#CfgPivotRows">PivotRows</a> except the last item)<br />
+	Individual defaults created from <a href="#CfgPivotRows">PivotRows</a> list. These defaults are used as default row, one per every level.<br />
+  </div>
+<i>The predefined default columns:</i><br />
+	<div class="L2">
+   "<b>Pivot</b>" - base column used to define all the automatically created columns except the <b>MainCol</b>. <i>Since 13.1</i> in the cell value there is replaced *Name* by the source column name.<br />
+	"<b>PivotData</b>" - default column used for leaf data columns (created from <a href="#CfgPivotData">PivotData</a>)<br />
+	"<b>PivotLast</b>" - default column used for the last group column (parent of the data columns, created from the last item in <a href="#CfgPivotCols">PivotCols</a>)<br />
+	"<b>PivotGroup</b>" - default column used for all the group columns except the last one (except the PivotLast, created from all the items in <a href="#CfgPivotCols">PivotCols</a> except the last item)<br />
+	Individual defaults from <a href="#CfgPivotCols">PivotCols</a> list. These defaults are used as default column, one per every level.<br />
+	Individual defaults from <a href="#CfgPivotData">PivotData</a> list. These defaults are used as default column, one per every data column level.<br />
+  </div><br />
+  
+The default columns usually define format or type of the cells in these columns.<br />
+The default rows usually define the cell formulas for these group or data rows.<br /><br />  
+
+The default rows can define more cells at once by using the default column names as the cell name.<br /> 
+For example <tt>&lt;D Name='PivotRow' PivotGroupFormula='sumc()'/></tt> sets all the cells that belong to the default column "PivotGroup".<br /><br />
+
+<i>To speed up the pivot creating it is strongly recommended to set default width for all columns (like <tt>&lt;DefCols>&lt;D Name='Pivot' Width='100'/>&lt;/DefCols></tt>), especially when many columns are created.</i><br />
+
+<!-- PivotValue -->
+<a name="CellPivotValue"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;cell></b> <i>string</i>
+   <h4>PivotValue</h4> <s></s>
+</div>
+Value displayed in pivot table instead of the source cell value.<br />
+When creating pivot table, there is used cell <a href="Group.htm#CellSortValue">SortValue</a> attribute to group the same values. The PivotValue is used only for display in cell.<br />
+
+<!-- OnGetPivotValue -->
+<a name="OnGetPivotValue"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetPivotValue</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>val</b>)</s>
+</div>
+Called to get value for display in pivot table, <i>val</i> is predefined value, returns <i>val</i> or new value.<br />
+The row, col is the cell from the value is read. For data cell it is real cell in the source grid, but for pivot columns and rows it is a temporary row created by grouping and main column.<br />
+When creating pivot table, there is called <a href="Group.htm#OnGetSortValue">OnGetSortValue</a> event to group the same values. The OnGetPivotValue is used only for display in cell.<br />
+
+<!-- Formula -->
+<a name="CFormula"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Formula</h4> <s></s>
+</div>
+By formulas you can calculate the group columns and rows in the Pivot grid. Use the formulas in the default rows or columns.<br /> 
+<b>Don't forget to set also <a href="CellFormula.htm#CfgCalcOrder">CalcOrder</a>, it is usually needed to set it in Pivot grid.</b><br />
+Use <a href="CellFormula.htm#sum">sum</a> function to sum row children or root rows.<br />
+Use <a href="#sumc">sumc</a> function to sum column children or root columns.<br />
+
+<!-- CalcOrder -->
+<a name="ICalcOrder"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>string[ ]</i>
+   <h4>CalcOrder</h4> <s></s>
+</div>
+Comma separated list of calculated cells to specify order in which the cells are calculated. See <a href="CellFormula.htm#ICalcOrder">CalcOrder</a> documentation.<br />
+When the CalcOrder is set in default row in Pivot table, it is possible to use the default column names (e.g. "PivotData") to reference all the columns that belong to the default column.<br />
+<i>The calculation order of "PivotGroup" is reversed (calculates first the last column from that group).</i><br />
+
+<!-- Type -->
+<a name="SpaceCellType"></a>
+<a name="SelectPivot"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>Type</h4> <s>Type="<h4>SelectPivot</h4>"</s>
+</div>
+Special combo box to select predefined pivots.<br />
+It presets these cell attribute: <tt>Type="Html" Button="Defaults" Formula=<i>PivotRows/Cols/Data</i> Defaults=<i>Updated Defaults</i> OnChange=<i>change PivotRows/Cols/Data</i></tt><br /> 
+Define Defaults attribute in this format:<br />
+<tt>Defaults="| R11,R12,...,R1X : C11,C12,...,C1X : D11,D12,...,D1X | R21,R22,...,R2X : C21,C22,...,C2X : D21,D22,...,D2X | R31,R32,...,R3X : C31,C32,...,C3X : D31,D32,...,D3X | ..... "</tt><br />
+where <b>R</b> are comma separated PivotRows, <b>C</b> comma separated PivotCols and <b>D</b> comma separated PivotData. Always column names, <u>not</u> captions.<br />
+The separator '|' can be replaced by any character that is not included in any value.<br />
+The comma and colon can be replaced by values defined in the cell <a href="#CellSeparators">Separators</a> attribute.<br />
+
+<!-- Separators -->
+<a name="CellSeparators"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;Space cell></b> <i>string[*]</i>
+   <h4>Separators</h4> <s>[...]</s>
+</div>
+First character separated array of five separators for <b>SelectPivot</b> type cell.<br />
+Like <tt>XXXSeparators="|A|B|C|D|E"</tt><br />
+<b>A</b> separates individual values in data in the Defaults array. Default is comma.<br />
+<b>B</b> separates groups (PivotRows, PivotCols and PivotData) in data in the Defaults array. Default is colon.<br />
+<b>C</b> separates individual values in display. Can contain HTML. Default is blue comma.<br />
+<b>D</b> separates PivotRows and PivotCols in display. Can contain HTML. Default is red plus.<br />
+<b>E</b> separates PivotCols and PivotData in display. Can contain HTML. Default is red equal.<br />
+Default value is <tt>"|,|:|&lt;b style='color:blue;'>,&lt;/b> | &lt;b style='color:red;'>+&lt;/b> | &lt;b style='color:red;'>=&lt;/b> "</tt><br />
+
+<!-- OnPivot -->
+<a name="OnPivot"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnPivot</h4> <s>(<i>TGrid</i> <b>Pivot</b>, <i>TGrid</i> <b>Master</b>, <i>string[ ]</i> <b>Rows</b>, <i>string[ ]</i> <b>Cols</b>, <i>string[ ]</i> <b>Data</b>)</s>
+</div>
+Called before the pivot grid data XML is created.<br />
+The Rows, Cols and Data are JavaScript arrays of parsed PivotRows, PivotCols and PivotData. The event can modify them, it will affect only the pivot creating, not the source values.<br />
+Return true to suppress creating the pivot grid.<br />
+
+<!-- OnPivotFinish -->
+<a name="OnPivotFinish"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnPivotFinish</h4> <s>(<i>TGrid</i> <b>Pivot</b>, <i>TGrid</i> <b>Master</b>, <i>string[ ]</i> <b>Rows</b>, <i>string[ ]</i> <b>Cols</b>, <i>string[ ]</i> <b>Data</b>)</s>
+</div>
+Called after the pivot grid data XML is created, but before the pivot grid is reloaded with the new XML.<br />
+The Rows, Cols and Data are JavaScript arrays of parsed PivotRows, PivotCols and PivotData. The event cannot modify them.<br />
+Return true to suppress reloading the pivot grid with new pivot data.<br />
+<i>To catch event after the pivot grid is created or rendered use standard loading events like OnLoaded, OnReady, OnRenderFinish.</i><br />
+
+<!-- CreatePivot -->
+<a name="CreatePivot"></a>
+<div class="API">
+   <u>new <b>9.2</b></u> <b>API method</b> <i>bool</i>
+   <h4>CreatePivot</h4> <s>(<i>function</i> <b>func</b>)</s>
+</div>
+Creates the pivot table according to the PivotRows, PivotCols and PivotData.<br />
+Returns false for error or incomplete settings.<br /> 
+Returns true for success. It calls Reload(), so it can return before the grid is created.<br />
+<b>func</b> is called after the grid is reloaded, in time of OnReady - before the grid is rendered.<br />
+  
+<!-- SwitchPivotGrid -->
+<a name="SwitchPivotGrid"></a>
+<div class="API">
+   <u>new <b>9.2</b></u> <b>API method</b> <i>void</i>
+   <h4>SwitchPivotGrid</h4> <s>(<i>bool</i> <b>pivot</b>)</s>
+</div>
+For <tt>pivot = 0</tt> it shows master grid, for <tt>pivot = 1</tt> it shows pivot grid.<br />
+Only when set <a href="#CfgPivotControlMaster">PivotControlMaster</a>.<br /> 
+
+<!-- PivotEscape -->
+<a name="PivotEscape"></a>
+<div class="API">
+   <u>new <b>9.2</b></u> <b>API method</b> <i>string</i>
+   <h4>PivotEscape</h4> <s>(<i>string</i> <b>Value</b>)</s>
+</div>
+Escapes any text value to be usable as TreeGrid column name, it escapes all the incorrect characters as _XX or _uXXXX (like escape function).<br />
+ 
+<!-- PivotUnescape -->
+<a name="PivotUnescape"></a>
+<div class="API">
+   <u>new <b>9.2</b></u> <b>API method</b> <i>string</i>
+   <h4>PivotUnescape</h4> <s>(<i>string</i> <b>Value</b>)</s>
+</div>
+Unescapes the values escaped by the <a href="#PivotEscape">PivotEscape</a>.<br />  
+
+<!-------------------------------------------------------------  Formulas  ------------------------------------------------------------->
+<a name="Formula"></a>
+<h2>Formulas</h2>
+Formulas used especially for the pivot tables, but they can be used also in other grid.<br />
+They are similar to the standard <a href="CellFormula.htm#AggFunc">aggregate functions</a>, but they aggregate columns instead of rows.<br />
+These functions are named the same as standard aggregate functions, with "c" suffix. <i>Please note, they have different parameters!</i><br />
+
+<p style="text-align:center;font-size:120%"><i><b>Basic aggregate functions</b></i></p>
+
+<!-- formula sumc -->
+<a name="sumc"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>float</i>
+   <h4>sumc</h4>
+   <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>headerid</b> = null, <i>string</i> <b>condition</b> = null)	</s>
+</div>
+Sums cell values in actual row. It sums values in child columns of the actual column (or the column col, if set).<br />
+The child columns are listed in <b>ExpandCols</b> attribute of the header row. You can specify the header row by <b>headerid</b> or it is used the first header where the cell col has <b>ExpandCols</b> attribute.<br />
+If col set to empty string (not null), it sums values in root columns => the columns in that the <b>headerid</b> header cell has set <b>ExpandCols</b>, but only the columns not listed in any <b>ExpandCols</b> attribute in that header. If the <b>headerid</b> is not set, it checks the first header.<br />
+<b>condition</b> is JavaScript code called as method of TCalc for every cell processed. It should return true or false if the cell should be added or not. It can read the variables Grid, Row and Col to get the cell.<br />
+
+<!-- formula counts -->
+<a name="countc"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>float</i>
+   <h4>counts</h4>
+   <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>headerid</b> = null, <i>string</i> <b>condition</b> = null)	</s>
+</div>
+Returns count of rows. See <a href="#sumc">sumc</a> function.<br />
+
+<!-- formula calcc -->
+<a name="calcc"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>type</i>
+   <h4>calcc</h4>
+   <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>headerid</b> = null, <i>string</i> <b>condition</b> = null)	</s>
+</div>
+Runs the formula for every row.<br /> 
+The <b>formula</b> is running in context of TCalc like standard formula.<br /> 
+The actual temporary result is stored in variable <b style="color:red;">Result</b>, formula should read and use it. Return value of formula is stored back to Result and is available for the next row formula.<br />
+<b>Result</b> is <b>0</b> on beginning.<br />
+The <b>Row</b> variable contains actual row, the <b>Col</b> variable the actually iterated column.<br />
+The <b>formula</b> can contain any JavaScript expression.<br />
+See <a href="#sumc">sumc</a> function.<br />
+
+<p style="text-align:center;font-size:120%"><i><b>Special aggregate functions</b></i></p>
+
+<!-- formula maxc -->
+<a name="maxc"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>float</i>
+   <h4>maxc</h4>
+   <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>headerid</b> = null, <i>string</i> <b>condition</b> = null)	</s>
+</div>
+Returns maximum value from the column. If there is no row to iterate, returns "". See <a href="#sumc">sumc</a> function.<br />
+  
+<!-- formula minc -->
+<a name="minc"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>float</i>
+   <h4>minc</h4>
+   <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>headerid</b> = null, <i>string</i> <b>condition</b> = null)	</s>
+</div>
+Returns minimum value from the column. If there is no row to iterate, returns "". See <a href="#sumc">sumc</a> function.<br />  
+
+<!-- formula sumrangec -->
+<a name="sumrangec"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>string</i>
+   <h4>sumrangec</h4>
+   <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>headerid</b> = null, <i>string</i> <b>condition</b> = null)	</s>
+</div>
+Sums all dates in column with <tt>Range=1 Type="Date"</tt>. It just creates new range from all intervals and updates it to not contain duplicate value cross intervals.<br />
+See <a href="#sumc">sumc</a> function.<br />
+
+<!-- formula sumsqc -->
+<a name="sumsqc"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>float</i>
+   <h4>sumsqc</h4>
+   <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>headerid</b> = null, <i>string</i> <b>condition</b> = null)	</s>
+</div>
+Sums all squares of values. See <a href="#sumc">sumc</a> function.<br />
+  
+<!-- formula countac -->
+<a name="countac"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>float</i>
+   <h4>countac</h4>
+   <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>headerid</b> = null, <i>string</i> <b>condition</b> = null)	</s>
+</div>
+Counts all non blank values in the column. See <a href="#sumc">sumc</a> function.<br />
+
+<!-- formula countblankc -->
+<a name="countblankc"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>float</i>
+   <h4>countblankc</h4>
+   <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>headerid</b> = null, <i>string</i> <b>condition</b> = null)	</s>
+</div>
+Counts all blank values in the column. See <a href="#sumc">sumc</a> function.<br />
+
+<!-- formula productc -->
+<a name="productc"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>float</i>
+   <h4>productc</h4>
+   <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>headerid</b> = null, <i>string</i> <b>condition</b> = null)	</s>
+</div>
+Multiplies all values in column. See <a href="#sumc">sumc</a> function.<br />
+
+<p style="text-align:center;font-size:120%"><i><b>String aggregate functions</b></i></p>
+  
+<!-- formula joinc -->
+<a name="joinc"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>string</i>
+   <h4>joinc</h4>
+   <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>headerid</b> = null, <i>string</i> <b>condition</b> = null)	</s>
+</div>
+Joins values in row. The values are separated by ValueSeparator (semicolon by default).<br />
+
+<!-- formula joinsumc -->
+<a name="joinsumc"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>string</i>
+   <h4>joinsumc</h4>
+   <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>headerid</b> = null, <i>string</i> <b>condition</b> = null)	</s>
+</div>
+Joins cell values in actual row. It joins values in child columns of the actual column (or the column col, if set).<br /> 
+The values are separated by ValueSeparator (semicolon by default).<br />
+The same values will be counted and placed once as "count x value". If the input values are already joined values, it splits them and recalculates the counts.<br />
+
+<!-- formula sumjoinc -->
+<a name="sumjoinc"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>type</i>
+   <h4>sumjoinc</h4>
+   <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>headerid</b> = null, <i>string</i> <b>condition</b> = null)	</s>
+</div>
+Sums values in actual as standard <a href="#sumc">sumc</a> function.<br />
+If any value is a not empty string, it joins the values as <a href="#joinsumc">joinsumc</a>.<br />
+If all the values are empty strings or no values are in the column, returns empty string instead of zero.<br />  
+  
+</div>
+</body>	
+</html>

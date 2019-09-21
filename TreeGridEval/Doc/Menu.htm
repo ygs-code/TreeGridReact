@@ -1,0 +1,2045 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Menus</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Menus</h1>
+<p>TreeGrid documentation</p>
+
+<b>TreeGrid library</b> contains sophisticated menu system.<br /> 
+The TreeGrid menus can contain <b style="color:blue;">sub levels</b>, <b style="color:blue;">collapsible sub levels</b>, <b style="color:blue;">sub menus</b>, <b style="color:blue;">columns</b>, <b style="color:blue;">checkboxes</b>, <b style="color:blue;">combo boxes</b>, <b style="color:blue;">edit inputs</b> and many other features.<br />
+The TreeGrid menus can be fully <b style="color:blue;">navigated</b> by <b style="color:blue;">mouse</b> and also by <b style="color:blue;">keys</b>.<br />
+The TreeGrid menus are also available in independent library without TreeGrid component itself.<br /><br />
+
+In TreeGrid the menus are used for <b>Enum</b> type (<a href="TypeEnum.htm#CEnumMenu">EnumMenu</a>), <b>Select</b> type (<a href="CellEdit.htm#CDefaults">Defaults</a>), <b>Defaults</b> list (<a href="CellEdit.htm#CDefaults">Defaults</a>), cell popup <b>Menu</b> (<a href="CellBasics.htm#CMenu">Menu</a>), global <b>configuration</b> menu and <b>columns</b> menu.<br /><br />
+
+The menus definition use standard JavaScript format <b>JSON</b>.<br />
+The simple menu can be defined also by just comma or first character list of strings as menu names.<br />
+<br />
+<i>Since 14.0</i> it can be used also to show <b>toolbar</b>. To show toolbar set usually <a href="#TDialogCloseClickOut">CloseClickOut</a>: 0, <a href="#TDialogPopup">Popup</a>: 0, <a href="#TDialogHeadClose">HeadClose</a>: 0. <br />
+To show horizontal toolbar set <a href="#TMenuHorz">Horz</a>: 1 or 2. For image buttons use <a href="#TMenuItemIcon">Icon</a> or <a href="#TMenuItemClass">Class</a> or <a href="#TMenuItemClassName">ClassName</a>.<br />
+
+
+<!---------------------------------------------------  The JSON menu definition  ------------------------------------------------------------>
+<a name="JSON"></a>
+<h2>The JSON menu definition</h2>
+
+<tt>
+<b style="color:red;">&#123;</b><br />
+Attr1 <b style="color:red;">:</b> "string value"<b style="color:red;">,</b><br />
+Attr2 <b style="color:red;">:</b> number_value<b style="color:red;">,</b><br />
+Attr3 <b style="color:red;">:</b> "next string"<b style="color:red;">,</b><br />
+...<br />
+<b>Items</b> <b style="color:red;">: [</b><br />
+	<div class="L2">
+  <b style="color:red;">&#123;</b> <b>Name</b> <b style="color:red;">:</b> "1. item name"<b style="color:red;">,</b> Attr1 <b style="color:red;">:</b> "string value"<b style="color:red;">,</b> Attr2 <b style="color:red;">:</b> "next string"<b style="color:red;">,</b> Attr3 <b style="color:red;">:</b> number_value ... }<b style="color:red;">,</b><br />
+	<b style="color:red;">&#123;</b> <b>Name</b> <b style="color:red;">:</b> "2. item name"<b style="color:red;">,</b> Attr1 <b style="color:red;">:</b> ... }<b style="color:red;">,</b><br />
+	<b style="color:red;">&#123;</b> <b>Name</b> <b style="color:red;">:</b> "3. item name"<b style="color:red;">,</b> ... }<b style="color:red;">,</b><br />
+	<b style="color:red;">&#123;</b> <b>Name</b> <b style="color:red;">:</b> "4. item name"<b style="color:red;">,</b> ... <b style="color:red;">,</b> <b>Items</b> <b style="color:red;">:</b> [<br />
+		<div class="L2">
+    <b style="color:red;">&#123;</b> <b>Name</b> <b style="color:red;">:</b> "1. sub item name"<b style="color:red;">,</b> Attr1 <b style="color:red;">:</b> ... }<b style="color:red;">,</b><br />
+    ...<br />
+    <b style="color:red;">] }</b>,<br />
+    </div>
+	...<br />
+	<b style="color:red;">]</b><br />
+  </div>
+<b style="color:red;">}</b>
+</tt><br /><br />
+
+<i>An example of clickable menu with <b>columns</b>, <b>submenus</b>, <b>collapsible</b> and <b>static levels</b>, <b>captions</b> and <b>separators</b>.</i><br /><br />
+
+<tt>
+&lt;I Col1Button="Defaults" Col1Defaults=""<br />
+&#123;<br /> 
+ShowCursor : 1,<br />
+<b style="color:red;">Items</b> : [<br />
+   <div class="L1">
+   &#123; Name:'Item1',Value:'Value1' },<br />
+   &#123; Name:'Item2',Value:'Value2' },<br />
+   &#123; <b style="color:red;">Columns</b>:2, Items : [<br />
+      <div class="L1">
+      &#123; Name:'ColItem1',Value:'ColValue1' },<br />
+      &#123; Name:'Menu3',<b style="color:red;">Menu</b>:1,<b>Items</b>:[<br />
+         <div class="L1">
+         &#123; Name:'SubItem1',Value:'SubValue1' },<br />
+         &#123; Name:'SubItem2',Value:'SubValue2' }<br />
+         ]},<br />
+         </div>
+      &#123; Name:'ColItem2',Value:'ColValue2' },<br />   
+      &#123; Name:'ColItem3',Value:'ColValue3' }<br />
+      ]},<br />
+      </div>
+   &#123; Name:'Item3',Value:'Value3' },<br />
+   &#123; <b style="color:red;">Name</b>:'-'},<br />
+   &#123; Name:'Menu1',<b style="color:red;">Menu</b>:1, <b>Items</b> : [<br />
+      <div class="L1">
+      &#123; Name:'SubItem1',Value:'SubValue1' },<br />
+      &#123; Name:'SubItem2',Value:'SubValue2' },<br />
+      &#123; Name:'Menu1-1',<b style="color:red;">Menu</b>:1, Items : [<br />
+         <div class="L1">
+         &#123; Name:'SubItem1',Value:'SubValue1' },<br />
+         &#123; Name:'SubItem2',Value:'SubValue2' },<br />
+         &#123; Name:'SubItem3',Value:'SubValue3' }<br />
+         ]},<br />
+         </div>
+      &#123; Name:'SubItem3',Value:'SubValue3' }<br />
+      ]},<br />
+      </div>
+   &#123; Name:'Menu2',<b style="color:red;">Menu</b>:1, <b>Items</b> : [<br />
+      <div class="L1">
+      &#123; Name:'SubItem1',Value:'SubValue1' },<br />
+      &#123; Name:'SubItem2',Value:'SubValue2' },<br />
+      &#123; Name:'SubItem3',Value:'SubValue3' }<br />
+      ]},<br />   
+      </div>
+   &#123; Name:'Item4',Value:'Value4' },<br />
+   &#123; Name:'Level1',<b style="color:red;">Level</b>:1, <b>Items</b> : [<br />
+      <div class="L1">
+      &#123; Name:'Level1Item1',Value:'Level1Value1' },<br />
+      &#123; Name:'Level1Item2',Value:'Level1Value2' },<br />
+      &#123; Name:'Level1Item3',Value:'Level1Value3' }<br />
+      </div>
+   ]},<br />
+   &#123; Name:'Caption1',<b style="color:red;">Caption</b>:1 },<br />   
+   &#123; Name:'Item5',Value:'Value5' },<br />
+   &#123; Name:'Level2',<b style="color:red;">Level</b>:1,<b>Expanded</b>:0, <b>Items</b> : [<br />
+      <div class="L1">
+      &#123; Name:'Level2Item1',Value:'Level2Value1' },<br />
+      &#123; Name:'Level2Item2',Value:'Level2Value2' },<br />
+      &#123; Name:'Level2Item3',Value:'Level2Value3' }<br />
+      ]},<br />
+      </div>
+   &#123; Name:'Level3',<b style="color:red;">Level</b>:1,<b>Expanded</b>:0, <b>Items</b> : [<br />
+      <div class="L1">
+      &#123; Name:'Level3Item1',Value:'Level3Value1' },<br />
+      &#123; Name:'Level3Item2',Value:'Level3Value2' },<br />
+      &#123; Name:'Level3Item3',Value:'Level3Value3' }<br />
+      ]}<br />
+      </div>
+   ]
+   </div>
+}<br />
+"/><br />
+</tt>
+
+<!---------------------------------------------------  Base settings  ------------------------------------------------------------>
+<a name="Base"></a>
+<h2>Base settings</h2>
+
+Base menu/dialog attributes.<br />
+The <b>TDialog</b> is precedestor of <b>TMenu</b> class and all its attributes can be used also in menu.<br />
+
+<!-----------------------  Base attributes  ------------------------>
+<a name="BaseAttributes"></a>
+<h3>Base attributes</h3>
+
+<!-- Items -->
+<a name="TMenuItems"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i style="width:80px;"><a href="#Item">TMenuItem</a>[ ]</i>
+   <h4 style="color:red;">Items</h4> <s>required attribute</s>
+</div>
+An array of individual item objects displayed in the menu.<br />
+The items are displayed in the order they are listed.<br />
+In simple menu it can be also set as comma or first character separated list of item names.<br />
+
+<!-- Default -->
+<a name="TMenuDefault"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i style="width:80px;"><a href="#Item">TMenuItem</a></i>
+   <h4>Default</h4> <s></s>
+</div>
+Default settings for all immediate items (in <a href="#TMenuItems">Items</a> array)<br />
+It sets all not explicitly defined attributes in all items in <a href="#TMenuItems">Items</a> array.<br /> 
+It affects only immediate items, the sub items can be preset by <a href="#TMenuItemDefault">Default</a> attribute of the parent <a href="#Item">TMenuItem</a> and so on.<br />
+
+<!-- SaveType -->
+<a name="TMenuItemSaveType"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>int</i>
+   <h4>SaveType</h4> <s>[0]</s>
+</div>
+What values and how are loaded and returned from menu for types Bool, Enum, Edit.<br />
+Have sense for <a href="CellBasics.htm#CRange">Range</a> cells only, when more values are returned.<br />
+In TreeGrid Range are usually used values <b>0</b> and <b>4</b>.<br /><br />
+
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Only <b>nonempty values</b> are returned.</td></tr>
+<tr><td></td><td>The <b>Bool</b> items are returned as "Name". The <b>Enum</b> and <b>Edit</b> items are returned as "Name:Value".</td></tr>
+<tr><td></td><td>Usually used to return checked items from menu if only Bool items are present.</td></tr>
+<tr><td>&nbsp;</td><td></td></tr>
+
+<tr><td><b>1</b></td><td>Only <b>changed values</b> are returned. When loading from data, the values are not nulled.</td></tr>
+<tr><td></td><td>The <b>Bool</b> items are returned as "Name:0" or "Name:1". The <b>Enum</b> and <b>Edit</b> items are returned as "Name:Value".</td></tr>
+<tr><td>&nbsp;</td><td></td></tr>
+
+<tr><td><b>2</b></td><td><b>All values</b> are returned.</td></tr>
+<tr><td></td><td>The <b>Bool</b> items are returned as "Name:0" or "Name:1". The <b>Enum</b> and <b>Edit</b> items are returned as "Name:Value".</td></tr>
+<tr><td>&nbsp;</td><td></td></tr>
+
+<tr><td><b>3</b></td><td><b>All values</b> are returned.</td></tr>
+<tr><td></td><td>The <b>Bool</b> items are returned as "0" or "1". The <b>Enum</b> and <b>Edit</b> items are returned as "Value" only.</td></tr>
+<tr><td>&nbsp;</td><td></td></tr>
+
+<tr><td><b>4</b></td><td><b>All values</b> are returned</td></tr>
+<tr><td></td><td>The <b>Bool</b> items are returned as "" or "Name". The <b>Enum</b> and <b>Edit</b> items are returned as "Value" only.</td></tr>
+</table>
+
+<!-- Buttons -->
+<a name="TMenuButtons"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>string[ ]</i>
+   <h4>Buttons</h4> <s>[ null / ["Clear","Ok"] ]</s>
+</div>
+Array of buttons displayed, possible values are "<b>Ok</b>", "<b>Cancel</b>", "<b>Clear</b>". Case insensitive. The order specifies the order of buttons shown.<br />
+By default is <b>empty</b> for normal menu and ["Clear","Ok"] for <a href="CellBasics.htm#CRange">Range</a> cells.<br />
+The buttons are useful when menu supports selecting more values (contains some <a href="#TMenuItemBool">Bool</a> / <a href="#TMenuItemEnum">Enum</a> / <a href="#TMenuItemEdit">Edit</a> items).<br />
+The button texts are defined in Text.xml, attributes MenuOk, MenuClear, MenuAll, MenuCancel.<br />
+The <b>Range</b> menu can be also accepted if set <a href="#TMenuEnterSwitches">EnterSwitches</a> : 1.<br />
+
+<!-- Header -->
+<a name="TDialogHeader"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>string</i>
+   <h4>Header</h4> <s></s>
+</div>
+For TreeGrid menu it is HTML displayed in on the cell, when the menu is shown.<br />
+For custom menu it is HTML displayed inside <b>place</b> set by <a href="#TPosition">TPosition</a> object.<br />
+
+<!-- Head -->
+<a name="TDialogHead"></a>
+<div class="XML">
+   <u><i>upd <b>14.0</b></i></u> <b>TDialog</b> <i>string</i>
+   <h4>Head</h4> <s></s>
+</div>
+Top HTML - menu caption, will not be scrolled.<br />
+<i>Since 14.0</i> if set to "<b>#</b>" it is not displayed. Setting to "" displays it as empty.<br />
+
+<!-- Foot -->
+<a name="TDialogFoot"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>string</i>
+   <h4>Foot</h4> <s></s>
+</div>
+Bottom HTML - menu footer, will not be scrolled.<br />
+It is ignored when shown <a href="#TMenuButtons">Buttons</a>.<br />
+
+<!-----------------------  Visual settings  ------------------------>
+<a name="VisualSettings"></a>
+<h3>Visual settings</h3>
+
+<!-- Horz -->
+<a name="TMenuHorz"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenu</b> <i>int</i>
+   <h4>Horz</h4> <s>[0]</s>
+</div>
+If set the menu horizontally instead of vertically. Useful for showing toolbars.<br />
+<b>0</b> - menu is shown vertically.<br />
+<b>1</b> - menu is shown horizontally. Head and Foot are shown above and below the menu items.<br />
+<b>2</b> - menu is shown horizontally. Head and Foot are shown left and right the menu items.<br />
+
+<!-- ShowCursor -->
+<a name="TMenuShowCursor"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>bool</i>
+   <h4>ShowCursor</h4> <s>[1]</s>
+</div>
+If left side cursor icons are shown<br />
+
+<!-- ShowTree -->
+<a name="TMenuShowTree"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>bool</i>
+   <h4>ShowTree</h4> <s>[1]</s>
+</div>
+If tree icons expand / collapse are shown<br />
+
+<!-- Indent -->
+<a name="TMenuIndent"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>int</i>
+   <h4>Indent</h4> <s>[12]</s>
+</div>
+Tree level indent from left in pixels<br />
+
+<!-- Shadow -->
+<a name="TDialogShadow"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>Shadow</h4> <s>[1]</s>
+</div>
+If it shows shadow under the dialog<br />
+
+<!-- ShadowHeader -->
+<a name="TDialogShadowHeader"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>ShadowHeader</h4> <s>[1]</s>
+</div>
+If it shows shadow under the header<br />
+
+<!-- HeadClose -->
+<a name="TDialogHeadClose"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>HeadClose</h4> <s></s>
+</div>
+Displays close button on the right in the <a href="#TDialogHead">Head</a>. Only if some <a href="#TDialogHead">Head</a> is set.<br />
+
+<!-- AppendHeader -->
+<a name="TDialogAppendHeader"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>AppendHeader</h4> <s>[1]</s>
+</div>
+Append dialog next to <a href="#TDialogHeader">Header</a> (if any) rather than to the <u><b>place</b></u> or to the TreeGrid cell.<br />
+
+<!-- AutoColumns -->
+<a name="TMenuAutoColumns"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenu</b> <i>int</i>
+   <h4>AutoColumns</h4> <s></s>
+</div>
+If set, splits the menu Items to given columns count. Use to simplify the list, to avoid splitting the Items manually.<br />
+
+<!-- ItemHeight -->
+<a name="TMenu_ItemHeight"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenu</b> <i>int</i>
+   <h4>ItemHeight</h4> <s></s>
+</div>
+Minimal height in pixels of all items in horizontal menu.
+
+<!-- ItemAlign -->
+<a name="TMenu_ItemAlign"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenu</b> <i>string</i>
+   <h4>ItemAlign</h4> <s></s>
+</div>
+Horizontal alignment of all items, it can be <b>Left</b>, <b>Right</b>, <b>Center</b> or <b>Justify</b>.<br />
+
+<!-----------------------  Key navigation  ------------------------>
+<a name="KeyNavigation"></a>
+<h3>Key navigation</h3>
+
+<!-- CanFocus -->
+<a name="TDialogCanFocus"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>CanFocus</h4> <s>[1/0]</s>
+</div>
+If the dialog gets key focus, 1 is default for menu, 0 for dialog.<br />
+
+<!-- EnterSwitches -->
+<a name="TMenuEnterSwitches"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>bool</i>
+   <h4>EnterSwitches</h4> <s>[1]</s>
+</div>
+0 - Enter always accepts results and closed the menu<br />
+1 - Enter switches on/off items that support it (Bool items, collapsible levels, popup menus, ...)<br />
+
+<!-- IgnoreSpace -->
+<a name="TMenuIgnoreSpace"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>bool</i>
+   <h4>IgnoreSpace</h4> <s>[0]</s>
+</div>
+If Space key is ignored, useful when menu is used as support for editbox<br />
+
+<!-- PageLength -->
+<a name="TMenuPageLength"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>int</i>
+   <h4>PageLength</h4> <s>[8]</s>
+</div>
+Count of items to move cursor by for PgDn / PgUp keys<br />
+
+<!-----------------------  Behavior  ------------------------>
+<a name="Behavior"></a>
+<h3>Behavior</h3>
+
+<!-- CollapseOther -->
+<a name="TMenuCollapseOther"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>bool</i>
+   <h4>CollapseOther</h4> <s>[1]</s>
+</div>
+If collapses all other expanded sections when is expanding another section on the same level<br />
+
+<!-- SubmenuTime -->
+<a name="TMenuSubmenuTime"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>int</i>
+   <h4>SubmenuTime</h4> <s>[200]</s>
+</div>
+When (in millisecond) will be shown submenu on mouse hover parent item (0 = never)<br />
+
+<!-- ExpandTime -->
+<a name="TMenuExpandTime"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>int</i>
+   <h4>ExpandTime</h4> <s>[200]</s>
+</div>
+When (in millisecond) will be shown sub section on mouse hover parent item (0 = never)<br />
+
+<!-- EnumTime -->
+<a name="TMenuEnumTime"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>int</i>
+   <h4>EnumTime</h4> <s>[200]</s>
+</div>
+When (in millisecond) will be expanded inline Enum item on mouse hover (0 = never)<br />
+
+<!-- ShowHint -->
+<a name="TMenuShowHint"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>bool</i>
+   <h4>ShowHint</h4> <s>[1]</s>
+</div>
+If shows overflowed item texts as hint<br />
+
+<!-- TipStart -->
+<a name="TMenuTipStart"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenu</b> <i>int</i>
+   <h4>TipStart</h4> <s>[500]</s>
+</div>
+The time after <a href="#TMenuItemTip">Tip</a> for menu item is displayed, in milliseconds.<br />
+
+<!-- TipEnd -->
+<a name="TMenuTipEnd"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenu</b> <i>int</i>
+   <h4>TipEnd</h4> <s>[0]</s>
+</div>
+The time after <a href="#TMenuItemTip">Tip</a> for menu item is automatically hidden, in milliseconds. 0 means never. Or should be higher than StartTip. <br />
+
+<!-- TipAlign -->
+<a name="TMenuTipAlign"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenu</b> <i>string</i>
+   <h4>TipAlign</h4> <s>[""]</s>
+</div>
+Position of the Tip. Values like <a href="#TPositionAlign">Align</a>.<br />
+If set empty (default), the Tip is shown under mouse cursor.<br />
+
+<!-- Modal -->
+<a name="TDialogModal"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>Modal</h4> <s>[0]</s>
+</div>
+If set to 1, disables all other controls at page when the dialog is shown.<br />
+
+<!-- CloseOut -->
+<a name="TDialogCloseOut"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>CloseOut</h4> <s>[0]</s>
+</div>
+If it is automatically closed when mouse moves outside the dialog and its header<br />
+
+<!-- CloseClickHeader -->
+<a name="TDialogCloseClickHeader"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>CloseClickHeader</h4> <s>[0]</s>
+</div>
+If it is automatically closed after click to <a href="#TDialogHeader">Header</a>.<br />
+For predefined header in TreeGrid menu like for Enum type is already set.<br />
+
+<!-----------------------  Size, scroll and position  ------------------------>
+<a name="SizeScroll"></a>
+<h3>Size, scroll and position</h3>
+
+<!-- NoScroll -->
+<a name="TDialogNoScroll"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>NoScroll</h4> <s>[0]</s>
+</div>
+If set to 1, never shows vertical scrollbar<br />
+
+<!-- MaxHeight -->
+<a name="TDialogMaxHeight"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>int</i>
+   <h4>MaxHeight</h4> <s>[null]</s>
+</div>
+Maximal height of the dialog in pixels (without header), for higher dialog will be displayed scrollbar.<br />
+
+<!-- MinHeight -->
+<a name="TDialogMinHeight"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>int</i>
+   <h4>MinHeight</h4> <s>[0 / null]</s>
+</div>
+Minimal height of the dialog in pixels (without header), so the dialog will be never shrunk below this limit with displayed scrollbars.<br />
+For higher dialog it will be displayed with another align to be displayed whole.<br />
+0 means always (rather change align than show scrollbars) (default for menu)<br />
+null means never (never change align) (default for dialog)<br />
+
+<!-- MaxWidth -->
+<a name="TDialogMaxWidth"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>int</i>
+   <h4>MaxWidth</h4> <s>[null]</s>
+</div>
+Maximal width of the dialog in pixels, for wider dialog the rest will be overflowed - hidden.<br />
+0 means the Width set in position (the cell width).<br />
+
+<!-- MinWidth -->
+<a name="TDialogMinWidth"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>int</i>
+   <h4>MinWidth</h4> <s>[null]</s>
+</div>
+Minimal width of the dialog in pixels<br />
+0 means the Width set in position (the cell width)<br />
+if the dialog cannot be displayed whole, its align is changed<br />
+
+<!-- MinEdge -->
+<a name="TDialogMinEdge"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>int</i>
+   <h4>MinEdge</h4> <s>[3]</s>
+</div>
+Minimal distance to window edge in pixels, for 0 can be dialog placed immediately next to the edge.<br />
+
+<!-- ResizeUpdate -->
+<a name="TDialogResizeUpdate"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>ResizeUpdate</h4> <s>[1]</s>
+</div>
+Automatically updates size when the <a href="#TMenuArea">Area</a> or body resizes.<br />
+
+<!-- ScrollUpdate -->
+<a name="TDialogScrollUpdate"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>ScrollUpdate</h4> <s>[1]</s>
+</div>
+Automatically updates size when body scrolls.<br />
+
+<!-- Area -->
+<a name="TMenuArea"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>object</i>
+   <h4>Area</h4> <s></s>
+</div>
+Into this area is dialog overflowed or moved. It means only in this area will be the dialog shown and cannot exceed it.<br />
+Affects setting of minimal and maximal extents, align change, resize, move and drag.<br />
+By default it is the whole browser window (not page body!)<br />
+It can be set as  <tt>&#123;X:0,Y:0,Width:0,Height:0}</tt> or <tt>[X,Y,Width,Height]</tt> or HTML tag id or the HTML tag itself.<br />
+
+<!-- Position -->
+<a name="TDialogPosition"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>TPosition</i>
+   <h4>Position</h4> <s></s>
+</div>
+Position and align of the menu. The position object has preset its <b><a href="#TPosition">place</a></b> to the cell the menu is shown for.<br />
+You can set especially <b><a href="#TPositionAlign">Position.Align</a></b> attribute to align the dialog to the cell differently.<br />
+
+<!---------------------------------------------------  Menu item  ------------------------------------------------------------>
+<a name="Item"></a>
+<h2>Menu item</h2>
+
+Attributes of every item in TMenu <a href="#TMenuItems">Items</a> array.<br />
+By default are all items clickable for normal menu or items <b>Bool</b> for <a href="CellBasics.htm#CRange">Range</a> cells. To explicitly define clickable menu item in <a href="CellBasics.htm#CRange">Range</a> cell set its Bool:0.<br />
+
+<!-----------------------  Base attributes  ------------------------>
+<a name="BaseItem"></a>
+<h3>Base attributes</h3>
+
+<!-- Name -->
+<a name="TMenuItemName"></a>
+<div class="XML">
+   <u><i>upd <b>14.0</b></i></u> <b>TMenuItem</b> <i>string</i>
+   <h4 style="color:red;">Name</h4> <s>required attribute</s>
+</div>
+Unique identification for the item.<br /> 
+Is also displayed if the <a href="#TMenuItemText">Text</a> is missing.<br />
+Is also returned for clickable item when its <a href="#TMenuItemValue">Value</a> is missing.<br />
+Is returned for <a href="#TMenuItemBool">Bool</a> type item in  when it has <tt>Value : 1</tt>.<br />
+If two items have the same name, to the second name is added an index. It does <u>not</u> apply in different levels or submenus.<br />
+<tt>Name : "-"</tt> displays inactive separator and ignores other settings.<br />
+<i>Since 14.0</i> Name starting and ending by "-" displays the item as <a href="#TMenuItemCaption">Caption</a>.<br />
+
+<!-- Text -->
+<a name="TMenuItemText"></a>
+<div class="XML">
+   <u><i>upd <b>14.0</b></i></u> <b>TMenuItem</b> <i>string</i>
+   <h4>Text</h4> <s></s>
+</div>
+HTML text displayed as menu item, if not set, used <a href="#TMenuItemName">Name</a> instead.<br />
+<i>Since 14.0</i> if set to "<b>#</b>" it is not displayed. Setting to "" displays it as empty.<br />
+
+<!-- VText -->
+<a name="TMenuItemVText"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenuItem</b> <i>string</i>
+   <h4>VText</h4> <s></s>
+</div>
+If defined, replaces item <a href="#TMenuItemText">Text</a> in vertical menu (<a href="#TMenuHorz">Horz</a> = <b>0</b>).
+
+<!-- HText -->
+<a name="TMenuItemHText"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenuItem</b> <i>string</i>
+   <h4>HText</h4> <s></s>
+</div>
+If defined, replaces item <a href="#TMenuItemText">Text</a> in horizontal menu (<a href="#TMenuHorz">Horz</a> = <b>1</b> / <b>2</b>).
+
+<!-- TextWidth -->
+<a name="TMenuItemTextWidth"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenuItem</b> <i>int</i>
+   <h4>TextWidth</h4> <s></s>
+</div>
+If set, sets the width of item Text.<br />
+
+<!-- Icon -->
+<a name="TMenuItemIcon"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>string</i>
+   <h4>Icon</h4> <s></s>
+</div>
+URL to item icon file displayed left side to item text.<br />
+
+<!-- IconWidth -->
+<a name="TMenuItemIconWidth"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>int</i>
+   <h4>IconWidth</h4> <s>[20]</s>
+</div>
+Width of the icon in pixels, must be specified to correctly display the icon.<br />
+
+<!-- LeftHtml -->
+<a name="TMenuItemLeftHtml"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>string</i>
+   <h4>LeftHtml</h4> <s></s>
+</div>
+HTML displayed left side to item text, right side to Icon.<br />
+
+<!-- LeftWidth -->
+<a name="TMenuItemLeftWidth"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>int</i>
+   <h4>LeftWidth</h4> <s>[20]</s>
+</div>
+Width of the LeftHtml in pixels, must be specified to correctly display the left html.<br />
+
+<!-- RightHtml -->
+<a name="TMenuItemRightHtml"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>string</i>
+   <h4>RightHtml</h4> <s></s>
+</div>
+HTML displayed right side to item text and value, left side to submenu menu icon.<br />
+
+<!-- RightWidth -->
+<a name="TMenuItemRightWidth"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>int</i>
+   <h4>RightWidth</h4> <s>[20]</s>
+</div>
+Width of the RightHtml in pixels, must be specified to correctly display the right html.<br />
+
+<!-- Class -->
+<a name="TMenuItemClass"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenuItem</b> <i>string</i>
+   <h4>Class</h4> <s></s>
+</div>
+The menu item gets the CSS class as Menu.<a href="#TDialogBase">Base</a>+MenuItem.<b>Class</b> and Menu.<a href="#TDialogClass">Class</a>+MenuItem.<b>Class</b>.<br />
+Basically XXMenu+Class, where XX is the Style prefix like TS for Standard style.<br />
+
+<!-- ClassName -->
+<a name="TMenuItemClassName"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenuItem</b> <i>string</i>
+   <h4>ClassName</h4> <s></s>
+</div>
+The menu item gets the CSS class with <a href="#TMenuItemName">Name</a> as Menu.<a href="#TDialogBase">Base</a>+MenuItem.<b>ClassName</b>+MenuItem.<a href="#TMenuItemName">Name</a> and Menu.<a href="#TDialogClass">Class</a>+MenuItem.<b>ClassName</b>+MenuItem.<a href="#TMenuItemName">Name</a>.<br />
+Basically XXMenu+ClassName+Name, where XX is the Style prefix like TS for Standard style.<br />
+
+<!-- ClassValue -->
+<a name="TMenuItemClassValue"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenuItem</b> <i>string</i>
+   <h4>ClassValue</h4> <s></s>
+</div>
+The menu item gets the CSS class with <a href="#TMenuItemValue">Value</a> as Menu.<a href="#TDialogBase">Base</a>+MenuItem.<b>ClassValue</b>+MenuItem.<a href="#TMenuItemValue">Value</a> and Menu.<a href="#TDialogClass">Class</a>+MenuItem.<b>ClassValue</b>+MenuItem.<a href="#TMenuItemValue">Value</a>.<br />
+Basically XXMenu+ClassValue+Value, where XX is the Style prefix like TS for Standard style.<br />
+For <a href="#TMenuItemEnum">Enum</a> type the menu items gets also the CSS class with enum value index from 0, as XXMenu+ClassValue+Index.<br />
+
+<!-- Tip -->
+<a name="TMenuItemTip"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenuItem</b> <i>string</i>
+   <h4>Tip</h4> <s></s>
+</div>
+Html shown as tooltip on mouse hover the item.<br />
+
+<!-- TipXXX -->
+<a name="TMenuItemTipXXX"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenuItem</b> <i>string</i>
+   <h4>TipXXX</h4> <s></s>
+</div>
+Tip shown only if the menu item has specific value <b>XXX</b>.<br />
+For <a href="#TMenuItemEnum">Enum</a> type the <b>XXX</b> can be also Enum value index from 0.<br />
+
+<!-- Height -->
+<a name="TMenuItemHeight"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>int</i>
+   <h4>Height</h4> <s></s>
+</div>
+Minimal height of the item in pixels. If not set, the item height is as high as its content. It is intended especially to set icon height.<br />
+
+<!-- Height -->
+<a name="TMenuItemAlign"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenuItem</b> <i>string</i>
+   <h4>Align</h4> <s></s>
+</div>
+Horizontal alignment of the item text. It can be <b>Left</b>, <b>Right</b>, <b>Center</b>, <b>Justify</b>.<br />
+
+<!-- Hidden -->
+<a name="TMenuItemHidden"></a>
+<div class="XML">
+   <u><i>upd <b>14.0</b></i></u> <b>TMenuItem</b> <i>int</i>
+   <h4>Hidden</h4> <s>[0]</s>
+</div>
+If the item is hidden. For sublevels and columns it hides the whole sublevel.<br />
+To hide only sublevel parent, set its <tt>Expanded : -<b>1</b></tt>.<br />
+If set to <b>1</b> the item is not rendered at all.<br />
+If set to <b>2</b> <i>(since 14.0)</i> the item is rendered hidden.<br />
+
+<!-- Disabled -->
+<a name="TMenuItemDisabled"></a>
+<div class="XML">
+   <u>new <b>6.1</b></u> <b>TMenuItem</b> <i>bool</i>
+   <h4>Disabled</h4> <s>[0]</s>
+</div>
+If the item is disabled. Disabled item is shown as inactive and inaccessible.<br />
+
+<!-- Default -->
+<a name="TMenuItemDefault"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i style="width:80px;"><a href="#Item">TMenuItem</a></i>
+   <h4>Default</h4> <s></s>
+</div>
+Default settings for all immediate items in summenu / sublevel item (all in <a href="#TMenuItems">Items</a> array)<br />
+It sets all not explicitly defined attributes in all items in <a href="#TMenuItems">Items</a> array.<br /> 
+It affects only immediate items, the sub items can be preset by <a href="#TMenuItemDefault">Default</a> attribute of the parent <a href="#Item">TMenuItem</a> and so on.<br />
+
+<!-----------------------  Clickable item  ------------------------>
+<a name="Clickable"></a>
+<h3>Clickable item</h3>
+
+Clickable item is an item without any special meaning.<br />
+By default are all items clickable for normal menu or items <b>Bool</b> for <a href="CellBasics.htm#CRange">Range</a> cells. To explicitly define clickable menu item in <a href="CellBasics.htm#CRange">Range</a> cell set its <tt>Bool:0</tt>.<br />
+By clicking this item is them menu closed and its Value (or Name) is returned.<br />
+If menu supports selection of more items, clicking the clickable item still closes the menu and returns only the item value without any other settings.<br />
+
+<!-- Value -->
+<a name="TMenuItemValue"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>string</i>
+   <h4>Value</h4> <s></s>
+</div>
+A value of clickable item, it will be returned instead of <a href="#TMenuItemName">Name</a> on click the item and close menu.<br />
+
+<!-----------------------  Inactive caption  ------------------------>
+<a name="Inactive"></a>
+<h3>Inactive caption</h3>
+
+It is used only to visually separate menu item sections and to show some informational texts.<br />
+To show only <b>horizontal line</b> as <b>separator</b>, set <tt><a href="#TMenuItemName">Name</a>='-'</tt> (minus), you don't need to set the Caption in this case.<br />
+
+<!-- Caption -->
+<a name="TMenuItemCaption"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>bool</i>
+   <h4>Caption</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, displays inactive item as not clickable caption.<br />
+If set to <b>2</b>, it the same as <b>1</b>, but the caption is not hidden as unused, if there are no items below it.<br />
+
+<!-----------------------  Collapsible sub level  ------------------------>
+<a name="Level"></a>
+<h3>Collapsible sub level</h3>
+
+It shows collapsible / expandable or static sub level.<br />
+The sub items are set it <b>Items</b> array and they are indented by <a href="#TMenuIndent">Indent</a> value from the left, relative to this parent indent.<br />
+The expandable sub level is automatically expanded when mouse hovers this parent menu item for <a href="#TMenuExpandTime">ExpandTime</a> milliseconds.<br />
+If is set <tt><a href="#TMenuExpandTime">ExpandTime</a> : <b>0</b></tt>, the level can be expanded / collapsed by mouse click.<br />
+When one sub level is expanded the other expanded sub levels are collapsed when set <a href="#TMenuCollapseOther">CollapseOther</a>.<br />
+When navigating by keys, the sub level can be expanded and collapsed by <b>Enter</b> key.<br />
+
+<!-- Level -->
+<a name="TMenuItemLevel"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>bool</i>
+   <h4>Level</h4> <s>[0]</s>
+</div>
+The sub items are displayed in sub level.<br />
+
+<!-- Items -->
+<a name="TMenuItemItemsLevel"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i style="width:80px;"><a href="#Item">TMenuItem</a>[ ]</i>
+   <h4>Items</h4> <s>[0]</s>
+</div>
+Sub level items defined in the same way as base menu <a href="#TMenuItems">Items</a>.<br />
+It can contain any <a href="#Item">TMenuItem</a> settings, including nested levels and sub menus and columns.<br />
+
+<!-- Expanded -->
+<a name="TMenuItemExpanded"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>int</i>
+   <h4>Expanded</h4> <s>[null]</s>
+</div>
+If the sub items will be expanded or expandable<br />
+<table>
+  <tr><td style="width:50px;">null</td><td>expanded, not collapsible, this parent item is displayed as inactive caption</td></tr>
+  <tr><td>-1</td><td>expanded, not collapsible, this parent item is hidden</td></tr>
+  <tr><td>1</td><td>expanded, collapsible</td></tr>
+  <tr><td>0</td><td>collapsed, expandable</td></tr>
+</table>
+
+<!-----------------------  Popup sub menu  ------------------------>
+<a name="Submenu"></a>
+<h3>Popup sub menu</h3>
+
+The item with popup submenu shows an popup icon on the right and on click to the item it shows the submenu defined in <b>Items</b> array.<br />
+The menu is automatically shown when mouse hovers this parent menu item for <a href="#TMenuSubmenuTime">SubmenuTime</a> milliseconds.<br />
+When navigating by keys, the popup menu is shown also on <b>Enter</b> and <b>right arrow</b> and hidden by <b>Esc</b> and <b>left arrow</b>.<br /><br />
+
+The parent menu item can contain settings like <a href="#Base">TMenu</a> for its submenu. Especially setting <a href="#TDialogMinWidth">MinWidth</a> and <a href="#TDialogMaxWidth">MaxWidth</a> is useful for submenus.<br />
+
+<!-- Menu -->
+<a name="TMenuItemMenu"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>bool</i>
+   <h4>Menu</h4> <s>[0]</s>
+</div>
+The sub items are displayed in sub popup menu (on right side).<br />
+
+<!-- Items -->
+<a name="TMenuItemItems"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i style="width:80px;"><a href="#Item">TMenuItem</a>[ ]</i>
+   <h4>Items</h4> <s></s>
+</div>
+Sub menu items defined in the same way as base menu <a href="#TMenuItems">Items</a>.<br />
+It can contain any <a href="#Item">TMenuItem</a> settings, including nested levels and sub menus and columns.<br />
+
+<!-- AutoColumns -->
+<a name="TMenuItemAutoColumns"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenuItem</b> <i>int</i>
+   <h4>AutoColumns</h4> <s></s>
+</div>
+If set, splits the submenu Items to given columns count. Use to simplify the list, to avoid splitting the Items manually.<br />
+
+<!-- MenuAlign -->
+<a name="TMenuItemMenuAlign"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenuItem</b> <i>string</i>
+   <h4>MenuAlign</h4> <s>["next top" / "left below"]</s>
+</div>
+Position of the submenu, how it is aligned to the parent menu.
+Values are the same as <a href="#TPositionAlign">Align</a>.<br />
+Default value is "next top" for <a href="#TMenuHors">Horz</a> = 0 or "left below" for <a href="#TMenuHors">Horz</a> = 1 / 2.
+
+<!-----------------------  Columns  ------------------------>
+<a name="Columns"></a>
+<h3>Columns</h3>
+
+Menu can be divided horizontally to columns to easily display more items.<br />
+You can control count and width of these columns.<br />
+The items are automatically placed to the columns, they are always placed <b>down</b> and after <b>right</b>.<br />
+
+<!-- Columns -->
+<a name="TMenuItemColumns"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>int</i>
+   <h4>Columns</h4> <s>[0]</s>
+</div>
+Count of columns to display in them the included <b>Items</b>. This item itself is <u>not</u> displayed.<br />
+The sub items are displayed in more columns.<br />
+
+<!-- ColumnSizes -->
+<a name="TMenuItemColumnSizes"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>TMenuItem</b> <i>string</i>
+   <h4>ColumnSizes</h4> <s></s>
+</div>
+Count of rows per individual column, for example "5,8,6" for 3 columns shows 5 rows, 8 rows and 6 rows.<br />
+
+<!-- Group -->
+<a name="TMenuItemGroup"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>int</i>
+   <h4>Group</h4> <s>[0]</s>
+</div>
+A number of group of columns from 1, all columns <i><b>vertically</b></i> in the group will have the same width, the groups should have the same count of columns.<br />
+If you have more column items in the menu (more items with <a href="#TMenuItemColumns">Columns</a> attribute set), you can let resize their columns to have all the same width, to look the menu better. Just set their <b>Group</b> attribute to the same value.<br />
+
+<!-- Items -->
+<a name="TMenuItemItemsColumns"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i style="width:80px;"><a href="#Item">TMenuItem</a>[ ]</i>
+   <h4>Items</h4> <s></s>
+</div>
+Sub items to show them in columns defined in the same way as base menu <a href="#TMenuItems">Items</a>.<br />
+It can contain any <a href="#Item">TMenuItem</a> settings, including nested sub menus and columns. Only nested <b>sub levels</b> are <u>not</u> supported.<br />
+
+<!-----------------------  Bool item (checkbox or radio)  ------------------------>
+<a name="Bool"></a>
+<h3>Bool item (checkbox or radio)</h3>
+
+Bool item shows checkbox or radio button on the right or left side.<br />
+It can be used for selecting more items.<br />
+It is default item for <a href="CellBasics.htm#CRange">Range</a> cells. To explicitly define clickable menu item in <a href="CellBasics.htm#CRange">Range</a> cell set its <tt><a href="#TMenuItemBool">Bool</a>:0</tt>.<br />
+The menu returns all checked item <a href="#TMenuItemName">Name</a> attributes on click button OK or Ctrl + Enter or Enter (when <a href="#TMenuEnterSwitches">EnterSwitches</a> is 1).<br />
+The Bool item can be saved to results as Name/"" or 0/1 or Name:0/1, see TMenu <a href="#TMenuItemSaveType">SaveType</a>.<br />
+
+<!-- Bool -->
+<a name="TMenuItemBool"></a>
+<div class="XML">
+   <u><i>upd <b>14.0</b></i></u> <b>TMenuItem</b> <i>int</i>
+   <h4>Bool</h4> <s>[0]</s>
+</div>
+Displays checkbox on the right and the menu item becomes <u>not</u> clickable.<br />
+<i>Since 14.0.11</i> if set to <b>2</b> it permits three states of the Value: 0, 1 and "".<br />
+<i>Since 14.0.11</i> if set to <b>3</b> it calculates its state according to sub items, if set with Level or Menu and permits three states.<br />
+
+<!-- Value -->
+<a name="TMenuItemValueBool"></a>
+<div class="XML">
+   <u><i>upd <b>14.0</b></i></u> <b>TMenuItem</b> <i>bool</i>
+   <h4>Value</h4> <s>[null]</s>
+</div>
+Item Bool Value - <b>1</b> checked, <b>0</b> unchecked and <i>since 14.0.11</i> for Bool 2 or 3 can be <b>""</b>.<br />
+
+<!-- Left -->
+<a name="TMenuItemLeft"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>bool</i>
+   <h4>Left</h4> <s>[0]</s>
+</div>
+Displays the check box on the left instead of the right.<br />
+
+<!-- ShowIcon -->
+<a name="TMenuItemShowIcon"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>TMenuItem</b> <i>int</i>
+   <h4>ShowIcon</h4> <s>[1]</s>
+</div>
+If the checkbox or radio icon will be shown.<br />
+<b>0</b> - icon is hidden and checked item is colored. <b>1</b> - icon is shown, <b>2</b> - icon is shown and checked item is also colored.<br />
+
+<!-- Group -->
+<a name="TMenuItemGroupBool"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>int</i>
+   <h4>Group</h4> <s>[null]</s>
+</div>
+Sets <b>radio</b> group to group more radio buttons. If set, the Bool item becomes <b>radio button</b>.<br />
+It is index of group (from 1) that the checkbox belongs to. Only one checkbox in group can be checked.<br />
+These checkboxes are not affected by <b>Clear/All on</b> button.<br />
+
+<!-- Uncheck -->
+<a name="TMenuItemUncheck"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>bool</i>
+   <h4>Uncheck</h4> <s>[0]</s>
+</div>
+If the radio button can be unchecked - to let all radio buttons to be in group empty.<br />
+
+<!-- CheckAll -->
+<a name="TMenuItemCheckAll"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>bool</i>
+   <h4>CheckAll</h4> <s>[0]</s>
+</div>
+Special checkbox or clickable item that checks / unchecks all checkboxes with the same <a href="#TMenuItemGroupAll">GroupAll</a> attribute value. If no <a href="#TMenuItemGroupAll">GroupAll</a> is set, it checks all <a href="#TMenuItemBool">Bool</a> items.<br />
+Set <a href="#TMenuItemGroupAll">GroupAll</a> attribute to the same value for more checkboxes and in one or more for them set also CheckAll attribute - these items will select all of the checkboxes on click.<br />
+If the <a href="#TMenuItemBool">Bool</a> is not set, closes also the menu.<br />
+
+<!-- GroupAll -->
+<a name="TMenuItemGroupAll"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>int</i>
+   <h4>GroupAll</h4> <s>[null]</s>
+</div>
+Index of group all, this group is unchecked / checked together by <a href="#TMenuItemCheckAll">CheckAll</a> checkbox.<br /> 
+The null is base default group.<br />
+<i>Must <u>not</u> be set with <a href="#TMenuItemGroupBool">Group</a> attribute.</i><br />
+
+<!-- NoAll -->
+<a name="TMenuItemNoAll"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>bool</i>
+   <h4>NoAll</h4> <s>[0]</s>
+</div>
+If set, the menu item is not affected by menu button Clear / All on.<br />
+
+<!-----------------------  Enum item (combo box)  ------------------------>
+<a name="Enum"></a>
+<h3>Enum item (combo box)</h3>
+
+Enum item shows combo box to choose the item value.<br />
+The Enum item can be saved to results as Value or Name:Value, see TMenu <a href="#TMenuItemSaveType">SaveType</a>.<br />
+The menu Enum item can choose only one value, it should <u>not</u> contain sub items Bool, Enum, Edit.<br /><br />
+
+The menu item can contain settings like <a href="#Base">TMenu</a> for its Enum combo box.<br />
+
+<!-- Enum -->
+<a name="TMenuItemEnum"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>bool</i>
+   <h4>Enum</h4> <s>[0]</s>
+</div>
+Displays combo box on the right.<br />
+
+<!-- Value -->
+<a name="TMenuItemValueEnum"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>string</i>
+   <h4>Value</h4> <s></s>
+</div>
+A selected item value in the combo box.<br />
+
+<!-- Items -->
+<a name="TMenuItemItemsEnum"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i style="width:80px;"><a href="#Item">TMenuItem</a>[ ]</i>
+   <h4>Items</h4> <s></s>
+</div>
+Sub items to show them in combo box defined in the same way as base menu <a href="#TMenuItems">Items</a>.<br />
+It can contain any <a href="#Item">TMenuItem</a> settings, including nested sub levels, sub menus and columns. It should <u>not</u> contain Bool, Enum and Edit type items.<br />
+
+<!-- AutoColumns -->
+<a name="TMenuItemAutoColumnsEnum"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenuItem</b> <i>int</i>
+   <h4>AutoColumns</h4> <s></s>
+</div>
+If set, splits the Enum Items to given columns count. Use to simplify the list, to avoid splitting the Items manually.<br />
+
+<!-- Range -->
+<a name="TMenuItemRange"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenuItem</b> <i>int</i>
+   <h4>Range</h4> <s>[0]</s>
+</div>
+If set, the Enum permits choosing more items.
+The chosed items are set in value as comma separated list of the Items names.<br />
+If set to <b>1</b> it shows only the list and the changes are applied always when the enum menu is closed.<br />
+If set to <b>2</b> it shows also buttons "Ok", "Clear" and "Cancel". The changes are applied only if clicked to "Ok" button.<br />
+
+<!-- ValueAll -->
+<a name="TMenuItemValueAll"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>TMenuItem</b> <i>string</i>
+   <h4>ValueAll</h4> <s></s>
+</div>
+A value representing all <a>Range</a> items are on.<br />
+If set and all items are checked, the Value will be set to ValueAll.<br />
+If not set, Value will be set to all the checked items.<br />
+
+<!-- Width -->
+<a name="TMenuItemWidth"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>int</i>
+   <h4>Width</h4> <s>[0]</s>
+</div>
+Width of the combo box in pixels.<br /> 
+If it is 0, the combo box resizes to accommodate its value.<br />
+
+<!-- Left -->
+<a name="TMenuItemLeftEnum"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>bool</i>
+   <h4>Left</h4> <s>[0]</s>
+</div>
+Displays the combo box on the left instead of the right.<br />
+
+<!-- Menu -->
+<a name="TMenuItemMenuEnum"></a>
+<div class="XML">
+   <u>new 14.0</u> <b>TMenuItem</b> <i>bool</i>
+   <h4>Menu</h4> <s>[0]</s>
+</div>
+If set Menu attribute with Enum, it displays the Enum as popup menu and does not show the Enum value, but the Value is still changed by the popup menu chosen item.<br />
+
+<!-----------------------  Edit item (input)  ------------------------>
+<a name="Edit"></a>
+<h3>Edit item (input)</h3>
+
+Edit item shows edit box to let a user to input any text value.<br />
+The Edit item can be saved to results as Value or Name:Value, see TMenu <a href="#TMenuItemSaveType">SaveType</a>.<br />
+The value and name separators are automatically replaced in input text when saving.<br /><br /> 
+
+The menu item can contain settings like <a href="CellEdit.htm#Input">TEdit</a> for its Edit input box.<br />
+
+<!-- Edit -->
+<a name="TMenuItemEdit"></a>
+<div class="XML">
+   <u><i>upd <b>14.0</b></i></u> <b>TMenuItem</b> <i>int</i>
+   <h4>Edit</h4> <s>[0]</s>
+</div>
+Displays edit box on the right.<br />
+<i>Since 14.0</i> if set to <b>2</b> it displays the edit box read only.<br />
+
+<!-- Value -->
+<a name="TMenuItemValueEdit"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>string</i>
+   <h4>Value</h4> <s></s>
+</div>
+Input value<br />
+
+<!-- Width -->
+<a name="TMenuItemWidthEdit"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>int</i>
+   <h4>Width</h4> <s>[0]</s>
+</div>
+Width of the edit box in pixels.<br /> 
+If it is 0, the edit box resizes to accommodate its value.<br />
+
+<!-- Left -->
+<a name="TMenuItemLeftEdit"></a>
+<div class="XML">
+   <u></u> <b>TMenuItem</b> <i>bool</i>
+   <h4>Left</h4> <s>[0]</s>
+</div>
+Displays the edit box on the left instead of the right.<br />
+
+<!---------------------------------------------------  Custom menu in JavaScript  ------------------------------------------------------------>
+<a name="Custom"></a>
+<h2>Custom menu in JavaScript</h2>
+TreeGrid library contains global functions to show a custom menu.<br />
+The custom menu has all TreeGrid menu attributes and many other.<br />
+
+<!-- ShowMenu -->
+<a name="ShowMenu"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i><a href="#Base">TMenu</a></i>
+   <h4>ShowMenu</h4>
+   <s>(<i><a href="#Base">TMenu</a></i> <b>Menu</b>, <i><a href="#TPosition">TPosition</a></i> <b>Pos</b>, <i>function</i> <b>Func</b>, <i>string</i> <b>Init</b>)</s>
+</div>
+Shows custom menu on given position.<br />
+<i>Remember, the <b>Menu</b> and <b>Pos</b> are JavaScript objects, <u>not</u> strings.</i><br />
+<b>Func</b> is function called when the menu is closed and value(s) is accepted - replaces <a href="#TMenuOnSave">OnSave</a> event.<br />
+<b>Init</b> are initial values in string for menu items Bool, Enum and Edit, in the same format it is sent to <a href="#TMenuOnSave">OnSave</a> event. See also <a href="#TMenuInput">Input</a>.<br />
+Returns the <b>Menu</b> or new menu object if the <b>Menu</b> has been set in string.<br />
+<i>To show menu in grid for some cell</i> use grid API method <a href="CellBasics.htm#ShowMenu">ShowMenu</a> instead.<br />
+
+<!-- ShowPopup -->
+<a name="ShowPopup"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i><a href="#Base">TMenu</a></i>
+   <h4>ShowPopup</h4>
+   <s>(<i>TMenu</i> <b>Menu</b>, <i>function</i> <b>Func</b>, <i>string</i> <b>Init</b>)</s>
+</div>
+Shows custom menu near the mouse cursor. Other settings see <a href="#ShowMenu">ShowMenu</a>.<br />
+
+<!-- Close -->
+<a name="Close"></a>
+<div class="API">
+   <u></u> <b style="width:120px;margin-left:-25px;">TMenu method</b> <i>void</i>
+   <h4>Close</h4>
+   <s>( )</s>
+</div>
+Closes the menu manually. Usable especially for <u>not</u> <a href="#TMenuPopup">Popup</a> menus.<br />
+
+<!-----------------------  Custom menu position  ------------------------>
+<a name="TPosition"></a>
+<h3>Custom menu position</h3>
+TPosition specifies position on screen of rectangle <u><b>place</b></u> for that is the dialog displayed - <i>it is <u>not</u> the dialog's area itself!</i><br /> 
+The <b>place</b> can be for example TreeGrid cell.<br />
+Inside the <b>place</b> is displayed dialog's <a href="#TDialogHeader">Header</a> if any.<br />
+The dialog is attached to some side outside or inside the <b>place</b> or can be also centered inside the <b>place</b>, see <a href="#TPositionAlign">Align</a>.<br /><br />
+If the <b>place</b> has not set width and height, it specifies the exact position of the dialog.<br />
+
+<!-- X , Y -->
+<a name="TPositionX"></a>
+<a name="TPositionY"></a>
+<div class="XML">
+   <u></u> <b>TPosition</b> <i>int</i>
+   <h4>X <span style="font-size:100%;">,</span> Y</h4> <s></s>
+</div>
+X, Y specifies left top position of the <u>place</u> on screen (as position:absolute tag).<br /> 
+Or if not set <a href="#TPositionWidth">Width</a> and <a href="#TPositionHeight">Height</a>, it specifies an exact position of the <u><b>dialog</b></u>.<br />
+Or if set <a href="#TPositionMouse">Mouse</a>, it is relative position to actual mouse position.<br /> 
+Or if set <a href="#TPositionTag">Tag</a>, it is position relative to the tag.<br />
+
+<!-- Width -->
+<a name="TPositionWidth"></a>
+<div class="XML">
+   <u></u> <b>TPosition</b> <i>int</i>
+   <h4>Width</h4> <s></s>
+</div>
+A width of the <u><b>place</b></u> in pixels.<br />
+Or if set <a href="#TPositionTag">Tag</a>, it is modification to the tag width. In this case, it can be even negative.<br /><br />
+
+If not set, the <a href="#TPositionX">X</a> specifies an exact dialog position.<br />
+
+<!-- Height -->
+<a name="TPositionHeight"></a>
+<div class="XML">
+   <u></u> <b>TPosition</b> <i>int</i>
+   <h4>Height</h4> <s></s>
+</div>
+A height of the <u><b>place</b></u> in pixels.<br />
+Or if set <a href="#TPositionTag">Tag</a>, it is modification to the tag height In this case, it can be even negative.<br />
+If not set, the <a href="#TPositionY">Y</a> specifies an exact dialog position.<br />
+
+<!-- Tag -->
+<a name="TPositionTag"></a>
+<div class="XML">
+   <u></u> <b>TPosition</b> <i>object</i>
+   <h4>Tag</h4> <s></s>
+</div>
+If set, it specifies the <u><b>place</b></u> instead of X, Y, Width, Height - for this tag will be dialog displayed.<br />
+It can be a string as tag id or the HTMLElement itself.<br />
+If set, the <a href="#TPositionX">X</a>, <a href="#TPositionY">Y</a> are relative to the tag and <a href="#TPositionWidth">Width</a>, <a href="#TPositionHeight">Height</a> are modification of the tag width, height.<br />
+It can be e.g. document.body for the whole screen.<br />
+
+<!-- Mouse -->
+<a name="TPositionMouse"></a>
+<div class="XML">
+   <u></u> <b>TPosition</b> <i>bool</i>
+   <h4>Mouse</h4> <s></s>
+</div>
+If set to 1, the <a href="#TPositionX">X</a>, <a href="#TPositionY">Y</a> are relative to mouse pointer.<br />
+
+<!-- Align -->
+<a name="TPositionAlign"></a>
+<div class="XML">
+   <u><i>upd <b>14.0</b></i></u> <b>TPosition</b> <i>string</i>
+   <h4>Align</h4> <s>["left,below"]</s>
+</div>
+An align of the <b>dialog</b> to the <u><b>place</b></u>,<br /> 
+It can contain two keywords, one for horizontal and one for vertical align<br />
+By default is dialog is displayed under the place, left aligned "left below"<br />
+<i>Since 14.0</i> the Align can be set to "<b>none</b>" to not set the dialog position at all, for custom position routine.<br />
+
+
+<h6>Horizontal alignment</h6>
+<table>
+<tr><td style="width:50px;"><b>prev</b></td><td><b>outside</b> attached to <b>left</b> side, can be automatically changed to "next" if dialog cannot fit to screen</td></tr>
+<tr><td><b>next</b></td><td><b>outside</b> attached to <b>right</b> side, can be automatically changed to "prev" if dialog cannot fit to screen</td></tr>
+<tr><td><b>left</b></td><td><b>inside left</b> aligned, minimal width is Width, can be automatically changed to "right" if dialog cannot fit to screen</td></tr>
+<tr><td><b>right</b></td><td><b>inside right</b> aligned, minimal width is Width, can be automatically changed to "left" if dialog cannot fit to screen</td></tr>
+<tr><td><b>center</b></td><td><b>inside centered</b> horizontally, can be automatically shifted horizontally if dialog cannot fit to screen</td></tr>
+</table>
+
+<h6>Vertical alignment</h6>
+<table>
+<tr><td style="width:50px;"><b>above</b></td><td><b>outside</b> attached from <b>top</b>, can be automatically changed to "below" if dialog cannot fit to screen</td></tr>
+<tr><td><b>below</b></td><td><b>outside</b> attached from <b>bottom</b>, can be automatically changed to "above" if dialog cannot fit to screen</td></tr>
+<tr><td><b>top</b></td><td><b>inside</b> aligned to <b>top</b>, can be automatically changed to "bottom" if dialog cannot fit to screen</td></tr>
+<tr><td><b>bottom</b></td><td><b>inside</b> aligned to <b>bottom</b>, can be automatically changed to "top" if dialog cannot fit to screen</td></tr>
+<tr><td><b>middle</b></td><td><b>inside centered</b> vertically, can be shifted vertically if dialog cannot fit to screen</td></tr>
+</table><br />
+
+<!-- Move -->
+<a name="TPositionMove"></a>
+<div class="XML">
+   <u></u> <b>TPosition</b> <i>bool</i>
+   <h4>Move</h4> <s>[null]</s>
+</div>
+If the dialog can be automatically moved to fit into screen<br /> 
+If set to null, it is <b>1</b> for <a href="#TPositionAlign">Align</a> <b>center</b> and <b>middle</b> and <b>0</b> for the rest<br />
+
+<!-- MoveMouse -->
+<a name="TPositionMoveMouse"></a>
+<div class="XML">
+   <u></u> <b>TPosition</b> <i>int</i>
+   <h4>MoveMouse</h4> <s></s>
+</div>
+If set Move and Mouse and it automatically moves the dialog above the mouse to fit to screen and adds here the <b>MoveMouse</b> pixels.<br />
+
+<!-- Resize -->
+<a name="TPositionResize"></a>
+<div class="XML">
+   <u></u> <b>TPosition</b> <i>bool</i>
+   <h4>Resize</h4> <s>[null]</s>
+</div>
+If the dialog can be automatically resized to fit into screen<br />
+If set to null, it is <b>1</b> for <a href="#TPositionAlign">Align</a> <b>center</b> and <b>middle</b> and <b>0</b> for the rest<br />
+    
+<!-- Realign -->
+<a name="TPositionRealign"></a>
+<div class="XML">
+   <u></u> <b>TPosition</b> <i>bool</i>
+   <h4>Realign</h4> <s>[null]</s>
+</div>
+If the <a href="#TPositionAlign">Align</a> can be changed to fit into screen<br />
+If set to null, it is <b>1</b> for all <a href="#TPositionAlign">Align</a> settings except <b>center</b> and <b>middle</b><br />
+
+<!-- AlignHeader -->
+<a name="TPositionAlignHeader"></a>
+<div class="XML">
+   <u></u> <b>TPosition</b> <i>string</i>
+   <h4>AlignHeader</h4> <s>["justify middle"]</s>
+</div>
+Align of <a href="#TDialogHeader">Header</a> inside the <b>place</b>. It can contain two keywords, one for horizontal and one for vertical align<br />
+<table>
+<tr><td>Horizontally:</td><td>"<b>justify</b>" - fill the whole place horizontally, "<b>left</b>" - left aligned, "<b>right</b>" - right aligned</td></tr>
+<tr><td>Vertically:</td><td>"<b>middle</b>" - fill the whole place vertically, "<b>top</b>" - top aligned, "<b>bottom</b>" - bottom aligned</td></tr>
+</table>
+
+<!-----------------------  Custom menu advanced settings  ------------------------>
+<a name="Advanced"></a>
+<h3>Custom menu advanced settings</h3>
+
+<!-- Cursor -->
+<a name="TMenuCursor"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>string</i>
+   <h4>Cursor</h4> <s></s>
+</div>
+Start and runtime position of key cursor - an item <a href="#TMenuItemName">Name</a>.<br />
+
+<!-- CursorValue -->
+<a name="TMenuCursorValue"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>string</i>
+   <h4>CursorValue</h4> <s></s>
+</div>
+Places the key cursor to clickable item with this <a href="#TMenuItemValue">Value</a> (or <a href="#TMenuItemName">Name</a> if missing).<br />
+
+<!-- Popup -->
+<a name="TMenuPopup"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>bool</i>
+   <h4>Popup</h4> <s>[1]</s>
+</div>
+If it is automatically closed after selecting clickable item or click button.<br />
+If set to 0, the menu must be closed manually <a href="#Close">Close</a> method.<br />
+
+<!-- CloseClickOut -->
+<a name="TDialogCloseClickOut"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>CloseClickOut</h4> <s>[1/0]</s>
+</div>
+If it is automatically closed after click outside the menu. It is default 1 for menu and 0 for dialog.<br />
+
+<!-- Separator -->
+<a name="TMenuSeparator"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>string</i>
+   <h4>Separator</h4> <s>["|"]</s>
+</div>
+Character that separates the individual item results when returns the value of Bool, Enum and Edit in OnSave<br />
+
+<!-- NameSeparator -->
+<a name="TMenuNameSeparator"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>string</i>
+   <h4>NameSeparator</h4> <s>[":"]</s>
+</div>
+Character that separates Name from Value when returns the value of Bool, Enum and Edit in OnSave<br />
+
+<!-- SeparatorReplace -->
+<a name="TMenuSeparatorReplace"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>string</i>
+   <h4>SeparatorReplace</h4> <s>[!]</s>
+</div>
+Character that replaces Separator and NameSeparator when entered to <b>Edit</b> input<br />
+
+<!-- Base -->
+<a name="TDialogBase"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>string</i>
+   <h4>Base</h4> <s>["TSMenu"]</s>
+</div>
+Base dialog class <u>prefix</u>, all classes in menu begins with this prefix.<br />
+Default value in TreeGrid menu is Cfg.Style+"Menu".<br />
+
+<!-- Class -->
+<a name="TDialogClass"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>string</i>
+   <h4>Class</h4> <s></s>
+</div>
+Custom dialog class <u>prefix</u>, if set, all classes in menu contain base class definition and the with this class prefix<br />
+
+<!-- ClassMenu -->
+<a name="TMenuClassMenu"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>string</i>
+   <h4>ClassMenu</h4> <s></s>
+</div>
+Custom class to inherit for submenu, set to <a href="#TDialogClass">Class</a> of all submenus<br />
+
+<!-- ClassEnum -->
+<a name="TMenuClassEnum"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>string</i>
+   <h4>ClassEnum</h4> <s></s>
+</div>
+Custom class to inherit for Enum menus, set to <a href="#TDialogClass">Class</a> of all enums.<br />
+
+<!-- Texts -->
+<a name="TMenuTexts"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>object</i>
+   <h4>Texts</h4> <s>[ &#123; Ok:"OK",Clear:"Clear",All:"All on",Cancel:"Cancel" } ]</s>
+</div>
+Texts for menu buttons<br />
+
+<!-- Input -->
+<a name="TMenuInput"></a>
+<div class="XML">
+   <u></u> <b>TMenu</b> <i>object</i>
+   <h4>Input</h4> <s></s>
+</div>
+If set, the menu loads and saves its results in this &lt;input>.<br /> 
+Can be an id of the &lt;input> tag or tag &lt;input> itself.<br />
+
+<!-- Rtl -->
+<a name="TDialogRtl"></a>
+<div class="XML">
+   <u>new <b>6.2</b></u> <b>TDialog</b> <i>bool</i>
+   <h4>Rtl</h4> <s>[0]</s>
+</div>
+Displays the dialog in right to left mode for Middle East languages.<br />
+
+<!-----------------------  Custom menu JavaScript events  ------------------------>
+<a name="Events"></a>
+<h3>Custom menu JavaScript events</h3>
+
+<!-- OnSave -->
+<a name="TMenuOnSave"></a>
+<div class="API">
+   <u></u> <b style="width:120px;margin-left:-25px;">TMenu	event</b> <i>bool</i>
+   <h4>OnSave</h4>
+   <s>(<i><a href="#Item">TMenuItem</a></i> <b>Item</b>, <i>string[ ]</i> <b>Data</b>)</s>
+</div>
+1) Called after a clickable item is clicked and the menu will be closed.<br /> 
+The <b>Item</b> is the clicked item. You can read its <a href="#TMenuItemName">Name</a> and <a href="#TMenuItemValue">Value</a> attributes.<br /> 
+The <b>Data</b> is null.<br /><br />
+
+2) Called after click to OK button to save <b>Bool</b>, <b>Enum</b>, <b>Edit</b> menu item values.<br />
+The <b>Item</b> is null.<br />
+The <b>Data</b> is array of strings that contain individual results of items Bool, Enum, Edit.<br />
+Which and how are the values present in <b>Data</b> is controlled by <a href="#TMenuItemSaveType">SaveType</a> attribute.<br />
+The Edit values contain replaced <a href="#TMenuSeparator">Separator</a> and <a href="#TMenuNameSeparator">NameSeparator</a> by <a href="#TMenuSeparatorReplace">SeparatorReplace</a>.<br />
+Return false to not close <a href="#TMenuPopup">Popup</a> menu.<br /><br />
+
+It is replaced by function <b>Func</b> if set as parameter in <a href="#ShowMenu">ShowMenu</a>.<br />
+It can be attached also to submenu (<a href="#TMenuItemMenu">Menu</a>:1) item to provide different action on save the submenu. In this case the base menu OnSave will <u>not</u> be called.<br /><br />
+
+The menu is accessible by <b>this</b> variable.<br />
+In menus created for TreeGrid cell there are set these Menu properties: <i>TGrid</i> <b>Grid</b>; <i>TRow</i> <b>row</b>; <i>string</i> <b>col</b>.<br /><br />
+
+Example: <tt>&lt;C Name="A" Menu="&#123; Items: [ &#123;Name:'XXX'}, &#123;Name:'YYY'} ], OnSave: function(I,D)&#123; alert('Selected '+I.Name+' in col '+this.Col); } }"/></tt><br />
+
+<!-- OnClose -->
+<a name="TDialogOnClose"></a>
+<div class="API">
+   <u></u> <b style="width:120px;margin-left:-25px;">TDialog	event</b> <i>void</i>
+   <h4>OnClose</h4>
+   <s>( )</s>
+</div>
+Called on close dialog.<br />
+
+<!-- OnSubmenu -->
+<a name="TMenuOnSubmenu"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b style="width:120px;margin-left:-25px;">TMenu	event</b> <i>TMenu</i>
+   <h4>OnSubmenu</h4>
+   <s>(<i><a href="#Item">TMenuItem</a></i> <b>Item</b>, <i><a href="#Base">TMenu</a></i> <b>Submenu</b>, <i><a href="#TPosition">TPosition</a></i> <b>Pos</b>)</s>
+</div>
+Called on show submenu.<br /> 
+You can update or even dynamically generate or download the submenu here.<br />
+The <b>Item</b> is menu item in parent menu for that is submenu shown.<br />
+The <b>Submenu</b> is new submenu to be shown, its <a href="#TMenuItems">Items</a> and other parameters are the subset of the Item properties.<br />
+The function can modify the <b>Submenu</b> or can create and return new submenu.<br />
+(<i>Since 12.0</i>) The function can modify the submenu position <b>Pos</b>.<br />
+Can return false to suppress showing the submenu.<br />
+
+<!-- OnExpand -->
+<a name="TMenuOnExpand"></a>
+<div class="API">
+   <u></u> <b style="width:120px;margin-left:-25px;">TMenu	event</b> <i>bool</i>
+   <h4>OnExpand</h4>
+   <s>(<i><a href="#Item">TMenuItem</a></i> <b>Item</b>)</s>
+</div>
+Called on expand sub level<br />
+The <b>Item</b> is the menu sub level item to be expanded.<br />
+Can return false to suppress showing sub section.<br />
+
+<!-- OnMove -->
+<a name="TMenuOnMove"></a>
+<div class="API">
+   <u></u> <b style="width:120px;margin-left:-25px;">TMenu	event</b> <i>void</i>
+   <h4>OnMove</h4>
+   <s>(<i><a href="#Item">TMenuItem</a></i> <b>Item</b>)</s>
+</div>
+Called after key cursor moves to new position. <b>Item</b> is the new cursor position.<br />
+
+<!-- OnMoveOut -->
+<a name="TMenuOnMoveOut"></a>
+<div class="API">
+   <u></u> <b style="width:120px;margin-left:-25px;">TMenu	event</b> <i>bool</i>
+   <h4>OnMoveOut</h4>
+   <s>(<i>int</i> <b>dir</b>)</s>
+</div>
+Called when cursor is to be moved outside the menu (it is on the first on last item and arrow key is pressed). <b>dir</b> is <b>0</b> up, <b>1</b> down.<br />
+Return true to hide cursor, false to let the cursor stay on the first/last item<br />
+
+<!-- OnTab -->
+<a name="TMenuOnTab"></a>
+<div class="API">
+   <u></u> <b style="width:120px;margin-left:-25px;">TMenu	event</b> <i>void</i>
+   <h4>OnTab</h4>
+   <s>(<i>bool</i> <b>dir</b>, <i>Event</i> <b>event</b>)</s>
+</div>
+Called when pressed tab key.  <b>dir</b> is <b>0</b> for tab right, <b>1</b> for tab left. <b>event</b> is standard JavaScript key event.<br />
+
+<!-- OnButton -->
+<a name="TMenuOnButton"></a>
+<div class="API">
+   <u></u> <b style="width:120px;margin-left:-25px;">TMenu	event</b> <i>bool</i>
+   <h4>OnButton</h4>
+   <s>(<i>string</i> <b>button</b>)</s>
+</div>
+Called after click on any bottom button, see <a href="#TMenuButtons">Buttons</a>.<br />
+<b>button</b> can be "Ok","Clear","All", "Cancel"<br />
+Can return false to suppress the action<br />
+
+<!-- OnClick -->
+<a name="TMenuItemOnClick"></a>
+<div class="API">
+   <u>new <b>6.4</b> chg <b>8.0</b></u> <b style="width:135px;margin-left:-25px;">TMenuItem	event</b> <i>bool</i>
+   <h4>OnClick</h4>
+   <s>( )</s>
+</div>
+Called after click to the menu item, before any its action.<br />
+Return <b>false</b> to suppress the action and continue in menu.<br />
+<i>(Since 8.0)</i> Return <b>true</b> to suppress the action and close the menu.<br />
+Return <b>null</b> to do default action.<br />
+The item is accessible by property <i>TMenuItem</i> <b>this</b>. The item name, like other properties, by <b>this.Name</b>.<br />
+The item has set property <i>TMenu</i> <b>Owner</b> to access the owner menu and <i>TMenuItem</i> <b>Parent</b> to access parent item or menu.<br />
+In menus created for TreeGrid cell there are set these Menu properties: <i>TGrid</i> <b>Grid</b>; <i>TRow</i> <b>Row</b>; <i>string</i> <b>Col</b>. So access the grid from OnClick by this.Owner.Grid.<br />
+<i>Since 8.0</i> it can be also string to be used as the function code, e.g. &#123;Name:"Item 1", OnClick:"alert(this.Owner.Col)"}<br />
+
+<!-- OnChanged -->
+<a name="TMenuItemOnChanged"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b style="width:135px;margin-left:-25px;">TMenuItem	event</b> <i>string</i>
+   <h4>OnChanged</h4>
+   <s>(<i>string</i> <b>Value</b>)</s>
+</div>
+Called after any change in item of type Bool, Enum or Edit, but before the change is applied.<br />
+The item is accessible by property <i>TMenuItem</i> <b>this</b>. The item name, like other properties, by <b>this.Name</b>.<br />
+The <b>Value</b> is new value to be set to item. Original value is in <b>this.Value</b>.<br />
+Return new value to change the input.<br />
+<i>Since 14.0</i> return null to ignore the event handler.
+<s><i>The function must return the value to be set into I.Value, return <b>Value</b> to not change the input or <b>this.Value</b> to discard the change or something else.</i></s><br />
+The item has set property <i>TMenu</i> <b>Owner</b> to access the owner menu and <i>TMenuItem</i> <b>Parent</b> to access parent item or menu.<br />
+In menus created for TreeGrid cell there are set these Menu properties: <i>TGrid</i> <b>Grid</b>; <i>TRow</i> <b>Row</b>; <i>string</i> <b>Col</b>. So access the grid from OnClick by this.Owner.Grid.<br />
+It can be also string to be used as the function code, e.g. <tt>&lt;Name:"Item 1", OnClick:"alert(Value + ' in ' + this.Owner.Col)"}</tt><br /><br />
+
+This event can be used to modify input value.<br /> 
+Or to recalculate other menu values related to this item - use methods <a href="#TMenuFindItem">FindItem</a> and <a href="#TMenuSetValue">SetValue</a>.<br />
+
+<!-- OnItemChanged -->
+<a name="TMenuOnItemChanged"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b style="width:120px;margin-left:-25px;">TMenu	event</b> <i>string</i>
+   <h4>OnItemChanged</h4>
+   <s>(<i><a href="#Item">TMenuItem</a></i> <b>Item</b>, <i>string</i> <b>Value</b>)</s>
+</div>
+Called after any change in item of type Bool, Enum or Edit, but before the change is applied.<br />
+Called after the Item <a href="#TMenuItemOnChanged">OnChanged</a> event, with the same behavior.<br />
+
+ 
+<!-----------------------  Custom menu JavaScript methods  ------------------------>
+<a name="Methods"></a>
+<h3>Custom menu JavaScript methods</h3>
+
+<!-- FindItem -->
+<a name="TMenuFindItem"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b style="width:120px;margin-left:-25px;">TMenu method</b> <i style="width:80px;"><a href="#Item">TMenuItem</a></i>
+   <h4>FindItem</h4>
+   <s>(<i>string</i> <b>Name</b>)</s>
+</div>
+Finds menu item by its Name attribute value.<br />
+
+<!-- SetValue -->
+<a name="TMenuSetValue"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b style="width:120px;margin-left:-25px;">TMenu method</b> <i>void</i>
+   <h4>SetValue</h4>
+   <s>(<i><a href="#Item">TMenuItem</a></i> <b>Item</b>, <i>type</i> <b>Value</b>)</s>
+</div>
+Sets the Value to Item type Bool, Enum or Edit and shows changes in menu.<br />
+
+<!-- SetText -->
+<a name="TMenuSetText"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b style="width:120px;margin-left:-25px;">TMenu method</b> <i>void</i>
+   <h4>SetText</h4>
+   <s>(<i><a href="#Item">TMenuItem</a></i> <b>Item</b>, <i>string</i> <b>Text</b>)</s>
+</div>
+Sets the <b>Text</b> to <b>Item</b> caption and shows changes in menu.<br />
+
+<!---------------------------------------------------  Calendar dialog  ------------------------------------------------------------>
+<a name="Calendar"></a>
+<h2>Calendar dialog</h2>
+TreeGrid calendar dialog. Supports choosing one or more dates from calendar. Supports also time cell.<br />
+In grid these attributes can be used in cell <a href="TypeDate.htm#CCalendar">Calendar</a> attribute, in TreeGrid menu JSON format.<br />
+
+<!-- Date -->
+<a name="TCalendarDate"></a>
+<div class="XML">
+   <u>new <b>6.2</b></u> <b>TCalendar</b> <i>type</i>
+   <h4>Date</h4> <s></s>
+</div>
+Date to show in calendar. It can be string in English notation "M/d/yyyy" or "d.M.yyyy" or "yyyy-M-d". Or it can be count of milliseconds from 1/1/1970. Or it can be JavaScript Date object.<br />
+If set Range attribute, it can be range of dates, in strings or counts of milliseconds. In Range are the bounds separated by '~', the ranges by ';'.<br />
+Used only for custom calendars.<br />
+
+<!-- Range -->
+<a name="TCalendarRange"></a>
+<div class="XML">
+   <u>new <b>6.2</b></u> <b>TCalendar</b> <i>bool</i>
+   <h4>Range</h4> <s>[0]</s>
+</div>
+If the calendar support choosing more dates or date ranges.<br />
+The individual dates can be selected or unselected by mouse click and date ranges by mouse drag. By mouse it only selects, not unselects.<br />
+The dates can be clean by Clear button and accepted by Ok button.<br />
+
+<!-- TimeFormat -->
+<a name="TCalendarTimeFormat"></a>
+<div class="XML">
+   <u>new <b>6.2</b></u> <b>TCalendar</b> <i>string</i>
+   <h4>TimeFormat</h4> <s></s>
+</div>
+Format string for editing time (e.g "hh:mm"). When set, the calendar will let a user to edit also time part of date.<br />
+
+<!-- Class -->
+<a name="TCalendarClass"></a>
+<div class="XML">
+   <u>new <b>6.2</b></u> <b>TCalendar</b> <i>string</i>
+   <h4>Class</h4> <s>["GMPick"]</s>
+</div>
+Calendar class <u>prefix</u>, it must be set, otherwise calendar is not shown correctly. It is base class prefix, not custom one like in Menu.<br />
+
+<!-- Rtl -->
+<a name="TCalendarRtl"></a>
+<div class="XML">
+   <u>new <b>6.2</b></u> <b>TCalendar</b> <i>bool</i>
+   <h4>Rtl</h4> <s>[0]</s>
+</div>
+Displays the calendar in right to left mode for Middle East languages.<br />
+To switch to Persian Hirji dates in custom calendar you need to set <tt>Formats.Hirji = 1</tt>.<br />
+
+<!-- ReadOnly -->
+<a name="TCalendarReadOnly"></a>
+<div class="XML">
+   <u>new <b>6.2</b></u> <b>TCalendar</b> <i>bool</i>
+   <h4>ReadOnly</h4> <s>[0]</s>
+</div>
+The calendar shows all dates inactive and a user cannot change the selected date(s).<br />
+
+<!-- Buttons -->
+<a name="TCalendarButtons"></a>
+<div class="XML">
+   <u>new <b>6.2</b> <i>upd <b>6.7</b></i></u> <b>TCalendar</b> <i>int</i>
+   <h4>Buttons</h4> <s>[0/7]</s>
+</div>
+Which buttons will be displayed, bit array.<br />
+By default are no button displayed for one date calendar and all buttons for date ranges.<br />
+1.bit &1 - Today, 2.bit &2 - Clear, 3.bit &4 - Ok, 4.bit &8 - Yesterday <i>(new 6.7)</i><br /> 
+
+<!-- Buttons2 -->
+<a name="TCalendarButtons2"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>TCalendar</b> <i>int</i>
+   <h4>Buttons2</h4> <s>[1]</s>
+</div>
+If the OK button will be displayed on the second, month / year, calendar. <b>0</b> - no, <b>1</b> - yes, -<b>1</b> only if the first calendar shows footer buttons or time<br />
+
+<!-- RowsPrev -->
+<a name="TCalendarRowsPrev"></a>
+<div class="XML">
+   <u>new <b>6.2</b></u> <b>TCalendar</b> <i>int</i>
+   <h4>RowsPrev</h4> <s>[0]</s>
+</div>
+How many full rows will be displayed from previous month above<br />
+
+<!-- RowsNext -->
+<a name="TCalendarRowsNext"></a>
+<div class="XML">
+   <u>new <b>6.2</b></u> <b>TCalendar</b> <i>int</i>
+   <h4>RowsNext</h4> <s>[0]</s>
+</div>
+How many full rows will be displayed from next month below.<br />
+The calendar displays minimally 6 rows, even if the last row is fully from the next month.<br />
+
+<!-- Texts -->
+<a name="TCalendarTexts"></a>
+<div class="XML">
+   <u>new <b>6.2</b> <i>upd <b>6.7</b></i></u> <b>TCalendar</b> <i>object</i>
+   <h4>Texts</h4> <s>[ &#123; Ok:"OK",Clear:"Clear",Cancel:"Cancel",Yesterday:"Yesterday" } ]</s>
+</div>
+Texts for calendar buttons<br />
+
+<!-- Header -->
+<a name=""></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>string</i>
+   <h4>Header</h4> <s></s>
+</div>
+For TreeGrid calendar it is HTML displayed in on the cell, when the menu is shown.<br />
+For custom calendar it is HTML displayed inside <b>place</b> set by <a href="#TPosition">TPosition</a> object.<br />
+
+<!-- Head -->
+<a name=""></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>string</i>
+   <h4>Head</h4> <s></s>
+</div>
+Top HTML - calendar caption, with close icon.<br />
+
+<!-- Foot -->
+<a name=""></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>string</i>
+   <h4>Foot</h4> <s></s>
+</div>
+Bottom HTML - calendar footer, displayed under calendar<br />
+
+<!-- Shadow -->
+<a name=""></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>Shadow</h4> <s>[1]</s>
+</div>
+If it shows shadow under the dialog.<br />
+
+<!-- ShadowHeader -->
+<a name=""></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>ShadowHeader</h4> <s>[1]</s>
+</div>
+If it shows shadow under the header.<br />
+
+<!-- HeadClose -->
+<a name=""></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>HeadClose</h4> <s></s>
+</div>
+Displays close button on the right in the <a href="#TDialogHead">Head</a>. Only if some <a href="#TDialogHead">Head</a> is set.<br />
+
+<!-- AppendHeader -->
+<a name=""></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>AppendHeader</h4> <s>[1]</s>
+</div>
+Append dialog next to <a href="#TDialogHeader">Header</a> (if any) rather than to the <u><b>place</b></u> or to the TreeGrid cell.<br />
+
+<!-- Modal -->
+<a name=""></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>Modal</h4> <s>[0]</s>
+</div>
+If set to 1, disables all other controls at page when the dialog is shown.<br />
+
+<!-- CloseOut -->
+<a name=""></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>CloseOut</h4> <s>[0]</s>
+</div>
+If it is automatically closed when mouse moves outside the dialog and its header.<br />
+
+<!-- CloseClickHeader -->
+<a name=""></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>CloseClickHeader</h4> <s>[0]</s>
+</div>
+If it is automatically closed after click to <a href="#TDialogHeader">Header</a>.<br />
+For predefined header in TreeGrid menu like for Enum type is already set.<br />
+
+<!-----------------------  Custom calendar and JavaScript events  ------------------------>
+<a name="CustomCalendar"></a>
+<h3>Custom calendar and JavaScript events</h3>
+TreeGrid library contains global function to show a custom calendar.<br />
+
+<!-- ShowCalendar -->
+<a name="ShowCalendar"></a>
+<div class="API">
+   <u>new <b>6.2</b></u> <b>global func.</b> <i><a href="#Calendar">TCalendar</a></i>
+   <h4>ShowCalendar</h4>
+   <s>(<i><a href="#Calendar">TCalendar</a></i> <b>Calendar</b>, <i><a href="#TPosition">TPosition</a></i> <b>Pos</b>, <i>function</i> <b>Func</b>, <i>type</i> <b>Date</b>)</s>
+</div>
+Shows custom calendar on given position.<br />
+<i>Remember, the <b>Calendar</b> and <b>Pos</b> are JavaScript objects, <u>not</u> strings.</i><br />
+<b>Func</b> is function called when the calendar is closed and value(s) is accepted - replaces <a href="#TCalendarOnSave">OnSave</a> event.<br />
+<b>Date</b> is initial date(s), replaces <a href="#TCalendarDate">Date</a>.<br />
+Returns the <b>Calendar</b> or new TCalendar object if the <b>Calendar</b> has been set in string.<br />
+<i>To show calendar in grid for some cell</i> use grid API method <a href="TypeDate.htm#ShowCalendar">ShowCalendar</a> instead.<br />
+
+<!-- Close -->
+<a name="TCalendarClose"></a>
+<div class="API">
+   <u>new <b>6.2</b></u> <b style="width:135px;margin-left:-20px;">TCalendar method</b> <i>void</i>
+   <h4>Close</h4>
+   <s>( )</s>
+</div>
+Closes the calendar manually. Usable especially for <u>not</u> <a href="#TMenuPopup">Popup</a> calendars.
+
+<!-- OnSave -->
+<a name="TCalendarOnSave"></a>
+<div class="API">
+   <u>new <b>6.2</b></u> <b style="width:135px;margin-left:-20px;">TCalendar event</b> <i>bool</i>
+   <h4>OnSave</h4>
+   <s>(<i>type</i> <b>date</b>)</s>
+</div>
+Called after a user chooses the date(s).<br />
+The date is count of milliseconds from 1/1/1970. For range is the range of these integers.<br />
+Return false to cancel closing.<br />
+
+<!-- OnChange -->
+<a name="TCalendarOnChange"></a>
+<div class="API">
+   <u>new <b>6.2</b></u> <b style="width:135px;margin-left:-20px;">TCalendar event</b> <i>void</i>
+   <h4>OnChange</h4>
+   <s>(<i>type</i> <b>date</b>)</s>
+</div>
+Called in multiselect (<tt><a href="#TCalendarRange">Range</a>=1</tt>) for every change.<br />
+The date is range(s) of counts of milliseconds from 1/1/1970.<br />
+
+<!-- OnCanEditDate -->
+<a name="TCalendarOnCanEditDate"></a>
+<div class="API">
+   <u>new <b>6.2</b></u> <b style="width:135px;margin-left:-20px;">TCalendar event</b> <i>bool</i>
+   <h4>OnCanEditDate</h4>
+   <s>(<i>Date</i> <b>date</b>)</s>
+</div>
+Called for every day shown in calendar to choose if it is selectable or not<br />
+
+<!-- OnGetCalendarDate -->
+<a name="TCalendarOnGetCalendarDate"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b style="width:135px;margin-left:-20px;">TCalendar event</b> <i>string</i>
+   <h4>OnGetCalendarDate</h4>
+   <s>(<i>Date</i> <b>date</b>, <i>string</i> <b>text</b>, <i>string[ ]</i> <b>classes</b>, <i>bool</i> <b>range</b>)</s>
+</div>
+Called when displaying Calendar dialog for every date in the calendar to let modify the displayed date text and / or class.<br />
+<b>date</b> is the Date object for given day. text is the text that will be displayed for the day.<br /> 
+<b>classes</b> is an array of four CSS classes that will be used for the day: [normal, hover, selected, selected+hover]. The event handler can modify theses four strings to use different CSS classes.<br />
+<b>range</b> is true if the calendar will permit selecting more dates or date ranges. If it is false, the <b>classes</b> use only first two strings.<br />
+Return the text of date or <b>text</b>.<br />
+
+<!-- OnClose -->
+<a name=""></a>
+<div class="API">
+   <u></u> <b style="width:135px;margin-left:-20px;">TDialog event</b> <i>void</i>
+   <h4>OnClose</h4>
+   <s>( )</s>
+</div>
+Called on close dialog.<br />
+
+<!-- OnButtonClick -->
+<a name="TCalendarOnButtonClick"></a>
+<div class="API">
+   <u>new <b>6.7</b></u> <b style="width:135px;margin-left:-20px;">TCalendar event</b> <i>void</i>
+   <h4>OnButtonClick</h4>
+   <s>(<i>int</i> <b>button</b>)</s>
+</div>
+Called on click to the control button.<br />
+button = 1 - OK, 2 - Cancel, 3 - Today, 4 - Yesterday.<br />
+Return the clicked button number or 0 to ignore the click.<br />
+
+<!---------------------------------------------------  Custom dialog in JavaScript  ------------------------------------------------------------>
+<a name="Dialog"></a>
+<h2>Custom dialog in JavaScript</h2>
+
+TreeGrid library contains global functions to show a custom dialog with any HTML content.<br />
+<i>For other TDialog properties see <a href="#Base">menu attributes</a> for TDialog object.</i><br />
+
+<!-- ShowDialog -->
+<a name="ShowDialog"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i>TDialog</i>
+   <h4>ShowDialog</h4>
+   <s>(<i>TDialog</i> <b>Dialog</b>, <i><a href="#TPosition">TPosition</a></i> <b>Pos</b>)</s>
+</div>
+Shows custom dialog on given position.<br />
+<i>Remember, the <b>Dialog</b> and <b>Pos</b> are JavaScript objects, <u>not</u> strings.</i><br />
+Returns the <b>Dialog</b> or new dialog object if the <b>Dialog</b> has been set in string.<br />
+<i>To show dialog in grid for some cell</i> use grid API method <a href="CellBasics.htm#ShowDialog">ShowDialog</a> instead.<br />
+<i>To show popup dialog in some grid use such code:</i> <tt>G.CloseDialog(); G.Dialog = ShowDialog("HTML to show",&#123;X:mousex,Y:mousey});</tt><br />
+
+<!-- Tag -->
+<a name="Tag"></a>
+<div class="API">
+   <u></u> <b style="width:135px;margin-left:-20px;">TDialog prop.</b> <i>object</i>
+   <h4>Tag</h4>
+   <s></s>
+</div>
+The DOM object of the dialog HTML representation.<br />
+Use for example to focus an input on the dialog like: <tt>ShowDialog (&#123;...},&#123;...}).Tag.getElementsByTagName("input")[0].focus();</tt><br />
+
+<!-- Close -->
+<a name="TDialogClose"></a>
+<div class="API">
+   <u></u> <b style="width:135px;margin-left:-20px;">TDialog method</b> <i>void</i>
+   <h4>Close</h4>
+   <s>( )</s>
+</div>
+Closes the dialog manually. Usable especially for <u>not</u> <a href="#TMenuPopup">Popup</a> dialogs.<br />
+
+<!-- Body -->
+<a name="TDialogBody"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>string</i>
+   <h4>Body</h4>
+   <s></s>
+</div>
+Basic HTML content of the dialog<br />
+
+<!-- ClosePlace -->
+<a name="TDialogClosePlace"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>ClosePlace</h4>
+   <s></s>
+</div>
+If the dialog is automatically closed when mouse moves outside the place set by TPosition (used for hint).<br />
+
+<!-- CloseIn -->
+<a name="TDialogCloseIn"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>CloseIn</h4>
+   <s></s>
+</div>
+If the dialog is automatically closed when mouse moves into the dialog (used for informational message).
+
+<!-- CloseTimeout -->
+<a name="TDialogCloseTimeout"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>int</i>
+   <h4>CloseTimeout</h4>
+   <s>[300]</s>
+</div>
+How long should be fulfilled the CloseOut, ClosePlace, CloseArea or CloseIn condition to close the dialog.
+
+<!-- CloseClick -->
+<a name="TDialogCloseClick"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>CloseClick</h4>
+   <s></s>
+</div>
+If the dialog is automatically closed after click to dialog.
+
+<!-- CloseMove -->
+<a name="TDialogCloseMove"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>CloseMove</h4>
+   <s></s>
+</div>
+If the dialog is automatically closed when mouse moves for given count of pixels (used for tooltip).
+
+<!-- CloseAfter -->
+<a name="TDialogCloseAfter"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>CloseAfter</h4>
+   <s></s>
+</div>
+If the dialog is automatically closed after given count of milliseconds.
+
+<!-- HeadDrag -->
+<a name="TDialogHeadDrag"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>HeadDrag</h4>
+   <s>[1]</s>
+</div>
+If the dialog can be moved by mouse dragging the Head.
+
+<!-- Shift -->
+<a name="TDialogShift"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>int</i>
+   <h4>Shift</h4>
+   <s>[-1]</s>
+</div>
+How much (in pixels) will be the dialog moved in align direction from the header (to overlay header and dialog).
+
+<!-- ShadowWidth -->
+<a name="TDialogShadowWidth"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>int</i>
+   <h4>ShadowWidth</h4>
+   <s>[7]</s>
+</div>
+The width of shadow in pixels, it will be reserved to the edge right and bottom edge.
+
+<!-- Wrap -->
+<a name="TDialogWrap"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>Wrap</h4>
+   <s></s>
+</div>
+If the dialog lets wrapping of texts, 0 - no, 1 - yes, null - default.
+
+<!-- InDiv -->
+<a name="TDialogInDiv"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>bool</i>
+   <h4>InDiv</h4>
+   <s>[0]</s>
+</div>
+Set it to 1 when it is already in div to not surround it by another.
+
+<!-- FocusTag -->
+<a name="TDialogFocusTag"></a>
+<div class="XML">
+   <u></u> <b>TDialog</b> <i>object</i>
+   <h4>FocusTag</h4>
+   <s></s>
+</div>
+Tag that is focused after click to scroll, for null it is the main dialog tag.
+
+</div>
+</body>	
+</html>

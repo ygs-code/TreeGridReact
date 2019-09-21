@@ -1,0 +1,87 @@
+﻿<Grid>
+   <Cfg id='Photoalbum' MainCol='A' HideRootTree='1' NoTreeLines='1' Sorting='0'
+      NoScrollAfterExpand='1' SaveExpanded='0' NoFormatEscape='1' 
+      ColMoving='0' Selecting='0' Deleting='0' Adding='0' Editing='0' Dragging='0' MaxHeight='1'
+      SortCols='D,B' ChildPartMin="5" ChildPartLength="5"
+      />
+   <Actions OnDragRow="Scroll" OnEnter="if(Img) Img.oncontextmenu(); else { ExpandF OR CollapseF }" OnSpace="if(Img) Img.onclick(); else { ExpandF; First(Grid.FRow); }" OnEsc="if(Img) Img.onclick();" 
+      OnPageDown="if(Img) Img.onmousewheel({wheelDelta:-120},1); else { PageDown; return 1; }" OnPageUp="if(Img) Img.onmousewheel({wheelDelta:120},1); else { PageUp; return 1; }"
+      OnDown="if(Img) Img.onmousewheel({wheelDelta:-120}); else { GoDown; return 1; }" OnUp="if(Img) Img.onmousewheel({wheelDelta:120}); else { GoUp; return 1; }"
+      OnRight="if(Img) Img.onmousewheel({wheelDelta:-120}); else { GoRight; return 1; }" OnLeft="if(Img) Img.onmousewheel({wheelDelta:120}); else { GoLeft; return 1; }"
+      OnDel="window.CollapseAll();" OnF1="Help();CancelEvent(event);"
+      />
+   <Panel Visible="0"/>
+   <Cols>
+      <C Name='A' Type='Text' Format='|0|&lt;B&gt;|&lt;/B&gt;' RelWidth='100'/>
+      <C Name='B' Type='Date' Format='ddd d. MMMM yyyy' Width='145'/>
+      <C Name='C' Type='Date' Format='ddd d. MMMM yyyy' Width='145'/>
+      <C Name='D' Type='Int' Visible='0' CanHide='0'/>
+   </Cols>
+   <Def>
+      <D Name='R' MaxHeight='0' Width='800' D='2' OnClick='Focus,Expand OR Collapse' FocusRow='Border,Color' FocusCell='Color'/>
+      <D Name='Root' Class='RootNode' AClass='RootNodeText' Height='26' OnClick='1' CanFocus='0' CanExpand='0'/>
+      <D Name='Desc' CanFocus='0' AType='Html' Spanned='1' ASpan='3' D='0'/>
+      <D Name='Img' CanFocus='0' AType='List' Spanned='1' ASpan='3' D='1'/>
+   </Def>
+   <Header A='Description and photos' B='Date from' C='Date to' Class='Header'/>
+   <Solid>
+
+      <!-- Photo preview -->
+      <I id='Preview' Cells='Preview' PreviewType='Html' PreviewRelWidth='1' PreviewAlign='Center' Height='200'/>
+
+      <!-- Toolbar with radios -->
+      <Toolbar id='Menu' Cells='Sep1,Photo,Preview,Thumbnails,Sep2,Collapse,Help,Sep3'
+
+         PhotoLabel='&lt;b>Photo:&amp;nbsp;&lt;/b>' PhotoType='Radio' PhotoEnum='|dialog|new&amp;nbsp;window' PhotoCanEdit='1'
+         PhotoFormula='Win' PhotoOnChange='Win = Value;'
+
+         PreviewLabel='&lt;b>Preview:&amp;nbsp;&lt;/b>' PreviewType='Radio' PreviewEnum='|none|small|medium|large' PreviewCanEdit='1'
+         PreviewFormula='Prev' PreviewOnChange='PreviewChange(Value)' PreviewVisibleFormula='Thumb!=4' PreviewLabelVisibleFormula='Thumb!=4'
+
+         ThumbnailsLabel='&lt;b>Thumbnails:&amp;nbsp;&lt;/b>' ThumbnailsType='Radio' ThumbnailsEnum='|small|magnified|large|preview' ThumbnailsCanEdit='1'
+         ThumbnailsFormula='Thumb-1' ThumbnailsOnChange='ThumbnailsChange(Value+1)'
+
+         CollapseType='Button' CollapseButton='Button' CollapseOnClick='CollapseAll' CollapseButtonText='Collapse all'
+
+         HelpType='Button' HelpButton='Button' HelpOnClick='Help();return true;' HelpButtonText='Help'
+
+         Sep1Type='Html' Sep2Type='Html' Sep1RelWidth='1' Sep2RelWidth='1' Sep3Type='Html' Sep3Width='15'
+         />
+
+      <!-- Two smaller ones -->
+      <Toolbar id="Menu1" Kind="Toolbar1" Mirror="Menu" Cells='Photo,Preview' Visible="0" CanHide="0"/>
+      <Toolbar id="Menu2" Kind="Toolbar2" Mirror="Menu" Cells='Thumbnails,Sep2,Collapse,Help,Sep3' Visible="0" CanHide="0"/>
+
+      <!-- Four yet smaller ones -->
+      <Toolbar id="Menu11" Kind="Toolbar12" Mirror="Menu" Cells='Photo' Visible="0" CanHide="0"/>
+      <Toolbar id="Menu12" Kind="Toolbar12" Mirror="Menu" Cells='Preview' Visible="0" CanHide="0"/>
+      <Toolbar id="Menu21" Kind="Toolbar21" Mirror="Menu" Cells='Thumbnails' Visible="0" CanHide="0"/>
+      <Toolbar id="Menu22" Kind="Toolbar22" Mirror="Menu" Cells='Sep3,Collapse,Help' Visible="0" CanHide="0" Sep3Width="8"/>
+
+   </Solid>
+
+   <!-- Splits the toolbar for smaller displays -->
+   <Media>
+      <M MinWidth="511" MaxWidth="1000">
+         <Rows>
+            <I id="Menu" Visible="0" CanHide="0"/>
+            <I id="Menu1" Visible="1" CanHide="1"/>
+            <I id="Menu2" Visible="1" CanHide="1"/>
+         </Rows>
+      </M>
+      <M MaxWidth="510">
+         <Rows>
+            <I id="Menu" Visible="0" CanHide="0"/>
+            <I id="Menu11" Visible="1" CanHide="1"/>
+            <I id="Menu12" Visible="1" CanHide="1"/>
+            <I id="Menu21" Visible="1" CanHide="1"/>
+            <I id="Menu22" Visible="1" CanHide="1"/>
+         </Rows>
+      </M>
+   </Media>
+   <Toolbar Visible='0'/>
+
+   <!-- Custom attributes, informational texts -->
+   <Cfg Help="Left click returns to the list&lt;br>Mouse wheel goes to next or previous image&lt;br>Right click zooms image&lt;br>Zoomed image can be scrolled by mouse wheel&lt;br>If browser stops loading photos, press F5"/>
+   <Cfg HelpGrid="&lt;b>Photo list&lt;/b>&lt;br>Click to the gray row expands or collapses it&lt;br>Click to photo thubnail shows it in dialog, window or preview (according to the settings).&lt;br>Mouse wheel scrolls the list up or down.&lt;br>&lt;br>White cursor can be moved by arrow keys, PGUp, PgDn, Home, End. &lt;br>Enter on row with cursor expands or collapses it.&lt;br>Space on row with cursor shows the first photo in dialog, window or preview (according to the settings).&lt;br>Del collapses all rows.&lt;br>&lt;br>&lt;b>Photo in dialog&lt;/b>&lt;br>"/>
+</Grid>

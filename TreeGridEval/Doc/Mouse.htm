@@ -1,0 +1,176 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Mouse API</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Mouse API</h1>
+<p>TreeGrid documentation</p>
+
+<!-- OnClick -->
+<a name="OnClick"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnClick</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>x</b>, <i>int</i> <b>y</b>, <i>Event</i> <b>event</b>)</s>
+</div>
+Called after click to cell [<b>row</b>, <b>col</b>]. <b>row</b> and <b>col</b> are <u>never</u> null.<br />
+<b>x</b>, <b>y</b> is click position inside the cell.	<b>event</b> is standard JavaScript MouseEvent to get for example information about Ctrl/Alt/Shift keys or other information about click.<br />
+Return true to suppress default <b>OnClick</b> action<br />
+
+<!-- OnDblClick -->
+<a name="OnDblClick"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnDblClick</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>x</b>, <i>int</i> <b>y</b>, <i>Event</i> <b>event</b>)</s>
+</div>
+Called after double click to grid. <b>row</b> or <b>col</b> can be null for double click outside the cells.<br />
+<b>x</b>, <b>y</b> is click position inside the cell.	<b>event</b> is standard JavaScript MouseEvent.<br />
+Return true to suppress default <b>OnDblClick</b> action<br />
+
+<!-- OnRightClick -->
+<a name="OnRightClick"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnRightClick</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>x</b>, <i>int</i> <b>y</b>, <i>Event</i> <b>event</b>)</s>
+</div>
+Called after right click to grid. <b>row</b> or <b>col</b> can be null for double click outside the cells.<br />
+<b>x</b>, <b>y</b> is click position inside the cell.	<b>event</b> is standard JavaScript MouseEvent.<br />
+Return true to suppress default <b>OnRightClick</b> action<br />
+
+<!-- OnLongClick -->
+<a name="OnLongClick"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnLongClick</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>x</b>, <i>int</i> <b>y</b>, <i>Event</i> <b>event</b>)</s>
+</div>
+Called on click with time between mouse/touch down and up longer than <a href="#CfgLongClick">LongClick</a> (default 500ms).<br />
+
+<!-- OnRightLongClick -->
+<a name="OnRightLongClick"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnRightLongClick</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>x</b>, <i>int</i> <b>y</b>, <i>Event</i> <b>event</b>)</s>
+</div>
+Called on right click with time between mouse/touch down and up longer than <a href="#CfgLongClick">LongClick</a> (default 500ms).<br />
+
+<!-- LongClick -->
+<a name="CfgLongClick"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>LongClick</h4>
+   <s>[500]</s>
+</div>
+Time between mouse / touch down and up to be the click taken as long click.<br />
+For long click there are called special long click events and next standard click events.<br />
+
+<!-- MacContextMenu -->
+<a name="CfgMacContextMenu"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>MacContextMenu</h4>
+   <s>[0/1]</s>
+</div>
+When the context menu is displayed on Mac computers on right click.<br />
+<b>0</b> - Mac way, displayed on mouse down. It can collide with dragging by right mouse button.<br />
+<b>1</b> - Windows way, displayed on mouse up. It always suppresses default browser context menu. Useful for dragging by right mouse button.<br />
+By default it is <b>1</b> on grids with Gantt chart and <b>0</b> in other grids.<br />
+
+<!-- OnMouseDown -->
+<a name="OnMouseDown"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnMouseDown</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>x</b>, <i>int</i> <b>y</b>, <i>Event</i> <b>event</b>)</s>
+</div>
+Called after mouse down in grid. <b>row</b> or <b>col</b> can be null for double click outside the cells.<br />
+<b>x</b>, <b>y</b> is click position inside the cell.	<b>event</b> is standard JavaScript MouseEvent.<br />
+Return true to suppress default <b>OnRightClick</b> action<br />
+
+<!-- OnMouseUp -->
+<a name="OnMouseUp"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnMouseUp</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>x</b>, <i>int</i> <b>y</b>, <i>Event</i> <b>event</b>)</s>
+</div>
+Called after mouse up in grid. <b>row</b> or <b>col</b> can be null for double click outside the cells.<br />
+<b>x</b>, <b>y</b> is click position inside the cell.	<b>event</b> is standard JavaScript MouseEvent.<br />
+Return true to suppress default <b>OnMouseUp</b> action<br />
+
+<!-- OnMouseMove -->
+<a name="OnMouseMove"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnMouseMove</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>x</b>, <i>int</i> <b>y</b>, <i>Event</i> <b>event</b>)</s>
+</div>
+Called whenever mouse moves above grid. <b>row</b> or <b>col</b> can be null for double click outside the cells.<br />
+<i>Use only very short code here to not slow down the grid.</i><br />
+<b>x</b>, <b>y</b> is click position inside the cell.	<b>event</b> is standard JavaScript MouseEvent.<br />
+Return true to suppress default <b>OnMouseMove</b> action<br />
+
+<!-- OnMouseOver -->
+<a name="OnMouseOver"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnMouseOver</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>TRow</i> <b>orow</b>, <i>string</i> <b>ocol</b>, <i>Event</i> <b>event</b>)</s>
+</div>
+Called after whenever mouse enters to another cell or outside any cell or row.<br /> 
+<b>row</b> or <b>col</b> is new cell, the <b>orow</b>, <b>ocol</b> is old cell. All parameters except <b>grid</b> can be null.<br />
+<b>event</b> is standard JavaScript MouseEvent.<br />
+
+<!-- Touched -->
+<a name="Touched"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API variable</b> <i>int</i>
+   <h4>Touched</h4>
+   <s></s>
+</div>
+It is set inside mouse events when the event is processing touch event on touch screen.<br />
+It is set to count of actually held fingers on touch screen.<br />
+<i>
+<b>Touch events do <u>not</u> work in MS IE in any version.</b><br />
+Touch events work in all other browsers on tablets and mobiles and in Chrome and Safari on desktop by default.<br />
+Touch events in MS Edge on desktop you have to permit in <a href="about:flags">about:flags</a>, option Touch - Touch events - Enable touch events.<br />
+Touch events in Firefox on desktop you have to permit in <a href="about:config">about:config</a>, option dom.w3c_touch_events.enabled = 1.<br />
+</i>
+
+<!-- Grids.Active -->
+<a name="Active"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i>TGrid</i>
+   <h4><span style="font-style:italic;">Grids.</span>Active</h4>
+   <s></s>
+</div>
+Pointer to active grid under the mouse cursor. It processes mouse wheel events.<br />
+
+<!-- ARow -->
+<a name="ARow"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>TRow</i>
+   <h4>ARow</h4>
+   <s style="color:red;">read only</s>
+</div>
+Actual row under mouse cursor or null<br />
+
+<!-- ACol -->
+<a name="ACol"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>string</i>
+   <h4>ACol</h4>
+   <s style="color:red;">read only</s>
+</div>
+Actual column under mouse cursor<br />
+
+</div>
+</body>	
+</html>

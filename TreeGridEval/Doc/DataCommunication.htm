@@ -1,0 +1,962 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Data communication</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Data communication with server</h1>
+<p>TreeGrid documentation</p>
+
+This document contains basic information about TreeGrid data communication.<br />
+TreeGrid can download data from remote server, local server, local files, from XML placed directly in the source HTML page or from JavaScript variable.<br />
+TreeGrid can upload data to remote or local server or include the data to HTML page and submit it.<br /><br />
+
+The communication type, urls and other settings are specified by base &lt;<u><b>treegrid</b></u>> or &lt;<u><b>bdo</b></u>> tag that defines TreeGrid on HTML page or by global <u><b>TreeGrid</b></u> function that creates TreeGrid dynamically by API.<br /><br />
+
+There are possible communication types:<br />
+<u><b>AJAX</b></u> - Background communication without reloading page. Supports all TreeGrid communication features like server paging.<br />
+<u><b>AJAX SOAP</b></u> - AJAX communication with XML in SOAP envelope. Supports all TreeGrid communication features like server paging.<br />
+<u><b>Submit</b></u> - Old communication style by submitting and reloading the whole page. It does not support TreeGrid server paging, auto update and reloading body.<br />
+<u><b>Direct</b></u> - XML data directly included in &lt;treegrid> / &lt;bdo> tag attribute values or JSON data in JavaScript object. It does not support uploading to server and server paging.<br />
+All these communications can be combined in one grid, e.g. use Direct communication for downloading layout and data and AJAX for uploading changes to server.<br /><br />
+
+Every data source has its own prefix before its attribute name (for example Data_Url, Data_ is prefix and Url is attribute name).<br />
+
+<!-----------------------------------------------------------------------  AJAX communication  ------------------------------------------------->
+<a name="AJAX"></a>
+<h2>AJAX communication</h2>
+
+Modern background communication without reloading page. Supports all TreeGrid communication features like server paging or reload body.<br /><br />
+
+For AJAX communication you must specify the <b>URL</b> where the data will be downloaded from and optionally sent to, for example <tt>Layout_Url = "../app/getLayout.jsp"</tt>.<br />
+Other attributes are optional and often work with the default settings.<br />
+<br />
+<b>Example</b>
+TreeGrid with structure downloaded from static file. Data is downloaded from aspx web page, with parameter <tt>Do = "Load"</tt>.<br />
+Changed data is uploaded to the same aspx page, with parameters <tt>TGData="changed data in XML"</tt>, <tt>Do="Save"</tt>.<br />
+Exported data is uploaded to export aspx page, with parameters <tt>TGData="the exported data"</tt>, <tt>File="Export.xls"</tt>, the aspx page is expected just to return this data to client in the file specified.<br /><br />
+<tt>
+&lt;<b style="color:darkred;">treegrid</b>
+    <div class="L1">
+    <b>Layout_Url</b>="TreeGridSampleDef.xml"<br /> 
+    <b>Data_Url</b>="TreeGridSample.aspx" <b>Data_Param_Do</b>="Load"<br />
+    <b>Upload_Url</b>="TreeGridSample.aspx" <b>Upload_Data</b>="TGData" <b>Upload_XML</b>="1" <b>Upload_Param_Do</b>="Save"<br />
+    <b>Export_Url</b>="TreeGridExport.aspx" <b>Export_Data</b>="TGData" <b>Export_Param_File</b>="Export.xls" ><br />
+    </div>
+&lt;/<b style="color:darkred;">treegrid</b>> 
+</tt>
+
+<!-- xxx_Url -->
+<a name="xxx_Url"></a><a name="Url"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Url</h4> <s>Postfix to data source (e.g. Data_Url)</s>
+</div>
+An URL to connect to. From this URL are data downloaded or to this URL are data uploaded.<br /> 
+This URL can be an URL of static file to download or any web page or web service.<br /> 
+<strong>This URL must be in the same domain as the page where TreeGrid is shown. It cannot be changed, because of browser security restrictions for AJAX. In this case use <a href="#JSONP">Jsonp</a> instead.</strong><br />
+If this URL  is <b>relative</b>, it is relative to the actual page URL, see <a href="#xxx_Relative">xxx_Relative</a>.<br />
+For download it can contain parameters for GET <a href="#Method">method</a> only (beyond the '?').<br /> 
+For upload it cannot contain parameters (beyond the "?"), because the POST method used.<br /><br />
+
+This attribute value can contain wildcards to change it according to grid or page settings. All these strings will be replaced by appropriate runtime value:<br />
+<div class="L1">
+<table>
+  <tr><td style="width:150px;"><b>*Sort0</b>, <b>*Sort1</b>, <b>*Sort2</b></td><td>Column name according to is grid sorted. With prefix '-' for descendant sorting</td></tr>
+  <tr><td></td><td>If grid is not sorted or Sort count is less than 3, the not used wildcards are removed.</td></tr>
+  <tr><td><b>*id</b></td><td>Row or page id (only for Page_Url)</td></tr>
+  <tr><td><b>*Pos</b></td><td>Page position (only for Page_Url)</td></tr>
+  <tr><td><b>*Rows</b></td><td>Page's attribute Rows (only for Page_Url), this attribute can be set to anything, for example to generate the whole URL.</td></tr>  
+</table>
+</div>
+For example <tt>Data_Url='..\Source\Body*Sort0.xml' Page_Url='..\Source\Page*Pos.xml'</tt><br />
+
+<!-- xxx_Relative -->
+<a name="xxx_Relative"></a><a name="Relative"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>bool</i>
+   <h4>xxx_Relative</h4> <s>[0/1]</s>
+</div>
+Where the relative <a href="#xxx_Url">xxx_Url</a> or <a href="#xxx_Jsonp">xxx_Jsonp</a> will be related to.<br />
+<b>0</b> - to the actual page URL (defined in window.location). It means nothing is added before the relative url.<br />
+<b>1</b> - to the Grid/ folder, where main TreeGrid script GridE.js is placed. Before url is added the path to Grid folder from actual location.<br />
+By default it is <b>0</b> for all data sources.  Only Defaults and Text data sources without Url / Jsonp attribute set have Relative set to <b>1</b>.<br />
+Relative url is an url that starts <u>neither</u> with protocol (xxx://) <u>nor</u> by slash (/).<br />
+
+<!-- xxx_Data -->
+<a name="AjaxData"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Data</h4> <s>["Data"] Postfix to data source (e.g. Data_Data)</s>
+</div>
+Name of parameter where to store uploaded data or data of request. Default value is "<b>Data</b>".<br />
+In this parameter can be read the data on server, similar to name of the &lt;input> tag in submitting &lt;form>.<br />
+
+<!-- xxx_Method -->
+<a name="xxx_Method"></a><a name="Method"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Method</h4> <s>["GET"/"POST"] Postfix to data source (e.g. Data_Method)</s>
+</div>
+HTTP method of uploading data to server. Case insensitive.<br />
+It is default <b>GET</b> for sources <b>Defaults</b>, <b>Text</b>, <b>Base</b>, <b>Layout</b>. It is <b>GET</b> also for <b>Data</b> if used client or no paging (<tt>&lt;Cfg Paging<=2></tt>)<br />
+It is default <b>POST</b> for sources <b>Upload</b>, <b>Page</b>, <b>Export</b>, <b>Cell</b>. It is <b>POST</b> also for <b>Data</b> if used server paging (<tt>&lt;Cfg Paging=3></tt>)<br /><br />
+
+<table>
+  <tr><td><b>GET</b></td><td>For download data only. Uses HTTP method GET. <u>No</u> data is sent in parameter <a href="#AjaxData">Data</a> - no configuration or uploaded changes.</td></tr>
+  <tr><td></td><td><b>Params</b> and <b>Param</b> settings are coded into URL string after '?'.</td></tr>
+  <tr><td>&nbsp;</td><td></td></tr>
+  <tr><td><b>POST</b></td><td>For download or upload. Uses HTTP method POST. The data is sent in parameter <a href="#AjaxData">Data</a> - the configuration in request or uploaded changes.</td></tr>
+  <tr><td></td><td><b>Params</b> and <b>Param</b> settings are sent also in body of the HTTP request.</td></tr>
+  <tr><td></td><td>The HTTP data format is <b>application/x-www-form-urlencoded</b>, the same as submitting &lt;form>.</td></tr>
+  <tr><td></td><td>The HTTP charset is always UTF8: <tt>charset=UTF-8</tt></td></tr>
+  <tr><td>&nbsp;</td><td></td></tr>  
+  <tr><td><b>SOAP</b></td><td>For download or upload. Uses HTTP method POST and uploads data in SOAP XML envelope. See AJAX SOAP.</td></tr>  
+</table>
+
+<!-- xxx_Format -->
+<a name="xxx_Format"></a><a name="Format"></a>
+<div class="XML">
+   <u>chg <b>6.0</b> <i>upd <b>6.6</b></i></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Format</h4> <s>["Internal"] Postfix to data source (e.g. Data_Format)</s>
+</div>
+If set to "DTD", the uploaded XML will be in <u>DTD</u> format instead of the Internal.<br />
+If set to "JSON", the uploaded data will be JSON string.<br />
+Used for uploading data or for request, input data format is always automatically recognized.<br />
+
+<!-- xxx_Bonus -->
+<a name="xxx_Bonus"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Bonus</h4> <s>Postfix to data source (e.g. Data_Bonus)</s>
+</div>
+A string with direct XML or JSON data for TreeGrid. This data is read and added after main data in Url/Tag/Data are read to change some default behavior.<br />
+For download sources only (Text, Defaults, Base, Layout, Data)<br />
+
+<!-- xxx_Timeout -->
+<a name="xxx_Timeout"></a><a name="Timeout"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>int</i>
+   <h4>xxx_Timeout</h4> <s>[60]	Postfix to data source (e.g. Data_Timeout)</s>
+</div>
+Timeout in seconds. How long the grid will wait for server response. <b>0</b> means forever.<br />
+If the timeout expires, the grid asks a user if he wants to wait or cancel the communication. Depends on <a href="#Repeat">Repeat</a> settings.<br />
+
+<!-- xxx_Repeat -->
+<a name="xxx_Repeat"></a><a name="Repeat"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>int</i>
+   <h4>xxx_Repeat</h4> <s>[1] Postfix to data source (e.g. Data_Repeat)</s>
+</div>
+Behavior when <a href="#Timeout">Timeout</a> expires.<br /> 
+<b>0</b> - alerts the problem to user ("Cannot download / upload data, timeout expired"), but does not let user to try it again.<br />
+<b>1</b> - does not alert anything to user, just silent error.<br />
+<b>2</b> - alerts the problem to user ("Cannot download / upload data, server timeout ! Do you want to repeat request ?") and let him to choose to repeat the attempt.<br /> 
+<b>3</b> - Automatically repeats the attempt.<br />
+
+<!-- xxx_Xml -->
+<a name="Upload_Xml"></a><a name="xxx_Xml"></a><a name="Xml"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>bool</i>
+   <h4>xxx_Xml</h4> <s>[0] Postfix to data source (e.g. Data_Xml)</s>
+</div>
+If the uploaded data will be sent as is or will be sent with coded entities.<br />
+For <b>0</b> (default) are uploaded data encoded to string (&amp; and &lt;,> are replaced by &amp;amp; &amp;lt; &amp;gt;). The web service's parameter is type of string.<br />
+The <b>0</b> is required value when submitting form due security validation in some server script like ASP.NET.<br />
+For <b>1</b> data are uploaded as XML without any change, the web service's parameter is type of XmlDocument (or similar type).<br />
+
+<!-- xxx_Param_xxx -->
+<a name="xxx_Param_xxx"></a><a name="xxx_Param"></a><a name="Param"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Param_xxx</h4> <s>Postfix to data source and prefix to parameter name (e.g. Data_Param_Test)</s>
+</div>
+This is second prefix for custom parameters to send with the request.<br />
+<strong>The case sensitivity of parameter name is unsure, the name is always converted to format "First letter upper, other letters lower" !</strong><br />
+For example: <tt>Data_Param_Test="12"</tt> => it added custom parameter named "Test" with value "12".<br />
+
+<!-- xxx_Params -->
+<a name="xxx_Params"></a><a name="Params"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Params</h4> <s>Postfix to data source (e.g. Data_Params)</s>
+</div>
+All custom parameters in one string, just to be added to data being sent. Its format varies according to used <a href="#Method">Method</a>.<br />
+Use this attribute instead of <a href="#Param">Param</a> prefix if you need exact case sensitivity of the parameter names.<br />
+For methods <b>GET</b> and <b>POST</b> it contains standard parameters for URL, "<tt>paramname=paramvalue&amp;paramname2=paramvalue2</tt>". Without the first "?".<br /> 
+<div class="L1">For example "<tt>name=peter&value=smith</tt>". The string is encoded by JavaScript encodeURI function.</div>
+For method <b>SOAP</b>: It contains XML nodes in format &lt;ParamName>ParamValue&lt;/ParamName>&lt;ParamName2>ParamValue2&lt;/ParamName2>
+
+<!-- xxx_Header_xxx -->
+<a name="xxx_Header_xxx"></a><a name="Header"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Header_xxx</h4> <s>Postfix to data source and prefix to parameter name (e.g. Data_Header_Authorization)</s>
+</div>
+This is second prefix for custom http headers to send with the request.<br />
+<strong>The case sensitivity of parameter name is unsure, the name is always converted to format "First letter upper, other letters lower" !</strong><br />
+For example: <tt>Data_Header_Authorization="Basic login:password"</tt> => it added custom http header named "Authorization" with value "Basic login:password".<br />
+
+<!-- xxx_Cache -->
+<a name="xxx_Cache"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>int</i>
+   <h4>xxx_Cache</h4> <s>[0] Postfix to data source (e.g. Data_Cache)</s>
+</div>
+Caching setting for individual data source. See <a href="#Cache">Cache</a> attribute.<br /><br />
+
+<!-- xxx_Static -->
+<a name="xxx_Static"></a><a name="Static"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Static</h4> <s>[???] Postfix to data source (e.g. Data_Cache)</s>
+</div>
+Caches static data under this name to not load the data from source. Caches them for all grids on page.<br />
+It should be used only for static files like Defaults.xml.<br />
+By default it is set to Defaults_ and Text_ data sources if they have not set the _Url.<br />
+
+<!-----------------------------------------------------------------------  AJAX SOAP envelope  ------------------------------------------------->
+<a name="SOAP"></a>
+<h2>AJAX SOAP envelope</h2>
+
+AJAX communication with XML in SOAP envelope.<br /> 
+Similar to standard AJAX communication, but uploads the request XML in SOAP XML envelope.<br />
+<b>Uses all listed AJAX attributes above and these attributes for specifying SOAP Envelope</b>:<br />
+<br />
+<b>Example</b>
+TreeGrid with structure downloaded from static file. Data is downloaded from soap webservice, method <i>string Load (string Grid)</i>, with parameter <tt>Grid = "Grid1"</tt>.<br />
+Data is uploaded to soap web service, method string <i>Save (XmlDocument Data, string Grid, int Test)</i>, with parameters <tt>TGData="changed data in XML"</tt>, <tt>Grid="Grid1"</tt>, <tt>Test=12</tt>.<br />
+<tt>
+&lt;<b style="color:darkred;">treegrid</b>
+    <div class="L1">
+    <b>Layout_Url</b>="TreeGridSampleDef.xml"<br /> 
+    <b>Data_Url</b>="TreeGridSample.asmx" <b>Data_Method</b>="Soap" <b>Data_Function</b>="Load"<br />
+    <b>Data_Namespace</b>="www.treegrid.com" <b>Data_Param_Grid</b>="Grid1"<br />
+    <b>Upload_Url</b>="TreeGridSample.asmx" <b>Upload_Method</b>="Soap" <b>Upload_Function</b>="Save"<br />
+    <b>Upload_Namespace</b>="www.treegrid.com" <b>Upload_Data</b>="TGData" <b>Upload_XML</b>="1"<br />
+    <b>Upload_Param_Grid</b>="Grid1" <b>Upload_Param_Test</b>="12" ><br />
+    </div>
+&lt;/<b style="color:darkred;">treegrid</b>> 
+</tt><br /><br />
+
+<b>SOAP envelope <u>request</u> structure</b><br />
+Data are sent as "text/xml; charset=UTF-8".<br />
+<tt>
+&lt;?xml version="1.0" encoding="utf-8"?><br />
+&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <div class="L1">
+  &lt;soap:Body>
+    <div class="L1">
+    &lt;<a href="#Function">Function</a> xmlns="<a href="#Namespace">Namespace</a>">
+      <div class="L1">
+      &lt;<a href="#Data">Data</a>>... uploaded data if any, in string (if <a href="#Upload_Xml">Xml</a> is 0) or in xml (if <a href="#Upload_Xml">Xml</a> is 1) ...&lt;/<a href="#Data">Data</a>><br />
+      &lt;<a href="#Param">Param1</a>>... parameter value ...&lt;/<a href="#Param">Param1</a>><br />
+      &lt;<a href="#Param">Param2</a>>... parameter value ...&lt;/<a href="#Param">Param2</a>><br />
+      ... next parameters ...<br />
+      </div>
+    &lt;/<a href="#Function">Function</a>>
+    </div>
+  &lt;/soap:Body>
+  </div>
+&lt;/soap:Envelope>
+</tt><br />
+Where <b>Function</b>, <b>Namespace</b> and <b>Data</b> are values of these attributes of &lt;treegrid> tag.<br />
+Where <b>Param1</b>, <b>Param2</b>, ... are attribute prefix names, e.g. for "Data_Param_P1" is "P1". <i>Remember that parameter names must have the first letter uppercase and other lowercase!</i><br />
+In request is also sent HTTP header attribute <b>SOAPAction</b>=<a href="#Namespace">Namespace</a>/<a href="#Function">Function</a><br /><br />
+
+<b>Usual SOAP envelope <u>response</u> structure</b><br />
+Data are in the tag &lt;<i>Function</i><b>Result</b>> as string.<br />
+This is the standard output of the XML web service, if function returns string and data were sent as SOAP XML envelope.<br />
+Usual envelope (the full XML response) is:<br />
+<tt>
+&lt;?xml version="1.0" encoding="utf-8"?><br />
+&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <div class="L1">
+  &lt;soap:Body>
+    <div class="L1">
+    &lt;<a href="#Function">Function</a> xmlns="<a href="#Namespace">Namespace</a>">
+      <div class="L1">
+      &lt;FunctionResult>... returned xml data in string (escaped entities) or in xml (not escaped) ...&lt;/FunctionResult>
+      </div>
+    &lt;/<a href="#Function">Function</a>>
+    </div>
+  &lt;/soap:Body>
+  </div>
+&lt;/soap:Envelope>
+</tt><br />
+Where <b>Function</b> and <b>Namespace</b> are values of these attributes of &lt;treegrid> tag.<br />
+<i>TreeGrid does not parse the SOAP envelope response, it just searches for inner &lt;Grid> tag or &lt;Grid&gt; in text node.</i><br />
+
+<!-- xxx_Method -->
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Method</h4> <s>["GET"/"POST"] Postfix to data source (e.g. Data_Method)</s>
+</div>
+Set the Method to "<b>SOAP</b>" for SOAP communication.<br />
+
+<!-- xxx_Function	-->
+<a name="xxx_Function"></a><a name="Function"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Function</h4> <s>Postfix to data source (e.g. Data_Function)</s>
+</div>
+Name of SOAP function. This function will be called in the web service.<br />
+
+<!-- xxx_Namespace	-->
+<a name="xxx_Namespace"></a><a name="Namespace"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Namespace</h4> <s>Postfix to data source (e.g. Data_Namespace)</s>
+</div>
+Name of SOAP namespace. The namespace the Function belongs to.<br />
+
+<!-- xxx_Envelope	-->
+<a name="xxx_Envelope"></a><a name="Envelope"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Envelope</h4> <s>Postfix to data source (e.g. Data_Envelope)</s>
+</div>
+Envelope tag for SOAP. Set it if default envelope cannot be used by provider.<br />
+Default value is:<br /> 
+<tt>'&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">'</tt><br /><br />
+
+The Envelope can be used also to place AuthHeader with UserName and Password like:<br /> 
+<tt>'&lt;soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">&lt;soap:Header>&lt;AuthHeader xmlns="http://tempuri.org/">&lt;UserName><b style="color:red;">username</b>&lt;/UserName>&lt;Password><b style="color:red;">password</b>&lt;/Password>&lt;/AuthHeader>&lt;/soap:Header>'</tt><br /><br />
+
+<!-----------------------------------------------------------------------  Submit communication  ------------------------------------------------->
+<a name="Submit"></a>
+<h2>Submit communication</h2>
+
+Old communication style by submitting and reloading the whole page. It does not support TreeGrid server paging, auto update and reloading body.<br />
+In download are data read from hidden input. The input value is cleared after reading.<br />
+In upload are data set into hidden input value and the &lt;form> where the input is placed is submitted to server.<br />
+<br />
+<b>Example</b><br />
+TreeGrid with structure read direct from string, data downloaded from static file, uploaded by form submit in hidden input GridData.<br />
+<tt>
+&lt;<b style="color:darkred;">input</b> <b>type</b>="hidden" <b>name</b>="grid" id="GridData"><br />
+&lt;<b style="color:darkred;">div</b> <b>style</b>="width:100%;height:100%;"><br /> 
+&lt;<b style="color:darkred;">treegrid</b><br /> 
+    <div class="L1">
+    <b>Layout_Data</b>="&lt;Grid>&lt;Cols>&lt;C Name='C1'/>&lt;/Cols>&lt;/Grid>"<br /> 
+    <b>Data_Url</b>="../data/TreeGridSample.xml"<br /> 
+    <b>Upload_Tag</b>="GridData"><br />
+    </div>
+&lt;/<b style="color:darkred;">treegrid</b>><br /> 
+&lt;/<b style="color:darkred;">div</b>><br />
+</tt>
+
+<!-- xxx_Tag -->
+<a name="xxx_Tag"></a><a name="Tag"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Tag</h4> <s>Postfix to data source (e.g. Data_Tag)</s>
+</div>
+An <b>id</b> of tag (usually hidden input).<br />
+In download are data read from its attribute value. When data are read, the value is cleared.<br />
+In upload to this value are changes written when submitting form.<br />
+This is alternative to <a href="#Url">Url</a> and cannot be set both. For upload this must be id of &lt;<b>input</b>> tag.<br />
+If set for upload, data are uploaded <b>by form submit</b> and TreeGrid Auto update option cannot be used.<br /> 
+When uploading, don't forget to place this hidden input on HTML form with specified Action attribute as usual, when uploading forms to sever.<br />
+When user clicks <b>Save</b> button, the input's value is filled by changed data and form to which the input belongs is submitted to server.<br />
+When the form to which the input belongs is submitted by any other way, before submit, the input value is filled by changed data.<br />
+By default are uploaded data html encoded (&amp;,&lt;,> to entities) because of security validation in server scripts, you can change it by <a href="#Xml">Xml</a> attribute.<br /><br />
+
+<!-- Grids.<u>NoTryActiveX</u> -->
+<a name="NoTryActiveX"></a>
+<div class="API">
+   <u></u> <b>Global prop.</b> <i>int</i>
+   <h4>Grids.NoTryActiveX</h4>
+   <s></s>
+</div>
+When set to 1 in IE does not try to create ActiveX objects, event if it is possible and uses slower script XML parsing,<br /> 
+but don't show any message to a user about ActiveX.<br />
+This property has sense only if is <u>not</u> used AJAX and all data, include <a href="Files.htm#DefaultsXml">Defaults.xml</a> and <a href="Files.htm#TextXml">Text.xml</a>, are included in HTML page.<br />
+
+<!-----------------------------------------------------------------------  Directly included data  ------------------------------------------------->
+<a name="Data"></a>
+<h2>Directly included data</h2>
+
+XML or JSON data directly included in &lt;treegrid> / &lt;bdo> tag attribute values.<br /> 
+It can be used only for download and also does not support server paging and reloading body.<br />
+It can be used for grids generated by JavaScript on client.<br />
+<i>Remember, the including xml or json directly to html page can be combined with other communication types, especially for upload.</i><br />
+<br />
+<b>Example</b><br />
+Simple TreeGrid with data directly included<br />
+<tt>
+&lt;<b style="color:darkred;">treegrid</b> 
+    <div class="L1">
+    <b>Data_Data</b>="&lt;Grid>&lt;Cols>&lt;C Name='A'/>&lt;/Cols>&lt;Body>&lt;B>&lt;I A='1'/>&lt;/B>&lt;/Body>&lt;/Grid>"<br />
+    ><br />
+    </div>
+&lt;/<b style="color:darkred;">treegrid</b>>
+</tt>
+
+<!-- xxx_Data -->
+<a name="xxx_Data"></a><a name="Data"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Data</h4> <s>Postfix to data source (e.g. Data_Data)</s>
+</div>
+String with direct data for TreeGrid.<br /> 
+It is alternative to <a href="#Url">Url</a> and <a href="#Tag">Tag</a> and can be set only one from them.<br /> 
+For download only.<br />
+Remember, when including XML into HTML attribute, you should encode the HTML entities.<br />
+If you include some &amp;, &lt; " or' into XML attribute value, you need to convert it twice, if you include it to HTML.<br />
+For example: <tt>&lt;treegrid Data_Data="&lt;Grid>&lt;Body>&lt;B>&lt;I Col1='One <b>&amp;amp;amp;</b> Two <b>&amp;amp;lt;</b> Four'/>&lt;/B>&lt;/Body>&lt;/Grid>">&lt;/treegrid></tt><br /><br />
+
+<!-----------------------------------------------------------------------  Data from JavaScript  ------------------------------------------------->
+<a name="Script"></a>
+<h2>Data from JavaScript</h2>
+
+<!-- xxx_Script -->
+<a name="xxx_Script"></a><a name="Script"></a>
+<div class="XML">
+   <u>new <b>6.6</b> chg <b>13.0</b></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Script</h4> <s>Postfix to data source (e.g. Data_Script)</s>
+</div>
+JavaScript code that returns the data in XML string or JSON string or object to use. Or the JavaScript code asynchronously calls callback function with the data.<br />
+The JavaScript code can use these variables:<br />
+<b>Grid</b> as the calling grid.<br />
+<b>Source</b> as the data source part object, e.g. Grid.Data.Layout or Grid.Data.Page, the <b>Source.Name</b> contains name of the source, e.g. "Layout".<br />
+<b>Data</b> as the data in string that TreeGrid wants to send to server.<br />
+<b>Func</b> as the callback function, format: function Func(<b>code</b>,<b>data</b>), where <b>code</b> is integer, negative as error code, 0 or positive for success. <b>data</b> are the data to load.<br />
+If the code does not contain 'return' and also no '{' and ';' characters, the <b>return</b> keyword is added before the code.<br />
+<br />
+It is alternative to <a href="#Url">Url</a> and <a href="#Tag">Tag</a> and can be set only one from them.<br /> 
+<i>Before 13.0</i> it could be only global JavaScript variable name containing the data and could be used for download only.<br />
+<br />
+<b>Example with static data</b><br />
+<tt>
+&lt;<b style="color:darkred;">script</b>><br />
+var TGData1 = &#123;Cols:&#123;A:&#123;}},Body:[[&#123;A:1}]]};<br />
+&lt;/<b style="color:darkred;">script</b>><br /> 
+&lt;<b style="color:darkred;">treegrid</b> 
+  <div class="L1">
+  <b>Data_Script</b>="TGData1"
+  </div>
+&lt;/<b style="color:darkred;">treegrid</b>> 
+</tt>
+<br /><br />
+<b>Example with dynamic data</b><br />
+<tt>
+&lt;<b style="color:darkred;">script</b>><br />
+function LoadMyData(url,callback){<br />
+AjaxCall(url,function(code,data){callback(code,data);});<br />
+}<br />
+&lt;/<b style="color:darkred;">script</b>><br /> 
+&lt;<b style="color:darkred;">treegrid</b> 
+  <div class="L1">
+  <b>Data_Script</b>="LoadMyData('MyUrl',Func);"
+  </div>
+&lt;/<b style="color:darkred;">treegrid</b>> 
+</tt>
+
+
+<!------------------------------------------  Cross domain or local communication by JSONP  ------------------------------------------------->
+<a name="JSONP"></a>
+<h2>Cross domain or local communication by JSONP</h2>
+
+Data loaded in JSONP format, loaded by added dynamically <tt>&lt;script src='...'></tt> tag into the page.<br />
+This method provides access to different domains and also loading local files without server (page run in file:// protocol). Normally these two options are restricted in AJAX communication in the most browsers.<br />
+<i>Usable only for download!</i><br />
+Accepts also attributes <a href="#xxx_Relative">xxx_Relative</a>, <a href="#xxx_Bonus">xxx_Bonus</a>, <a href="#xxx_Timeout">xxx_Timeout</a>, <a href="#xxx_Repeat">xxx_Repeat</a>, <a href="#xxx_Cache">xxx_Cache</a>, <a href="#xxx_Static">xxx_Static</a>, <a href="#xxx_Param">xxx_Param</a>, <a href="#xxx_Params">xxx_Params</a>.<br />
+<i>The JSONP data are always loaded one by one, even if there are more grids. If one data is missing, it waits for timeout until it loads the next one.</i><br />
+
+<!-- xxx_Jsonp -->
+<a name="xxx_Jsonp"></a><a name="Jsonp"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>xxx_Jsonp</h4> <s>Postfix to data source (e.g. Data_Jsonp)</s>
+</div>
+URL to JSONP file in format:<br />
+a) <tt>TreeGridLoaded(<i>&#123;the JSON data}</i>)</tt>, e.g. <tt>TreeGridLoaded ( &#123; Cols: [ &#123; Name:"A" ] } , Body: [ [ &#123; A:"value \"A&1\"" } ] ] } )</tt><br />
+b) <tt>TreeGridLoaded("<i>the XML data</i>")</tt>, e.g. <tt>TreeGridLoaded("&lt;Grid>&lt;Cols>&lt;C Name='A'/>&lt;/Cols>&lt;Body>&lt;B>&lt;I A='Value \"A&amp;1\"'/>&lt;/B>&lt;/Body>&lt;/Grid>")</tt><br />
+The Jsonp has the same format as <a href="#xxx_Url">xxx_Url</a>.<br /><br />
+
+<i>The data must not contain any syntax error, otherwise they are ignored!</i><br />
+
+<!-- TreeGridLoaded -->
+<a name="TreeGridLoaded"></a>
+<div class="API">
+   <u>new <b>9.2</b></u> <b>global func.</b> <i>void</i>
+   <h4>TreeGridLoaded</h4>
+   <s>(<i>type</i> <b>Input</b>)</s>
+</div>
+Function called from JSONP script file to add the JSON or XML data to grid.<br />
+<i>Can be called only in JSONP script, not in any other code.</i><br />
+
+<!------------------------------------------  Sessions (AJAX)  ------------------------------------------------->
+<a name="Sessions"></a>
+<h2>Sessions (AJAX)</h2>
+
+How to identify one continuous access (session) to server.<br />
+
+<!-- Session -->
+<a name="Session"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>Session</h4> <s></s>
+</div>
+Initial identity for communication session. The session identity is sent in every request to server in &lt;IO <a href="#IOSession">Session</a>/> attribute to identify the session.<br /> 
+If server returns in its response the &lt;IO <a href="#IOSession">Session</a>/> attribute, the session identity is set to this attribute value to start new session.<br />
+By default the Session value is not persistent, therefore if user reloads page, the Session value is lost and new session is started.<br />
+You can let TreeGrid to store Session value to hidden input or to cookies by &lt;Cfg <a href="#CfgSaveSession">SaveSession</a>/> attribute.<br />
+<i>The session is <u>not</u> used by TreeGrid on client, it is intended only to identify the client on server in your server code.</i><br />
+
+<!-- Session -->
+<a name="IOSession"></a>
+<div class="XML">
+   <u></u> <b>&lt;IO></b> <i>string</i>
+   <h4>Session</h4> <s></s>
+</div>
+If session identity has been set for this grid, it is sent to server in every request in the &lt;IO <b>Session</b>/> to identify the client session.<br />
+The session identity can be set by &lt;treegrid <a href="#Session">Session</a>> on session start or can be set or changed by any server response(s) by the &lt;IO <b>Session</b>/>.<br />
+Remember, the IO is not sent to server if &lt;treegrid *_<a href="#Method">Method</a>='<b>Get</b>'> is used.<br />
+By default the Session value is not persistent, therefore if user reloads page, the Session value is lost.<br />
+You can let TreeGrid to store Session value to hidden input or to cookies by &lt;Cfg <a href="#CfgSaveSession">SaveSession</a>/> attribute.<br />
+
+<!-- SaveSession -->
+<a name="CfgSaveSession"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>SaveSession</h4> <s></s>
+</div>
+It can be set to '1' to save <a href="#IOSession">Session</a> attribute value to cookies. It saves Session regardless of values of <a href="Cookie.htm#CfgSuppressCfg">SuppressCfg</a> and <a href="Cookie.htm#CfgVersion">Version</a>.<br />
+Or it can be set to id of hidden input, it stores <a href="#IOSession">Session</a> attribute value to this input to be persistent for page reloading.<br />
+  <div class="L1">
+  Only some browsers preserve input values for page reloading.<br />
+	The hidden input must be placed to page in HTML and not by JavaScript. Also don't place it into TreeGrid main tag.<br />
+  </div>
+This attribute should not be set in data xml, only in layout.<br />
+
+<!-- SetSession -->
+<a name="SetSession"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>SetSession</h4>
+   <s>(<i>string</i> <b>Session</b>)</s>
+</div>
+Sets grid <a href="#Session">Session</a> attribute that identifies it in server requests. Saves the Session according to the <a href="#CfgSaveSession">SaveSession</a> setting.<br />
+Usable especially to clear the Session when wants to start new session with new data.<br />
+
+<!------------------------------------------  Server response (AJAX)  ------------------------------------------------->
+<a name="ServerResponse"></a>
+<h2>Server response (AJAX)</h2>
+
+<!-- Result -->
+<a name="IOResult"></a>
+<div class="XML">
+   <u>chg <b>7.0</b></u> <b>&lt;IO></b> <i>int</i>
+   <h4>Result</h4> <s></s>
+</div>
+General result of the <b>server</b> response.<br />
+TreeGrid distinguishes only two values:<br />
+  <div class="L1">
+  >= 0 as OK, the communication succeeded. The data sent from server have been accepted. For upload, all pending changes were accepted.<br />
+  &lt; 0 as Error, the communication failed. The data sent from server have been discarded. For upload, all pending changes are still pending.<br />
+  </div>
+Values -<b>1</b> to -<b>9</b> should be reserved to TreeGrid.<br />
+<i><b>Since 7.0</b> for results -2 to -9 in save response is displayed error alert. To not show it, remove the ErrorSave value from Text.xml</i><br />
+You can define API event <a href="#OnDataReceive">OnDataReceive</a> where you can access or change the Result by grid.IO.Result before it is processed by grid.<br /> 
+  <div class="L1">
+  Here you can read also any other custom IO attributes set by server to get more information about response status.
+  </div>
+  
+<!-- Message -->
+<a name="IOMessage"></a>
+<div class="XML">
+   <u></u> <b>&lt;IO></b> <i>string</i>
+   <h4>Message</h4> <s></s>
+</div>
+Server response message.<br /> 
+If it is set, this text is alerted to user, independently on <a href="#IOResult">Result</a> value and before <a href="#OnDataReceive">OnDataReceive</a> event.<br />
+It is intended to inform a user about some error or important change sent from server.<br />  
+
+<!-- HtmlMessage -->
+<a name="IOHtmlMessage"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;IO></b> <i>string</i>
+   <h4>HtmlMessage</h4> <s></s>
+</div>
+Server response message that can contain HTML code.<br /> 
+It is shown to user by TreeGrid modal ShowMessage inside TreeGrid main tag. It can be shown only for time specified by <a href="#IOHtmlMessageTime">HtmlMessageTime</a>.<br />
+If it is set, this text is shown to a user independently on <a href="#IOResult">Result</a> value and after the incoming data is added to grid or discarded.<br />
+It is intended to inform a user about some error or important change sent from server.<br />
+
+<!-- HtmlMessageTime -->
+<a name="IOHtmlMessageTime"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;IO></b> <i>int</i>
+   <h4>HtmlMessageTime</h4> <s></s>
+</div>
+How long will be the <a href="#IOHtmlMessage">HtmlMessage</a> shown, in milliseconds.<br />
+If not set or set to 0, the message is shown forever with OK button to hide it.<br />
+If set to negative number, the message is shown for the (positive) time, but also with OK button to hide it.<br />
+
+<!-- Reload -->
+<a name="IOReload"></a>
+<div class="XML">
+   <u></u> <b>&lt;IO></b> <i>int</i>
+   <h4>Reload</h4> <s></s>
+</div>
+If set to <b>1</b> reloads all body rows / pages.<br />
+It is useful to regenerate pages for server paging when pages were changed on server.<br />
+It can be also used if there are many updates on server and is faster to reload them all from server.<br />
+Remember, when set to 1, Data source xml can contain only variable rows, all other definitions like columns, fixed rows and so on must be in Layout source xml.<br />
+The reload body is done after <a href="#OnDataReceive">OnDataReceive</a> event, you can change this parameter in this event.<br />
+
+<!-- ReloadMessage -->
+<a name="IOReloadMessage"></a>
+<div class="XML">
+   <u></u> <b>&lt;IO></b> <i>string</i>
+   <h4>ReloadMessage</h4> <s></s>
+</div>
+Server response confirm message for reload.<br />
+If it is set, shows confirm dialog before reloading, to confirm this action by user.<br />
+It is independent on <a href="#IOResult">Result</a> value and is displayed before <a href="#OnDataReceive">OnDataReceive</a> event.<br />
+
+<!-- UpdateMessage -->
+<a name="IOUpdateMessage"></a>
+<div class="XML">
+   <u></u> <b>&lt;IO></b> <i>string</i>
+   <h4>UpdateMessage</h4> <s></s>
+</div>
+Server response confirm message for accepting changes sent from server.<br />
+If it is set, shows confirm dialog before the changes received from server are added to grid, to confirm this action by user.<br />
+It can be used especially when used <a href="DataServerChanges.htm#CheckForUpdates">checking for updates</a> function.<br />
+It is independent on <a href="#IOResult">Result</a> value and is displayed before <a href="#OnDataReceive">OnDataReceive</a> event.<br />
+
+<!-- IO -->
+<a name="IO"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>object</i>
+   <h4>IO</h4>
+   <s></s>
+</div>
+A response &lt;IO> tag accessible by API.<br /> 
+It is accessible in event <a href="#OnDataReceive">OnDataReceive</a> to check the server response result and confirm or reject the downloaded data and changes.<br />
+Remember, the IO object is reset for every response got from server, even if this response does not contain &lt;IO> tag.<br />
+
+<!------------------------------------------  Synchronous communication (AJAX)  ------------------------------------------------->
+<a name="SynchronousAJAX"></a>
+<h2>Synchronous communication (AJAX)</h2>
+
+By default TreeGrid loads all AJAX data asynchronously, one by one.<br />
+After load it updates data, sorts, filters, groups them and so on. Every this action is done also asynchronously one by one.<br />
+The advantage of asynchronous communication is that the page with TreeGrid is still accessible for user. TreeGrid also shows status messages to inform user what it is doing.<br />
+But asynchronous communication is slower, especially for smaller grids.<br /> 
+The grid can be completely downloaded and rendered synchronously by setting Sync attribute. The grid can be even fully created and rendered during page load.<br />
+The changes can be also uploaded to server synchronously to not let user to change any data unless the upload finishes, set Upload_Sync attribute.<br />
+
+<!-- Sync -->
+<a name="Sync"></a>
+<div class="XML">
+   <u>chg <b>6.0</b> <i>upd <b>9.2</b></i></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>int</i>
+   <h4>Sync</h4> <s></s>
+</div>
+If set to <b>1</b>, TreeGrid is created and rendered fully synchronously.<br />
+If created by TreeGrid function, it is rendered in time the function returns.<br />
+TreeGrid can be created and rendered synchronously also during HTML page loading.<br />
+If TreeGrid is created synchronously it does <u>not</u> display any message during loading and updating.<br />
+If TreeGrid is created synchronously it loads its CSS style sheet by AJAX, you should <u>not</u> include the CSS style to page in this case.<br />
+<i>This attribute value does <u>not</u> affect uploading and loading pages in server paging! For these you must set the <a href="#Upload_Sync">Upload_Sync</a> and / or <a href="#Page_Sync">Page_Sync</a>.</i><br />
+The synchronous creating is faster, especially for small grids, but disables browser during creating.<br />
+Individual data loading can be controlled by <a href="#xxx_Sync">xxx_Sync</a> attribute of the given data source.<br /><br />
+
+If set to <b>2</b> <i>(since 8.0)</i>, it loads data asynchronously, but permits only one request per html page. It always waits to finish actual request before starting new request.<br />
+It affects all grids at page and all their requests. It does not permit simultaneous data requests to server.<br />
+<i>Since 9.2</i> it queues the requests, so they are always processed in the order they are started.<br />
+Useful to not create more new threads on server side for the page.<br />
+<i>It must be set when using TreeGrid server DLL with PHP FastCGI to not create more instances of the DLL.</i><br />
+
+<!-- Page_Sync -->
+<a name="Page_Sync"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>bool</i>
+   <h4>Page_Sync</h4> <s></s>
+</div>
+Sets synchronous download of page or child page in server paging.<br />
+The grid is disabled during load and waits for server response.<br />
+
+<!-- Upload_Sync -->
+<a name="Upload_Sync"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>bool</i>
+   <h4>Upload_Sync</h4> <s></s>
+</div>
+Sets synchronous upload for AJAX communication.<br />
+The grid is disabled during upload and waits for server response.<br />
+
+<!-- xxx_Sync -->
+<a name="xxx_Sync"></a><a name="Sync"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>bool</i>
+   <h4>xxx_Sync</h4> <s>Postfix to data source (e.g. Data_Sync)</s>
+</div>
+Sets synchronous download of given data source when used AJAX communication.<br />
+The grid is disabled during load and waits for server response.<br />
+You can set Sync attributes for data sources Defaults, Text, Base, Layout and Data by &lt;treegrid <a href="#Sync">Sync</a>/> attribute.<br />
+
+<!-- SynchroCount -->
+<a name="CfgSynchroCount"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SynchroCount</h4> <s>[100]</s>
+</div>
+When count of rendered rows (<a href="RowAPI.htm#RowCount">RowCount</a>) is higher than this value, many actions like sorting, grouping, column resizing and so on are done asynchronously, 
+grid is disabled and message is displayed.<br />
+See also <a href="Export.htm#CfgExportRows">ExportRows</a> and <a href="Print.htm#CfgPrintRows">PrintRows</a> attributes.<br />
+These actions run asynchronously also when <b>Paging</b> is used regardless to SynchroCount settings.<br />
+
+<!------------------------------------------  Caching (AJAX)  ------------------------------------------------->
+<a name="Caching"></a>
+<h2>Caching (AJAX)</h2>
+
+There is known problem that browsers sometimes does not download the newest data, even if they were changed and use the old ones from their cache.<br />
+TreeGrid by default solves this problem by forcing browser to not cache the items at all.<br />
+The not caching files is useful especially during development when the files are changed frequently.<br />
+For final version you should consider letting browser to cache some files to speed up the communication.<br />
+
+<!-- Cache -->
+<a name="Cache"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>int</i>
+   <h4>Cache</h4> <s>[0]</s>
+</div>
+How source files are cached / refreshed.<br /> 
+<strong>The default value is 0 that is expected for development. For final release you should set higher value to speed up the communication.</strong><br />
+It affects all TreeGrid required files - <b>Defaults.xml</b>, <b>Text.xml</b>, <b>Grid.css</b>, <b>Gantt.css</b>, <b>Help.html</b>.<br />
+It affects also all data source files downloaded by AJAX, but only by <a href="#Method">method</a> <b>Get</b>. Individual data source can be cached according to its attribute <a href="#xxx_Cache">Cache</a>.<br />
+It affects all cells of type <a href="TypeHtml.htm#TImg">Img</a>.<br />
+<i>Remember, the only file that is <u>not</u> affected by Cache setting is main script <b>GridE.js</b>, you should control its caching by yourself.</i><br />
+<b>0</b> - Never cache - files are always downloaded from server when they are requested. Useful for development when the files are changed frequently.<br />
+<b>1</b> - Component version - files are downloaded only when TreeGrid is upgraded to new version or build otherwise is used standard browser cache.<br />
+<b>2</b> - Cache version - files are downloaded only when <a href="#CacheVersion">CacheVersion</a> attribute changes otherwise is used standard browser cache.<br />
+<b>3</b> - Standard cache - caching depends on browser and server settings, files are usually downloaded when they are modified.<br />
+
+<!-- CacheVersion -->
+<a name="CacheVersion"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>int</i>
+   <h4>CacheVersion</h4> <s>[0]</s>
+</div>
+Version for caching when <tt><a href="#Cache">Cache</a>=2</tt>. When the value is increased, the files are forced to download.<br />
+
+<!------------------------------------------  API (AJAX)  ------------------------------------------------->
+<a name="API"></a>
+<h2>API (AJAX)</h2>
+
+<!-- OnDataSend -->
+<a name="OnDataSend"></a>
+<div class="API">
+   <u><i>upd <b>6.0</b></i></u> <b>API event</b> <i>type</i>
+   <h4>OnDataSend</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object</i> <b>source</b>, <i>string</i> <b>data</b>, <i>function</i> <b>Func</b>)</s>
+</div>
+Called before the request or changed data are sent to server by AJAX.<br />
+<b>source</b> is the data source that is accessed, for example grid.Source.Layout. The source.<b>Name</b> contains the name of source, e.g. "Layout".<br />
+<b>data</b> is XML in string that will be sent to server, it can be XML with request or changes to upload.<br />
+<b>Func</b> is function that must be called if (and only if) the handler returns true for custom communication. function <b>Func</b> (int result), result &lt; 0 error, >=0 success.<br /><br />
+
+<i><b>In this event handler you can do:</b></i>
+Update parameters to be sent with the data, by source.Param and source.Params and <b>return null</b> to continue<br />
+Modify the XML/JSON data string to sent and <b>return string</b> with the modified XML/JSON.<br />
+Do your own communication and <b>return true</b> to <u>not</u> continue. You must call the <b>Func</b> after the custom communication finishes. Use function <a href="#AddDataFromServer">AddDataFromServer</a> to add your own data to grid.<br />
+
+<!-- OnCustomAjax -->
+<a name="OnCustomAjax"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnCustomAjax</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object</i> <b>source</b>, <i>string</i> <b>data</b>, <i>function</i> <b>Func</b>)</s>
+</div>
+Use it for custom AJAX communication to replace TreeGrid built-in AJAX routine. Return true for the custom communication.<br />
+<b>source</b> is a <u>copy</u> of the data source that is accessed, for example <u>copy</u> of grid.Source.Layout. The source.<b>Name</b> contains the name of source, e.g. "Layout".<br />
+	<div class="L1">
+  When downloading page or row children, it has set source.Row as the page or parent row.<br />
+	It is the copy of source, because there can be more simultaneous requests for one source with different Row settings.<br />
+  </div>
+<b>data</b> is XML or JSON in string that should be sent to server, it can be XML or JSON with request or changes to upload.<br /><br />
+
+After your communication finishes, call function <b>Func</b> (<b>code</b>, <b>result</b>);<br />
+	<div class="L1">
+  <b>code</b> is the integer error code, negative for error, 0 or positive for success<br />
+	<b>result</b> is a) returned data string with XML or JSON for <b>code</b> >=0 or b) error message string for <b>code</b> &lt; 0<br />
+  </div><br />
+  
+Simple example: <tt>Grids.OnCustomAjax = function(G,IO,data,func)&#123; var ret = AjaxCall(IO.Url,data); if(ret&lt;0) func(ret,"Error"); else func(0,ret); return true; }</tt><br />  
+
+<!-- OnDataParse -->
+<a name="OnDataParse"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnDataParse</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object</i> <b>source</b>, <i>string</i> <b>data</b>)</s>
+</div>
+Called when received successful server response with correct data in AJAX communication.<br />
+This event is called before the &lt;IO> tag is parsed and before the input data structure is checked.<br />
+<b>source</b> is the data source that is accessed, for example grid.Source.Layout. The source.<b>Name</b> contains the name of source, e.g. "Layout".<br />
+<div class="L1">
+  For <b>Page</b> data source the <b>source.<span style="color:darkred;">Row</span></b> contains the row or page the data are loaded for.<br />
+</div>
+<b>data</b> is input data in string received from server as the server response.<br />
+Use to convert any input string, e.g. csv, to TreeGrid XML or JSON. Return the converted string or null to ignore the event.<br />
+
+
+<!-- OnDataGet -->
+<a name="OnDataGet"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnDataGet</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object</i> <b>source</b>, <i>string</i> <b>data</b>, <i>object</i> <b>IO</b>)</s>
+</div>
+Called when received successful server response with correct data in AJAX communication.<br />
+This event is called after the &lt;IO> tag is parsed, but before the downloaded data are added to grid, changes accepted or body is reloaded (<tt>&lt;IO Reload='1'/></tt>).<br />
+<b>source</b> is the data source that is accessed, for example grid.Source.Layout. The source.<b>Name</b> contains the name of source, e.g. "Layout".<br />
+	<div class="L1">
+  For <b>Page</b> data source the <b>source.<span style="color:darkred;">Row</span></b> contains the row or page the data are loaded for.<br />
+  </div>
+<b>data</b> is XML or JSON in string received from server as the server response.<br />
+<b>IO</b> is parsed <a href="#ServerResponse">&lt;IO></a> tag with the server response header.<br /><br />
+
+In this event handler you can read and change all <b>IO</b> attributes, including custom attributes sent from server in &lt;IO> tag.<br />
+You can also modify the received data and return the modified data from this handler (in string).<br />
+
+<!-- OnDataReceive -->
+<a name="OnDataReceive"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnDataReceive</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object</i> <b>source</b>)</s>
+</div>
+Called when received successful server response with correct data in AJAX communication.<br />
+This event is called after all the received data have been added to grid, but before changes are accepted or body is reloaded (<tt>&lt;IO Reload='1'/></tt>).<br />
+<b>source</b> is the data source that is accessed, for example grid.Source.Layout. <b>The source.<span style="color:darkred;">Name</span></b> contains the name of source, e.g. "Layout".<br />
+	<div class="L1">	
+  For <b>Page</b> data source the <b>source.<span style="color:darkred;">Row</span></b> contains the row or page the data are loaded for.
+  </div><br />
+  
+In this event handler you can update the grid after it received the data from server.<br />
+
+<!-- OnDataError -->
+<a name="OnDataError"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnDataError</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object</i> <b>source</b>, <i>int</i> <b>result</b>, <i>string</i> <b>message</b>, <i>string</i> <b>data</b>)</s>
+</div>
+Called when communication with server failed and got server HTTP error response.<br />
+It is called also if the server returned success, but its response does not contain TreeGrid XML data (tag &lt;Grid>) – it probably contains some error message from server.<br />
+<b>source</b> is the data source that is accessed, for example grid.Source.Layout. The source.<b>Name</b> contains the name of source, e.g. "Layout".<br />
+	<div class="L1">
+  For <b>Page</b> data source the <b>source.<span style="color:darkred;">Row</span></b> contains the row or page the data are loaded for.<br />
+  </div>
+<b>result</b> is TreeGrid error code if exception raised or bad data downloaded:<br />
+	<div class="L1">  
+  -<b>1</b> empty URL, -<b>2</b> bad URL, -<b>3</b> URL not found, -<b>4</b> bad document format (no tag &lt;Grid>), -<b>5</b> empty response, -<b>6</b> Timeout
+  </div>
+<b>result</b> is HTTP response error code (e.g 404 as not found) if AJAX communication failed.<br />
+<b>message</b> is HTTP response error message (statusText) or JavaScript exception message when HTTP communication failed.<br />
+<b>data</b> is a response got from server. It can be HTTP error page or the response HTML received from server for successful AJAX, with invalid format.<br />
+For timeout (result = -6) the handler can change the source.<b>Repeat</b> and <b>RepeatText</b> to change repeating behavior on the timeout.<br />
+
+<!-- AjaxCall -->
+<a name="AjaxCall"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>global func.</b> <i>string</i>
+   <h4>AjaxCall</h4>
+   <s>(<i>string</i> <b>Url</b>, <i>string</i> <b>Data</b>, <i>function</i> <b>Func</b>)</s>
+</div>
+Universal function to do synchronous or asynchronous AJAX call to send data to and / or receive data from server.<br />
+<b>Url</b> is server URL to communicate with. It can be absolute or relative, or even static local file.<br />
+<b>Url</b> can be also JavaScript object as the TreeGrid data source like grid.Source.Layout with its parameters like Url, Method, Param, etc. set.<br />
+<b>Data</b> is the data to send to server in parameter named <b>Data</b>.<br />
+If the <b>Func</b> is <u>not</u> set, the function does <u>synchronous</u> AJAX call and returns the received response in string.<br />
+If the <b>Func</b> is set, the function does <u>asynchronous</u> AJAX call and after finish it calls <b>Func</b>: function (int result, string response).<br />
+
+<!-- AjaxCall -->
+<a name="APIAjaxCall"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API method</b> <i>string</i>
+   <h4>AjaxCall</h4>
+   <s>(<i>object</i> <b>Source</b>, <i>string</i> <b>Data</b>, <i>function</i> <b>Func</b>)</s>
+</div>
+This method does synchronous or asynchronous AJAX call to given TreeGrid data source and adds the server response to grid.<br />
+<i>This method is related to TreeGrid, to do custom AjaxCall, use global <a href="#AjaxCall">AjaxCall</a> function.</i><br />
+<b>source</b> is the data source that is accessed, for example grid.Source.Layout.<br />
+<b>Data</b> is the data to send to server.<br />
+<b>Func</b> is called after the communication is finished, <b>Func</b>: function (int result).<br />
+
+<!-- AddDataFromServer -->
+<a name="AddDataFromServer"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>AddDataFromServer</h4>
+   <s>(<i>string</i> <b>Data</b>)</s>
+</div>
+Adds the XML or JSON <b>Data</b> (<tt>"&lt;Grid>...&lt;Changes> ... &lt;/Changes> ... &lt;/Grid>"</tt>) into grid like it was sent from server.<br /> 
+Accepts all changes and does not send anything to server.<br />
+Use it to modify data by &lt;Changes> tag with rows Added/Changed/Deleted/Moved.<br />
+
+<!-- xxx.Name -->
+<a name="xxx_Name"></a><a name="Name"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API variable</b> <i>string</i>
+   <h4>xxx.Name</h4>
+   <s>[0] Postfix to data source (e.g. grid.Source.Data.Name)</s>
+</div>
+The name of the data source, e.g "Defaults" or "Layout". To distinguish the data source in API events.<br />
+
+<!-- Page.Row -->
+<a name="Page_Row"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API variable</b> <i>string</i>
+   <h4>Page.Row</h4>
+   <s>Data source Page attribute (grid.Source.Page.Row)</s>
+</div>
+When downloading page or child page, the grid.Source.Page.Row contains the page that is downloading.<br />
+
+<!-- Upload.Row -->
+<a name="Upload_Row"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API variable</b> <i>string</i>
+   <h4>Upload.Row</h4>
+   <s>Data source Upload attribute (grid.Source.Upload.Row)</s>
+</div>
+When uploading change of only one row in AutoUpdate, the grid.Source.Upload.Row contains the row.<br />
+
+<!-- Cell.Row -->
+<a name="Cell_Row"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API variable</b> <i>string</i>
+   <h4>Cell.Row</h4>
+   <s>Data source Cell attribute (grid.Source.Cell.Row)</s>
+</div>
+When requesting changes for some cell, the grid.Source.Cell.Row contains the cell row.<br />
+
+<!-- Cell.Col -->
+<a name="Cell_Col"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API variable</b> <i>string</i>
+   <h4>Cell.Col</h4>
+   <s>Data source Cell attribute (grid.Source.Cell.Col)</s>
+</div>
+When requesting changes for some cell, the grid.Source.Cell.Col contains the cell column.<br />
+
+<!-- Cell.Value -->
+<a name="Cell_Value"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API variable</b> <i>string</i>
+   <h4>Cell.Value</h4>
+   <s>Data source Cell attribute (grid.Source.Cell.Value)</s>
+</div>
+When requesting Suggest list for some cell, the grid.Source.Cell.Value contains the actually entered value.<br />
+
+</div>
+</body>	
+</html>

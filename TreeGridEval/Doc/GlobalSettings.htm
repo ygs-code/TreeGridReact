@@ -1,0 +1,1225 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Global settings</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Global settings</h1>
+<p>TreeGrid documentation</p>
+
+<!-----------------------------------------------------------------------  Status messages  ------------------------------------------------->
+<a name="Messages"></a>
+<h2>Status messages</h2>
+
+<!-- SuppressMessage -->
+<a name="CfgSuppressMessage"></a>
+<div class="XML">
+   <u style="width:60px;">chg <b>6.0</b></u> <b style="width:170px;">&lt;Cfg> &lt;treegrid / bdo></b> <i style="width:50px;">int</i>
+   <h4>SuppressMessage</h4> <s>[0]</s>
+</div>
+Which TreeGrid status messages will be suppressed.<br />
+<table>
+<tr><td style="width:50px;"><b>1</b></td><td>Messages during loading and updating grid on start and on reload</td></tr>
+<tr><td><b>2</b></td><td><b>1</b> + Informational messages shown when longer task is run</td></tr>
+<tr><td><b>3</b></td><td><b>2</b> + Message inside loading or rendering page</td></tr>
+<tr><td><b>4</b></td><td><b>3</b> + Error message if TreeGrid cannot show</td></tr>
+</table>
+
+<!-- MessageWidth -->
+<a name="CfgMessageWidth"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MessageWidth</h4> <s>[140]</s>
+</div>
+Minimal width of TreeGrid status messages, in pixels.<br />
+To place centered message to the same position and to not change the width according to message text.<br />
+
+<!-- CenterMessage -->
+<a name="CfgCenterMessage"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>CenterMessage</h4> <s>[0]</s>
+</div>
+If set to <b>1</b> it centers all the grid messages in the whole page. Useful for small grids.<br />
+If set to <b>2</b> it also disables the whole page while showing the message.<br />
+
+<!-- MoveMessage -->
+<a name="CfgMoveMessage"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>MoveMessage</h4> <s>[0]</s>
+</div>
+If set to <b>1</b> it all the grid modal messages can be moved by mouse dragging.<br />
+TreeGrid core must be compiled with <b>LibMouse</b> module, that is not included by default.<br />
+
+<!-- OnShowMessage -->
+<a name="OnShowMessage"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnShowMessage</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>HTMLElement</i> <b>message</b>)</s>
+</div>
+Called when any grid status message is displayed. <b>message</b> is the tag showing the text.<br />
+It is called after the tag is shown, but with display="none".<br />
+
+<!-- OnDisable -->
+<a name="OnDisable"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnDisable</h4>
+   <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+Called before grid is disabled (and optional status message is shown).<br />
+
+<!-- OnEnable -->
+<a name="OnEnable"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnEnable</h4>
+   <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+Called after grid is enabled (and any status message is hidden)<br />
+
+<!-- ShowMessage -->
+<a name="ShowMessage"></a>
+<div class="API">
+   <u>upd <b>13.0</b></u> <b>API event</b> <i>void</i>
+   <h4>ShowMessage</h4>
+   <s>(<i>string</i> <b>message</b>, <i>int</i> <b>importance</b> = 2, <i>int</i> <b>type</b> = 0)</s>
+</div>
+Displays modal message centered inside main tag<br />
+It hides previously displayed message. When message is displayed, grid is disabled.<br /> 
+Shows only messages with <b>importance</b> > <a href="#CfgSuppressMessage">SuppressMessage</a>.<br />
+<i>(Since 13.0)</i> If set <b>type</b> = <b>1</b>, it disables the grid visually, usually as 50% transparent. <b>type</b> = 3 = 1 + 2.<br />
+<i>(Since 13.0)</i> If set <b>type</b> = <b>2</b>, it animates the showing and hiding the message. <i>Message is animated only if no JavaScript is running during the animation time.</i><br />
+
+<!-- ShowMessageTime -->
+<a name="ShowMessageTime"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ShowMessageTime</h4>
+   <s>(<i>string</i> <b>message</b>, <i>int</i> <b>time</b> = 0, <i>function</i> <b>func</b> = null, <i>string[]</i> <b>buttons</b> = null, <i>int</i> <b>importance</b> = 4)</s>
+</div>
+Displays modal message centered inside main tag with given buttons.<br />
+The message is shown in 10ms timeout, so it can be used within handlers that hide message after their finish.<br /> 
+If set <b>time</b>, the message is hidden in next timeout after the <b>time</b> milliseconds elapsed.<br />
+If <b>time</b> is 0, the message is shown forever, if in this case the <b>buttons</b> are not set, shows OK button to hide it.<br />
+If <b>func</b> is set, it is called after the message is hidden or button is clicked. It has format: function <b>func</b> (<b>result</b>); The <b>result</b> is 0 - timeout, 1 - the first button, 2 - the second button, 3 - ..., -1 Enter, -2 Esc<br />
+The <b>buttons</b> is array of button names shown in the message. They can be direct button captions, or values from &lt;Lang>&lt;MenuButtons/>&lt;/Lang> tag, see Text.xml.<br />
+Shows only messages with <b>importance</b> > <a href="#CfgSuppressMessage">SuppressMessage</a>.<br />
+For example: <tt>grid.ShowMessageTime("Do you want to do this action?",2000,function(result){ if(result==1) alert("Clicked yes"); },["Yes","No"]);</tt><br />
+
+<!-- HideMessage -->
+<a name="HideMessage"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>HideMessage</h4>
+   <s>( )</s>
+</div>
+Hides grid modal message and enables grid. If no message is shown, does nothing.<br />
+
+<!-- Disable -->
+<a name="Disable"></a>
+<div class="API">
+   <u>upd <b>13.0</b></u> <b>API method</b> <i>void</i>
+   <h4>Disable</h4>
+   <s>(<i>bool</i> <b>hard</b> = false)</s>
+</div>
+Disables grid, the grid is grayed and does not respond to user actions.<br />
+<i>(Since 13.0)</i> If set <b>hard</b> = true, it disables the grid visually, usually as 50% transparent.
+
+<!-- Enable -->
+<a name="Enable"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>Enable</h4>
+   <s>( )</s>
+</div>
+Enables disabled grid.<br />
+
+<!-- Prompt -->
+<a name="Prompt"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>Prompt</h4>
+   <s>(<i>string</i> <b>text</b>, <i>string</i> <b>default</b>, <i>function</i> <b>func</b>, <i>int</i> <b>width</b>)</s>
+</div>
+Replacement for standard JavaScript window.prompt function. It is <u>asynchronous</u>.<br />
+<b>text</b> is message text (can be HTML), <b>default</b> is default input value, <b>width</b> is optional width in pixels of the message box.<br />
+function <b>func</b> (<b>val</b>) is called after a user enters the value. The <b>val</b> is entered text or null when user clicked to Cancel button.<br />
+
+<!-- ShowProgress -->
+<a name="ShowProgress"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API method</b> <i>void</i>
+   <h4>ShowProgress</h4>
+   <s>(<i>string</i> <b>caption</b>, <i>string</i> <b>text</b>, <i>string</i> <b>cancel</b>, <i>int</i> <b>pos</b>, <i>int</i> <b>cnt</b>)</s>
+</div>
+Shows modal progress message with <b>caption</b> and <b>text</b> texts.<br />
+If set <b>cancel</b>, shows cancel button with the <b>cancel</b> caption. If clicked to this button, the message is hidden and the grid has set property <b>CancelProgress</b> = <b>1</b>.<br />
+<b>pos</b> is actual progress completed from all <b>cnt</b> units.<br />
+Call the ShowProgress method whenver the progress changes with different <b>pos</b><br />
+
+<!-- Grids.Alert -->
+<a name="Alert"></a>
+<div class="API">
+   <u>new <b>6.1</b></u> <b>global variable</b> <i>bool</i>
+   <h4>Grids.Alert</h4>
+   <s></s>
+</div>
+Set it before JavaScript modal dialog like alert, confirm or prompt to <b>1</b> and after call set it back to <b>0</b>.<br />
+For example: <tt>Grids.Alert=1; alert("Error"); Grids.Alert=0;</tt><br />
+It ensures that grid will not loose focus because of the alert dialog.<br />
+
+<!-----------------------------------------------------------------------  Configuration menu  ------------------------------------------------->
+<a name="CfgMenu"></a>
+<h2>Configuration menus</h2>
+TreeGrid contains four predefined configuration menus:<br />
+<a href="#MenuCfg">Settings menu</a> in &lt;MenuCfg>, 
+<a href="#MenuColumns">Columns menu</a> in &lt;MenuColumns>, 
+<a href="#MenuPrint">Print / PDF menu</a> in &lt;MenuPrint> and 
+<a href="#MenuExport">Export menu</a> in &lt;MenuExport.<br />
+
+<!-- Items -->
+<a name="MenuCfgItems"></a>
+<div class="XML">
+   <u><i>upd <b>11.0</b></i></u> <b>&lt;Menu...></b> <i>string</i>
+   <h4>Items</h4> <s>[...]</s>
+</div>
+A list of items to display in the configuration menu. It sets also their order.<br />
+See available items in particular menus above.<br />
+To show separator, place item named "-".<br />
+The individual items can be hidden also by setting its name to 0.<br />
+<i>Since 9.3</i> it is possible to disable individual option for the Enum item if set its text to empty string. Defined in Text.xml.<br />
+Default value depends on the menu, defined in Defaults.xml.<br />
+
+<!-- Menu -->
+<a name="MenuCfgMenu"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Menu...></b> <i>string</i>
+   <h4>Menu</h4> <s></s>
+</div>
+Full <a href="Menu.htm">JSON menu</a> definition used instead of <b>Items</b>.<br />
+
+<!-- Columns -->
+<a name="MenuCfgColumns"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Menu...></b> <i>int</i>
+   <h4>Columns</h4> <s>[0]</s>
+</div>
+If set, splits the menu rows and columns items to given number of columns.<br />
+If set to 0, splits the menu if it has more than 25 visible items.<br />
+
+<!-- CfgColumns -->
+<a name="MenuCfgCfgColumns"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Menu...></b> <i>int</i>
+   <h4>CfgColumns</h4> <s>[0]</s>
+</div>
+If set, splits the menu configuration and options items to given number of columns.<br />
+If set to 0, it is set to Columns/0.66.<br />
+
+<!-- Sort -->
+<a name="MenuCfgSort"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Menu...></b> <i>int</i>
+   <h4>Sort</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, sorts all columns according to alphabet and not by their sections and merges to them also side pagers, if present Pagers item.<br />
+If set to <b>2</b>, sorts all rows according to alphabet and not by their sections.<br />
+If set to <b>3</b>, sorts both columns and rows.<br />
+
+<!-- HideUnused -->
+<a name="MenuCfgHideUnused"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Menu...></b> <i>int</i>
+   <h4>HideUnused</h4> <s>[1]</s>
+</div>
+For <b>0</b> never hides items that cannot be changed, just shows them disabled.<br />
+For <b>1</b> hides all items that cannot be changed and will not be processed, but shows disabled items that cannot be changed, but will be processed (for Print and Export).<br />
+For <b>2</b> hides all items that cannot be changed.<br />
+
+<!-- Attribute -->
+<a name="MenuCfgAttribute"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Menu...></b> <i>string</i>
+   <h4>Attribute</h4> <s>[...]</s>
+</div>
+Which row and column attribute will be tested to display them in menu.<br />
+For MenuCfg and MenuColumns it is "CanHide", for MenuPrint "CanPrint and for MenuExport "CanExport".<br />
+
+<!-- MenuName -->
+<a name="CMenuName"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>string</i>
+   <h4>MenuName</h4> <s></s>
+</div>
+Html string displayed in <b>Cols</b> menu part for this column. If not set, the column caption is displayed.<br />
+
+<!-- MenuName -->
+<a name="CMenuName"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>MenuName</h4> <s></s>
+</div>
+Html string displayed in <b>Rows</b> / <b>Head</b> / <b>Foot</b> / <b>Space</b> menu part for this row. If not set, the row <a href="RowBasics.htm#IName">Name</a> or value in <a href="RowBasics.htm#CfgNameCol">NameCol</a> cell or row <a href="RowId.htm#Iid">id</a> is displayed.<br />
+
+<!-- ShowCfg -->
+<a name="ShowCfg"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API method</b> <i>TMenu</i>
+   <h4>ShowCfg</h4>
+   <s>(<i>object</i> <b>source</b> = MenuColumns, <i>function</i> <b>func</b> = null, <i>object</i> <b>options</b> = null)</s>
+</div>
+Shows given configuration menu.<br />
+<b>source</b> is the grid tag that contains the menu definition, it can be grid.MenuCfg, grid.MenuColumns, grid.MenuPrint or grid.MenuExport.<br />
+If the user clicks to OK, it calls function <b>func</b> (TMenu <b>Menu</b>), where <b>Menu</b> is the <a href="Menu.htm">TMenu</a> object.<br />
+<b>options</b> named array of groups of custom menu items to replace items in <b>source</b>, it is possible to read the <b>options</b> changes in the Menu parameter in function <b>func</b>.<br />
+Returns the created menu or null for error.<br />
+
+<!-- OnCreateMenu -->
+<a name="OnCreateMenu"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnCreateMenu</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TMenu</i> <b>Menu</b>, <i>object</i> <b>source</b>, <i>object</i> <b>options</b>)</s>
+</div>
+Called before the configuration menu is created.<br />
+<b>Menu</b> is not initialized menu, it is possible to change or define its Items or other attributes.<br />
+<b>source</b> is menu object definition, it can be: grid.MenuCfg, grid.MenuColumns, grid.MenuPrint or grid.MenuExport.<br />
+<b>options</b> named array of groups of custom menu items to replace items in <b>source</b>, e.g. Print or Export options.<br />
+Return true to <u>not</u> show the menu.<br />
+
+<!-- OnShowMenu -->
+<a name="OnShowMenu"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnShowMenu</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TMenu</i> <b>Menu</b>, <i>object</i> <b>source</b>, <i>object</i> <b>options</b>)</s>
+</div>
+Called before configuration menu is displayed, <b>Menu</b> is initialized TreeGrid menu with all items to display.<br />
+It is possible to use the event to add custom items to the menu.<br />
+Return true to <u>not</u> show the menu. For parameters see <a href="#OnCreateMenu">OnCreateMenu</a>.<br />
+
+<!-- OnSaveMenu -->
+<a name="OnSaveMenu"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnSaveMenu</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TMenu</i> <b>Menu</b>, <i>object</i> <b>source</b>, <i>object</i> <b>options</b>)</s>
+</div>
+Called after the configuration menu button OK is clicked, before the changes are saved.<br />
+Return true to <u>not</u> save the changes. For parameters see <a href="#OnCreateMenu">OnCreateMenu</a>.<br />
+
+<!-- OnCloseMenu -->
+<a name="OnCloseMenu"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API event</b> <i>void</i>
+   <h4>OnCloseMenu</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TMenu</i> <b>Menu</b>, <i>object</i> <b>source</b>, <i>object</i> <b>options</b>, <i>bool</i> <b>saved</b>)</s>
+</div>
+Called after the configuration menu is closed. <b>saved</b> is true if the changes were saved.
+For parameters see <a href="#OnCreateMenu">OnCreateMenu</a>.<br />
+
+<a name="MenuCfg"></a>
+<h3>TreeGrid settings menu</h3>
+Shows and changes grid and Gantt options. Can also choose visibility of columns and rows. <br />
+Defined in <b>&lt;MenuCfg /></b> tag, texts defined in &lt;Lang>&lt;MenuCfg />&lt;/Lang>.<br />
+Shown by action <a href="#ActionsShowCfg">ShowCfg</a> attached to click to <b>Cfg</b> toolbar button.<br />
+<h6>Available items</h6> 
+<i>Column groups:</i> <b>ColsCaption</b>, <b>Cols</b> (all columns with CanHide>0), <b>PagersCaption</b>, <b>Pagers</b> (all side pagers with CanHide>0), <br />
+<i>Row groups:</i> <b>SpaceCaption</b>, <b>Space</b> (all solid space rows with CanHide>0), <b>RowsCaption</b>, <b>Head</b> (all head rows with CanHide>0), <b>Foot</b> (all foot rows with CanHide>0), <b>Rows</b> (all variable rows with CanHide>0), <br />
+<i>Configuration groups:</i> <b>GanttCaption</b>, <b>GanttCfg</b> (all Gant configuration items), <b>CfgCaption</b>, <b>Cfg</b> (all grid configuration items).<br />
+<i>Individual Cfg items:</i> <b>ShowDeleted</b> (show deleted rows), <b>ReversedTree</b> (child items above parents), <b>AutoSort</b> (auto sort rows after change), 
+<b>SortClick</b> (sorting behavior on click to header), <b>AutoUpdate</b> (auto update changes to server), 
+<b>CheckUpdates</b> (periodically download changes from server), <b>Scrollbars</b> (scrollbars on tablet), <b>Scroll</b> (scrolling behavior on tablets) , 
+<b>MouseHover</b> (hover objects under mouse), <b>ShowDrag</b> (show dragged object below mouse cursor), 
+<b>ShowPanel</b> (show left row panel column), <b>ShowPager</b> (show first side pager), <b>ShowAllPages</b> (show all pages or one page), <b>ShowButtons</b> (icons or text on toolbar buttons).<br />
+<i>Individual GanttCfg items:</i>
+<b>GanttCheckDependencies</b> (restrict circular dependencies), <b>GanttCheckExclude</b> (starting tasks on holidays), <b>GanttCheck</b> (incorrect manual inputs), 
+<b>GanttCorrectDependencies</b> (auto schedule tasks), <b>GanttDirection</b> (schedule from start or finish), <b>GanttStrict</b> (schedule tasks method), 
+<b>GanttCorrectDependenciesFixed</b> (auto schedule also the changed task), <b>GanttFixComplete</b> (schedule also already started tasks), <b>GanttCorrectOutsideBounds</b> (schedule tasks outside project bounds), 
+<b>GanttBaseProof</b> (move objects before project start), <b>GanttFinishProof</b> (move objects after project finish), <b>GanttBasePreferred</b> (project start is preferred to constraints), <b>GanttFinishPreferred</b> (project finish is preferred to constraints), 
+<b>GanttMinSlack</b> (minimal slack for critical task), <b>GanttErrSlack</b> (minimal slack bound for error task), <b>GanttSeparateSlack</b> (calculate critical path individually), <b>GanttHideExclude</b> (show holidays in chart).<br />
+
+<!-- Action ShowCfg -->
+<a name="ActionsShowCfg"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowCfg</h4>
+   <s>Attached to event <b>OnClickButtonCfg</b></s>
+</div>
+Shows configuration menu defined in &lt;MenuCfg />.<br />
+
+<!-- MenuCfg -->
+<a name="MenuCfg"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>object</i>
+   <h4>MenuCfg</h4>
+   <s></s>
+</div>
+All settings loaded from &lt;MenuCfg> tags.<br />
+
+<!-- OnRestoreCfg -->
+<a name="OnShowMenu"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnRestoreCfg</h4>
+   <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+Called before the default configuration is loaded, when clicked to Defaults button in the options menu. Return true to <u>not</u> load it.<br />
+
+<!-- OnCreateCfg -->
+<a name="OnCreateCfg"></a>
+<div class="DEL">
+   <u>new <b>6.0</b> deleted <b>12.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnCreateCfg</h4>
+   <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+Replaced by <a href="#OnCreateMenu">OnCreateMenu</a>
+
+<!-- OnShowCfg -->
+<a name="OnShowCfg"></a>
+<div class="DEL">
+   <u>chg <b>6.0</b> deleted <b>12.1</b></u> <b>API event</b> <i>void</i>
+   <h4>OnShowCfg</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TMenu</i> <b>Menu</b>)</s>
+</div>
+Replaced by <a href="#OnShowMenu">OnShowMenu</a>
+
+<!-- OnCfgChanged -->
+<a name="OnCfgChanged"></a>
+<div class="DEL">
+   <u>deleted <b>12.1</b></u> <b>API event</b> <i>int</i>
+   <h4>OnCfgChanged</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TMenu</i> <b>Menu</b>, <i>int</i> <b>update</b>)</s>
+</div>
+Replaced by <a href="#OnSaveMenu">OnSaveMenu</a>
+
+
+<a name="MenuColumns"></a>
+<h3>Columns visibility menu</h3>
+Can change visibility of columns and <i>since 12.1</i> also rows. <i>Since 12.1</i> it can also show and change grid and Gantt options.<br />
+Defined in <b>&lt;MenuColumns/></b> tag, texts defined in &lt;Lang>&lt;MenuColumns/>&lt;/Lang>.<br />
+Shown by action <a href="#ActionsShowColumns">ShowColumns</a> attached to click to <b>Columns</b> toolbar button.<br />
+<h6>Available items</h6> 
+The same as in <a href="#MenuCfg">TreeGrid settings menu</a>.<br />
+<i>In fact it can show the same items as TreeGrid options menu, the only difference is that Reset/Defaults button is replaced by Clear/Show all button and different API events are called.</i><br />
+
+<!-- Action ShowColumns -->
+<a name="ActionsShowHint"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowColumns</h4>
+   <s>Attached to event <b>OnClickButtonColumns</b></s>
+</div>
+Shows the column visibility menu.<br />
+
+<!-- MenuColumns -->
+<a name="MenuColumns"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API variable</b> <i>object</i>
+   <h4>MenuColumns</h4>
+   <s></s>
+</div>
+All settings loaded from &lt;MenuColumns> tags.<br />
+
+<!-- ShowColumns -->
+<a name="ShowColumns"></a>
+<div class="DEL">
+   <u>new <b>6.0</b> deleted <b>12.1</b></u> <b>API method</b> <i>void</i>
+   <h4>ShowColumns</h4>
+   <s>(<i>string</i> <b>attribute</b>, <i>string</i> <b>caption</b>, <i>function</i> <b>func</b>, <i>TMenuItem[ ]</i> <b>options</b>, <i>string</i> <b>optionscaption</b>)</s>
+</div>
+Replaced by <a href="#ShowCfg">ShowCfg</a>, note it has different parameters!<br />
+
+<!-- MenuColumnsCount -->
+<a name="CfgMenuColumnsCount"></a>
+<div class="DEL">
+   <u>renamed <b>6.0</b> deleted <b>12.1</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MenuColumnsCount</h4> <s>[1]</s>
+</div>
+Replaced by &lt;MenuCfg <a href="#MenuCfgColumns">Columns</a>/>.<br />
+
+<!-- MenuColumnsSort -->
+<a name="CfgMenuColumnsSort"></a>
+<div class="DEL">
+   <u>new <b>6.4</b> deleted <b>12.1</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>MenuColumnsSort</h4> <s>[0]</s>
+</div>
+Replaced by &lt;MenuCfg <a href="#MenuCfgSort">Sort</a>/>.<br />
+
+<!-- OnShowColumns -->
+<a name="OnShowColumns"></a>
+<div class="DEL">
+   <u>chg <b>6.0</b> deleted <b>12.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnShowColumns</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TMenu</i> <b>Menu</b>)</s>
+</div>
+Replaced by <a href="#OnShowMenu">OnShowMenu</a>.<br />
+
+<!-- OnColumnsFinish -->
+<a name="OnColumnsFinish"></a>
+<div class="DEL">
+   <u>new <b>9.1</b> deleted <b>12.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnColumnsFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TMenu</i> <b>Menu</b>)</s>
+</div>
+Replaced by <a href="#OnSaveMenu">OnSaveMenu</a>.<br />
+
+<!-- OnColumnsChanged -->
+<a name="OnColumnsChanged"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnColumnsChanged</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>bool[ ]</i> <b>cols</b>, <i>int</i> <b>count</b>)</s>
+</div>
+<i>Deprecated, use <a href="#OnSaveMenu">OnSaveMenu</a> instead.</i><br />
+Called when user presses OK button on columns menu. Before any updates in data or display.<br />
+<b>cols</b> is array of changed columns, with string index as column name and value as its new visibility.<br />
+Return true to suppress changes.<br />
+
+<!-- OnAfterColumnsChanged -->
+<a name="OnAfterColumnsChanged"></a>
+<div class="DEL">
+   <u>new <b>6.0</b> deleted <b>12.1</b></u> <b>API event</b> <i>void</i>
+   <h4>OnAfterColumnsChanged</h4>
+   <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+Replaced by <a href="#OnCloseMenu">OnCloseMenu</a>.<br />
+
+
+
+<a name="MenuPrint"></a>
+<h3>Print / PDF menu</h3>
+Can choose printed columns and rows and set print options.<br />
+Defined in <b>&lt;MenuPrint/></b> tag, texts defined in &lt;Lang>&lt;MenuPrint/>&lt;/Lang>.<br />
+Shown by action <a href="Print.htm#ActionsPrint">Print</a> attached to click to <b>Print</b> toolbar button, only if set <a href="Print.htm#CfgPrintCols">PrintCols</a> attribute.<br />
+Shown by action <a href="ExportPDF.htm#ActionsExportPDF">ExportPDF</a> attached to click to <b>ExportPDF</b> toolbar button, only if set <a href="ExportPDF.htm#CfgExportPDFCols">PrintPDFCols</a> attribute.<br />
+<h6>Available items</h6>
+<i>Column groups:</i> <b>ColsCaption</b>, <b>Cols</b> (all columns with CanPrint=1,2), <br />
+<i>Row groups:</i> <b>SpaceCaption</b>, <b>Space</b> (all solid space rows with CanPrint=1,2,5,6), <b>RowsCaption</b>, <b>Head</b> (all head rows with CanPrint=1,2,5,6), <b>Foot</b> (all foot rows with CanPrint=1,2,5,6), <b>Rows</b> (all variable rows with CanPrint=1,2), <br />
+<i>Print groups:</i> <b>OptionsCaption</b>, <b>Options</b> (all base print options), <b>SizeCaption</b>, <b>Size</b> (print page size options).<br />
+<i>Individual Options items:</i>
+<b>PrintRows</b> (maximum rows per page), <b>PrintPageRoot</b> (start page always by root row), 
+<b>PrintExpanded</b> (print all rows expanded), <b>PrintFiltered</b> (print all rows (unfiltered)), 
+<b>PrintSelected</b> (print selected rows only), <b>PrintVisible</b> (print visible Gantt only).<br />
+<i>Individual Options items for PDF only:</i>
+<b>PDFName</b> (file name), <b>PDFFormat</b> (actually not used), <b>PDFText</b> (actually not used)<br />
+<i>Individual Size items:</i>
+<b>PrintPageSize</b> (paper size), <b>PrintPageOrientation</b> (portrait/landscape), 
+<b>PrintMarginWidth</b> (page margin width (mm)), <b>PrintMarginHeight</b> (page margin height (mm)), 
+<b>PDFFitPage</b> (fit to one page), <b>PrintDPI</b> (DPI (PPI) ratio), 
+<b>PrintWidth</b> (page width (px)), <b>PrintHeight</b> (Page height (px)), <b>PrintResults</b> (calculates printed pages count).<br />
+<i>The Options and Size individual items cannot be used in the <a href="#MenuCfgItems">Items</a> / <a href="#MenuCfgMenu">Menu</a>, they can be used only as attribute to hide the item by setting the attribute value to 0!</i>
+<br />
+
+<!-- MenuPrint -->
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API variable</b> <i>object</i>
+   <h4>MenuPrint</h4>
+   <s></s>
+</div>
+All settings loaded from &lt;MenuPrint> tags.<br />
+
+<a name="MenuExport"></a>
+<h3>Export menu</h3>
+Can choose exported columns and rows and set export options.<br />
+Defined in <b>&lt;MenuExport/></b> tag, texts defined in &lt;Lang>&lt;MenuExport/>&lt;/Lang>.<br />
+<h6>Available items</h6>
+<i>Column groups:</i> <b>ColsCaption</b>, <b>Cols</b> (all columns with CanExport=1), <br />
+<i>Row groups:</i> <b>RowsCaption</b>, <b>Head</b> (all head rows with CanExport=1), <b>Foot</b> (all foot rows with CanExport=1), <b>Rows</b> (all variable rows with CanExport=1), <br />
+<i>Export groups:</i> <b>OptionsCaption</b>, <b>Options</b> (all export options).<br />
+<i>Individual Options items:</i>
+<b>ExportName</b> (file name), <b>ExportFormat</b> (file extension), <b>ExportExpanded</b> (export all rows expanded), <b>ExportFiltered</b> (export also filtered rows), <b>ExportOutline</b> (create Excel outline), <b>ExportIndent</b> (indent tree levels)<br />
+<i>Individual Options items for XLSX only:</i>
+<b>ExportSelectedRows</b> (export only selected rows), <b>ExportSelectedCols</b> (export only selected columns), <b>ExportSelectedCells</b> (export only selected cells), 
+<b>ExportFixedRows</b> (freeze head rows), <b>ExportFixedCols</b> (freeze left columns), <b>ExportEmpty</b> (export also empty cells)<br />
+
+<!-- MenuExport -->
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API variable</b> <i>object</i>
+   <h4>MenuExport</h4>
+   <s></s>
+</div>
+All settings loaded from &lt;MenuPrint> tags.<br />
+
+
+
+
+
+<!-----------------------------------------------------------------------  Default Toolbar  ------------------------------------------------->
+<a name="DefaultToolbar"></a>
+<h2>Default Toolbar</h2>
+
+<strong>Toolbar is standard Space row and has all Space row and cell attributes.</strong><br />
+Default TreeGrid toolbar is defined by root &lt;Toolbar> tag in <a href="Files.htm#DefaultsXml">Defaults</a>.xml.<br />
+
+<h6>Buttons visibility</h6>
+The default toolbar buttons are defined in file <a href="Files.htm#DefaultsXml">Defaults</a>.xml, in &lt;Toolbar> section.<br /> 
+Here is defined also their xxxVisibleFormula that specifies when the button is shown.<br />
+To <b>hide</b> any default toolbar button set its name to 0, for example <tt>&lt;Toolbar Add='0'/></tt>.<br />
+
+<h6>Buttons actions</h6>
+The default toolbar button actions are defined in &lt;Actions> tag as OnClickButtonXXX, where XXX is the button name, for example <tt>&lt;Actions OnClickButtonAdd="AddRowEnd"/></tt>.<br />
+The default toolbar button actions are defined in <a href="Files.htm#DefaultsXml">Defaults</a>.xml.<br />
+
+<h6>Adding custom buttons to toolbar</h6>
+It is possible to add new buttons to toolbar like to any other Space row into Cells array. Because Toolbar already defines many cells, it is better to define custom CellsXXX attribute and control the placement by the XXX as index, for example:<br />
+<tt>
+&lt;Toolbar Cells05Custom="Custom1" Cells65Custom="Custom2"<br />
+<b>Custom1</b>Type="Button" <b>Custom1</b>Button="Button" <b>Custom1</b>="Custom 1" <b>Custom1</b>OnClick="alert('Custom 1 clicked')"<br />
+<b>Custom2</b>Type="Button" <b>Custom2</b>Icon="Test.gif" <b>Custom2</b>OnClick="alert('Custom 2 clicked')" /><br />
+</tt>
+For more button types see <a href="TypeButton.htm">Button</a> type. It is also possible to show any other cell types (like Text, Int, Select,...) on Toolbar.<br />
+
+<!-- Visible -->
+<a name="ToolbarVisible"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>Visible</h4> <s>[1]</s>
+</div>
+If the default toolbar is visible.<br />
+In trial version this attribute is ignored.<br />
+
+<!-- Space -->
+<a name="ToolbarSpace"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>int</i>
+   <h4>Space</h4> <s>[4]</s>
+</div>
+Toolbar position in table.<br />
+<b style="color:blue;">-1</b> - above table, <b style="color:blue;">0</b> - above Head, <b style="color:blue;">1</b> - between Head and Body, <b style="color:blue;">2</b> - between Body and Foot, <b style="color:blue;">3</b> - between Foot and vertical scrollbar, <b style="color:blue;">4</b> - under vertical scrollbar, <b style="color:blue;">5</b> - under table<br />
+<b>-1</b>, <b>0</b>, <b>4</b>, <b>5</b> are spanned for whole grid, including vertical scrollbar and pager,<br /> 
+<b>1</b>, <b>2</b>, <b>3</b>  are spanned only for columns - the vertical scrollbar and pager are placed right side.<br />
+
+<!-- Kind -->
+<a name="ToolbarKind"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Toolbar></b> <i>string</i>
+   <h4>Kind</h4> <s>["Toolbar"]</s>
+</div>
+The Kind can be Toolbar, Toolbar1, Toolbar2, Toolba3, Topbar, Topbar1, Topbar2, Topbar3.<br />
+It specifies just style of the toolbar. Set to Topbar when placing on top. Set it Toolbar1 or 2 when there are two bottom toolbars.<br />
+
+<!-- Tag -->
+<a name="ToolbarTag"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>string</i>
+   <h4>Tag</h4> <s></s>
+</div>
+To place Toolbar outside the grid to any HTML tag on page. If set, the <a href="RowSpace.htm#SpaceSpace">Space</a> attribute is ignored.<br />
+It is the id of HTML tag where to render the row.<br /> 
+The width of the external space row is still preserved to be the same as the actual main table width.<br />
+<i>In trial version this attribute is ignored.</i><br />
+
+<!-- Cells -->
+<a name="ToolbarCells"></a>
+<div class="XML">
+   <u>chg <b>12.0</b></u> <b>&lt;Toolbar></b> <i>string[ ]</i>
+   <h4>Cells</h4> <s>[ ]</s>
+</div>
+Since 12.0 the Toolbar does not define the Cells, but more CellsXXX.<br />
+If you define the Cells, it removes all default Toolbar buttons and uses only the cells defined in the Cells.<br />
+
+<!-- CellsXXX -->
+<a name="ToolbarCellsXXX"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Toolbar></b> <i>string[ ]</i>
+   <h4>Cells<span style="color:black;">XXX</span></h4> <s>[ ]</s>
+</div>
+Groups of Toolbar cells. Every group contains comma separated list of cells.<br />
+The final order of the cells on Toolbar is done by sorting the CellXXX groups by the names, always as strings.<br />
+To add new button to Toolbar, define new CellXXX group with the new cells. Choose the XXX to place the new cells to desired place.<br />
+The individual Toolbar cells can be hidden also by setting its name to 0, see next attributes.<br />
+Empty cell is for alignment.<br />
+By default Toolbar defines these CellXXX groups in Defaults.xml:<br />
+<tt>
+Cells10Gantt = "Correct"<br />
+Cells20Data="Import,Save,Reload,Repaint,Print,ExportPDF,Export"<br />
+Cells30Manipulate="Undo,Redo,Add,AddChild,AddCol,Join,Split,Outdent,Indent,ExpandAll,CollapseAll"<br />
+Cells40Sheet="Left,Center,Right,Top,Middle,Bottom,Bold,Italic,Underline,Strike,RotateLeft,RotateRight,WrapText,Size,ColorText,ColorShadow,ColorBackground,Border,Format"<br />
+Cells50GanttZoom="ZoomIn,ZoomOut,ZoomFit"<br />
+Cells60Cfg="Sort,Calc,Columns,Cfg,Help,Debug"<br />
+Cells70Styles="Styles,GanttStyles,Sizes,Scales"<br />
+Cells80Right = "Empty,Formula,Resize"<br />
+</tt>
+
+
+<!-- Save -->
+<a name="ToolbarSave"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>Save</h4> <s>[ ]</s>
+</div>
+Button for uploading pending changes to server. Set it 0 to hide the button.<br />
+It can be shown only when set <tt>&lt;treegrid/bdo Upload_Url</tt> or <tt>Upload_Tag/></tt>.<br />
+
+<!-- Reload -->
+<a name="ToolbarReload"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>Reload</h4> <s>[ ]</s>
+</div>
+Button for reloading data from server. All the pending changes are lost. Set it 0 to hide the button.<br />
+Cannot be shown in Detail grid.<br />
+
+<!-- Repaint -->
+<a name="ToolbarRepaint"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>Repaint</h4> <s>[ ]</s>
+</div>
+Button for repainting all pages. Useful when too many pages are rendered and grid becomes slow. Set it 0 to hide the button.<br />
+It can be shown only when set Paging and AllPages.<br />
+
+<!-- Print -->
+<a name="ToolbarPrint"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>Print</h4> <s>[ ]</s>
+</div>
+Button for creating printable version and printing it. Set it 0 to hide the button.<br />
+Shown always<br />
+
+<!-- Export -->
+<a name="ToolbarExport"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>Export</h4> <s>[ ]</s>
+</div>
+Button for exporting grid data to Excel or CSV. Set it 0 to hide the button.<br />
+It can be shown only when set <tt>&lt;treegrid/bdo Export_Url/></tt>.<br />
+
+<!-- Add -->
+<a name="ToolbarAdd"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>Add</h4> <s>[ ]</s>
+</div>
+Button for adding or copying rows. Set it 0 to hide the button.<br />
+It can be shown only when permitted Adding.<br />
+
+<!-- AddChild -->
+<a name="ToolbarAddChild"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>AddChild</h4> <s>[ ]</s>
+</div>
+Button for adding or copying rows into row's children. Set it 0 to hide the button.<br />
+It can be shown only when permitted Adding and MainCol is set.<br />
+
+<!-- Sort -->
+<a name="ToolbarSort"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>Sort</h4> <s>[ ]</s>
+</div>
+Button for enabling / disabling sorting. It is a switch button and has value of <b>Sorted</b> attribute. Set it 0 to hide the button.<br />
+It can be shown only when permitted Sorting.<br />
+
+<!-- Calc -->
+<a name="ToolbarCalc"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>Calc</h4> <s>[ ]</s>
+</div>
+Button for enabling / disabling calculating grid. It is a switch button and has value of <b>Calculated</b> attribute. Set it 0 to hide the button.<br />
+It can be shown only when permitted Calculating.<br />
+
+<!-- ExpandAll -->
+<a name="ToolbarExpandAll"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>ExpandAll</h4> <s>[ ]</s>
+</div>
+Button for expanding all rows. Set it 0 to hide the button.<br />
+It can be shown only when set MainCol.<br />
+
+<!-- CollapseAll -->
+<a name="ToolbarCollapseAll"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>CollapseAll</h4> <s>[ ]</s>
+</div>
+Button for collapsing all rows. Set it 0 to hide the button.<br />
+It can be shown only when set MainCol.<br />
+
+<!-- Columns -->
+<a name="ToolbarColumns"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>Columns</h4> <s>[ ]</s>
+</div>
+Button for showing columns menu to choose visible columns. Set it 0 to hide the button.<br />
+Shown always.<br />
+
+<!-- Cfg -->
+<a name="ToolbarCfg"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>Cfg</h4> <s>[ ]</s>
+</div>
+Button for showing configuration menu  (MenuCfg) to set various grid configuration. Set it 0 to hide the button.<br />
+Shown always.<br />
+
+<!-- Help -->
+<a name="ToolbarHelp"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>Help</h4> <s>[ ]</s>
+</div>
+Button for displaying TreeGrid user help page (Help.html). Set it 0 to hide the button.<br />
+Shown always.<br />
+
+<!-- Debug -->
+<a name="ToolbarDebug"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>Debug</h4> <s>[ ]</s>
+</div>
+Button for showing debug window. Set it 0 to hide the button.<br />
+It can be shown only when set <tt>&lt;treegrid/bdo Debug/></tt>.<br />
+
+<!-- Styles -->
+<a name="ToolbarStyles"></a>
+<div class="XML">
+   <u><i>upd <b>7.0</b></i></u> <b>&lt;Toolbar></b> <i>int</i>
+   <h4>Styles</h4> <s>[1]</s>
+</div>
+Controls visibility of all Style... buttons for choosing TreeGrid CSS style.<br />
+<b>0</b> - no style buttons, <b>1</b> - style radio buttons, <b>2</b> - <i>(new 7.0)</i> styles combo<br />
+
+<!-- Formula -->
+<a name="ToolbarFormula"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>string</i>
+   <h4>Formula</h4> <s></s>
+</div>
+Formula on toolbar, just to simplify showing some calculation result on toolbar.<br />
+You can add also any other custom cells and set their Formula attribute and have more calculated cells on toolbar.<br />
+Set the Formula to the formula to calculate, like <tt>&lt;Toolbar Formula='count()+<b style="color:red;">"</b> rows<b style="color:red;">"</b>'/></tt><br />
+
+<!-- Resize -->
+<a name="ToolbarResize"></a>
+<div class="XML">
+   <u></u> <b>&lt;Toolbar></b> <i>bool</i>
+   <h4>Resize</h4> <s>[ ]</s>
+</div>
+Special button for resize grid. Set it 0 to hide the button.<br />
+The special icon for resizing is displayed if set <tt>&lt;Cfg ResizingMain/></tt> regardless on setting this Resize button.<br />
+This button just indents the Toolbar buttons from right to not overflow the resizing icon.<br />
+
+<!-- Toolbar -->
+<a name="Toolbar"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>object</i>
+   <h4>Toolbar</h4>
+   <s></s>
+</div>
+All settings loaded from &lt;Toolbar> tags.<br />
+
+<!---------------------------------------------------------  Language and regional settings (Text.xml)  ------------------------------------------------->
+<a name="Language"></a>
+<h2>Language and regional settings (Text.xml)</h2>
+
+All TreeGrid texts, messages, alerts and language dependent settings are stored in <b>Text.xml</b>.<br />
+You can translate this file to all languages you need and provide to visitors appropriate file according to their language settings.<br /> 
+Url to Text.xml is set by <tt>&lt;treegrid/bdo Text_Url/></tt><br />
+In <b>Text.xml</b> are the attributes marked according to TreeGrid version in which were added.<br /><br />
+
+The most of language settings is set in &lt;Lang> tag, the rest in &lt;Toolbar>, &lt;Panel> and &lt;Header>.<br /><br /> 
+
+You can define or redefine any particular or even all settings outside the Text.xml in any other input XML, in appropriate tags.<br />
+For example to change text for deleting row set <tt>&lt;Lang>&lt;Alert DelRow='Do you want to delete the row %d ?'/>&lt;/Lang></tt><br />
+
+<!-- <Alert> -->
+<a name="LangAlert"></a>
+<div class="XML">
+   <u></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;Alert></h4> <s>XML tag</s>
+</div>
+All pure text settings. Used for standard <b>alert</b> and <b>confirm</b> dialogs.<br />
+If the particular text is set to empty string, the message is <u>not</u> shown and the confirm dialog returns true or false according to particular logic.<br />
+The message can contain some variable information like row or column name, count of rows and so on. This information replaces the <b>%d</b> or <b>%1</b>, <b>%2</b>, etc. string in the message.<br />
+If there are more variable information, they replace one by one the <b>%d</b> strings in the message.<br />
+What message can contain variable information you can see from its text in <b>Text.xml</b>.<br />
+
+<!-- <Text> -->
+<a name="LangText"></a>
+<div class="XML">
+   <u></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;Text></h4> <s>XML tag</s>
+</div>
+All HTML texts in grid. Usually text of <b>status messages</b> displayed in grid.<br />
+If the particular text is set to empty string, the message is <u>not</u> shown.<br />
+The message can contain some variable information like row or column name, count of rows and so on. This information replaces the <b>%d</b> string in the message.<br />
+If there are more variable information, they replace one by one the <b>%d</b> or <b>%1</b>, <b>%2</b>, etc. strings in the message.<br />
+What message can contain variable information you can see from its text in <b>Text.xml</b>.<br />
+
+<!-- <Gantt> -->
+<a name="LangGantt"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;Gantt></h4> <s>XML tag</s>
+</div>
+Gantt chart texts, the same syntax as &lt;<a href="#LangText">Text</a>>.<br />
+
+<!-- <MenuCell> -->
+<a name="LangMenuCell"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuCell></h4> <s>XML tag</s>
+</div>
+All action texts in cell popup menu.<br />
+If the particular text is set to empty string, the item is <u>not</u> shown.<br />
+The message can contain some variable information like row or column name, count of rows and so on. This information replaces the <b>%d</b> string in the message.<br />
+If there are more variable information, they replace one by one the <b>%d</b> or <b>%1</b>, <b>%2</b>, etc. strings in the message.<br />
+What message can contain variable information you can see from its text in <b>Text.xml</b>.<br />
+
+<!-- <MenuButtons> -->
+<a name="LangMenuButtons"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuButtons></h4> <s>XML tag</s>
+</div>
+Popup dialog buttons, for menu and calendar. Pure texts.<br />
+
+<!-- <MenuCopy> -->
+<a name="CfgMenuCopy"></a>
+<div class="DEL">
+   <u>new <b>6.0</b> deleted <b>12.0</b></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuCopy></h4> <s>XML tag</s>
+</div>
+All possible items in popup Copy / Add menu.<br />
+Replaced by &lt;MenuCell>
+
+<!-- <MenuCfg> -->
+<a name="LangMenuCfg"></a>
+<div class="XML">
+   <u></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuCfg></h4> <s>XML tag</s>
+</div>
+All item names in options menu.<br />
+
+<!-- <MenuColumns> -->
+<a name="LangMenuColumns"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuColumns></h4> <s>XML tag</s>
+</div>
+All item names in columns menu.<br />
+
+<!-- <MenuPrint> -->
+<a name="LangMenuPrint"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuPrint></h4> <s>XML tag</s>
+</div>
+All item names in print menu.<br />
+
+<!-- <MenuExport> -->
+<a name="LangMenuExport"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuExport></h4> <s>XML tag</s>
+</div>
+All item names in export menu.<br />
+
+<!-- <MenuFilter> -->
+<a name="LangMenuCfg"></a>
+<div class="XML">
+   <u></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;MenuFilter></h4> <s>XML tag</s>
+</div>
+All operator names in <b>Filter</b> operator menu.<br />
+
+<!-- <Format> -->
+<a name="LangFormat"></a>
+<div class="XML">
+   <u></u> <b>&lt;Lang></b> <i></i>
+   <h4>&lt;Format></h4> <s>XML tag</s>
+</div>
+All language settings for formatting date, time and numbers.<br />
+Contains predefined formats and item names (like day or month names).<br />
+<i>Predefined formats are global for whole page, for all grids on one page.</i><br />
+For attribute description see <a href="TypeNumber.htm#Localization">Number localization</a> and <a href="TypeDate.htm#Localization">Date localization</a>.<br />
+
+<!-- TextOnly -->
+<a name="ITextOnly"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;I></b> <i>bool</i>
+   <h4>TextOnly</h4> <s></s>
+</div>
+Used for defining some fixed row attributes in Text.xml to not affect the row position.<br />
+Define the row with TextOnly in Text.xml also with Visible='0' and in data or layout redefine the row with the same id and Visible='1'.<br />
+For example in Text.xml define the row text as:<br />
+<tt>&lt;Solid>&lt;I id='MyRow' Visible='0' TextOnly='1' MyCol='MyTextToTranslate'/>&lt;/Solid></tt><br />
+And in data or layout define the row normally with all attributes, like:<br />
+<tt>&lt;Solid>&lt;I id='MyRow' Visible='1' Cells='MyCol' MyColWidth='100' ... />&lt;/Solid></tt><br />
+
+
+<!-- Tip -->
+<a name="ToolbarCellTip"></a>
+<div class="XML">
+   <u style="width:85px;">new <b>6.0</b></u> <b style="width:135px;">&lt;Toolbar cell></b> <i>string</i>
+   <h4>Tip</h4> <s></s>
+</div>
+Tooltip texts for all standard Toolbar buttons<br />
+
+<!-- PanelxxxTip -->
+<a name="PanelPanelxxxTip"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Panel></b> <i>string</i>
+   <h4>PanelxxxTip</h4> <s>xxx is name of Panel button like Select</s>
+</div>
+Tooltip texts for all standard Panel buttons<br />
+
+<!-- PanelPanelrxxxTip -->
+<a name="HeaderPanelHeaderxxxTip"></a><a name="HeaderPanelPanelxxxTip"></a>
+<div class="XML">
+   <u>new <b>6.0</b> renamed <b>12.0</b></u> <b>&lt;Header></b> <i>string</i>
+   <h4>PanelPanelxxxTip</h4> <s>xxx is name of Panel button like Select</s>
+</div>
+Tooltip texts for all standard Panel buttons in header.<br />
+<i>Since 12.0 it was renamed from PanelHeaderxxxTip.</i><br />
+
+<!-- Lang -->
+<a name="OnHint"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>object</i>
+   <h4>Lang</h4>
+   <s></s>
+</div>
+Actual language settings loaded from &lt;Lang> tags.<br />
+
+<!---------------------------------------------------------  Changing language  ------------------------------------------------->
+<a name="Change"></a>
+<h2>Changing language</h2>
+
+TreeGrid can change its language and translate all its texts without reloading the whole grid.<br />
+
+<!-- Cfg Language -->
+<a name="CfgLanguage"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>Language</h4> <s></s>
+</div>
+Language code actually used in TreeGrid. It is the <a href="#LCode">Code</a> of one of defined languages in &lt;Languages> tag.<br />
+
+<!-- Cfg UseLanguages -->
+<a name="CfgUseLanguages"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>UseLanguages</h4> <s></s>
+</div>
+Comma separated list of language codes to display in popup menu to select language.<br />
+Use it to specify order and / or subset of defined languages to let users to choose from.<br />
+
+<!-- <L> -->
+<a name="L"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Languages></b> <i></i>
+   <h4>&lt;L></h4> <s>XML tag</s>
+</div>
+Definition of one language. As shortcut the L can be replaced by the language code <tt>&lt;L Code="EN" ...</tt> is the same as <tt>&lt;EN ...</tt>
+
+<!-- LCode -->
+<a name="LCode"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;L></b> <i>string</i>
+   <h4>Code</h4> <s></s>
+</div>
+Standard two letter language code like "EN", "FR" or "DE". Case insensitive, for API always converted to upper case.<br />
+It is used to identify the language, to be set to the <a href="#CfgLanguage">Language</a><br />
+
+<!-- LName -->
+<a name="LName"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;L></b> <i>string</i>
+   <h4>Name</h4> <s></s>
+</div>
+Name of the language. It is shown in popup menu to select language.
+
+<!-- LSource -->
+<a name="LSource"></a> <a name="LText"></a> <a name="LBase"></a> <a name="LLayout"></a> <a name="LData"></a> <a name="LLang"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;L></b> <i>string</i>
+   <h4>Source</h4> <s>["Text,Base,Layout,Data,Lang"]</s>
+</div>
+Comma separated list of data sources to load for given language.<br />
+Similar to &lt;treegrid> <a href="DataDownload.htm#Source">Source</a> attribute. But the sources here are always loaded one by one.<br />
+If the source name is the same as existing data source defined in &lt;treegrid> <a href="DataDownload.htm#Source">Source</a> attribute, 
+it uses all its attributes from the original data source and is loaded only if contains different url or other attributes than the original source.<br />
+The data source can define all standard data source attributes like xxx_Url or xxx_Param, see <a href="DataCommunication.htm">Data communication</a>.<br />
+Default data sources for language are <b>Text</b>, <b>Base</b>, <b>Layout</b>, <b>Data</b> as standard data sources except Defaults and special data source for languages <b>Lang</b>.<br />
+
+<!-- SetLanguage -->
+<a name="SetLanguage"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>SetLanguage</h4>
+   <s>(<i>string</i> <b>code</b>)</s>
+</div>
+Changes grid <a href="#CfgLanguage">Language</a> to the <b>code</b>, loads all language resources and re-renders grid.<br />
+Returns true for success, false for failed loading and null for not existing language.<br />
+
+<!-- OnSetLanguage -->
+<a name="OnSetLanguage"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnSetLanguage</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>code</b>)</s>
+</div>
+Called before the grid language is set to given <b>code</b>. Return true to suppress changing the language.<br />
+Called from <a href="#SetLanguage">SetLanguage</a> method.<br />
+
+<!-- OnLanguageSet -->
+<a name="OnLanguageSet"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnLanguageSet</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>code</b>)</s>
+</div>
+Called after the grid language is set to given <b>code</b> and all language resources are loaded to grid. Called before the grid is re-rendered.<br />
+Called from <a href="#SetLanguage">SetLanguage</a> method.<br />
+
+<!---------------------------------------------------------  Useful API functions  ------------------------------------------------->
+<a name="API"></a>
+<h2>Useful API functions</h2>
+ 
+<!-- GetWindowSize -->
+<a name="GetWindowSize"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i>int[2]</i>
+   <h4>GetWindowSize</h4>
+   <s>( )</s>
+</div>
+Returns size of browser's window (<u>not</u> the whole body), client area without scrollbars, returns [width, height]<br />
+
+<!-- GetWindowScroll -->
+<a name="GetWindowScroll"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i>int[2]</i>
+   <h4>GetWindowScroll</h4>
+   <s>( )</s>
+</div>
+Returns scroll of body, returns [left,top]<br />
+
+<!-- EventXYToElement -->
+<a name="EventXYToElement"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i>int[2]</i>
+   <h4>EventXYToElement</h4>
+   <s>(<i>Event</i> <b>event</b>, <i>object</i> <b>elem</b> )</s>
+</div>
+Converts event.clientX, event.clientY to coordinates relative to elem, returns [left,top]<br />
+
+<!-- ElemToParent -->
+<a name="ElemToParent"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i>int[2]</i>
+   <h4>ElemToParent</h4>
+   <s>(<i>object</i> <b>elem</b>, <i>object</i> <b>parent</b> )</s>
+</div>
+Returns relative position of element in its parent, returns [left,top]<br />
+
+<!-- CancelEvent -->
+<a name="CancelEvent"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i>void</i>
+   <h4>CancelEvent</h4>
+   <s>(<i>Event</i> <b>event</b>, <i>int</i> <b>type</b> = 0 )</s>
+</div>
+Cancels propagation and/or prevents default of event.<br /> 
+<b>type = 0</b> - both, <b>1</b> - cancels propagation only, <b>2</b> - prevents default only.<br />
+
+<!-- GetStyle -->
+<a name="GetStyle"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i>Style</i>
+   <h4>GetStyle</h4>
+   <s>(<i>object</i> <b>Elem</b>)</s>
+</div>
+Returns computed style of the element.<br />
+
+<!-- CreateXML -->
+<a name="CreateXML"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i>object</i>
+   <h4>CreateXML</h4>
+   <s>(<i>string</i> <b>str</b>)</s>
+</div>
+Creates internal XML document from string. This document can be iterated by DOM functions.<br />
+This document does <u>not</u> provide attributes <b>childNodes</b> and <b>xml</b>.<br />
+
+<!-- Escape -->
+<a name="Escape"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>string</i>
+   <h4>Escape</h4>
+   <s>(<i>string</i> <b>str</b>)</s>
+</div>
+Escapes the string to show it in HTML code. Replaces the &amp; &lt; ' " characters by entities.<br />
+
+<!-- Grids.Tablet -->
+<a name="Tablet"></a>
+<a name="Grids.Tablet"></a>
+<div class="API">
+   <u style="width:105px;">new <b>10.0</b></u> <b style="width:115px;">global variable</b> <i>bool</i>
+   <h4>Grids.Tablet</h4>
+   <s></s>
+</div>
+It is set to <b>1</b> if TreeGrid is run on touch screen.<br />
+
+<!-- SetTimeout -->
+<a name="SetTimeout"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>SetTimeout</h4>
+   <s>(<i>type</i> <b>code</b>, <i>int</i> <b>time</b>, <i>string</i> <b>ident</b>, <i>int</i> <b>flags</b>, <i>type</i> <b>data</b>)</s>
+</div>
+Calls given code in timeout, similarly to standard JavaScript setTimeout, but with extended behavior.<br />
+The code will <u>not</u> be called if the grid is cleared or reloaded during the timeout time.<br />
+<table>
+<tr><td style="width:50px;"><b>code</b></td><td>is JavaScript code as string or JavaScript function to be called.</td></tr>
+<tr><td><b>time</b></td><td>is the delay in milliseconds, after this time will be the code called. Note, it is not exact value, the code can be called later if the browser is busy. The browser must be idle (no running JavaScript) to call the delayed codes.</td></tr>
+<tr><td><b>ident</b></td><td>is unique string to identify this timeout. It is required parameter. It can be null, if the code is string, in this case it will have the <b>code</b> value.</td></tr>
+<tr><td></td><td>If the SetTimeout is called with the same ident again before the timeout expired, it calls only one code, the new or the old depending on the <b>flags</b> setting.</td></tr>
+<tr><td><b>flags</b></td><td>bit array of settings.</td></tr>
+<tr><td></td><td>1. bit (&1). If set, it calls the <b>code</b> immediately from the SetTimeout, if there was no call with the same <b>ident</b> for at least <b>time</b> milliseconds.</td></tr>
+<tr><td></td><td>2. bit (&2). If set, it does not replace the old not yet run <b>code</b> with the same <b>ident</b>. It also does not reset the timeout.</td></tr>
+<tr><td></td><td><div class="L1">If <b>not</b> set, it replaces the not yet run <b>code</b> with the same ident by the new code and resets the timeout to <b>time</b>.</div></td></tr>
+<tr><td><b>data</b></td><td>is custom JavaScript object passed to <b>code</b>. If the code is string, it is accessible in parameter named <b>data</b>. If the code is function, the function is called with the <b>data</b> as its first parameter.</td></tr>
+</table>
+Returns <b>true</b> if the code was already called (due <b>type</b>&1), <b>false</b> if the code will be called, or <b>null</b> if it did not replace the previous code due <b>type</b>&2.<br />
+
+<!---------------------------------------------------------  Help file  ------------------------------------------------->
+<a name="Help"></a>
+<h2>Help file</h2>
+
+<!-- HelpFile -->
+<a name="CfgHelpFile"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>HelpFile</h4> <s>["Help.html"]</s>
+</div>
+Path and filename of TreeGrid help file. It is shown when a user clicks to Help button on toolbar.<br />
+It is relative to actual page URL.<br />
+
+<!-- Action ShowHelp -->
+<a name="ActionsShowHelp"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowHelp</h4>
+   <s></s>
+</div>
+Show TreeGrid user help page<br />
+
+
+</div>
+</body>	
+</html>

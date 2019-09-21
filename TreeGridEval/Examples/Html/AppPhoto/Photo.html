@@ -1,0 +1,274 @@
+<html>
+	<head>
+      <title>Photoalbum done by JavaScript tree grid component | TreeGrid</title>
+      <meta name="description" content="Live sample shows TreeGrid features: custom HTML code in cells, e.g. many clickable thumbnail images, and using JavaScript API to build an application" />
+		<script src="../../../Grid/GridE.js"> </script>
+      <style>
+         /* Examples shared styles */
+         .Example h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+         .Example h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+         .Example h3,.Example h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+         .Example h3 { background:#EE9; border:1px solid #DD8; }
+         .Example h4 { background:#BDE; border:1px solid #ACD; }
+         .Example a { text-decoration:underline; }      
+         .Example li { padding-bottom:8px; }
+         .Example ul { margin:6px 0px 0px 20px; font:13px Arial; }
+         .Example .Desc { margin:0px 5px 10px 5px; padding:10px; border:1px solid #dfdfdf; }
+         .Example .Desc > ul { margin-left:0px; padding:0px 0px 0px 15px; clear:both; }
+         .Example .Desc b { color:#0585B9; }
+         .Example .Path { font:normal 12px Arial; color:#0585B9; }
+         .Example .Path b { color:#D73938; }
+         .Example .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+         .Example .Path i { color:black; font-style:normal; font-weight:bold; }
+         .Example .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+         .Example .Border { margin:0px 5px 15px 5px; }
+         .Example .Main { }
+
+         .Example .Spec { margin-bottom:10px; font-style:italic; color:blue; }
+
+         /* Custom class for root nodes */
+         .GridMain .RootNode { background:#DDD!important; }
+         .GridMain .RootNodeText,.GridMain .RootNodeText b { font-weight:bold; font-size:14px; color:black; }
+         .TBMain .RootNode { background:#666!important; }
+         .TBMain .RootNodeText,.TBMain .RootNodeText b { color:white; }
+
+         /* Custom classes */
+         .Header { background:#444!important; }    
+         .Help { background:#F6F4F0; border:1px solid #A39282; padding:10px; white-space:nowrap; text-align:center; font:13px "Microsoft Sans Serif",Verdana,Arial; }
+
+         /* Slightly modifies the default style for this example */
+         .TSCellUser { background:#FFF; }
+         .TSClassNoFocus,.TSClassReadOnly { color:#444; }
+         .TSColorSelected { background:#EEE; }
+      </style>
+	</head>
+	<body class="Example">
+		<script>
+
+// --------------------------------------------------------------------------------------------------------------------------------
+// Main Settings
+var Prev = 1;   // Preview: 0 - none, 1 - small, 2 - medium, 3 - large
+var Thumb = 1;  // Thumbnails: - 1 - small, 2 - magnified, 3 - large, 4 - preview
+var Win = 0;    // Photo: 0 - dialog, 1 - new window
+var Lang = "E"; // Language, E = English
+
+// Speed Test, shows large thumbnails on fast connection
+if(window.AjaxCall){
+   var T1 = new Date();
+   AjaxCall("../../../Grid/Styles/WhiteGrid.css?Tmp="+Math.random());
+   var TT = new Date()-T1;
+   if(TT<1500) { Prev = 0; Thumb = 3; }
+   }
+
+// --------------------------------------------------------------------------------------------------------------------------------
+var Start = 1;  // Shows help when an image is shown in dialog for first time
+var Size;       // Actual size of photo shown in dialog, 0 without scroll, 1 only one direction scroll, 2 both directions scroll
+var Img = null; // Image shown in dialog
+// --------------------------------------------------------------------------------------------------------------------------------
+// Updates size of photo shown in dialog
+function UpdateSize(P,D,w,h){
+var A = GetWindowSize(), W = A[0]-12, H = A[1]-12, ww = W, hh = H, x = 0, y = 0;
+if(Size==0) { 
+   if(w/h > W/H) { hh = h/w*W; y += (H-hh)/2; }
+   else { ww = w/h*H; x += (W-ww)/2; }
+   }
+else if(Size==1){
+   if(w/h < W/H) { hh = h/w*W; ww -= 26; }
+   else { ww = w/h*H; hh -= 26; }
+   }
+//else { hh = H*2; ww = hh*w/h; }
+else { hh = ""; ww = ""; }
+P.style.width = ww ? ww+"px" : "";
+P.style.height = hh ? hh+"px" : "";
+D.style.overflow = Size ? "auto" : "visible";
+P.style.marginLeft = x+"px";
+P.style.marginTop = y+"px";
+D.style.width = W+"px";
+D.style.height = H+"px";
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------
+// Shows the first image after pressing Space
+function First(row){
+if(row.firstChild) Click(row.firstChild.r1.parentNode.getElementsByTagName("IMG")[0]);
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------
+// Called on click to the image
+function Click(I,win){
+
+// --- Shows the image in preview ---
+if(Prev&&!win){ 
+   var G = Grids.Photoalbum;
+   G.SetValue(G.Rows.Preview,"Preview","<IMG SRC='"+I.src.replace(/[\\\/][TP][123]_/,"/P"+Prev+"_")+"' ONCLICK='Click(this,true);' STYLE='cursor:pointer;'>",1);
+   }
+
+// --- Shows the image in new window ---
+else if(Win) window.open(I.src.replace(/[\\\/][TP][123]_/,"/O_"),"_blank"); 
+
+// --- Shows the image in dialog ---
+else { 
+   var D = document.createElement("div"), S = GetWindowScroll();
+   D.style.position = "absolute";
+   D.style.left = S[0]+6+"6px";
+   D.style.top = S[1]+6+"px";
+   D.style.background = "white";
+   D.style.zIndex = 999;
+   document.body.appendChild(D);
+   var P = document.createElement("img"), S = null;
+   Img = P;
+   //P.style.position = "absolute";
+   P.style.zIndex = 1000;
+   D.appendChild(P);
+   Size = 0;
+   UpdateSize(P,D,I.offsetWidth,I.offsetHeight);
+   P.src = I.src.replace(/[\\\/][TP][123]_/,"/O_");
+   P.onclick = function(){ 
+      if(P.parentNode) P.parentNode.removeChild(P); 
+      if(D.parentNode) D.parentNode.removeChild(D); 
+      if(S && S.parentNode) S.parentNode.removeChild(S); 
+      window.onresize = null; 
+      Img = null;
+      }
+   D.onclick = P.onclick;
+   P.oncontextmenu = function(ev){ 
+      Size = !Size; 
+      UpdateSize(P,D,I.offsetWidth,I.offsetHeight); CancelEvent(ev?ev:event); 
+      }
+   D.oncontextmenu = P.oncontextmenu;
+   P.onmousewheel = function(ev,nosize){ 
+      if(!ev) ev = event; 
+      var delta = ev.wheelDelta ? ev.wheelDelta : -ev.detail*40; 
+      if(Size && !nosize) { 
+         if(D.offsetWidth < P.offsetWidth) D.scrollLeft -= delta; 
+         else D.scrollTop -= delta; 
+         } 
+      else {
+         D.onclick();
+         I = delta>0 ? I.previousSibling : I.nextSibling;
+         while(I&&I.nodeType!=1) I = delta>0 ? I.previousSibling : I.nextSibling;
+         if(I) Click(I,win);
+         }
+      CancelEvent(ev?ev:event); 
+      }
+   D.onmousewheel = P.onmousewheel;
+   if(P.addEventListener) { P.addEventListener('DOMMouseScroll', P.onmousewheel, false); D.addEventListener('DOMMouseScroll', D.onmousewheel, false); }
+   window.onresize = function(){ UpdateSize(P,D,I.offsetWidth,I.offsetHeight); }
+
+   if(Start){
+      S = document.createElement("div");
+      S.className = "Help";
+      S.style.position = "absolute";
+      S.style.zIndex = 1001;
+
+      S.style.left = parseInt(D.style.width)/2-100+S[0]+"px";
+      S.style.top = parseInt(D.style.height)/2-20+S[1]+"px";
+      
+      S.innerHTML = Grids[0].Help;
+      setTimeout(function(){
+         S.onmousemove = function(){ if(S.parentNode) S.parentNode.removeChild(S); }
+         },100);
+      document.body.appendChild(S);
+      Start = 0;
+      }
+   }
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------
+// Sets different value to Thum and reloads grid 
+function ThumbnailsChange(idx){
+var G = Grids[0];
+G.Data.Data.Url = "PhotoData"+idx+Lang+".xml";
+var PS = document.getElementById("PS");
+if(idx==4) PreviewChange(0);
+var exp = new Date(); exp.setFullYear(exp.getFullYear()+1);
+document.cookie = "PhotoThumb="+idx+"; expires="+exp.toUTCString();
+Thumb = idx;
+G.ReloadBody(function(){ Grids.OnRenderFinish(G); });
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------
+// Sets different value to Prev and updates preview
+function PreviewChange(idx){
+var G = Grids.Photoalbum, P = G.Rows.Preview;
+var H = [0,210,360,510];
+var last = Prev;
+Prev = idx;
+if(idx){ 
+   P.Height = H[idx];
+   G.ShowRow(P);
+   G.RefreshRow(P);
+   var cell = G.GetCell(P,"Preview"); 
+   if(cell) cell = cell.getElementsByTagName("img")[0];
+   if(cell) Click(cell);
+   }
+else {
+   G.HideRow(P);
+   }
+if(!G.Update()){
+   S.selectedIndex = last;
+   PreviewChange(last);
+   return;
+   }
+var exp = new Date(); exp.setFullYear(exp.getFullYear()+1);
+document.cookie = "PhotoPrev="+idx+"; expires="+exp.toUTCString();
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------
+// Called after grid is fully rendered. Updates vertical scroll position
+Grids.OnRenderFinish = function(G){
+var r = G.Body.firstChild.lastChild.previousSibling.previousSibling;
+G.Focus(r.lastChild,"A");
+G.Focus(r.firstChild.nextSibling,"A");
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------
+// Called after grid is ready, but not rendered yet. Adds new empty row to end to permit scrolling more down.
+Grids.OnReady = function(G){
+var r = G.AddRow();
+r.Visible = 1; r.Height = 500; r.CanFocus = 0; r.Added = 0; r.HoverRow = ""; r.HoverCell = "";
+if(!Prev) G.Rows.Preview.Visible = 0;
+else G.Rows.Preview.Height = [0,210,360,510][Prev];
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------
+// Shows help on click to Help button
+function Help(){
+var G = Grids[0];
+G.ShowMessageTime(G.HelpGrid + G.Help);
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------
+// Loads configuration of custom parameters from cookies
+var cook = document.cookie;
+var idx = cook.search("PhotoPrev="); if(idx>=0) Prev = cook.charAt(idx+10)-0;
+idx = cook.search("PhotoThumb="); if(idx>=0) Thumb = cook.charAt(idx+11)-0;
+idx = cook.search("PhotoWin="); if(idx>=0) Win = cook.charAt(idx+9)-0;
+
+// --------------------------------------------------------------------------------------------------------------------------------
+
+		</script>
+      <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Examples\/|\/ExamplesGantt\/)([^\/]+)\/([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+      <h1>Photoalbum example</h1>
+      <h2>HTML code in cells and using JavaScript API</h2>
+      <center class="Spec">This example needs an access to internet, it loads all the photos and thumbnails from site www.treegrid.com.</center>
+      <div class="Border">
+         <div class="Main" id="Grid" style="width:100%;height:700px;">
+   	   <script>
+   	   document.write('<treegrid Layout_Url="PhotoDef'+Lang+'.xml" Data_Url="PhotoData'+Thumb+Lang+'.xml"></treegrid>');
+			</script>
+		</div>
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGTrialGrid\s*=\s*(\d+)/), TGIndex = 2;
+         if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunTrialHtmlPhoto", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGrid="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+	</body>
+</html>

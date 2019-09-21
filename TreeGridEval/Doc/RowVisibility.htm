@@ -1,0 +1,183 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Row visibility</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Row visibility</h1>
+<p>TreeGrid documentation</p>
+
+<!-- Visible -->
+<a name="IVisible"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>bool</i>
+   <h4>Visible</h4> <s>[1]</s>
+</div>
+If the row is displayed in grid.<br />
+The row Visible attribute can be changed also by Filter / Search and by deleting row, when deleted rows are hidden. <br />
+By API the Visible attribute can be changed by methods ShowRow / HideRow.<br />
+Collapsing / expanding children and rendering pages, child pages or child parts does <u>not</u> affect row Visible attribute.<br />
+<br />
+The Visible attribute does <u>not</u> directly affect if the row is rendered in grid.<br />
+When row has Visible='0' on start, it is <u>not</u> rendered at all and it is rendered when it is shown for the first time.<br />
+When the already rendered row is hidden by Filter / Search or by HiddenRow, it has set display='none' and next showing just clears the CSS attribute.<br />
+The visible row can be also not rendered because of collapsed parent (in child paging) or not rendered page, child page or child part.<br />
+
+<!-- Hidden -->
+<a name="IHidden"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;I></b> <i>bool</i>
+   <h4>Hidden</h4> <s>[0]</s>
+</div>
+The Hidden attribute is set by manual hiding and showing rows.<br />
+If set Hidden='1' the row is <u>not</u> shown/hidden by any filter.
+
+<!-- HideParents -->
+<a name="CfgHideParents"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>HideParents</h4> <s>[0]</s>
+</div>
+If set, hides parent rows without hiding their children by setting their attribute <a href="Tree.htm#IExpanded">Expanded</a> = 2 or 3.
+
+<!-- SaveVisible -->
+<a name="CfgSaveVisible"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SaveVisible</h4> <s>[0] Saves information to cookies</s>
+</div>
+Saves row <a href="#IVisible">Visible</a> state to cookies. All rows must have set <a href="RowId.htm#Iid">id</a> attribute.<br />
+If set 1. bit &amp;<b>1</b>, saves Visible state of all fixed and space rows.<br />
+If set 2. bit &amp;<b>2</b>, saves Visible state of all variable rows to cookies.<br />
+If set 3. bit &amp;<b>4</b>, saves the state of all rows that can be hidden. Otherwise saves state of only rows that differs from their default row's Visible state.<br />
+Remember, cookies are limited to 4096 bytes for the whole page, so use this setting only for very small tables or use <a href="Cookie.htm#CfgPersistentCfg">PersistentCfg</a>.<br />
+Also use the smallest ids as possible (the amount of space is used: id+1 bytes per row).<br />
+<i>Cannot be used with server side paging. Cannot be used for automatically created group rows.</i><br />
+
+<!-- HiddenRows -->
+<a name="CfgHiddenRows"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>HiddenRows</h4> <s></s>
+</div>
+All rows (comma separated ids) that will be hidden.
+It is done on start.<br />
+It overrides the states saved by <a href="#CfgSaveVisible">SaveVisible</a>.<br />
+
+<!-- VisibleRows -->
+<a name="CfgVisibleRows"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>VisibleRows</h4> <s></s>
+</div>
+All rows (comma separated ids) that will be shown.
+It is done on start.<br />
+It overrides the states saved by <a href="#CfgSaveVisible">SaveVisible</a>.<br />
+
+
+<!-- ShowRow -->
+<a name="ShowRow"></a>
+<div class="API">
+   <u>chg <b>7.0</b> <i>upd <b>14.0</b></i></u> <b>&lt;I></b> <i>void</i>
+   <h4>ShowRow</h4> <s>(<i>TRow</i> <b>row</b>, <i>bool</i> <b>noshow</b> = 0, <i>bool</i> <b>expanded</b> = 0)</s>
+</div>
+Displays the row in grid, sets its <a href="#IVisible">Visible</a> property to 1. <br />
+<i>Since 7.0</i> it never expands row's parent;
+if the parent is invisible or not expanded, the row remains not displayed until the parent is expanded and visible. <br />
+To expand all parents to display the row call <a href="Tree.htm#ExpandParents">ExpandParents</a> method after calling ShowRow.<br />
+If <b>noshow</b> is 1, only sets Visible attribute, but does not show the row.<br />
+<i>Since 14.0</i> if <b>expanded</b> is 1 and the row has <a href="Tree.htm#IExpanded">Expanded</a> = 2 / 3, it sets <a href="Tree.htm#IExpanded">Expanded</a> to 0 / 1 and shifts the children.<br />
+Can be called also for solid and fixed rows.
+
+<!-- HideRow -->
+<a name="HideRow"></a>
+<div class="API">
+   <u><i>upd <b>14.0</b></i></u> <b>&lt;I></b> <i>void</i>
+   <h4>HideRow</h4> <s>(<i>TRow</i> <b>row</b>, <i>bool</i> <b>del</b> = 0, <i>bool</i> <b>noshow</b> = 0)</s>
+</div>
+Hides the row from table, sets its <a href="#IVisible">Visible</a> property to 0, sets its style display='none'.<br />
+If <b>del</b> = 1, deletes the row from html table (but <u>not</u> from data). <br />
+If <b>noshow</b> is 1, only sets Visible attribute, but does not hide the row.<br />
+<i>Since 14.0</i> if <b>del</b> is <b>-1</b> and the row has <a href="Tree.htm#IExpanded">Expanded</a> = 0 / 1, it sets <a href="Tree.htm#IExpanded">Expanded</a> to 2 / 3 and preserves visibility of the row's children.<br />
+Can be called also for solid and fixed rows.
+
+<!-- OnRowShow -->
+<a name="OnRowShow"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnRowShow</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>bool</i> <b>hide</b>)</s>
+</div>
+Called when the row will be shown (<b>hide</b> = 0) or hidden (<b>hide</b> = 1).<br />
+Return true to suppress the action.
+
+<!-- Action HideRow -->
+<a name="ActionsHideRow"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>HideRow <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Hides actual or focused row.<br />
+
+<!-- Action HideRows -->
+<a name="ActionsHideRows"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>HideRows <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Hides focused rows. Version without ...F fails if the actual cell is not focused.<br />
+
+<!-- Action HideSelectedRows -->
+<a name="ActionsHideSelectedRows"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>HideSelectedRows <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Hides selected rows. Version without ...F fails if the actual row is not selected.<br />
+
+<!-- Action ShowRowAbove -->
+<a name="ActionsShowRowAbove"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowRowAbove <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Shows hidden row above actual or focused row.<br />
+
+<!-- Action ShowRowBelow -->
+<a name="ActionsShowRowBelow"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowRowBelow <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Shows hidden row below actual or focused row.<br />
+
+<!-- Action ShowRows -->
+<a name="ActionsShowRows"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowRows <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Shows all hidden rows in focused range. Version without ...F fails if the actual cell is not focused.<br />
+
+<!-- Action ShowAllRows -->
+<a name="ActionsShowAllRows"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowAllRows</h4>
+   <s>Not assigned to any event</s>
+</div>
+Shows all hidden rows in grid.<br />
+
+
+</div>
+</body>	
+</html>

@@ -1,0 +1,98 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>2. Points</h1>
+   <h2>Movable math points on exact dates</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='02-Points.xml'>02-Points.xml</a></div>
+      <div class="Main" style='width:100%; height:421px;'>
+         <bdo Debug='check' Data_Url='02-Points.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li>
+         See documentation for <b><a href="../../Doc/GanttIcons.htm#Point">Point</a></b>.
+      </li>
+      <li>
+         The points represents movable marks on exact dates.<br />
+         They are expected to use in math charts to display values from one or more source columns.<br />
+         To just mark some date in chart by icon and information use <b>GanttFlags</b> instead of GanttPoints. See tutorial <a href="01-Flags.html">01-Flags</a>.<br />
+         Point icon is centered directly to its date.
+      </li>
+      <li>
+         The points are defined by <h3>GanttPoints</h3> attribute in possible four ways:
+         <ul>
+            <li>
+               Comma separated list of column names where are the individual values stored, for example GGanttPoints='A,B,C' A='1/1/2000' B='2/1/2000' C='4/2/2000'.<br />
+               Users cannot add more points than the column count, but can change the source columns values, delete points and add new points up to source column count.
+            </li>
+            <li>
+               Column name where are the column names stored, for example GGanttPoints='X' X='A,B,C' A='1/1/2000' B='2/1/2000' C='4/2/2000'.<br />
+               Users can change the source column list and also can change the source columns values, delete points and add new points up to actual source column count.
+            </li>
+            <li>
+               Direct list of values, comma or semicolon separated, for example GGanttPoints='1/1/2000;2/1/2000;4/2/2000'.<br />
+               It is not changeable by users.
+            </li>
+            <li>
+               Column name where are the direct values stored, for example GGanttPoints='X' X='1/1/2000;2/1/2000;4/2/2000'.<br />
+               It has not limited count of the points added by users. Users can freely add, delete and move the points.
+            </li>
+         </ul>
+      </li>
+      <li>
+         There are eight predefined icons for the points, every next point in the cell will have next icon from the list.<br />
+         From ninth point the icons are cycled from beginning.<br />
+         It is possible to show custom icons for the points or change the assigning order of predefined icons by attribute <h3>GanttPointsIcons</h3>.<br />
+         The GanttPointsIcons contains semicolon separated list of the icon urls (relative to the actual page) or number 1-8 for predefined icon. The icons are assigned to the points in that order.
+      </li>
+      <li>
+         There can be more points on the same date, the next point is shifted for <b>GanttPointsShift</b> pixels right to not completely hide the previous point.
+      </li>
+      <li>
+         Attribute <h3>GanttPointsEdit</h3> specifies if the individual points can be moved or deleted. In the order they are defined in GanttPoints.<br />
+         To not edit any point remove rather Points keyword from <b>GanttEdit</b>.
+      </li>
+      <li>
+         Tooltip for the points can be formatted by <h3>GanttPointsTip</h3> to show specific information for the point like its date, index and source column name.
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialGantt\s*=\s*(\d+)/), TGIndex = 1024;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridIcons2", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGantt="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

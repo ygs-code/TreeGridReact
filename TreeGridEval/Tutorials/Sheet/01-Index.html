@@ -1,0 +1,92 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>1. Index</h1>
+   <h2>Row and column automatic index</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='01-Index.xml' target="_blank">01-Index.xml</a></div>
+      <div class="Main" style='width:770px; height:500px;'>
+         <bdo Debug='check' Data_Url='01-Index.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li> <h4>Index of rows</h4><br />
+         The column to show the row indexes is set by &lt;Cfg> <h3>RowIndex</h3>, here is set to Index column.<br /> 
+         If the column with row indexes does not exist, it is created as the first left column. Here is shown right to the row panel, therefore it is defined to control its position.<br />
+         Here creates the row index for all rows except deleted. It is set by &lt;Cfg> <b>RowIndexType</b>='<b>6</b>'.<br />
+         Here the row index consists from letters A-Z. It is set by &lt;Cfg> <b>RowIndexChars</b>="ABCDEFGHIJKLMNOPQRSTUVWXYZ".<br />
+         Here the row index starts from "AA", it is set by &lt;Cfg> <b>RowIndexStart</b>="<b>27</b>" (as 1 for "A" + 26 characters).<br />
+      </li>
+      <li><h4>Index of columns</h4><br />
+         The row to show the column indexes is set by &lt;Cfg> <h3>ColIndex</h3>, here is set to main Header row.<br />
+         If the row with column indexes does not exist, it is created as the last head row.<br /> 
+         Here creates the column index for all columns except deleted. It is set by &lt;Cfg> <b>ColIndexType</b>='<b>6</b>'.<br />
+         Here the column index consists from numbers 0-9. It is set by &lt;Cfg> <b>ColIndexChars</b>="0123456789".<br /> 
+         If the ColIndexChars was empty, the column index would be normal number. Defining it to "0123456789" lets to start the index by 0.<br />
+         Here the column index starts from "001", it is set by &lt;Cfg> <b>ColIndexStart</b>="<b>112</b>" (as 2 for "1" (1 is for "0") + 10 2nd + 100 3rd).<br />
+      </li>
+      <li><h4>Automatic empty data</h4><br />
+         Here are created 20 empty columns. It is set by &lt;Cfg> <h3>AutoCols</h3>='20'. The columns have set Def="Auto".<br />
+         Here are created 50 empty rows. It is set by &lt;Cfg> <h3>AutoRows</h3>='50'. The rows have set Def="R" like any other row without Def set.<br />
+      </li>
+      <li><h4>Other features</h4><br />
+         <ul>
+            <li>
+            Columns can be moved by dragging column header. It is default behavior.<br />
+            Columns can be selected, deleted and copied. It is set by &lt;Cfg ColAdding="1" ColDeleting="1" SelectingCols="1"/>.<br />
+            Here is defined top panel for columns with default buttons Select, Delete and Copy. It is set by placing &lt;Panel/> tag in &lt;Head> section.<br />
+            Columns can copied by dragging column header with Ctrl.<br />
+            </li>
+            <li>
+            Rows can be moved by dragging the Index column. It is default behavior. Dragging by other columns is overridden by focusing cells by FocusRect.<br />
+            Rows can be copied by dragging the Index column with Ctrl. It is default behavior.<br />
+            Rows can be selected, deleted and copied. It is default behavior.<br />
+            Here is modified left panel for rows with added button Copy. It is set by &lt;Panel Copy='1'/>.<br />
+            </li>
+            <li>
+            Cell range can be focused by mouse dragging. It is set by &lt;Cfg> <b>FocusRect</b>='<b>5</b>'.<br />
+            Enter moves cursor down. It is set by &lt;Cfg> EnterMode='1'.<br />
+            All actions can be undone, including focus. It is set by &lt;Cfg> Undo='15'.<br />
+            </li>
+         </ul>
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialSheet\s*=\s*(\d+)/), TGIndex = 1;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialSheet1", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialSheet="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

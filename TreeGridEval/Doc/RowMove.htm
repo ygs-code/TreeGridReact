@@ -1,0 +1,535 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Moving rows</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Row moving and dragging</h1>
+<p>TreeGrid documentation</p>
+
+Rows in TreeGrid can be dragged inside one grid or between any two grids. The dropped rows can be moved or copied.<br />
+Only variable rows can be moved or copied!<br />
+By default every row can be dragged and every row accepts every child as drop target.<br />
+To control which row can be dragged use row's <a href="#ICanDrag">CanDrag</a> attribute and/or <a href="#OnStartDrag">OnStartDrag</a> event.<br />
+To control which row accepts which child use <b>Def</b> and <b>AcceptDef</b> attributes. The row accepts as child only rows with <b>Def</b> attribute listed in the row's <b>AcceptDef</b> array. The root rows are controlled by &lt;Root <b>AcceptDef</b>/>.<br /> 
+<i>All the <b>Def</b> and <b>AcceptDef</b> settings are described in <a href="RowDefaults.htm">Default rows documentation</a>.</i><br />
+Dynamically you can control dropping by <a href="#OnCanDrop">OnCanDrop</a> and <a href="#OnEndDrag">OnEndDrag</a> events.<br />
+
+<!-- Dragging -->
+<a name="CfgDragging"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Dragging</h4> <s>[1]</s>
+</div>
+If rows can be moved by mouse - the grid can be a <u>source</u> grid for drag / drop rows.<br />
+
+<!-- Dropping -->
+<a name="CfgDropping"></a>
+<div class="XML">
+   <u><i>upd <b>14.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>Dropping</h4> <s>[1]</s>
+</div>
+If rows can be dropped to this grid - the grid can be a <u>target</u> grid for drag / drop rows.<br />
+<i>Since 14.0</i> it is not permitted dragging rows between grids with different <a href="MasterDetail.htm#CfgSyncId">SyncId</a> except if set Dropping = <b>2</b>.<br />
+
+<!-- Copying -->
+<a name="CfgCopying"></a>
+<div class="XML">
+   <u>chg <b>10.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Copying</h4> <s>[1]</s>
+</div>
+If existing rows can be copied / duplicated.<br />
+If set to <b>0</b>, the Panel Copy button is hidden and the CopyMenu does not display items for copying.<br />
+If set to <b>0</b>, all <b>Copy</b>... actions fail but <a href="RowAdd.htm#CopyRow">CopyRow</a> and <a href="RowAdd.htm#CopyRows">CopyRows</a> methods still work.<br />
+<i>(Since 10.0)</i> If set to <b>0</b>, the rows cannot be copied by dragging.<br />
+Copying is automatically disabled when set <tt><a href="RowAdd.htm#CfgAdding">Adding</a>='0'</tt>.<br />
+<i>It is <u>not</u> related to Copy&Paste, it is controlled by <a href="CopyPaste.htm#CfgPasting">Pasting</a>.</i><br />
+
+<!-- DragCol -->
+<a name="CfgDragCol"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>DragCol</h4> <s>[...]</s>
+</div>
+If defined, shows drop position by outer arrows instead of showing it in the <a href="Tree.htm#CfgMainCol">MainCol</a>.<br />
+Useful especially for plain grid without MainCol. Default value is Index if not defined MainCol, otherwise it is null.<br />
+
+<!-- DragCopy -->
+<a name="CfgDragCopy"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>DragCopy</h4> <s>[0]</s>
+</div>
+For copying <u>between</u> two grids. If set to <b>1</b> in <u>source</u> grid, rows are copied instead of moved - the moved rows are not deleted in the <u>source</u> grid.<br />
+It does <u>not</u> affect moving rows inside the same grid.<br />
+
+<!-- DragCopyId -->
+<a name="CfgDragCopyId"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>DragCopyId</h4> <s>[0]</s>
+</div>
+If set, the moved row between grids does not change its id. It is not used for copied rows.<br />
+You must ensure the rows have unique ids in both grids, including newly added rows - use different <a href="RowId.htm#CfgIdChars">IdChars</a> or <a href="RowId.htm#CfgIdPrefix">IdPrefix</a> in the grids.<br />
+If set, the <a href="#OnRowCopyId">OnRowCopyId</a> is not called for the moved rows.<br />
+
+<!-- CopyDeleted -->
+<a name="CfgCopyDeleted"></a>
+<div class="XML">
+   <u>new <b>6.4</b> chg <b>10.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>CopyDeleted</h4> <s>[0]</s>
+</div>
+If copies also deleted rows.<br />
+<i>Since 10.0</i> it is used also for copied rows by dragging, in previous version the deleted rows were copied always, now only if set it to 1.<br />
+
+<!-- DragEdit -->
+<a name="CfgDragEdit"></a>
+<div class="XML">
+   <u><i>upd <b>12.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>DragEdit</h4> <s>[0]</s>
+</div>
+If set, dragging actions are permitted even if the grid is in edit mode.<br /> 
+If set to <b>1</b>, the grid finishes editing on mouse down at any other cell than edited one.<br />
+If set to <b>2</b>, <i>(since 12.0)</i> the editing is not finished during dragging.<br />
+It is still not possible to drag row by the cell being edited.<br />
+
+<!-- ShowDrag -->
+<a name="CfgShowDrag"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ShowDrag</h4> <s>[1] &nbsp; Saved to cookies, to not load it, set <tt><b>ShowDragLap</b>='1'</tt></s>
+</div>
+If shows dragged object under mouse cursor. The dragged row(s) or moved column(s).<br />
+It can be changed by a user in configuration menu<br />
+
+<!-- DragObject -->
+<a name="CfgDragObject"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>DragObject</h4> <s>[1]</s>
+</div>
+What is shown under mouse cursor when dragging rows.<br />
+<b>0</b> - nothing<br />
+<b>1</b> - the first dragged row proxy. If dragged more rows, the border of the proxy is thicker<br />
+<b>2</b> - row name or count of dragged rows, in Grid.CSS is represented by class GxDragObject.<br />
+  <div class="L1">
+  the message is defined in Text.xml by &lt;Lang>&lt;Text DragObjectMove DragObjectCopy DragObjectMoreMove DragObjectMoreCopy/>&lt;/Lang>.<br />
+  </div>
+  
+<!-- DropFixed -->
+<a name="CfgDropFixed"></a>
+<div class="XML">
+   <u><i>upd <b>14.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>DropFixed</h4> <s>[2]</s>
+</div>
+If set to <b>1</b>, it is possible to drop rows above fixed sections.<br />
+If the row is dropped to head section, it is placed as the first root row, if the row is dropped to foot section, it is placed as the last root row.<br />
+<i>Since 14.0</i> if set to <b>2</b>, it is possible to drop to only NoData fixed row shown in empty grid.<br />
+
+<!-- ExpandOnDrag -->
+<a name="CfgExpandOnDrag"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ExpandOnDrag</h4> <s>[1]</s>
+</div>
+If set <b>1</b>, expands row when dragging row and mouse goes over the expand icon of not expanded row.<br />
+
+<!-- ScrollOnDrag -->
+<a name="CfgScrollOnDrag"></a>
+<div class="XML">
+   <u>new <b>6.0</b> chg <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ScrollOnDrag</h4> <s>[50]</s>
+</div>
+If set, scrolls grid down if the dragging mouse hovers foot section and scrolls up if mouse hovers head section.<br />
+<i>Since 7.0</i> it specifies the scrolling speed, for how many pixels will be scrolled in one step, the original value 1 is changed to 50.<br />  
+
+<!-- NoDragIcon -->
+<a name="CfgNoDragIcon"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>NoDragIcon</h4> <s>[0]</s>
+</div>
+If set <b>1</b>, does not show dragging icon during dragging.<br />
+
+<!-- TouchDragFocused -->
+<a name="CfgTouchDragFocused"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>TouchDragFocused</h4> <s>[2]</s>
+</div>
+<i>Only for touch screens.</i><br />
+If set to <b>1</b>, it permits dragging only focused object (row, Gantt bar, Gantt icon or Gantt line).<br />
+If set to <b>2</b> permits dragging focused cell, not only focused row. Gantt is the same as for <b>1</b>.<br />
+First tap on the object to focus it and next touch and move or resize it.<br /> 
+Similarly tap to empty space in Gantt chart and next touch and drag to create new bar.<br />
+It affects also showing Gantt menu - tap on the Gantt object and tap on it again to show the popup GanttMenu.<br />
+
+<!-- TouchClearFocused -->
+<a name="CfgTouchClearFocused"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>TouchClearFocused</h4> <s>[0]</s>
+</div>
+<i>Only for touch screens.</i><br />
+Time in milliseconds; after that time the focus from actually focused cell or Gantt object is cleared.<br />
+<b>0</b> means never.<br />
+
+<!-- CanDrag -->
+<a name="ICanDrag"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>bool</i>
+   <h4>CanDrag</h4> <s>[1]</s>
+</div>
+If row can be moved by mouse dragging. Not applicable for fixed rows. Fixed rows cannot also be drop target.<br />
+
+<!-- CanDrag -->
+<a name="CCanDrag"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>bool</i>
+   <h4>CanDrag</h4> <s>[1]</s>
+</div>
+If row can by caught by cell in this column and being dragged. Set it to 0 to let a user to select text in cell instead of dragging.<br />
+
+<!-- CanCopy -->
+<a name="ICanCopy"></a>
+<div class="XML">
+   <u>chg <b>10.0</b></u> <b>&lt;I></b> <i>bool</i>
+   <h4>CanCopy</h4> <s>[1]</s>
+</div>
+If the row can be duplicated and copied.<br /> 
+If set to <b>0</b>, the Panel Copy button is inactive and all <b>Copy</b>... actions fail but <a href="RowAdd.htm#CopyRow">CopyRow</a> and <a href="RowAdd.htm#CopyRows">CopyRows</a> methods still work.<br />
+The row cannot be also copied by dragging.<br />
+<i>Since 10.0</i> it is tested also for copied rows by dragging.<br />
+<i>It is <u>not</u> related to copying values into clipboard.</i><br />
+
+<!-- Moved -->
+<a name="IMoved"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>int</i>
+   <h4>Moved</h4> <s>[0] &nbsp; Uploaded to server, supports Undo</s>
+</div>
+If and how the row has been moved inside the grid. <b>0</b> - no, <b>1</b> - to another position in the same parent, <b>2</b> - to another parent.<br />
+When sorting is enabled, the value <b>1</b> is not used.<br />
+When the row is moved between grids, it is marked as <b>Added</b> in target grid and <b>Deleted</b> in source grid. No <b>Moved</b> flag is set in this case.<br />
+After uploading changes to server or calling <a href="DataUpload.htm#AcceptChanges">AcceptChanges</a> the moved row just looses its state and becomes normal row.<br />
+
+<!-- Copy -->
+<a name="ICopy"></a>
+<div class="XML">
+   <u>chg <b>10.0</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>Copy</h4> <s>Uploaded to server</s>
+</div>
+This attribute is set when used <tt><a href="PagingServer.htm#ChildPaging">ChildPaging</a>=3</tt> and the row was created as deep copy of another row, the Copy is <a href="RowId.htm#Iid">id</a> of the source row.<br />
+This attribute is set only if the source row has some children and they were not loaded from server yet (the row was not expanded yet).<br />
+The server script must provide deep copy of the children of source (Copy) node to children of this (id) node.<br />
+<i>Since 10.0</i> it is set also for copied rows by dragging.<br />
+
+<!-- Parent -->
+<a name="IParent"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>string</i>
+   <h4>Parent</h4> <s>Uploaded to server</s>
+</div>
+When the row is moved or added, this is id of the new parent row or position of page (from 0).<br />
+
+<!-- Next -->
+<a name="INext"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>string</i>
+   <h4>Next</h4> <s>Uploaded to server</s>
+</div>
+When the row is moved or added, this is id of the row below or "" if the row is the last row in its parent.<br />
+
+<!-- Prev -->
+<a name="IPrev"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>string</i>
+   <h4>Prev</h4> <s>Uploaded to server</s>
+</div>
+When the row is moved or added, this is id of the row above or "" if the row is the first row in its parent.<br />
+
+<!-- Move -->
+<a name="PanelMove"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>bool</i>
+   <h4>Move</h4> <s>[0]</s>
+</div>
+If the default Panel button <b>Move</b> is visible. This button is hidden also if <tt>&lt;Cfg <a href="#CfgDragging">Dragging</a>="0"/></tt>. This button is inactive when the row has <tt><a href="#ICanDrag">CanDrag</a>='0'</tt>.<br />
+Dragging this button moves the row. Use this button if dragging row by cells has different function like selecting cells.<br />
+<i>Used only if the <a href="TypePanel.htm#CButtons">Buttons</a> and the cell value are <u>not</u> set.</i><br />
+
+<!-- OnStartDrag -->
+<a name="OnStartDrag"></a>
+<div class="API">
+   <u><i>upd <b>10.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnStartDrag</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>more</b>, <i>bool</i> <b>copy</b>, <i>TRow</i>[ ] <b>rows</b>)</s>
+</div>
+Called before the row is being dragged. Return true to suppress dragging the row.<br />
+<b>row</b> is the caught row, <b>col</b> is column where the <b>row</b> is caught, <b>more</b> is true when more selected rows will be dragged together.<br />
+<b>copy</b> <i>(since 8.0)</i> is true if the row will be copied instead of moved.<br />
+<b>rows</b> <i>(since 10.0)</i> are all the moved rows (when moved more selected rows). It does <u>not</u> contain children of moved rows.<br />
+
+<!-- OnEndDrag -->
+<a name="OnEndDrag"></a>
+<div class="API">
+   <u><i>upd <b>10.0</b></i></u> <b>API event</b> <i>int</i>
+   <h4>OnEndDrag</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>TGrid</i> <b>togrid</b>, <i>TRow</i> <b>torow</b>, <i>int</i> <b>type</b>, <i>int</i> <b>X</b>, <i>int</i> <b>Y</b>, <i>bool</i> <b>copy</b>, <i>TRow[ ]</i> <b>rows</b>)</s>
+</div>
+Called after the dragged row is dropped. It is called for any drop, even not permitted.<br />
+<b>grid</b>, <b>row</b> - dragged source row, <b>togrid</b>, <b>torow</b> - drop target - row under mouse cursor<br />
+<b>type</b> - <b>0</b> - cannot drop, <b>1</b> - above <b>torow</b>, <b>2</b> - to the end of children of torow, <b>3</b> - below <b>torow</b><br />
+<b>X</b>, <b>Y</b> - mouse cursor position on screen (related to browser window)<br />
+<b>togrid</b> is never null, it is the last grid that was under mouse cursor. <b>torow</b> is null when no row is under mouse cursor in time of drop.<br />
+<b>copy</b> <i>(since 8.0)</i> is true if the row will be copied instead of moved.<br />
+<b>rows</b> <i>(since 10.0)</i> are all the moved rows (when moved more selected rows). It does <u>not</u> contain children of moved rows.<br />
+Return new type to change dropping results.<br />
+
+<!-- OnEndedDrag -->
+<a name="OnEndedDrag"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnEndedDrag</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>TGrid</i> <b>togrid</b>, <i>TRow</i> <b>torow</b>, <i>int</i> <b>type</b>, <i>int</i> <b>X</b>, <i>int</i> <b>Y</b>, <i>bool</i> <b>copy</b>, <i>TRow[ ]</i> <b>rows</b>)</s>
+</div>
+Called after the dragged row is dropped and all changes are already done. Parameters are the same as in <a href="#OnEndDrag">OnEndDrag</a>.<br />
+
+<!-- OnCanDrop -->
+<a name="OnCanDrop"></a>
+<div class="API">
+   <u style="width:135px;">renamed <b>6.0</b> <i>upd <b>10.0</b></i></u> <b>API event</b> <i style="margin-left:-10px;">int</i>
+   <h4>OnCanDrop</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>TGrid</i> <b>togrid</b>, <i>TRow</i> <b>torow</b>, <i>int</i> <b>type</b>, <i>bool</i> <b>copy</b>, <i>TRow[ ]</i> <b>rows</b>)</s>
+</div>
+Called during dragging row above other rows (drop targets) to find out if and how row can be dropped to this target.<br />
+It is called even if the dropping here is restricted (with <tt>type = 0</tt>). It is not called for grids with <tt>&lt;Cfg <a href="#CfgDropping">Dropping</a>='0'/></tt>.<br />
+<b>grid</b>, <b>row</b> - dragged source row, <b>togrid</b>, <b>torow</b> - drop target - row under mouse cursor,<br />
+<b>type</b> - <b>0</b> - cannot drop, <b>1</b> - above <b>torow</b>, <b>2</b> - to the end of children of <b>torow</b>, <b>3</b> - below <b>torow</b><br />
+<b>copy</b> is true if the source <b>row</b> will be copied, not moved.<br />
+<b>rows</b> <i>(since 10.0)</i> are all the moved rows (when moved more selected rows). It does <u>not</u> contain children of moved rows.<br />
+Return new type to change dropping permits.<br />
+This event controls <u>dropping</u>. To control which rows can be dragged (caught), set the row attribute <a href="#ICanDrag">CanDrag</a> or set &lt;Cfg <a href="#CfgDragging">Dragging></a> for whole grid or use <a href="#OnStartDrag">OnStartDrag</a> event.<br />
+
+<!-- OnRowMoveToGrid -->
+<a name="OnRowMoveToGrid"></a>
+<div class="API">
+   <u><i>upd <b>7.0</b></i></u> <b>API event</b> <i>int</i>
+   <h4>OnRowMoveToGrid</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>TGrid</i> <b>togrid</b>, <i>TRow</i> <b>torow</b>, <i>bool</i> <b>copy</b>)</s>
+</div>
+Called after row is moved or copied to another grid. Called from function <a href="#MoveRowsToGrid">MoveRowsToGrid</a>( ).<br />
+In time of call new row (<b>torow</b>) is positioned and displayed in target grid (<b>togrid</b>).<br /> 
+Old row (<b>row</b>) is still not deleted in source grid (<b>grid</b>).<br /> 
+If <b>copy</b> = true, old row will not be deleted.<br />
+return null to default behavior according to <b>copy</b>, or <b>0</b> to move, <b>1</b> to copy and -<b>1</b> to remove source row.<br />
+
+<!-- OnRowMove -->
+<a name="OnRowMove"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnRowMove</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>TRow</i> <b>oldparent</b>, <i>TRow</i> <b>oldnext</b>)</s>
+</div>
+Called after row has been moved inside one grid. Called from function <a href="#MoveRow">MoveRow</a>( ).<br />
+The <b>row</b> is still displayed in old position but have new settings.<br /> 
+<b>oldparent</b> is original parent of the row, <b>oldnext</b> is original next sibling.<br />
+
+<!-- OnRowCopyId -->
+<a name="OnRowCopyId"></a>
+<div class="API">
+   <u>new <b>6.4</b> <i>upd <b>10.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnRowCopyId</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>TRow</i> <b>source</b>, <i>bool</i> <b>move</b>)</s>
+</div>
+Called before creating id for the new moved / copied row, the row has already copied the IdNames columns, the other columns will be copied later.<br />
+<i>Since 8.1</i> it can set the row id and return true to not generate the new id.<br />
+<i>Since 10.0</i> <b>move</b> is set when the row is moved from another grid.<br />
+
+<!-- OnRowCopyDef -->
+<a name="OnRowCopyDef"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnRowCopyDef</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>TRow</i> <b>source</b>, <i>bool</i> <b>move</b>)</s>
+</div>
+Called when moving row between grids. Called before copying values from old default row to the new row.<br /> 
+Use if the default row of copied row differ between grids to copy only some attributes and return true.<br />
+<b>move</b> is set when the row is moved from another grid.<br />
+
+<!-- MoveRow -->
+<a name="MoveRow"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>MoveRow</h4> 
+   <s>(<i>TRow</i> <b>row</b>, <i>TRow</i> <b>parent</b>, <i>TRow</i> <b>next</b>, <i>bool</i> <b>show</b> = false)</s>
+</div>
+Moves <b>row</b> with all its children to the <b>parent's</b> children in front of <b>next</b> row. <b>parent</b> can be row, page or null. If <b>show</b> = true, displays changes.<br />
+If <b>next</b> is null, moves new row as last <b>parent's</b> child. If <b>parent</b> and <b>next</b> are null, moves row as the last root row.<br />
+If the row is first row in spanned range (has set RowSpan for some cell), it moves the whole range.<br />
+
+<!-- MoveRows -->
+<a name="MoveRows"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>MoveRows</h4> 
+   <s>(<i>TRow</i> <b>row</b>, <i>TRow</i> <b>rowto</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Moves row with all its children inside one grid. It converts its parameters and calls <a href="#MoveRow">MoveRow</a>.<br />
+<b>row</b> is the row to move, <b>type</b> - <b>1</b> - above <b>torow</b>, <b>2</b> - to the end of children of <b>torow</b>, <b>3</b> - below <b>torow</b><br />
+If the row is first row in spanned range (has set RowSpan for some cell), it moves the whole range.<br />
+
+<!-- MoveRowsToGrid -->
+<a name="MoveRowsToGrid"></a>
+<div class="API">
+   <u>chg <b>7.0</b></u> <b>API method</b> <i>TRow</i>
+   <h4>MoveRowsToGrid</h4> 
+   <s>(<i>TRow</i> <b>row</b>, <i>TGrid</i> <b>togrid</b>, <i>TRow</i> <b>torow</b>, <i>int</i> <b>type</b>, <i>int</i> <b>copy</b> = 1)</s>
+</div>
+Moves or copies row to another (or the same) grid. Displays changes. Returns added row from source (calling) grid.<br />
+<b>row</b> is the row to move or copy, <b>togrid</b> is target grid. If target grid is the same as source grid it calls <a href="#MoveRows">MoveRows</a>.<br />
+<b>type</b> - <b>1</b> - above <b>torow</b>, <b>2</b> - to the end of children of <b>torow</b>, <b>3</b> - below <b>torow</b><br />
+If <b>copy</b> is <b>0</b>, row (and its children) is added to target grid (marked as <b>Added</b>) and deleted from source grid (marked as <b>Deleted</b>).<br />
+If <b>copy</b> is <b>1</b>, row (and its children) is added to target grid, but it is <u>not</u> deleted from source grid.<br /> 
+If <b>copy</b> is <b>2</b>, copies only row, without its children.<br /> 
+Copies all row and cell attributes except when replacing deleted row with the same id. Does <u>not</u> copy RowSpan.<br />
+<strong>If <b>copy</b> is <b>0</b> and in target grid already exists <b>deleted</b> row with the same <b>id</b> as source <b>row</b>, to the target grid is <u>not</u> added new row, but the existing target row is moved to new position and filled with cell values from source row and the source row is deleted!</strong><br />
+<i>If copy is <b>0</b> it preserves creating new and new rows when moving one row more times between two grids.</i><br />
+Since 7.0 replaces only deleted rows with the same id. Also copies all attributes not only values.<br />
+
+<!-- DragByMouse -->
+<a name="DragByMouse"></a>
+<div class="API">
+   <u>new <b>8.0</b></u> <b>Global func.</b> <i>void</i>
+   <h4>DragByMouse</h4> 
+   <s>(<i>object</i> <b>tag</b>, <i>Event</i> <b>event</b>, <i>int</i> <b>move</b> = null, <i>string</i> <b>html</b> = null, <i>function</i> <b>func</b> = null, <i>object</i> <b>param</b> = null)</s>
+</div>
+Useful for dragging external object into grid (or anywhere else)<br />
+Attaches copy of given HTML <b>tag</b> to mouse cursor to simulate its dragging. <i>Call it only on mouse down.</i><br />
+Automatically removes the attached object on mouse up. You can call DragByMouse without parameters to remove the object manually.<br />
+The ghost object is placed below mouse cursor to not suppress standard mouse events.<br />
+<b>tag</b> is HTML tag to be dragged. It is <u>not</u> modified by this function. It is used to get its position, class and innerHTML.<br />
+<b>event</b> is standard HTML MouseEvent, the function used its clientX and clientY for placing the ghost object.<br />
+<b>move</b> can be direction to move the ghost object only, 1 - horizontally, 2 - vertically<br />
+<b>html</b> is html to filled into ghost object. If not set, the tag.innerHTML is used.<br />
+function <b>func</b> (<b>param</b>) is called when the ghost object is removed (usually on mouse up). <b>param</b> is any custom parameter.<br />
+
+<!-- Action DragRow -->
+<a name="ActionsDragRow"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DragRow</h4> 
+   <s>Attached to <b>OnDragPanelMove</b> and <b>OnDragRow</b> events, can be attached to <b>OnDrag...</b> events only</s>
+</div>
+Starts dragging actual row with all its children to new position. Dropped row will be moved.<br />
+
+<!-- Action DragSelected -->
+<a name="ActionsDragSelected"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DragSelected</h4> 
+   <s>Attached to <b>OnDragRow</b> events, can be attached to <b>OnDrag...</b> events only</s>
+</div>
+Starts dragging selected rows with all their children to new position. Dropped rows will be moved.<br />
+Fails if actual row is not selected. It is possible to drag selected rows only by dragging one of them.<br />
+
+<!-- Action DragCopy -->
+<a name="ActionsDragCopy"></a>
+<div class="ACT">
+   <u>chg <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DragCopy</h4> 
+   <s>Not attached to any event, can be attached to <b>OnDrag...</b> events only</s>
+</div>
+Starts dragging actual row <u>without</u> its children to new position. Dropped row will be <u>copied</u>.<br />
+Like <a href="#ActionsDragRow">DragRow</a>, but copies row, without its children.<br />
+<i>Since 7.0</i> it fails also when set <tt><a href="RowAdd.htm#CfgAdding">Adding</a>='0'</tt> or <tt><a href="RowAdd.htm#CfgCopying">Copying</a>='0'</tt>.<br />
+
+<!-- Action DragSelectedCopy -->
+<a name="ActionsDragSelectedCopy"></a>
+<div class="ACT">
+   <u>chg <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DragSelectedCopy</h4> 
+   <s>Not attached to any event, can be attached to <b>OnDrag...</b> events only</s>
+</div>
+Starts dragging selected rows <u>without</u> their children to new position. Dropped rows will be <u>copied</u>.<br />
+Fails if actual row is not selected. It is possible to drag selected rows only by dragging one of them.<br />
+Like <a href="#ActionsDragSelected">DragSelected</a>, but copies rows, without their children.<br />
+<i>Since 7.0</i> it fails also when set <tt><a href="RowAdd.htm#CfgAdding">Adding</a>='0'</tt> or <tt><a href="RowAdd.htm#CfgCopying">Copying</a>='0'</tt>.<br />
+
+<!-- Action DragCopyChildren -->
+<a name="ActionsDragCopyChildren"></a>
+<div class="ACT">
+   <u>chg <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DragCopyChildren</h4> 
+   <s>Not attached to any event, can be attached to <b>OnDrag...</b> events only</s>
+</div>
+Starts dragging actual row <u>with</u> all its children to new position. Dropped row will be <u>copied</u>.<br />
+Like <a href="#ActionsDragRow">DragRow</a>, but copies row, with all its children.<br />
+<i>Since 7.0</i> it fails also when set <tt><a href="RowAdd.htm#CfgAdding">Adding</a>='0'</tt> or <tt><a href="RowAdd.htm#CfgCopying">Copying</a>='0'</tt>.<br />
+
+<!-- Action DragSelectedCopyChildren -->
+<a name="ActionsDragSelectedCopyChildren"></a>
+<div class="ACT">
+   <u>chg <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DragSelectedCopyChildren</h4> 
+   <s>Not attached to any event, can be attached to <b>OnDrag...</b> events only</s>
+</div>
+Starts dragging selected rows <u>with</u> their children to new position. Dropped rows will be <u>copied</u>.<br />
+Fails if actual row is not selected. It is possible to drag selected rows only by dragging one of them.<br />
+Like <a href="#ActionsDragSelected">DragSelected</a>, but copies rows, with all their children.<br />
+<i>Since 7.0</i> it fails also when set <tt><a href="RowAdd.htm#CfgAdding">Adding</a>='0'</tt> or <tt><a href="RowAdd.htm#CfgCopying">Copying</a>='0'</tt>.<br />
+
+<!-- Action DragCell -->
+<a name="ActionsDragCell"></a>
+<div class="ACT">
+   <u>new <b>8.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DragCell</h4> 
+   <s>Not attached to any event, can be attached to <b>OnDrag...</b> events only</s>
+</div>
+Custom dragging of the cell. It does not provide any action on drop, just calls custom events.<br />
+On mouse down, the cell content is attached to the mouse cursor.<br /> 
+On start calls <a href="#OnStartDragCell">OnStartDragCell</a>, while moving there is called API event <a href="#OnMoveDragCell">OnMoveDragCell</a>, on mouse up there is called <a href="#OnEndDragCell">OnEndDragCell</a> API event.<br />
+
+<!-- OnStartDragCell -->
+<a name="OnStartDragCell"></a>
+<div class="API">
+   <u>new <b>8.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnStartDragCell</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>html</b>)</s>
+</div>
+Called when started dragging by action <a href="#ActionsDragCell">DragCell</a>.<br />
+<b>grid</b>, <b>row</b>, <b>col</b> - dragged source cell,<br /> 
+<b>html</b> - html to be attached to mouse as ghost object for dragging<br />
+return true to suppress dragging or return new html to attach it to mouse cursor.<br />
+
+<!-- OnMoveDragCell -->
+<a name="OnMoveDragCell"></a>
+<div class="API">
+   <u>new <b>8.0</b> <i>upd <b>12.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnMoveDragCell</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>TGrid</i> <b>togrid</b>, <i>TRow</i> <b>torow</b>, <i>string</i> <b>tocol</b>, <i>int</i> <b>X</b>, <i>int</i> <b>Y</b>)</s>
+</div>
+Called during dragging by action <a href="#ActionsDragCell">DragCell</a>.<br />
+<b>grid</b>, <b>row</b>, <b>col</b> - dragged source cell,<br /> 
+<b>togrid</b>, <b>torow</b>, <b>tocol</b> - drop target - cell under mouse cursor or null when dragging outside. <b>togrid</b> is never null, it is the last grid that was under mouse cursor<br />
+<b>X</b>, <b>Y</b> - mouse cursor position on screen (related to browser window)<br />
+<i>Since 12.0</i> return <b>true</b> to set drag cursor, return <b>false</b> to set no drag cursor, return <b>null</b> to not change mouse cursor.<br />
+
+<!-- OnEndDragCell -->
+<a name="OnEndDragCell"></a>
+<div class="API">
+   <u>new <b>8.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnEndDragCell</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>TGrid</i> <b>togrid</b>, <i>TRow</i> <b>torow</b>, <i>string</i> <b>tocol</b>, <i>int</i> <b>X</b>, <i>int</i> <b>Y</b>)</s>
+</div>
+Called the dragged cell is dropped, started by action <a href="#ActionsDragCell">DragCell</a>.<br />
+<b>grid</b>, <b>row</b>, <b>col</b> - dragged source cell,<br /> 
+<b>togrid</b>, <b>torow</b>, <b>tocol</b> - drop target - cell under mouse cursor or null when dragging outside. <b>togrid</b> is never null, it is the last grid that was under mouse cursor<br />
+<b>X</b>, <b>Y</b> - mouse cursor position on screen (related to browser window)<br />
+
+</div>
+</body>	
+</html>

@@ -1,0 +1,70 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+
+      /* Change for inverse Black style */
+      .TBDataRow * { color:black; } 
+      .TBClassFocusedCell { color:white; }
+   </style>
+
+   <script>
+// -------------------------------------------------------------------------
+// Returns value for editing
+Grids.OnGetInputValue = function(G,row,col,val){
+if(col=="X") return Get(row,"Y"); // For cell X returns value from Y
+}
+// -------------------------------------------------------------------------
+   </script>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>7. Editable calculated cells</h1>
+   <h2>Changing calculate cell and modifying its source</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='07-Editable_Calculated_Cells.xml'>07-Editable_Calculated_Cells.xml</a></div>
+      <div class="Main" style='width:100%; height:253px;'>
+         <bdo Debug='check' Data_Url='07-Editable_Calculated_Cells.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li>It is possible to edit calculated cell value. Set <h3>CanEdit</h3> to the column or, for <b>Calculated</b> row, to the cell. 
+      And define <h3>OnChange</h3> XML event or <h3>OnAfterValueChanged</h3> API event to modify the source of the cell formula.</li>
+      <li> Optionally define <b>OnGetInputValue</b> for editable cell to edit different value than shown calculated by Formula. </li>
+      <li>The edited value must <u>not</u> be stored in the cell value itself, because the cell value is overwritten by the formula result.</li>
+      <li>Compare with <a href="06-Calculated_Attributes.html">06-Calculated_Attributes.html</a> example.</li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialBasic\s*=\s*(\d+)/), TGIndex = 4096;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridCalculation7", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialBasic="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

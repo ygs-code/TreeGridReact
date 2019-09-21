@@ -1,0 +1,369 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Row API</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Row API</h1>
+<p>TreeGrid documentation</p>
+
+<b>TRow</b> is row JavaScript object. col is column name as string.<br /><br />
+
+In TreeGrid rows are stored in the same way as in the input XML, the variable rows are placed inside pages (if the grid is not paged, to only one page) and the pages root is <a href="#Body">Body</a>. &lt;Head>, &lt;Foot> and &lt;Solid> rows are placed in the separated tags accessible by <a href="#Head">Head</a>, <a href="#Foot">Foot</a> and <a href="RowSpace.htm#SpaceSpace">Space</a> variables.<br />
+Every row is represented by JavaScript object similar to HTMLElement. The rows can be iterated by <a href="#firstChild">firstChild</a> / <a href="#nextSibling">nextSibling</a> variables or <a href="#GetFirst">GetFirst</a> / <a href="#GetNext">GetNext</a> methods.<br />
+In this documentation, the row object is named as <b>TRow</b>, but this object name in fact does not exist.<br /> 
+All rows are accessible by their ids from <a href="#Rows">Rows</a> array.<br /><br />
+
+All attributes loaded from XML data are in rows represented as properties with the same name. For example you can access row.Selected or row.Added or row.Col1CanEdit or row.Col1 as cell value.<br /> 
+There is not predefined type for attributes, it can be string or number, depending on many factors. Therefore if you expect boolean value, you cannot test it as if(row.Selected) but if(row.Selected-0).<br /> 
+For many attributes is better to read them by predefined methods as <a href="CellEdit.htm#CanEdit">CanEdit</a>, <a href="Focus.htm#CanFocus">CanFocus</a> and so on. Most of row's attributes are expected to be read only, thus don't change their values directly.<br /> 
+<i>Generally, use predefined functions (if any) to read or change row's attribute values instead of accessing them directly.</i><br />
+<i>Also use these properties as read only if possible. To get row's attribute use global function <b><a href="CellFormula.htm#Formulas">Get</a></b> rather then direct access to attribute.</i><br /><br />
+
+All other XML data (defaults, columns, panel, toolbar, pager, configuration menu, language texts) are represented as JavaScript object (or arrays of these objects accessed by name) with properties of same name as XML attributes. These properties has converted type, therefore numbers are always numbers not strings. But it depends on property value not on expected type (the conversion is universal).<br /><br />
+
+Grid configuration (tag &lt;<b>Cfg</b>>) is filled to properties of basic <b><a href="Create.htm#ClassTGrid">TGrid</a></b> object. TGrid object has all properties named as &lt;<b>Cfg</b>> tag attributes. Values are also converted by their value types.<br /><br />
+
+In all functions columns are identified by its name (given in XML, <tt>&lt;C <a href="ColBasics.htm#CName">Name</a>=""></tt>). By this name column object can be got from TGrid.<a href="ColAPI.htm#Cols">Cols</a> array.<br /><br />
+
+In HTML table is every row represented by one &lt;tr> tag for every section (left columns, variable columns, right columns). You can access cell DOM by <b><a href="CellBasics.htm#GetCell">GetCell</a></b> function.<br /><br />
+
+Any grid on page can be accessed from global JavaScript array <b><a href="Create.htm#Grids">Grids</a></b>. By its <a href="Create.htm#Index">Index</a> or by its <a href="Create.htm#id">id</a>.<br />
+
+<!-- Rows -->
+<a name="Rows"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API variable</b> <i>TRow[ ]</i>
+   <h4>Rows</h4>
+   <s><span style="color:red;">read only</span> JavaScript named array of row objects by their <b>id</b></s>
+</div>
+All rows in grid by their <a href="RowId.htm#Iid">id</a>. Including fixed and Space rows.<br />
+If the row has set its id neither in XML nor by IdNames, the id is automatically generated as "R"+number from 1.<br />
+
+<!-- GetRowById -->
+<a name="GetRowById"></a>
+<div class="API">
+   <u><i>upd <b>7.0</b></i></u> <b>API method</b> <i>TRow</i>
+   <h4>GetRowById</h4>
+   <s>(<i>string</i> <b>id</b>, <i>string</i> <b>attr</b>, <i>bool</i> <b>nofixed</b>)</s>
+</div>
+Searches for the row by its id.<br />
+If the row exists in <a href="#Rows">Rows</a>, it returns the row from <a href="#Rows">Rows</a>, otherwise it iterates all rows in grid to find the row.<br />
+The advantage to <a href="#Rows">Rows</a> is that it can be used also before the Rows array is filled during grid creating.<br />
+The disadvantage is that it will be slow when the <a href="#Rows">Rows</a> does <u>not</u> contain given <b>id</b>.<br />
+<i>(Since 7.0)</i> If set <b>attr</b>, it searches the row according to this attribute value instead of id, in this case it always iterates all the rows.<br />
+<i>(Since 7.0)</i> If set <b>nofixed</b>, it does <u>not</u> search in fixed and space rows.<br />
+
+<!-- Body -->
+<a name="Body"></a>
+<div class="API">
+   <u>renamed <b>6.0</b></u> <b>API variable</b> <i>TRow</i>
+   <h4>Body</h4>
+   <s><span style="color:red;">read only</span></s>
+</div>
+The parent of all pages in grid. The XML &lt;Body> tag.<br />
+You can iterate the pages by firstChild / nextSibling attributes.<br />
+You can iterate the rows in page also firstChild / nextSibling attributes or by GetFirst / GetNext method.<br />
+
+<!-- Head -->
+<a name="Head"></a>
+<div class="API">
+   <u>renamed <b>6.0</b></u> <b>API variable</b> <i>TRow</i>
+   <h4>Head</h4>
+   <s><span style="color:red;">read only</span></s>
+</div>
+The parent of all fixed rows in Head section. The XML &lt;Head> tag.<br />
+You can iterate them by firstChild / nextSibling attributes.<br />
+
+<!-- Foot -->
+<a name="Foot"></a>
+<div class="API">
+   <u>renamed <b>6.0</b></u> <b>API variable</b> <i>TRow</i>
+   <h4>Foot</h4>
+   <s><span style="color:red;">read only</span></s>
+</div>
+The parent of all fixed rows in Foot section. The XML &lt;Foot> tag.<br />
+You can iterate them by firstChild / nextSibling attributes.<br />
+
+<!-- Solid -->
+<a name="Solid"></a>
+<div class="API">
+   <u>renamed <b>6.0</b></u> <b>API variable</b> <i>TRow</i>
+   <h4>Solid</h4>
+   <s><span style="color:red;">read only</span></s>
+</div>
+The parent of all Space rows. The XML &lt;Solid> tag.<br />
+You can iterate them by firstChild / nextSibling attributes.<br />
+The rows are not positioned by its Space attribute, but by its position in XML.<br />
+
+<!-- Header -->
+<a name="Header"></a>
+<div class="API">
+   <u>renamed <b>6.0</b></u> <b>API variable</b> <i>TRow</i>
+   <h4>Header</h4>
+   <s><span style="color:red;">read only</span></s>
+</div>
+The main Header row in grid. (the header with <tt>id='Header'</tt>).<br />
+
+<!-- Toolbar -->
+<a name="Toolbar"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>TRow</i>
+   <h4>Toolbar</h4>
+   <s><span style="color:red;">read only</span></s>
+</div>
+The main Toolbar row in grid. (the toolbar with <tt>id='Toolbar'</tt>)<br />
+
+<!-- Filter -->
+<a name="Filter"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API variable</b> <i>TRow</i>
+   <h4>Filter</h4>
+   <s><span style="color:red;">read only</span></s>
+</div>
+The first filter row in grid.<br />
+
+<!-- GetFixedRows -->
+<a name="GetFixedRows"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>TRow[ ]</i>
+   <h4>GetFixedRows</h4>
+   <s>( )</s>
+</div>
+Returns all fixed rows (head and foot) as JavaScript array.<br />
+
+<!-- RowCount -->
+<a name="RowCount"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>int</i>
+   <h4>RowCount</h4>
+   <s><span style="color:red;">read only</span></s>
+</div>
+Count of actually <b>rendered variable</b> rows.<br /> 
+This variable is set after page was rendered and is updated for every next page or child page or child part is rendered.<br />
+For non-paged grids, you can access this variable first in <a href="Create.htm#OnRenderPageFinish">OnRenderPageFinish</a> event handler.<br />
+
+<!-- LoadedCount -->
+<a name="LoadedCount"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API variable</b> <i>int</i>
+   <h4>LoadedCount</h4>
+   <s><span style="color:red;">read only</span></s>
+</div>
+Count of actually <b>loaded variable</b> rows.<br /> 
+This variable is set after page was loaded and is updated for every next page or child page is loaded.<br />
+For non-paged grids, you can access this variable first in <a href="DataDownload.htm#OnUpdated">OnUpdated</a> event handler.<br />
+
+<!-- Fixed -->
+<a name="Fixed"></a>
+<div class="API">
+   <u></u> <b style="margin-left:-10px;width:105px;">API TRow var.</b> <i>string</i>
+   <h4>Fixed</h4>
+   <s><span style="color:red;">read only</span></s>
+</div>
+It is set for fixed and space rows only.<br /> 
+For head rows is "<b>Head</b>", for foot rows is "<b>Foot</b>", for Space rows is "<b>Solid</b>".<br />
+
+<!-----------------------------------------------------------  Row iterating  ----------------------------------------------------------->
+<a name="Iteration"></a>
+<h2>Row iterating</h2>
+
+<!-- nextSibling -->
+<a name="nextSibling"></a>
+<div class="API">
+   <u></u> <b style="margin-left:-10px;width:105px;">API TRow var.</b> <i>TRow</i>
+   <h4>nextSibling</h4>
+   <s><span style="color:red;">read only</span> <i>The first letter is lower case</i></s>
+</div>
+Next row below this row.<br />
+
+<!-- previousSibling -->
+<a name="previousSibling"></a>
+<div class="API">
+   <u></u> <b style="margin-left:-10px;width:105px;">API TRow var.</b> <i>TRow</i>
+   <h4>previousSibling</h4>
+   <s><span style="color:red;">read only</span> <i>The first letter is lower case</i></s>
+</div>
+Previous row above this row.<br />
+
+<!-- firstChild -->
+<a name="firstChild"></a>
+<div class="API">
+   <u></u> <b style="margin-left:-10px;width:105px;">API TRow var.</b> <i>TRow</i>
+   <h4>firstChild</h4>
+   <s><span style="color:red;">read only</span> <i>The first letter is lower case</i></s>
+</div>
+First child of the row in tree.<br />
+
+<!-- lastChild -->
+<a name="lastChild"></a>
+<div class="API">
+   <u></u> <b style="margin-left:-10px;width:105px;">API TRow var.</b> <i>TRow</i>
+   <h4>lastChild</h4>
+   <s><span style="color:red;">read only</span> <i>The first letter is lower case</i></s>
+</div>
+Last child of the row in tree.<br />
+
+<!-- parentNode -->
+<a name="parentNode"></a>
+<div class="API">
+   <u></u> <b style="margin-left:-10px;width:105px;">API TRow var.</b> <i>TRow</i>
+   <h4>parentNode</h4>
+   <s><span style="color:red;">read only</span> <i>The first letter is lower case</i></s>
+</div>
+Parent row in tree. For root row it returns page or Head / Foot / Solid section for fixed row.<br />
+
+<!-- GetFirst -->
+<a name="GetFirst"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>TRow</i>
+   <h4>GetFirst</h4>
+   <s>(<i>TRow</i> <b>parent</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Returns first existing row in given page <b>parent</b> or children of the <b>parent</b> row.<br />
+If <b>parent</b> is null returns the first variable row.<br />
+if (<b>type</b>&amp;<b>4</b>) - including head and foot rows.<br />
+
+<!-- GetLast -->
+<a name="GetLast"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>TRow</i>
+   <h4>GetLast</h4>
+   <s>(<i>TRow</i> <b>parent</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Returns last existing row in given page <b>parent</b> or children of the <b>parent</b> row.<br />
+If <b>parent</b> is null returns the last variable row.<br />
+if (<b>type</b>&amp;<b>1</b>) - ignores rows in collapsed parents, if (<b>type</b>&amp;<b>4</b>) - including head and foot rows.<br />
+
+<!-- GetNext -->
+<a name="GetNext"></a>
+<div class="API">
+   <u><i>upd <b>13.2</b></i></u> <b>API method</b> <i>TRow</i>
+   <h4>GetNext</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Returns next existing row below the given row.<br />
+if (<b>type</b>&amp;<b>1</b>) - ignores rows in collapsed parents, if (<b>type</b>&amp;<b>2</b>) - only from actual root page.<br />
+<i>Since 13.2</i> if (<b>type</b>&amp;<b>4</b>) - including head and foot rows.<br />
+
+<!-- GetPrev -->
+<a name="GetPrev"></a>
+<div class="API">
+   <u><i>upd <b>13.2</b></i></u> <b>API method</b> <i>TRow</i>
+   <h4>GetPrev</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Returns previous existing row above the given row.<br />
+if (<b>type</b>&amp;<b>1</b>) - ignores rows in collapsed parents, if (<b>type</b>&amp;<b>2</b>) - only from actual root page.<br /><br />
+<i>Since 13.2</i> if (<b>type</b>&amp;<b>4</b>) - including head and foot rows.<br />
+
+<!-- GetFirstVisible -->
+<a name="GetFirstVisible"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>TRow</i>
+   <h4>GetFirstVisible</h4>
+   <s>(<i>TRow</i> <b>parent</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Returns first visible row (has <tt>Visible='1'</tt>) in given page <b>parent</b> or children of the <b>parent</b> row.<br />
+If <b>parent</b> is null returns the first visible variable row.<br />
+if (<b>type</b>&amp;<b>4</b>) - including head and foot rows.<br />
+
+<!-- GetLastVisible -->
+<a name="GetLastVisible"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>TRow</i>
+   <h4>GetLastVisible</h4>
+   <s>(<i>TRow</i> <b>parent</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Returns last visible (has <tt>Visible='1'</tt>) row in given page <b>parent</b> or children of the <b>parent</b> row.<br />
+If <b>parent</b> is null returns the last visible variable row.<br />
+if (<b>type</b>&amp;<b>1</b>) - ignores rows in collapsed parents, if (<b>type</b>&amp;<b>4</b>) - including head and foot rows.<br />
+
+<!-- GetNextVisible -->
+<a name="GetNextVisible"></a>
+<div class="API">
+   <u><i>upd <b>13.2</b></i></u> <b>API method</b> <i>TRow</i>
+   <h4>GetNextVisible</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Returns next visible (has <tt>Visible='1'</tt>) row below the given row.<br />
+if (<b>type</b>&amp;<b>1</b>) - ignores rows in collapsed parents, if (<b>type</b>&amp;<b>2</b>) - only from actual root page.<br />
+<i>Since 13.2</i> if (<b>type</b>&amp;<b>4</b>) - including head and foot rows.<br />
+
+<!-- GetPrevVisible -->
+<a name="GetPrevVisible"></a>
+<div class="API">
+   <u><i>upd <b>13.2</b></i></u> <b>API method</b> <i>TRow</i>
+   <h4>GetPrevVisible</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Returns previous visible (has <tt>Visible='1'</tt>) row above the given row.<br />
+if (<b>type</b>&amp;<b>1</b>) - ignores rows in collapsed parents, if (<b>type</b>&amp;<b>2</b>) - only from actual root page.<br />
+<i>Since 13.2</i> if (<b>type</b>&amp;<b>4</b>) - including head and foot rows.<br />
+
+<!-- GetPrevShift -->
+<a name="GetPrevShift"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>object[ ]</i>
+   <h4>GetPrevShift</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>int</i> <b>pagepos</b>, <i>int</i> <b>cnt</b>)</s>
+</div>
+Returns [<i>TRow</i> <b>row</b>, <i>int</i> <b>pagepos</b>] .<br /> 
+Returns previous visible row shifted by cnt rows above. <b>row</b> can be root page, in this case <b>pagepos</b> is used as row position in the page.<br />
+
+<!-- GetNextShift -->
+<a name="GetNextShift"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>object[ ]</i>
+   <h4>GetNextShift</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>int</i> <b>pagepos</b>, <i>int</i> <b>cnt</b>)</s>
+</div>
+Returns [<i>TRow</i> <b>row</b>, <i>int</i> <b>pagepos</b>] .<br /> 
+Returns next visible row shifted by cnt rows below. <b>row</b> can be root page, in this case <b>pagepos</b> is used as row position in the page.<br />
+
+<!-- GetNextSibling -->
+<a name="GetNextSibling"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b>API method</b> <i>TRow</i>
+   <h4>GetNextSibling</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Returns next row on the same tree level, for root rows iterates through pages.<br />
+<i>Since 12.0</i>, <b>type</b>&amp;<b>1</b> - ignores rows in collapsed parents, <b>type</b>&amp;<b>2</b> - only from actual root page. <b>type</b>&amp;<b>4</b> also from next parents on the same level.<br />
+
+<!-- GetNextSiblingVisible -->
+<a name="GetNextSiblingVisible"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b>API method</b> <i>TRow</i>
+   <h4>GetNextSiblingVisible</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Returns next visible row on the same tree level, for root rows iterates through pages.<br />
+<i>Since 12.0</i>, <b>type</b>&amp;<b>1</b> - ignores rows in collapsed parents, <b>type</b>&amp;<b>2</b> - only from actual root page. <b>type</b>&amp;<b>4</b> also from next parents on the same level.<br />
+
+<!-- GetPrevSibling -->
+<a name="GetPrevSibling"></a>
+<div class="API">
+   <u>new <b>10.0</b> <i>upd <b>12.0</b></i></u> <b>API method</b> <i>TRow</i>
+   <h4>GetPrevSibling</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Returns previous row on the same tree level, for root rows iterates through pages.<br />
+<i>Since 12.0</i>, <b>type</b>&amp;<b>1</b> - ignores rows in collapsed parents, <b>type</b>&amp;<b>2</b> - only from actual root page. <b>type</b>&amp;<b>4</b> also from previous parents on the same level.<br />
+
+<!-- GetPrevSiblingVisible -->
+<a name="GetPrevSiblingVisible"></a>
+<div class="API">
+   <u>new <b>10.0</b> <i>upd <b>12.0</b></i></u> <b>API method</b> <i>TRow</i>
+   <h4>GetPrevSiblingVisible</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Returns previous visible row on the same tree level, for root rows iterates through pages.<br />
+<i>Since 12.0</i>, <b>type</b>&amp;<b>1</b> - ignores rows in collapsed parents, <b>type</b>&amp;<b>2</b> - only from actual root page. <b>type</b>&amp;<b>4</b> also from previous parents on the same level.<br />
+
+</div>
+</body>	
+</html>

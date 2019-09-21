@@ -1,0 +1,255 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Type Panel</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Panel with more buttons - Panel</h1>
+<p>TreeGrid documentation</p>
+
+Panel type displays one or more clickable icon buttons in one cell.<br />
+
+<!-- Type -->
+<a name="CType"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Panel"]  <tt>Type = "Panel"</tt></s>
+</div>
+To define Panel type, set column or cell attribute Type to "<b>Panel</b>".<br />
+There is a shortcut in XML, as column &lt;Panel /> instead of &lt;C Name="Panel"/>.<br />
+
+<!-- Kind -->
+<a name="CKind"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>Kind</h4> <s>["Panel"]  <tt>Kind = "Panel"</tt></s>
+</div>
+If row Kind is set to "Panel" it sets Type="Panel" for every row cell and also assigns default row "Panel" with the panel column actions and definitions.<br />
+There is a shortcut in XML, as row &lt;Panel /> instead of &lt;I Kind="Panel"/>.<br />
+
+<!-- ColorPanel -->
+<a name="CfgColorPanel"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;I></b> <i>bool</i>
+   <h4>ColorPanel</h4> <s>[0]</s>
+</div>
+If the Panel type cell will be colored like normal cell.
+
+<!-----------------------------------------------------------------------  Standard fast panel  ------------------------------------------------->
+<a name="Standard"></a>
+<h2>Predefined Panel column</h2>
+
+Every grid has predefined one column as <tt>Type="Panel" Name="Panel"</tt> always displayed on grid left side.<br />
+You can move this column to another section by placing <tt>&lt;Panel Name="Panel"/></tt> to any column section to place the panel here.<br />
+Or to hide the default panel, set <tt>&lt;<b>Panel Visible</b>='0'/></tt> in the root.<br />
+To not let user to show the panel from menu set <tt>&lt;<b>Panel Visible</b>='<b>0</b>' <b>CanHide</b>='<b>0</b>'/></tt><br />
+The default panel is defined by XML root tag &lt;Panel>.<br />
+Grid can have more standard panels defined by &lt;Panel/> tag with different Name.<br /> 
+<br />
+The default Panel can show up to four predefined buttons, always in this order: <b>Move</b>, <b>Select</b>, <b>Delete</b> and <b>Copy</b>.<br />
+In <b>Header</b> row there are predefined buttons: <b>MoveAll</b>, <b>SelectAll</b>, <b>DeleteAll</b>, <b>CopyAll</b>. <br />
+<i>Prior to 12.0 the Header buttons were named Move, Select, Delete, Copy and were identified in events as HeaderXXX instead of PanelXXX.</i><br />
+
+<!-- Move -->
+<a name="PanelMove"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>bool</i>
+   <h4>Move</h4> <s>[0]</s>
+</div>
+If the default Panel button <b>Move</b> / <b>MoveAll</b> is visible. This button is hidden also if <tt>&lt;Cfg <a href="RowMove.htm#CfgDragging">Dragging</a>="0"/></tt>. This button is inactive when the row has <tt><a href="RowMove.htm#ICanDrag">CanDrag</a>='0'</tt>.<br />
+Dragging this button moves the row. Use this button if dragging row by cells has different function like selecting cells.<br />
+<i>Used only if the <a href="#CButtons">Buttons</a> and the cell value are <u>not</u> set.</i><br />
+
+<!-- Select -->
+<a name="PanelSelect"></a>
+<div class="XML">
+   <u><i>upd <b>9.2</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>Select</h4> <s>[1]</s>
+</div>
+If the default Panel button <b>Select</b> / <b>SelectAll</b> is visible. This button is hidden also if <tt>&lt;Cfg <a href="RowSelect.htm#CfgSelecting">Selecting</a>="0"/></tt>. This button is inactive when the row has <tt><a href="RowSelect.htm#ICanSelect">CanSelect</a>='0'.</tt><br />
+Click to this button selects the whole row. Dragging this button selects rows range.<br />
+<i>(Since 9.2)</i> If set to <b>2</b>, it is similar to 1, but the button is checked only if the whole row is selected, not only individual cells.<br />
+<i>Used only if the <a href="#CButtons">Buttons</a> and the cell value are <u>not</u> set.</i><br />
+
+<!-- Delete -->
+<a name="PanelDelete"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>bool</i>
+   <h4>Delete</h4> <s>[1]</s>
+</div>
+If the default Panel button <b>Delete</b> / <b>DeleteAll</b> is visible. This button is hidden also if <tt>&lt;Cfg <a href="RowDelete.htm#CfgDeleting">Deleting</a>="0"/></tt>. This button is inactive when the row has <tt><a href="RowDelete.htm#ICanDelete">CanDelete</a>='0'.</tt><br />
+Click to this button deletes row or undeletes deleted row.<br />
+<i>Used only if the <a href="#CButtons">Buttons</a> and the cell value are <u>not</u> set.</i><br />
+
+<!-- Copy -->
+<a name="PanelCopy"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;C></b> <i>bool</i>
+   <h4>Copy</h4> <s>[0]</s>
+</div>
+If the default Panel button <b>Copy</b> / <b>CopyAll</b> is visible. This button is hidden also if <tt>&lt;Cfg <a href="RowAdd.htm#CfgCopying">Copying</a>="0"/></tt>. This button is inactive when the row has <tt><a href="RowAdd.htm#ICanCopy">CanCopy</a>='0'.</tt><br />
+Click to this button shows popup menu for copying and adding rows. The menu is defined by attribute <a href="CellBasics.htm#CMenu">PanelCopyMenu</a>.<br />
+<i>Used only if the <a href="#CButtons">Buttons</a> and the cell value are <u>not</u> set.</i><br />
+
+<!-- FastPanel -->
+<a name="CfgFastPanel"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>FastPanel</h4> <s>[1]</s>
+</div>
+For <b>1</b> it displays standard panel as one image to speed rendering up.                                  
+<i>Used only if the <a href="#CButtons">Buttons</a> and the cell value is <u>not</u> set.</i><br />
+For <b>0</b> it displays all icons separately.<br />
+
+<!-----------------------------------------------------------------------  Custom panel  ------------------------------------------------->
+<a name="Custom"></a>
+<h2>Custom panel</h2>
+
+Panel can contain one or more custom buttons set in cell value or by Buttons attribute.<br />
+You can specify the custom button name in value or Buttons and set its parameters as separate attributes.<br />
+The custom button name is set as <strong>xxx</strong> in the next documentation.<br />
+
+<!-- Buttons -->
+<a name="CButtons"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;C> &lt;I></b> <i>string[ ]</i>
+   <h4>Buttons</h4> <s></s>
+</div>
+Comma separated list of buttons on panel.<br />
+One panel button can be one of predefined buttons or any custom button name.
+The predefined buttons are:<br />
+<b>Move</b> (move row), <b>Select</b> (select row), <b>Delete</b> (delete row), <b>Copy</b> (copy or add row),<br />
+<i>(since 12.0)</i> <b>MoveAll</b> (not used), <b>SelectAll</b> (select all rows), <b>DeleteAll</b> (delete selected rows), <b>CopyAll</b> (copy or add selected rows),<br />
+<i>(since 12.0)</i> <b>ColMove</b> (move column), <b>ColSelect</b> (select column), <b>ColDelete</b> (delete column), <b>ColCopy</b> (copy or add column),<br />
+<i>(since 12.0)</i> <b>ColMoveAll</b> (not used), <b>ColSelectAll</b> (select all columns), <b>ColDeleteAll</b> (delete selected columns), <b>ColCopyAll</b> (copy or add selected columns),<br />
+<i>(since 6.4)</i> If button name is set to <b>Empty</b> or to empty string, empty space is shown instead of button, EmptyWidth pixels wide.<br />
+<i>Since 12.0</i> it is read from row with Kind="Panel" instead of column.<br />
+If the custom button has not defined its icon, it is rendered as HTML &lt;BUTTON>, see <a href="TypePanel.htm#CfgUseButton">UseButton</a>.<br />
+For example <tt>&lt;C Name='Col1' Buttons='Select,Add,Delete,Edit' Add='Add.gif' Edit='../Icons/Edit.gif' EditWidth='20' /></tt><br />
+<i>For backward compatibility with prior to 12.0, the Move, Select, Delete and Copy buttons in Header row are automatically renamed to MoveAll, SelectAll, DeleteAll and CopyAll.
+And checks row CanMove, CanDelete, CanSelect and CanCopy attributes and for 0 hides the button.
+</i><br />
+
+<!-- value -->
+<a name="CellValue"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;cell></b> <i>string[ ]</i>
+   <h4>value</h4> <s></s>
+</div>
+Comma separated list of buttons on panel.<br />
+The same as <a href="#CButtons">Buttons</a>, but it is set in cell value and can be also calculated by <a href="#CFormula">Formula</a>.<br />
+
+<!-- xxx -->
+<a name="Cxxx"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>xxx</h4> <s></s>
+</div>
+Image url for the custom panel button.<br />
+<i>Since 12.0</i> it can be used also for standard Panel buttons like Select or Delete. 
+For Select the on state can be set by <b>xxx1</b> attribute like &lt;Panel Select="Off.gif" Select1="On.gif"/>.<br />
+<i>Since 12.0</i> it is read from row with Kind="Panel" instead of column.<br />
+If this attribute is missing, the custom panel button is displayed as &lt;button> tag with caption <i><b>xxx</b></i>.<br />
+
+<!-- xxxWidth -->
+<a name="CxxxWidth"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>int</i>
+   <h4>xxxWidth</h4> <s>[from Grid.css]</s>
+</div>
+Width of the custom panel button. <br />
+<i>Since 12.0</i> it can be used also for standard Panel buttons like Select or Delete with custom icon. <br />
+<i>Since 12.0</i> it is read from row with Kind="Panel" instead of column.<br />
+Default value is set in Grid.css, class GxPanelImage.<br />
+
+<!-- OnClickPanelxxx -->
+<a name="OnClickPanelxxx"></a>
+<div class="ACT">
+   <u>new <b>6.0</b> chg <b>12.0</b></u> <b>&lt;XML event></b> <i>void</i>
+   <h4>OnClickPanelxxx</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>TRow</i> <b>Row</b>, <i>string</i> <b>Col</b>, <i>TEvent</i> <b>Event</b>)</s>
+</div>
+Standard column, row, cell or Actions attribute containing JavaScript code.<br />
+It is called on click to the cell part, panel button. <i>Since 12.0 it is called also for Header Panel.</i><br />
+<i>It is standard TreeGrid mouse event, here is just mentioned to not forget its possibility when handling Panel button clicks.</i><br />
+Example: <tt>&lt;I Col1='Add,Select' Add='Add.gif' Col1OnClickPanelAdd='alert("clicked add in column "+Col);'/></tt><br />
+
+<!-- OnClickHeaderxxx -->
+<a name="OnClickHeaderxxx"></a>
+<div class="DEL">
+   <u>new <b>6.0</b> deleted <b>12.0</b></u> <b>&lt;XML event></b> <i>void</i>
+   <h4>OnClickHeaderxxx</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>TRow</i> <b>Row</b>, <i>string</i> <b>Col</b>, <i>TEvent</i> <b>Event</b>)</s>
+</div>
+<del>The OnClickPanelxxx replacement for Header row.<br /></del>
+
+<!-- PanelxxxMenu -->
+<a name="CPanelxxxMenu"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string [*]</i>
+   <h4>PanelxxxMenu</h4> <s></s>
+</div>
+<a href="CellBasics.htm#CMenu">Menu</a> for the individual Panel button.<br />
+
+<!-- PanelxxxTip -->
+<a name="CPanelxxxTip"></a>
+<div class="XML">
+   <u>new <b>6.0</b> chg <b>12.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>PanelxxxTip</h4> <s></s>
+</div>
+Tooltip text for Panel button. <i>Since 12.0 it is called also for Header Panel.</i><br />
+<i>Since 12.0</i> it is read from row with Kind="Panel" instead of column.<br />
+
+<!-- HeaderxxxTip -->
+<a name="CHeaderxxxTip"></a>
+<div class="DEL">
+   <u>new <b>6.0</b> deleted <b>12.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>HeaderxxxTip</h4> <s></s>
+</div>
+<del>Tooltip text for Panel button in Header row<br /></del>
+
+<!-- PanelxxxCursor -->
+<a name="CPanelxxxCursor"></a>
+<div class="XML">
+   <u>new <b>6.0</b> chg <b>12.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>PanelxxxCursor</h4> <s>["pointer"]</s>
+</div>
+Mouse cursor displayed on mouse hover Panel button. <i>Since 12.0 it is called also for Header Panel.</i><br />
+It can be standard CSS cursor name: <b>auto</b>, <b>crosshair</b>, <b>default</b>, <b>pointer</b>, <b>move</b>, <b>e-resize</b>, <b>ne-resize</b>, <b>nw-resize</b>, <b>n-resize</b>, <b>se-resize</b>, <b>sw-resize</b>, <b>s-resize</b>, <b>w-resize</b>, <b>text</b>, <b>wait</b>, <b>help</b>.<br />
+It works only for image buttons, not for &lt;button>.<br />
+<i>Since 12.0</i> it is read from row with Kind="Panel" instead of column.<br />
+
+<!-- HeaderxxxCursor -->
+<a name="CHeaderxxxCursor"></a>
+<div class="DEL">
+   <u>new <b>6.0</b> deleted <b>12.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>HeaderxxxCursor</h4> <s>["pointer"]</s>
+</div>
+<del>The PanelxxxCursor replacement for Header row.<br /></del>
+
+<!-- Formula -->
+<a name="CFormula"></a>
+<div class="XML">
+   <u></u> <b style="width:135px;">&lt;C>&lt;cell></b> <i>string</i>
+   <h4>Formula</h4> <s></s>
+</div>
+<i>Standard Formula attribute for Calculated row, here is stated just to not forget its advantage for Panel buttons.</i><br />
+The formula can return a comma separated list of the panel buttons for the row - you can return different buttons lists according to various formula sources.<br />
+
+<!-- UseButton -->
+<a name="CfgUseButton"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>UseButton</h4> <s>[0]</s>
+</div>
+How the TreeGrid buttons are rendered.<br />
+Bit array: <b>1</b>.bit for type Button with <tt><a href="TypeButton.htm#CButton">Button</a>="Button"</tt>, <b>2</b>. bit for right side button with <tt><a href="TypeButton.htm#CButton">Button</a>="Button"</tt>, <b>3</b>. bit for type Panel <a href="TypePanel.htm#CButtons">custom button</a>.<br />
+<b>0</b> - It renders the buttons as TreeGrid styled button done by <tt>&lt;u></tt> tag.<br />
+<b>1</b> - It renders the buttons as HTML &lt;button> tag. Set <tt>UseButton='7'</tt> for all three type buttons. <i>Default behavior before version 11.0.</i><br />
+
+</div>
+</body>
+</html>

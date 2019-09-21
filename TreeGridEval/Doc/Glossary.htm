@@ -1,0 +1,250 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid and Gantt chart - documentation index and glossary | TreeGrid</title>
+<meta name="description" content="Use the most flexible web table, gantt chart and universal bar chart on the Internet - visit the full online documentation for TreeGrid and Gantt chart." />
+</head>
+<body>
+<style>
+   .Doc .XML a, .Doc .API a, .Doc .ACT a, .Doc .DEL a { text-decoration:none; color:black; }
+   .Doc .XML a:visited, .Doc .API a:visited, .Doc .ACT a:visited, .Doc .DEL a:visited { text-decoration:none; color:black; }
+   .Doc .XML a:hover, .Doc .API a:hover, .Doc .ACT a:hover, .Doc .DEL a:hover { text-decoration:underline; color:red; }
+   .Preface { margin-top:40px; line-height:1.4; margin-left:auto; margin-right:auto; width:510px; }
+   .Preface p { border:1px solid #DFDFDF; padding:10px 10px 10px 10px; }
+   .Preface b { font-weight:normal; color:#04A; }
+</style>
+<div class="Doc Glossary">
+
+<h1>Documentation</h1>
+<p>TreeGrid documentation glossary</p>
+
+<div class="Preface">
+<p>Here is full online documentation for <b>TreeGrid</b>, <b>Gantt chart</b> and <b>SpreadSheet</b>.<br />
+   Choose desired document in <b>left side tree</b> or find it in <a href="SearchAttr.html">documentation search</a>.<br />
+   In this documentation glossary is described how to use the documentation.<br /></p>
+</div>
+
+<!-----------------------------------------------------------------------  Documentation items ------------------------------------------------->
+<a name="Item"></a>
+<h2>Documentation items</h2>
+
+<!-- Attribute -->
+<div class="XML">
+   <u><a href="#Version"><span style="color:red;">version</span></a></u> <b><a href="#Tag">&lt;tag></a></b> <i><a href="#Type">type</a></i>
+   <h4>XmlAttribute</h4>
+   <s>[default value]&nbsp;&nbsp;&nbsp;specialty</s>
+</div>
+XML or JSON attribute definition. The XML and JSON formats have the same attributes and tags/objects.<br />
+<table>
+   <tr><td style="width:100px;"><b>version</b></td><td>TreeGrid version(s) where the attribute was changed. See the <a href="#Version">versions</a>.</td></tr>
+   <tr><td><b>tag</b></td><td>A list of XML tags or JSON object where the attribute can be used. See all possible <a href="#Tag">tags</a>.<br />
+      The most of XML/JSON attributes can be accessed also by JavaScript API, it is also described in the <a href="#Tag">tag list</a>.</td></tr>
+   <tr><td><b>type</b></td><td>Informational attribute type according to the attribute meaning. See all possible <a href="#Type">types</a>.<br />
+      In XML all attributes are strings, in JSON the values can be number or strings regardless on this type.<br />
+      In JavaScript API the property type is integer or string according to the value itself, not according to this type.</td></tr>
+   <tr><td><b>default value</b></td><td>Initial attribute value. The default values are preset usually in <a href="Files.htm#DefaultsXml">Defaults.xml</a>, but some of them are also set directly in TreeGrid code.<br />
+      If the default value is not defined, the item has initially null or 0 or empty string according to its type.</td></tr>
+   <tr><td><b>specialty</b></td><td>Information that the attribute is saved to and loaded from cookies (therefore can be ignored in XML/JSON data) and information how to avoid it.<br />
+      Or information that the attribute is uploaded to server.<br />
+      Or information that the attribute can be undone (supports Undo), when set &lt;Cfg Undo='1'/>.</td></tr>
+</table>
+
+<!-- API -->
+<div class="API">
+   <u><a href="#Version"><span style="color:red;">version</span></a></u> <b><a href="#Object">object</a></b> <i><a href="#Type">type</a></i>
+   <h4>ApiItem</h4>
+   <s>(parameters)&nbsp;&nbsp;&nbsp;read only</s>
+</div>
+JavaScript API <b>method</b>, API <b>event</b> or API <b>variable</b> definition.<br />
+<strong>All these API items are part of <b>Extended API</b>. The <b>Extended API</b> is not included in any component license and must be purchased apart!</strong><br />
+<table>
+   <tr><td style="width:100px;"><b>version</b></td><td>TreeGrid version(s) where the attribute was changed. See the <a href="#Version">versions</a>.</td></tr>
+   <tr><td><b>object</b></td><td>JavaScript object this item belongs to as its property or method. See all possible <a href="#Object">objects</a>.</td></tr>
+   <tr><td><b>type</b></td><td>Informational property or function return type according to the item meaning. The real JavaScript type can be different. See all possible <a href="#Type">types</a>.</td></tr>
+   <tr><td><b>parameters</b></td><td>Are shown for JavaScript functions. Note, the parameter types and names are just informational, the only exact thing is the parameters order.</td></tr>
+   <tr><td><b>read only</b></td><td>Is listed for API variable that should <u>not</u> be changed.<br />
+</table>
+
+<!-- Action -->
+<div class="ACT">
+   <u><a href="#Version"><span style="color:red;">version</span></a></u> <b>&lt;Actions></b> <i></i>
+   <h4>Action <i>...F</i></h4>
+   <s>attached to</s>
+</div>
+JavaScript action. It can be attached to any XML/JSON mouse or key event, usually in &lt;Actions> tag.<br />
+Many actions are attached by default to some event in &lt;Actions> tag in <a href="Files.htm#DefaultsXml">Defaults.xml</a>, e.g. &lt;Actions OnClickButtonSave="Validate AND Save"/><br />
+The action can be called also from JavaScript as API method of grid object, named with Action prefix, e.g. Grids[0].ActionSave ( ); for action named Save.<br />
+<table>
+   <tr><td style="width:100px;"><b>version</b></td><td>TreeGrid version(s) where the attribute was changed. See the <a href="#Version">versions</a>.</td></tr>
+   <tr><td><b>attached to</b></td><td>Information where the action is attached by default (in <a href="Files.htm#DefaultsXml">Defaults.xml</a>) and restrictions to which events can be attached.</td></tr>
+   <tr><td><b>...F</b></td><td>It means that there are two action names, one with and one without <b>F</b> suffix (e.g SelectRow and SelectRowF).<br />
+      The one without <b>F</b> uses actual cell (under mouse) and one with <b>F</b> uses focused cell.<br />
+      The focused version with <b>F</b> suffix is usually used for key events or as actions run from toolbar.</td></tr>
+</table>
+
+<!-- XML event -->
+<div class="ACT">
+   <u><a href="#Version"><span style="color:red;">version</span></a></u> <b>&lt;XML event></b> <i></i>
+   <h4>XmlEvent</h4>
+   <s>(parameters)</s>
+</div>
+XML/JSON mouse or key event.<br /> 
+The XML/JSON event handler code you write directly to the XML/JSON data (oposite to JavaScript API event written in JavaScript code).<br />
+In documentation there are listed only events special for described features.<br /> 
+All standard XML/JSON mouse and key events are described in <a href="Events.htm#Mouse">Mouse events</a> and <a href="Events.htm#Key">Key events</a>.<br />
+<table>
+   <tr><td style="width:100px;"><b>version</b></td><td>TreeGrid version(s) where the attribute was changed. See the <a href="#Version">versions</a>.</td></tr>
+   <tr><td><b>parameters</b></td><td>The XML/JSON mouse or key event has always these parameters: (TGrid Grid, TRow Row, TCol Col, TEvent Event); <br />
+      where Row, Col is cell under mouse for mouse event or focused cell for key event.<br />
+      The Grid, Row, Col and Event variables can be used in the event handler code as JavaScript objects;<br /> 
+      e.g. &lt;Actions OnClickCell="alert('clicked cell '+Row.id+','+Col)"/></td></tr>
+</table>
+
+<!-- Formula -->
+<div class="ACT">
+   <u><a href="#Version"><span style="color:red;">version</span></a></u> <b>formula</b> <i><a href="#Type">type</a></i>
+   <h4>formula</h4>
+   <s>(parameters)</s>
+</div>
+Formula that can be used in Formula attribute code, e.g. &lt;I RFormula="sum()"/>.<br />
+<table>
+   <tr><td style="width:100px;"><b>version</b></td><td>TreeGrid version(s) where the attribute was changed. See the <a href="#Version">versions</a>.</td></tr>
+   <tr><td><b>parameters</b></td><td>Are shown as for JavaScript function. Note, the parameters types and names are just informational, the only exact thing is the parameters order.</td></tr>
+</table>
+
+<!-- Deleted -->
+<div class="DEL">
+   <u><a href="#Version"><span style="color:red;">version</span></a></u> <b>...</b> <i>...</i>
+   <h4>DeletedItem</h4>
+   <s>...</s>
+</div>
+Any of the above listed items that is deleted and should be no longer used.<br />
+The most of deleted items are still present and usable in TreeGrid, they are only deprecated.<br />
+
+
+<!-----------------------------------------------------------------------  Version ------------------------------------------------->
+<a name="Version"></a>
+<h2>Version</h2>
+<p>Last update done to the item</p>
+<table>
+   <tr><td style="width:100px;"><span style="color:red;">new 10.0</span></td><td>Item was released in the given version (the item did not exist in previous versions).</td></tr>
+   <tr><td><span style="color:red;">chg 10.0</span></td><td>Major update to item was done in the given version (the usage of the item was changed).</td></tr>
+   <tr><td><span style="color:blue;">upd 10.0</span></td><td>Minor update to item was done in the given version (like new parameter added to function or new value added to bit array or flags).</td></tr>
+   <tr><td><span style="color:red;">renamed 10.0</span></td><td>The item has been renamed in the given version (the old name is usually still usable, but deprecated).</td></tr>
+   <tr><td><span style="color:red;">deleted 10.0</span></td><td>The item has been removed since the given version (the item name is usually still usable, but deprecated).</td></tr>
+</table>
+
+<!-----------------------------------------------------------------------  Tag ------------------------------------------------->
+<a name="Tag"></a>
+<h2>Tag</h2>
+<p>Where the XML / JSON attribute can be used</p>
+
+There can be listed more places like &lt;C> &lt;cell> - item is an attribute of column or cell.<br />
+For &lt;C>&lt;I>&lt;cell> or &lt;I>&lt;C>&lt;cell> the attribute is read from cell, next if null from column and next if null from row; except it is stated different order in the attribute description.<br />
+<i>For JSON format the tag names are the same, just with different syntax.</i><br />
+<br />
+<table>
+   <tr><td style="width:100px;"></td><td style="width:240px;"></td><td style="width:70px"></td><td style="width:40px"></td><td></td></tr>
+   <tr><td><b>&lt;treegrid,bdo></b></td><td colspan="4">Basic TreeGrid definition on HTML page, defines TreeGrid data sources. It can be used &lt;treegrid> or &lt;bdo> tag.</td></tr>
+   <tr><td colspan="5">&nbsp;</td></tr>
+   <tr><td><b>&lt;Cfg></b></td><td>XML attribute of tag &lt;Cfg></td><td colspan="3">basic grid configuration</td></tr>
+   <tr><td><b>&lt;C></b></td><td>XML attribute of tag &lt;C></td><td colspan="3">whole column settings</td></tr>
+   <tr><td><b>&lt;C Panel></b></td><td>XML attribute of tag &lt;C> or &lt;Panel></td><td colspan="3">whole column settings for column type Panel</td></tr>
+   <tr><td colspan="5">&nbsp;</td></tr>
+   <tr><td><b>&lt;B></b></td><td>XML attribute of tag &lt;B></td><td colspan="3">settings of page</td></tr>
+   <tr><td><b>&lt;Root></b></td><td>XML attribute of tag &lt;Root></td><td colspan="3">row setting of virtual root row as parent of all first level rows</td></tr>
+   <tr><td><b>&lt;D></b></td><td>XML attribute of tag &lt;D></td><td colspan="3">row or column setting of default row or column</td></tr>
+   <tr><td colspan="5">&nbsp;</td></tr>
+   <tr><td><b>&lt;I></b></td><td>XML attribute of tag &lt;I></td><td colspan="3">row setting of normal row within columns (Data, Header, Filter)</td></tr>
+   <tr><td><b>&lt;Header></b></td><td>XML attribute of tag &lt;I> or &lt;Header></td><td colspan="3">setting of Header row</td></tr>
+   <tr><td><b>&lt;Filter></b></td><td>XML attribute of tag &lt;I> or &lt;Filter></td><td colspan="3">setting of Filter row</td></tr>
+   <tr><td><b>&lt;Space></b></td><td>XML attribute of tag &lt;I> or &lt;Space></td><td colspan="3">setting of any Space row (row kinds Space, Group, Search, Toolbar)</td></tr>
+   <tr><td><b>&lt;Group></b></td><td colspan="2">XML attribute of tag &lt;I>, &lt;Space> or &lt;Group></td><td colspan="2">row settings special for grouping</td></tr>
+   <tr><td><b>&lt;Search></b></td><td colspan="2">XML attribute of tag &lt;I>, &lt;Space> or &lt;Search></td><td colspan="2">row settings special for searching</td></tr>
+   <tr><td><b>&lt;Toolbar></b></td><td colspan="2">XML attribute of tag &lt;I>, &lt;Space> or &lt;Toolbar></td><td colspan="2">settings of Toolbar row</td></tr>
+   <tr><td colspan="5">&nbsp;</td></tr>
+   <tr><td><b>&lt;cell></b></td><td>XML attribute postfix of tag &lt;I></td><td colspan="3">setting of any row cell, set with column name as prefix (e.g &lt;I Col1Visible=’0’/>)</td></tr>
+   <tr><td><b>&lt;I cell></b></td><td>XML attribute postfix of tag &lt;I></td><td colspan="3">setting of any non Space cell (row kinds Data, Header, Filter)</td></tr>
+   <tr><td><b>&lt;Header cell></b></td><td colspan="2">XML attribute postfix of tag &lt;I> or &lt;Header></td><td colspan="2">setting of Header cell</td></tr>
+   <tr><td><b>&lt;Filter cell></b></td><td colspan="2">XML attribute postfix of tag &lt;I> or &lt;Filter></td><td colspan="2">setting of Filter cell</td></tr>
+   <tr><td><b>&lt;Space cell></b></td><td colspan="2">XML attribute postfix of tag &lt;I> or &lt;Space></td><td colspan="2">setting of any Space cell (row kinds Space, Group, Search, Toolbar)</td></tr>
+   <tr><td><b>&lt;Group cell></b></td><td colspan="3">XML attribute postfix of tag &lt;I>, &lt;Space> or &lt;Group></td><td>special setting of cell for grouping</td></tr>
+   <tr><td><b>&lt;Search cell></b></td><td colspan="3">XML attribute postfix of tag &lt;I>, &lt;Space> or &lt;Search></td><td>special setting of cell for searching</td></tr>
+   <tr><td colspan="5">&nbsp;</td></tr>
+   <tr><td><b>&lt;Pager></b></td><td>XML attribute of tag &lt;Pager></td><td colspan="3">side pager settings</td></tr>
+   <tr><td colspan="5">&nbsp;</td></tr>
+   <tr><td><b>&lt;IO></b></td><td>XML attribute of tag &lt;IO></td><td colspan="3">data communication, settings of individual data request or response</td></tr>
+   <tr><td><b>&lt;Changes></b></td><td>XML attribute of tag &lt;Changes></td><td colspan="3">downloaded changes from server</td></tr>
+   <tr><td colspan="5">&nbsp;</td></tr>
+   <tr><td><b>&lt;P></b></td><td>XML attribute of tag &lt;P></td><td colspan="3">definition of attributes in XML short and extra short format</td></tr>
+   <tr><td colspan="5">&nbsp;</td></tr>
+   <tr><td><b>&lt;Resources></b></td><td>XML tag as child of tag &lt;Resources></td><td colspan="3">a list of Gantt resources</td></tr>
+   <tr><td><b>&lt;R></b></td><td>XML attribute of tag &lt;R></td><td colspan="3">an individual Gantt resource</td></tr>
+   <tr><td><b>&lt;Zoom></b></td><td>XML tag as child of tag &lt;Zoom></td><td colspan="3">a list of Gantt zoom levels</td></tr>
+   <tr><td><b>&lt;Z></b></td><td>XML attribute of tag &lt;Z></td><td colspan="3">an individual Gantt zoom level</td></tr>
+   <tr><td><b>&lt;Calendars></b></td><td>XML tag as child of tag &lt;Calendars></td><td colspan="3">a list of Gantt calendars</td></tr>
+   <tr><td><b>&lt;E></b></td><td>XML attribute of tag &lt;E></td><td colspan="3">an individual Gantt calendar</td></tr>
+   <tr><td colspan="5">&nbsp;</td></tr>
+   <tr><td><b>&lt;Lang></b></td><td>XML tag as child of tag &lt;Lang></td><td colspan="3">language dependent settings</td></tr>
+   <tr><td><b>&lt;Format></b></td><td>XML attribute of tag &lt;Format></td><td colspan="3">language dependent settings for numbers and dates, &lt;Lang> &lt;Format /> &lt;/Lang></td></tr>
+   <tr><td><b>&lt;MenuCfg></b></td><td>XML attribute of tag &lt;MenuCfg></td><td colspan="3">settings of configuration menu dialog</td></tr>
+   <tr><td colspan="5">&nbsp;</td></tr>
+   <tr><td><b>&lt;HTML tag></b></td><td>HTML tag</td><td colspan="4">a tag used in HTML, the &lt;bdo> tags &lt;treegrid> tags</td></tr>
+</table>
+
+<!-----------------------------------------------------------------------  Object ------------------------------------------------->
+<a name="Object"></a>
+<h2>Object</h2>
+<p>Owner objects of JavaScript API items</p>
+
+<table>
+   <tr><td style="width:120px;"><b>API variable</b></td><td>JavaScript property of grid (TGrid object)</td></tr>
+   <tr><td><b>API method</b></td><td>JavaScript method of grid (TGrid object)</td></tr>
+   <tr><td><b>API event</b></td><td>JavaScript method of global Grids array called as callback for defined event (like event handler)<br />
+      <i>This method is defined by you in your code and called by TreeGrid from its code!</i><br />
+      For example define: Grids.OnClick = function(G,row,col,x,y){ alert("clicked "+row.id+","+col); }</td></tr>
+   <tr><td><b>API TCol var.</b></td><td>JavaScript property of column (TCol object), the object is accessible by grid.Cols array</td></tr>
+   <tr><td><b>API TRow var.</b></td><td>JavaScript property of row (TRow object)</td></tr>
+   <tr><td><b>global func.</b></td><td>JavaScript global function (a method of window object)</td></tr>
+   <tr><td><b>global prop.</b></td><td>JavaScript global property (a property of Grids object)</td></tr>
+   <tr><td><b>global variable</b></td><td>JavaScript global variable (a property of window  object)</td></tr>
+   <tr><td><b>TCalendar</b></td><td>JavaScript property, method or event of TCalendar object - JSON calendar dialog</td></tr>
+   <tr><td><b>TDialog</b></td><td>JavaScript property, method or event of TDialog object - JSON dialog</td></tr>
+   <tr><td><b>TMenu</b></td><td>JavaScript property, method or event of TMenu object - JSON menu</td></tr>
+   <tr><td><b>TMenuItem</b></td><td>JavaScript property, method or event of TMenuItem object - one menu item in JSON menu</td></tr>
+   <tr><td><b>TEdit</b></td><td>JavaScript property, method or event of TEdit object - JSON edit input</td></tr>
+   <tr><td><b>TPosition</b></td><td>JavaScript property, method or event of TPosition object - position of JSON dialog or menu</td></tr>
+   <tr><td><b>TLineChart</b></td><td>JavaScript property, method or event of TLineChart object - Line chart object</td></tr>
+   <tr><td><b>TChartLine</b></td><td>JavaScript property, method or event of TChartLine object - one line in Line chart object</td></tr>
+</table>
+
+<!-----------------------------------------------------------------------  Type ------------------------------------------------->
+<a name="Type"></a>
+<h2>Type</h2>
+<p>Standard (like C++) item type, not JavaScript type</p>
+The type is <u>not</u> JavaScript variable type, but it is similar to standard type in languages like C++, C# or Java.<br />
+The type is shown only in documentation, it is used <u>nowhere</u> in XML, JSON or JavaScript.
+The sense of the type in XML / JSON is to more precisely define what is expected to get in the item, it has not any other special meaning.<br />
+<table>
+   <tr><td style="width:70px;"><b>void</b></td><td>In API: method does not return value or event does not expect return value</td></tr>
+   <tr><td><b>bool</b></td><td>In XML: 0 or 1 (not true or false)</td></tr>
+   <tr><td><b></b></td><td>In API: any expression that can be converted to true or false</td></tr>
+   <tr><td><b>int</b></td><td>Integer value, in API it should be Number type</td></tr>
+   <tr><td><b></b></td><td>It can be also bit array – every bit in the number has its own meaning and the value is sum of the bits<br />
+   <div style="padding-left:50px;">(1.bit=1, 2. bit=2, 3.bit=4, 4.bit=8, 5.bit=16, 6.bit=32, 7.bit=64, 8.bit=128, 9.bit=256, ...)<br />
+      Examples of bit array: to set first, third and sixth bit set 1+4+32 = 37, to set second, third, fifth and tenth bit set 2+4+16+512 = 534</div></td></tr>
+   <tr><td><b>string</b></td><td>String value, in API it should be String type</td></tr>
+   <tr><td><b>string[ ]</b></td><td>In XML: one string with individual items separated with comma: "One,Two,Three"<br />
+      In API: array of strings</td></tr>
+   <tr><td><b>string[*]</b></td><td>In XML: one string with individual items separated by first character in the string – the string starts with the separator: "|One|Two|Three"<br />
+      The separator can be any Unicode character not included in any of the separated items</td></tr>
+   <tr><td><b>string[ ][ ]</b></td><td>In API: two dimensional array of strings</td></tr>
+   <tr><td><b>TCol</b></td><td>In API: column object (not name)</td></tr>
+   <tr><td><b>TRow</b></td><td>In API: row object</td></tr>
+   <tr><td><b>TGrid</b></td><td>In API: grid object, all API events get it as the first parameter</td></tr>
+</table>
+
+
+</div>
+</body>	
+</html>

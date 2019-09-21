@@ -1,0 +1,137 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+
+      /* Styles special for this example */
+      .GridMain .Red { background:#A33; color:white; border-color:blue; }
+      .GridMain .Green { background:#7E9; color:black; }
+      .GridMain .Blue { background:#33A; color:white; border-color:green; }
+
+   </style>
+   <script>
+   // -------------------------------------------------------------------------------------------------------
+   // Returns another icon shown on mouse over
+   Grids.OnGetGanttFlagIconHover = function(G,row,col,idx,icon){ 
+   return icon.replace(/\./,"Hover.");
+   }
+   // -------------------------------------------------------------------------------------------------------
+   // Returns custom HTML for the flag text. Used only for the row='11'
+   Grids.OnGetGanttFlagText = function(G,row,col,idx,text){ 
+   if(row.id!=11) return text;
+   var flags = (G.GetValue(row,"FLAGS")+"").split(";");
+   return DateToString(flags[idx]-0,"'<div style=\"background:#5B7;color:white;padding:1px;\">'dddddd MMMM'</div><div style=\"background:#33A;color:white;padding:1px;\">'dddd'</div>'")
+      + "<div style=\"color:red;padding:2px;text-align:right;\">"+text+"</div>";
+   }
+   // -------------------------------------------------------------------------------------------------------
+   </script>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>1. Flags</h1>
+   <h2>Movable points with defined icon and text or tooltip</h2>
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='01-Flags.xml'>01-Flags.xml</a></div>
+      <div class="Main" style='width:100%; height:491px;'>
+         <bdo Debug='check' Data_Url='01-Flags.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li>
+         See documentation for <b><a href="../../Doc/GanttIcons.htm#Flag">Flag</a></b>.
+      </li>
+      <li>
+         The flags represent custom marks on given dates that show their information as text or tooltip.<br />
+         For math charts, to display values from source columns in chart use <b>GanttPoints</b> instead of GanttFlags. See tutorial <a href="02-Points.html">02-Points</a>.<br />
+         The flag icon is centered to the one GanttUnits right to the flag date.
+      </li>
+      <li>
+         By <h3>GanttFlagsType</h3> specify if the flags in the cell will be shown as icon (<b>1</b>), text (<b>2</b>) or both (<b>3</b>)
+      </li>
+      <li> 
+         Flags are defined by attribute <h3>GanttFlags</h3>.<br />
+         The column should be defined as <b>Type='Date' Range='1' Button=''</b> - it should be type Date, but without calendar,
+         because selecting flag dates in calendar will break down the relation between flags and their texts and icons.
+      </li>
+      <li>
+         The flag information is defined in <h3>GanttFlagTexts</h3>.<br />
+         It is also range cell, the individual texts are separated by semicolon. 
+         The flag text must not contain semicolon. When edited in Gantt, the semicolon is replaced by comma.<br />
+         The flag information can be shown as textbox right to the icon, by single textbox or as tooltip for the icon.
+      </li>
+      <li>
+         The flags can show <h4>custom icons</h4> instead of the default flag icon. And also <h4>custom CSS styles</h4> for the flag text.
+         <ul>
+            <li>
+               The icons for individual flags are defined by <h3>GanttFlagIcons</h3> attribute.<br />
+               It is also range cell, the individual icons are separated by semicolon. 
+               The icons are exact urls to the icon files, paths are relative to the actual page.
+            </li>
+            <li>
+               The actual CSS classes for individual flag texts are defined by <h3>GanttFlagClasses</h3> attribute.<br />
+               It is also range cell, the individual classes are separated by semicolon. 
+               The values are exact CSS class names. These CSS classes can be define in page embedded style or in external style sheet.
+            </li>
+            <li>
+               It is possible to let users to choose the custom icons and CSS classes for the flag and its text.<br /> 
+               The possible icons are defined in <h3>GanttFlagIconList</h3> attribute. It is first character separated array, not range cell. It contains full urls of the icons.
+               Empty item value means default icon, '-' item value means no icon, only text.<br />
+               The possible classes are defined in <h3>GanttFlagClassList</h3> attribute. It is first character separated array, not range cell.<br />
+               Users can choose the icon and class for the flag from gantt popup menu. The menu item texts are defined by <h3>GanttFlagIconNames</h3>. 
+               The item text can contain <b>%1</b> string to be replaced by the icon and <b>%2</b> and <b>%3</b> to be replaced by &lt;span> and &lt;/span> tags with custom CSS style.
+            </li>
+         </ul>
+      </li>
+      <li>
+         Tooltip for the flags can be formatted by <h3>GanttFlagsTip</h3> to show specific information for the flag like its date, index and its information from GanttFlagTexts.
+      </li>
+      <li>
+         The flag content can be generated dynamically by JavaScript API.<br />
+         The text HTML content can be created by <b>OnGetGanttFlagText</b> API event. The icon by <b>OnGetGanttFlagIcon</b>.<br />
+         By API event <b>OnGetGanttFlagIconHover</b> is possible also to define or change icon shown on mouse hover.
+      </li>
+      <li> By default the texts in Gantt chart are shown above the Gantt objects. Set <h3>GanttTextOverlay</h3><b>='1'</b> to suppress the behavior.
+         This setting can slow down the chart, so do it only if you really need it.
+      </li>
+      <li>
+         The Flags can be moved by mouse also to another row if set <h3>GanttFlagsMove</h3><b>='2'</b>.<br />
+         Only Run bars and Flags can be moved between rows. The Run bars can be moved also between grids, but Flags cannot.<br />
+         The Flags dragging can be controlled by API events <b>OnStartDragGantt</b>, <b>OnDragGantt</b> and <b>OnEndDragGantt</b> 
+         and also by events <b>OnGanttFlagMove</b> / <b>OnGanttFlagMoved</b> for moving between rows and <b>OnGanttChange</b> / <b>OnGanttChanged</b> for moving inside row.
+      </li>
+
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialGantt\s*=\s*(\d+)/), TGIndex = 512;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridIcons1", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGantt="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

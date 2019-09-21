@@ -1,0 +1,522 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Line and XY charts</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Line charts</h1>
+<p>TreeGrid documentation</p>
+
+TreeGrid can compute and show classic line charts, point charts, XY point charts.<br />
+These charts can be shown in TreeGrid space cell from sources in grid data column(s).<br />
+The charts are available also in standalone TreeGrid library to use it without TreeGrid itself.<br />
+
+<!-----------------------------------------------------------------------  Charts in grid cells ------------------------------------------------->
+<a name="Charts"></a>
+<h2>Charts in grid cells</h2>
+
+TreeGrid can show one or more charts in space row cells of type <b>Chart</b>.<br />
+
+<!-- Type -->
+<a name="CType"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"] <tt>Type="Chart"</tt></s>
+</div>
+<tt>Type="Chart"</tt> sets the cell to show line chart.<br />
+
+<!-- Chart -->
+<a name="SpaceCellChart"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>Chart</h4> <s></s>
+</div>
+The chart settings in JSON format.<br />
+The individual Lines settings are used for individual lines according to the sources in <a href="#SpaceCellSourcesY">SourcesY</a>.<br />
+See the <a href="#Chart">TLineChart</a> object.<br />
+
+<!-- SourcesY -->
+<a name="SpaceCellSourcesY"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Space cell></b> <i>string[ ]</i>
+   <h4>SourcesY</h4> <s></s>
+</div>
+Specifies column names where to get the Y sources for the chart.<br />
+Every column will produce one line.<br />
+
+<!-- SourcesX -->
+<a name="SpaceCellSourcesX"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Space cell></b> <i>string[ ]</i>
+   <h4>SourcesX</h4> <s></s>
+</div>
+Specifies column names where to get the X sources for the Y values.<br />
+If defined, the chart will the <b>XY point chart</b>.<br />
+If not defined, it produces standard <b>line chart</b> and the X will be set as 0 - p, where p is the row count+1 used for Y sources.<br />
+
+<!-- Parent -->
+<a name="SpaceCellParent"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>Parent</h4> <s></s>
+</div>
+To show chart only for children of some row in tree, set the Parent to the parent row id.<br />
+
+<!-- Refresh -->
+<a name="SpaceCellRefresh"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Space cell></b> <i>string[ ]</i>
+   <h4>Refresh</h4> <s></s>
+</div>
+List of columns. If any cell in the column is changed by user, the chart is recalculated.<br />
+By default it contains all columns from SourcesX and SourcesY.<br />
+Use it when some source columns are calculated, to specify their sources here.<br />
+
+<!-- Width -->
+<a name="SpaceCellWidth"></a>
+<div class="XML">
+   <u></u> <b>&lt;Space cell></b> <i>int</i>
+   <h4>Width</h4> <s></s>
+</div>
+Width of the cell in pixels. It specifies the <a href="#TLineChartWidth">Width</a> of the chart.<br />
+<i>It is possible to use also <b>RelWidth</b>, but it can remarkably slow down grid or column resizing, because for every cell resize will be the chart repainted.</i><br />
+
+<!-- Height -->
+<a name="SpaceHeight"></a>
+<div class="XML">
+   <u></u> <b>&lt;Space></b> <i>int</i>
+   <h4>Height</h4> <s></s>
+</div>
+Height of the whole row in pixels. It specifies the <a href="#TLineChartHeight">Height</a> of the chart.<br />
+
+<!-- GetChart -->
+<a name="GetChart"></a>
+<div class="API">
+   <u>new <b>6.4</b></u> <b>API method</b> <i>void</i>
+   <h4>GetChart</h4>
+   <s>(<i>string <b>id</b></i>)</s>
+</div>
+Returns the actually rendered <a href="#Chart">TLineChart</a> object with the given <a href="#TLineChartid">id</a>.<br />
+The chart is accessible only after it is rendered.<br />
+
+<!-- RefreshChart -->
+<a name="RefreshChart"></a>
+<div class="API">
+   <u>new <b>6.4</b></u> <b>API method</b> <i>void</i>
+   <h4>RefreshChart</h4>
+   <s>(<i>string <b>id</b></i>)</s>
+</div>
+Recalculates and repaints the actually rendered <a href="#Chart">TLineChart</a> object with the given <a href="#TLineChartid">id</a>.<br />
+It just calls RefreshCell for the cell displaying the chart.<br />
+
+<!-----------------------------------------------------------------------  Chart JSON definition ------------------------------------------------->
+<a name="Chart"></a>
+<h2>Chart JSON definition</h2>
+
+The chart is defined in JSON format.<br />
+When used in TreeGrid, the data sources are defined by cell attributes <a href="#SpaceCellSourcesX">SourcesX</a> and <a href="#SpaceCellSourcesY">SourcesY</a>.<br /> 
+When used standalone, the sources are defined by <a href="#TChartLineX">X</a>, <a href="#TChartLineY">Y</a> parameters of TChartLine. And the chart is shown by <a href="#ShowLineChart">ShowLineChart</a> function.<br /><br />
+
+In documentation, the global object is called TLineChart and the individual objects in Lines array are named TChartLine.<br /><br />
+
+<i>JSON Example in TreeGrid Chart attribute (in XML without data):</i><br />
+<tt>
+Col1Chart="<br />
+&#123;<br />
+   <div class="L1">
+   id: 'Chart1',<br />
+   Top: 5, Right: 5,<br />
+   AxisX: 5, LabelX: 5, Bottom: 20,<br />
+   AxisY: 5, LabelY: 5, Left: 20,<br />
+            <div class="L1">
+            ChartRoundY: 5, ChartAddY: 0.5,<br />
+            Lines: [<br />
+               <div class="L1">
+               { Width:1, PointType:1, Color:'red' },<br />
+               { Width:3, PointType:0, Color:'blue' }<br />
+               ]<br />
+               </div>
+            </div>
+  </div>               
+}"
+</tt><br /><br />
+
+<i>JSON Example of standalone version with data (in JavaScript with data):</i><br />
+<tt>
+ShowLineChart(<br />
+&#123;<br />
+   <div class="L1">
+   id:'Chart1',<br />
+   Top: 5, Right: 5,<br />
+   AxisX: 5, LabelX: 5, Bottom: 20,<br />
+   AxisY: 5, LabelY: 5, Left: 20,<br />
+   ChartRoundY: 5, ChartAddY: 0.5,<br />
+   Lines: [<br />
+      <div class="L1">
+      &#123; X:[-0.25,0,0.25,0.5,0.75,1,1.5,2,3,5],Y:[-1,0,-1,-2,-1,0,1,2,1,0], Width:1, PointType:1, Color:'red' },<br />
+      &#123; Points:&#123;'-0.25':1,0:0,0.25:1,0.5:2,0.75:1,1:0,1.5:-1,2:-2,3:-1,5:0}, Width:3, PointType:0, Color:'blue' }<br />
+      </div>               
+   ]<br />
+   </div>
+},'MyTag');<br />
+</tt>
+
+<!-------------------------------------------------------------  Base chart settings ------------------------------------------------->
+<a name="Base"></a>
+<h2>Base chart settings</h2>
+
+<!-----------------------  Basic attributes  ------------------------>
+<a name="Basic"></a>
+<h3>Basic attributes</h3>
+
+<!-- id -->
+<a name="TLineChartid"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>string</i>
+   <h4>id</h4> <s></s>
+</div>
+Unique id of the chart.<br />
+By this id can be the chart accessible from JavaScript - by global array LineCharts[id] or by TreeGrid API method GetChart(id).<br />
+
+<!-- Lines -->
+<a name="TLineChartLines"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i style="width:80px;"><a href="#Lines">TChartLine</a>[ ]</i>
+   <h4>Lines</h4> <s></s>
+</div>
+Array of settings of individual lines.<br />
+In standalone usage the lines contain also points data.<br />
+
+<!-- Default -->
+<a name="TLineChartDefault"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i style="width:70px;"><a href="#Lines">TChartLine</a></i>
+   <h4>Default</h4> <s></s>
+</div>
+Default settings for all lines.<br />
+These attributes of Default are used when the line does not have defined the attribute.<br />
+
+<!-- Class -->
+<a name="TLineChartDefault"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>string</i>
+   <h4>Class</h4> <s>["GMChart"]	Only standalone usage</s>
+</div>
+Class prefix for all items in the chart.<br />
+For TreeGrid usage it is set always  to &lt;Cfg Style> value + "Chart"<br />
+
+<!-----------------------  Size  ------------------------>
+<a name="Size"></a>
+<h3>Size</h3>
+
+<!-- Width -->
+<a name="TLineChartWidth"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>int</i>
+   <h4>Width</h4> <s></s>
+</div>
+Width of the chart space in pixels.<br />
+If not set, it is computed from the parent tag or cell width.<br />
+
+<!-- Height -->
+<a name="TLineChartHeight"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>int</i>
+   <h4>Height</h4> <s></s>
+</div>
+Height of the chart space in pixels.<br />
+If not set, it is computed from the parent tag or row height.<br />
+
+<!-- MinX -->
+<a name="TLineChartMinX"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>float</i>
+   <h4>MinX</h4> <s></s>
+</div>
+The first X value shown in the chart = the left constraint.<br />
+If not set, it is used minimal value from X sources rounded down by ChartRoundX and decreased by ChartAddX.<br />
+
+<!-- MaxX -->
+<a name="TLineChartMaxX"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>float</i>
+   <h4>MaxX</h4> <s></s>
+</div>
+The last X value shown in the chart = the right constraint.<br />
+If not set, it is used maximal value from X sources rounded up by ChartRoundX and increased by ChartAddX.<br />
+
+<!-- ChartRoundX -->
+<a name="TLineChartChartRoundX"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>float</i>
+   <h4>ChartRoundX</h4> <s></s>
+</div>
+Rounds the first X down and last X up in chart if not set MinX and MaxX.<br />
+
+<!-- ChartAddX -->
+<a name="TLineChartChartAddX"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>float</i>
+   <h4>ChartAddX</h4> <s></s>
+</div>
+Subtracts the value from the first X and adds to the last X in the chart if MinX and MaxX not set.<br />
+Default value is 10 pixels (yes, pixels, but any set value is in X units).<br />
+
+<!-- MinY -->
+<a name="TLineChartMinY"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>float</i>
+   <h4>MinY</h4> <s></s>
+</div>
+The first Y value shown in the chart = the top constraint.<br />
+If not set, it is used minimal value from Y sources rounded down by ChartRoundY and decreased by ChartAddY.<br />
+
+<!-- MaxY -->
+<a name="TLineChartMaxY"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>float</i>
+   <h4>MaxY</h4> <s></s>
+</div>
+The last Y value shown in the chart = the bottom constraint.<br />
+If not set, it is used maximal value from Y sources rounded up by ChartRoundY and increased by ChartAddY.<br />
+
+<!-- ChartRoundY -->
+<a name="TLineChartChartRoundY"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>float</i>
+   <h4>ChartRoundY</h4> <s></s>
+</div>
+Rounds the first Y down and last Y up in chart if not set MinY and MaxY.<br />
+
+<!-- ChartAddY -->
+<a name="TLineChartChartAddY"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>float</i>
+   <h4>ChartAddY</h4> <s></s>
+</div>
+Subtracts the value from the first Y and adds to the last Y in the chart if MinY and MaxY not set.<br />
+Default value is 10 percent (yes, percent, but any set value is in Y units).<br />
+
+<!-----------------------  Axis and caption  ------------------------>
+<a name="Axis"></a>
+<h3>Axis and caption</h3>
+
+<!-- Left -->
+<a name="TLineChartLeft"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>int</i>
+   <h4>Left</h4> <s></s>
+</div>
+Space in pixels reserved from left. Used for Axis Y labels.<br />
+
+<!-- Right -->
+<a name="TLineChartRight"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>int</i>
+   <h4>Right</h4> <s></s>
+</div>
+Space in pixels reserved from right.<br />
+
+<!-- Top -->
+<a name="TLineChartTop"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>int</i>
+   <h4>Top</h4> <s></s>
+</div>
+Space in pixels reserved from top. Used for caption.<br />
+
+<!-- Bottom -->
+<a name="TLineChartBottom"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>int</i>
+   <h4>Bottom</h4> <s></s>
+</div>
+Space in pixels reserved from bottom. Used for Axis X labels.<br />
+
+<!-- AxisX -->
+<a name="TLineChartAxisX"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>float</i>
+   <h4>AxisX</h4> <s></s>
+</div>
+Shows horizontal lines in chart. The line positions are rounded to this count of x units values.<br />
+For example value 5 means the line will be shown at ..., -15, -10,-5, 0, 5, 10, 15, ...<br />
+
+<!-- LabelX -->
+<a name="TLineChartLabelX"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>float</i>
+   <h4>LabelX</h4> <s></s>
+</div>
+Shows the labels for AxisX lines, below the chart. The label position is rounded to this count x units value.<br />
+The space for the labels should be reserved by <a href="#TLineChartBottom">Bottom</a> attribute.<br />
+For example value 10 means the label will be shown at ..., -20, -10, 0, 10, 20 ...<br />
+
+<!-- LabelXFormat -->
+<a name="TLineChartLabelXFormat"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>string</i>
+   <h4>LabelXFormat</h4> <s></s>
+</div>
+Format string to format the label x numbers.<br />
+It is standard TreeGrid <a href="TypeNumber.htm#CFormat">Format</a> string.<br />
+
+<!-- AxisY -->
+<a name="TLineChartAxisY"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>float</i>
+   <h4>AxisY</h4> <s></s>
+</div>
+Shows vertical lines in chart. The line positions are rounded to this count of y units values.<br />
+For example value 5 means the line will be shown at ..., -15, -10,-5, 0, 5, 10, 15, ...<br />
+
+<!-- LabelY -->
+<a name="TLineChartLabelY"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>float</i>
+   <h4>LabelY</h4> <s></s>
+</div>
+Shows the labels for AxisY lines, left to the chart. The label position is rounded to this count y units value.<br />
+The space for the labels should be reserved by <a href="#TLineChartLeft">Left</a> attribute.<br />
+For example value 10 means the label will be shown at ..., -20, -10, 0, 10, 20 ...<br />
+
+<!-- LabelYFormat -->
+<a name="TLineChartLabelYFormat"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>string</i>
+   <h4>LabelYFormat</h4> <s></s>
+</div>
+Format string to format the label y numbers.<br />
+It is standard TreeGrid <a href="TypeNumber.htm#CFormat">Format</a> string.<br />
+
+<!-- Caption -->
+<a name="TLineChartCaption"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TLineChart</b> <i>string</i>
+   <h4>Caption</h4> <s></s>
+</div>
+Text shown above the chart, the space for it should be reserved by <a href="#TLineChartTop">Top</a> attribute.<br />
+
+<!-------------------------------------------------------------  Individual chart lines ------------------------------------------------->
+<a name="Lines"></a>
+<h2>Individual chart lines</h2>
+
+<!-----------------------  Data sources ------------------------>
+<a name="Sources"></a>
+<h3>Data sources</h3>
+
+<!-- X -->
+<a name="TChartLineX"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TChartLine</b> <i>float[ ]</i>
+   <h4>X</h4> <s>Only standalone usage</s>
+</div>
+The X values for the chart.<br />
+If not defined, it will be set as 0,1,2,3,4,5,6 ... - Y length<br />
+<i>In TreeGrid the X values are defined in column(s) set by cell <a href="#SpaceCellSourcesX">SourcesX</a>.</i><br />
+
+<!-- Y -->
+<a name="TChartLineY"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TChartLine</b> <i>float[ ]</i>
+   <h4>Y</h4> <s>Only standalone usage</s>
+</div>
+The Y values for the chart.<br />
+If not defined, it will be set as 0,1,2,3,4,5,6 ... - X length<br />
+<i>In TreeGrid the Y values are defined in column(s) set by cell <a href="#SpaceCellSourcesY">SourcesY</a>.</i><br />
+
+<!-- Sort -->
+<a name="TChartLineSort"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TChartLine</b> <i>int</i>
+   <h4>Sort</h4> <s>[1]</s>
+</div>
+If and how will be data sources sorted.<br />
+<b>0</b> - no sort, the chart will be XY points chart.<br />
+<b>1</b> - sort by X, the chart will be horizontal Line chart.<br />
+<b>2</b> - sort by Y, the chart will be vertical Line chart.<br />
+
+<!-- Connect -->
+<a name="TChartLineConnect"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TChartLine</b> <i>bool</i>
+   <h4>Connect</h4> <s>[0]</s>
+</div>
+Connect also the first and the last points by line.<br />
+It connects the points only when Sort is 0, otherwise it just interpolates the last parts like in continuous function.<br />
+
+<!-----------------------  Visual settings  ------------------------>
+<a name="Visual"></a>
+<h3>Visual settings</h3>
+
+<!-- Visible -->
+<a name="TChartLineConnect"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TChartLine</b> <i>bool</i>
+   <h4>Visible</h4> <s>[1]</s>
+</div>
+If this line chart is visible.<br />
+To easily show and hide the individual lines from the chart<br />
+
+<!-- Interpolation -->
+<a name="TChartLineInterpolation"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TChartLine</b> <i>int</i>
+   <h4>Interpolation</h4> <s>[3]</s>
+</div>
+Interpolation function used to connect the points<br />
+<b>0</b> - none (line is hidden), <b>1</b> - linear (straight lines between points), <b>2</b> - cosine, <b>3</b> - hermite, <b>4</b> - cubic.<br />
+
+<!-- Width -->
+<a name="TChartLineWidth"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TChartLine</b> <i>int</i>
+   <h4>Width</h4> <s>[2]</s>
+</div>
+Width of the line in pixels. 0 hides the line.<br />
+
+<!-- Color -->
+<a name="TChartLineColor"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TChartLine</b> <i>string</i>
+   <h4>Color</h4> <s>["black"]</s>
+</div>
+CSS color used for the line. It can be any string usable for CSS <b>background</b> attribute.<br />
+
+<!-- Color2 -->
+<a name="TChartLineColor2"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TChartLine</b> <i>string</i>
+   <h4>Color2</h4> <s></s>
+</div>
+When set, the Color2 is used for ascending lines and the Color for descending lines. It can also simulate 3d effect of the line.<br />
+
+<!-- PointType -->
+<a name="TChartLinePointType"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>TChartLine</b> <i>int</i>
+   <h4>PointType</h4> <s>[1]</s>
+</div>
+Type of the point, it is number of icon.<br />
+<b>0</b> - hidden, <b>1</b> - black, <b>2</b> - red, <b>3</b> - blue, <b>4</b> - green, <b>5</b> - pink, <b>6</b> - yellow, <b>7</b> - light blue, <b>8</b> - gray<br />
+
+<!-------------------------------------------------------------  API for standalone usage  ------------------------------------------------->
+<a name="API"></a>
+<h2>API for standalone usage</h2>
+
+<!-- ShowLineChart -->
+<a name="ShowLineChart"></a>
+<div class="API">
+   <u>new <b>6.4</b></u> <b>global func.</b> <i style="margin-left:-8px;margin-right:8px;"><a href="#Chart">TLineChart</a></i>
+   <h4>ShowLineChart</h4>
+   <s>(<i><a href="#Chart">TLineChart</a></i> <b>Chart</b>, <i>string</i> <b>tag</b>)</s>
+</div>
+Calculates and renders the <b>Chart</b> into the tag. The <b>tag</b> can be tag id or HTMLElement itself.<br />
+It can be called also after any change in the <b>Chart</b> to recalculate and re-render it.<br />
+
+</div>
+</body>	
+</html>

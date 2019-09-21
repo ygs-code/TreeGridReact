@@ -1,0 +1,530 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Data upload</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Upload changes</h1>
+<p>TreeGrid documentation</p>
+
+TreeGrid can upload data to remote or local server or include the data to HTML page and submit it.<br />
+You need to set <a href="#Upload_Url">Upload_Url</a> for background AJAX upload or <a href="#Upload_Tag">Upload_Tag</a> for whole page submit.<br />
+
+<!-- Upload_ -->
+<a name="Upload_"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i style="font-weight:bold;">prefix</i>
+   <h4>Upload_</h4> <s></s>
+</div>
+Data source to <i style="color:rgb(51,102,255);font-weight:bold;">upload changes to server</i>. It is called after click to Save button or for every change when is set <b>AutoUpdate</b>.<br />
+It can return success (<tt>&lt;Grid>&lt;IO Result='0'/>&lt;/Grid></tt>) or error message or XML data with changes to apply them in grid.<br />
+By default is set <b><tt>Upload_Method="Form" Upload_Data="Data" Upload_Type="1" Upload_Format="Internal" Upload_Xml="0"</tt></b><br />    
+Supports only AJAX or Submit communication (<b style="color:rgb(51,102,255);">Upload_Url</b> or <b style="color:rgb(51,102,255);">Upload_Tag</b> attribute). The XML changes are sent in <b>Data</b> parameter.<br />
+
+<!-- Upload_Url -->
+<a name="Upload_Url"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>Upload_Url</h4> <s></s>
+</div>
+Set it to URL address to send the changes XML by <b>AJAX</b> or <b>AJAX SOAP</b>. The changes are stored in parameter <b>Data</b>.<br />
+When used AJAX method, the changes XML is upload on background while grid is still accessible.<br /> 
+If server returns success XML <tt>&lt;Grid>&lt;IO Result='0'/>&lt;/Grid></tt> all the changes are accepted (the deleted rows are deleted, other rows are recolored to loose its flag).<br />
+If server returns error XML <tt>&lt;Grid>&lt;IO Result='-1'/>&lt;Grid></tt> or the AJAX call failed at all, the changes are <u>not</u> accepted and can be sent again.<br />
+The server can also return message to alert it to user to inform him about success or error: <tt>&lt;Grid>&lt;IO Result='-1' Message='Save failed'/>&lt;Grid></tt><br />
+The server can also return some updates in &lt;<b>Changes</b>> tag to do them in grid, for example mark some cell by Error to highlight it to user.<br />
+It is possible to set <tt><b>Upload_Sync</b>="1"</tt> to wait for response and disable grid while waiting for response.<br />
+
+<!-- Upload_Tag -->
+<a name="Upload_Tag"></a>
+<div class="XML">
+   <u><i>upd <b>11.0</b></i></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>Upload_Tag</h4> <s></s>
+</div>
+Set it to &lt;input> tag name or id where the changes XML will be stored. To use old <b>Submit</b> method of uploading.<br />
+This &lt;input> tag should be placed within some &lt;form>. This form will be automatically submitted to its action url.<br />
+After form submit, the whole page will be reloaded or redirected according to the &lt;form> settings.<br />
+<i>Since 11.0 if the Upload_Tag is set to "<b>Debug</b>", it does not upload the data, just prints them in debug window, if debugging print permitted.</i><br />
+
+<!-- Upload_Type -->
+<a name="Upload_Type"></a>
+<div class="XML">
+   <u>chg <b>6.0</b> <i>upd <b>14.1</b></i></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string[ ]</i>
+   <h4>Upload_Type</h4> <s>["Changes"]</s>
+</div>
+What parts of grid will be uploaded to server, it is an array of comma separated keywords.<br /> 
+It can contain more keywords to send more parts to the server. The keywords are case insensitive. The order of filled parts is not specified.<br />
+<i>Note, uploaded files in <a href="TypeHtml.htm#TFile">File</a> type are <u>not</u> sent in the XML, but apart like the standard <tt>&lt;input type="file"></tt> values.</i><br />
+For example <tt>Upload_Type="changes,settings,cookie"</tt><br />
+<br />
+
+<u><b>Changes</b></u><br />
+Modified rows - rows with set attribute <b>Added</b>, <b>Deleted</b>, <b>Moved</b> or <b>Changed</b> (modified values). The rows are sent in &lt;<a href="#XML">Changes</a>> tag.<br />
+Set this keyword to get only changed rows on server to update a database according to the changes.<br />
+The rows have filled only attributes required for its state like Parent or id. To fill any other or custom attribute set <a href="#Upload_Attrs">Upload_Attrs</a>.<br />
+To fill all column values or values from defaults specify <tt>Upload_Flags="Defaults"</tt> or <tt>"AllCols"</tt><br /><br />
+
+<u><b>Selected</b></u><br />
+Selected rows - rows with set attribute Selected. The rows are sent in &lt;<a href="#XML">Changes</a>> tag.<br />
+Set this keyword to get the selected rows on server to do action on server with these rows.<br />
+The rows can be selected by a user or by search or by API.<br />
+The rows have filled only id attribute. To fill any other or custom attribute set <a href="#Upload_Attrs">Upload_Attrs</a>.<br />
+To fill all column values or values from defaults specify <tt>Upload_Flags="Defaults"</tt> or <tt>"AllCols"</tt><br />
+<i>Since 12.1</i> it uploads also all selected cells of the rows with Selected=2.<br />
+<i>Since 12.1</i> it uploads also all selected columns.<br />
+<br />
+
+<u><b>Resized</b></u> <i>(since 11.0)</i><br />
+Resized rows - rows with changed <a href="RowHeight.htm#IHeight">Height</a>. The rows are sent in &lt;<a href="#XML">Changes</a>> tag.<br />
+Rows resized by a user.<br />
+The rows have filled only id and Height attributes.<br /><br />
+
+<u><b>Cells</b></u> <i>(since 12.0)</i><br />
+Rows with some attribute changed. The rows are sent in &lt;<a href="#XML">Changes</a>> tag or <i>since 12.1</i> in &lt;<b>Body</b>> tag if Upload_Type contains also "Changes".<br />
+If set, stores all original data on start for comparing. Therefore it must be set on start.<br />
+Use it with <b>NoEmpty</b> <a href="#Upload_Flags">Upload_Flags</a> to list only changed rows.<br />
+<br />
+
+<u><b>Body</b></u><br />
+All variable rows. The rows are uploaded as they are in pages and body, in tag &lt;Body>&lt;B>&lt;/B>&lt;/Body><br />
+Set this attribute to get the whole body to just store it on server and return it in next body request.<br />
+To fill only column values specify <tt>Upload_Flags="AllCols"</tt>. To fill only some specified attributes set <a href="#Upload_Attrs">Upload_Attrs</a>.<br />
+<i>Setting this attribute can significantly slow data communication for larger grids. Not compatible with server paging.</i><br /><br />
+
+<u><b>Data</b></u><br />
+All data rows (<tt>&lt;I Kind='Data'/></tt>). The data rows are all rows with no special meaning (unlike Header, Filter, Group, Search, Pager, Space, User).<br />
+The rows are uploaded as they are in pages and body, in tag &lt;Body>&lt;B>&lt;/B>&lt;/Body>, &lt;Head>&lt;/Head> and &lt;Foot>&lt;/Foot><br />
+These rows are variable (body) and can be also fixed rows.<br />
+Set this attribute to get all the cells that can have values to just store it on server and return it in next grid request.<br />
+To fill only column values specify <tt>Upload_Flags="AllCols"</tt>. To fill only some specified attributes set <a href="#Upload_Attrs">Upload_Attrs</a>.<br />
+<i>Setting this attribute can significantly slow data communication for larger grids. Not compatible with server paging.</i><br /><br />
+
+<u><b>All</b></u><br />
+All rows in grid, including all functional rows (Data, Header, Filter, Group, Search, Pager, Space).<br />
+The rows are uploaded as they are in pages and body, in tag &lt;Body>&lt;B>&lt;/B>&lt;/Body>, &lt;Head>&lt;/Head> and &lt;Foot>&lt;/Foot> and &lt;Solid>&lt;/Solid><br />
+Set this attribute to get all rows on server to store the complete XML here and return it on next request.<br />
+To fill only column values specify <tt>Upload_Flags="AllCols"</tt>. To fill only some specified attributes set <a href="#Upload_Attrs">Upload_Attrs</a>.<br />
+<i>Setting this attribute can significantly slow data communication for larger grids. Not compatible with server paging.</i><br /><br />
+
+<u><b>Fixed</b></u> <i>(since 14.1)</i><br />
+Fixed rows in grid, including all functional rows (Data, Header, Filter, Group, Search, Pager, Space).<br />
+The rows are uploaded as they are in their sections, in tag &lt;Head>&lt;/Head> and &lt;Foot>&lt;/Foot> and &lt;Solid>&lt;/Solid><br /><br />
+
+<u><b>Span</b></u> <i>(since 7.0)</i><br />
+All rows with some cells spanned (through columns or rows), sends only attributes <b>id</b>, <b>Span</b> and <b>RowSpan</b>. The rows are sent in &lt;<b>Spanned</b>> tag.<br />
+To send only changes in span, set rather <tt>Upload_Flags="Spanned" Upload_Type="Changes"</tt>.<br /><br />
+
+<u><b>Gantt</b></u> <i>(since 6.3)</i><br />
+Uploads actual Gantt settings in &lt;Gantt ... /> tag.<br />
+Uploads the attributes: <b>GanttBase</b>, <b>GanttFinish</b>, <b>GanttExclude</b>, GanttInclude.<br />
+<i>(Since 8.0)</i> When set Cfg DateStrings, the GanttBase and GanttFinish are uploaded also as strings in GanttBaseDate and GanttFinishDate attributes.<br /><br />
+
+<u><b>Calendars</b></u> <i>(since 8.0)</i><br />
+Uploads actual calendars in &lt;Calendars> tag.<br /><br />
+
+<u><b>Resources</b></u> <i>(since 8.0)</i><br />
+Uploads actual resources in &lt;Resources> tag.<br /><br />
+
+<u><b>Zoom</b></u> <i>(since 14.0)</i><br />
+Uploads actual zoom levels in &lt;Zoom> tag.<br /><br />
+
+<u><b>Settings</b></u><br />
+Sends grid configuration similarly to Data and Page request.<br />
+Sends sort, group, search, print, export, style and other configuration settings in &lt;Cfg>, filter setting in &lt;Filters> and columns with Name, Width, Visible 
+and <i>(since 11.0)</i> Spanned attributes in &lt;LeftCols>, &lt;Cols>, &lt;RightCols>
+and <i>(since 12.1)</i> hidden fixed and space rows in HiddenRows attribute.
+<br /><br />
+
+<u><b>Config</b></u> <i>(since 13.0)</i><br />
+Sends grid configuration that is not related to data.<br />
+Sends print, export, style and other configuration settings in &lt;Cfg>. <br /><br />
+
+<u><b>Focused</b></u> <i>(since 14.1)</i><br /> 
+Sends Cfg attributes <a href="Focus.htm#CfgFocused">Focused</a>, <a href="Focus.htm#CfgFocusedCol">FocusedCol</a>, <a href="Focus.htm#CfgFocusedPos">FocusedPos</a> and <a href="Focus.htm#CfgFocusedRect">FocusedRect</a>.<br /><br />
+
+<u><b>Expanded</b></u> <i>(since 6.7)</i><br /> 
+Sends ids of all expanded rows in &lt;Cfg <a href="Tree.htm#CfgExpanded">Expanded</a>/> attribute, comma separated.<br /><br />
+
+<u><b>Hidden</b></u> <i>(since 12.1)</i><br /> 
+Sends ids of all hidden rows in &lt;Cfg <a href="RowVisibility.htm#CfgHiddenRows">HiddenRows</a>/> attribute, comma separated.<br /><br />
+
+<u><b>Cookie</b></u><br />
+Sends the whole configuration in &lt;Cfg <a href="Cookie.htm#CfgCookie">Cookie</a>/> attribute like it is stored to cookies.<br />
+It can be used to store the configuration on server instead of client's cookies - based on some user identification and not browser.<br />
+Return this configuration in next request for Layout in &lt;Cfg Cookie/> to apply it.<br />
+The Cookie should not be modified on server, it should be used as black box.<br /><br />
+
+<u><b>AutoCols</b></u> <i>(since 12.0)</i><br />
+Uploads actual count of all indexed columns (with <a href="ColBasics.htm#HasIndex">HasIndex</a> set) in Cfg <a href="ColBasics.htm#CfgAutoCols">AutoCols</a> attribute.<br />
+Use instead of <b>Settings</b> to save just column count, not their attributes.<br />
+<br />
+
+<u><b>Cfg</b></u><br />
+Adds &lt;Cfg> tag, sends all attributes from this tag.<br /><br />
+
+<u><b>Def</b></u><br /> 
+Adds &lt;Def>,&lt;D>,&lt;Root> tags, sends all defaults with all attributes in <b>Internal</b> format only.<br /><br />
+
+<u><b>Cols</b></u><br />
+Adds &lt;LeftCols>, &lt;Cols>, &lt;RightCols>, &lt;C> tags, sends all columns' settings.<br /><br />
+
+<u><b>Menu</b></u> <i>(since 14.0)</i><br />
+Adds &lt;MenuCfg>, &lt;MenuColumns>, &lt;MenuPrint>, &lt;MenuExport> tags, sends all attributes of these tags.<br /><br />
+
+<u><b>Actions</b></u> <i>(since 14.0)</i><br />
+Adds &lt;Actions> tag, sends all attributes of this tag.<br /><br />
+
+<u><b>Animations</b></u> <i>(since 14.0)</i><br />
+Adds &lt;Animations> tag, sends all attributes of this tag.<br /><br />
+
+<u><b>Media</b></u> <i>(since 14.0)</i><br />
+Adds &lt;Media> tag, sends all attributes of its tags.<br /><br />
+
+<u><b>Pagers</b></u> <i>(since 14.0)</i><br />
+Adds &lt;Pagers> tag, sends all attributes of its tags.<br /><br />
+
+<u><b>Languages</b></u> <i>(since 14.0)</i><br />
+Adds &lt;Languages> tag, sends all attributes of its tags.<br /><br />
+
+<u><b>Other</b></u><br />
+Shortcut for Menu,Actions,Animations,Media,Pagers,Zoom,Languages.<br /><br />
+
+<u><b>Text</b></u> <i>(since 14.0)</i><br />
+Adds &lt;Text> tag, sends all attributes of its tags.<br /><br />
+
+<u><b>Lang</b></u><br />
+Adds &lt;Lang> tag, sends all texts and format settings.<br /><br />
+
+<u><b>Complete</b></u> <i>(since 14.0)</i><br />
+Uploads complete data and settings in grid. Shortcut for All,Cols,Cfg,Def,Calendars,Resources,Zoom,Menu,Actions,Animations,Media,Pagers,Zoom,Languages,Lang,Text. <br />
+Such complete data can be used to create the grid without the defaults and texts like &lt;bdo Defaults_Url="" Text_Url="" Data_Data="this_data">&lt;/bdo><br />
+
+
+<!-- Upload_Flags	-->
+<a name="Upload_Flags"></a>
+<div class="XML">
+   <u><i>upd <b>12.0</b></i></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string[ ]</i>
+   <h4>Upload_Flags</h4> <s></s>
+</div>
+Various flags for extended control of uploading, comma separated list of keywords. It is case insensitive.<br />
+For example <tt>Upload_Flags="defaults,noio"</tt><br /><br />
+
+<table>
+<tr><td style="width:100px;"><u><b>Index</b></u></td><td><i>(Since 12.0)</i> Sends row index (<a href="RowBasics.htm#CfgRowIndex">RowIndex</a>) in row id attribute and uses column index (<a href="ColBasics.htm#CfgColIndex">ColIndex</a>) instead of column Name, for <tt>Upload_Type="Cells,Body,Data,All"</tt>.</td></tr>
+<tr><td><u><b>EditAttrs</b></u></td><td><i>(Since 12.0)</i> Sends all <a href="CellEdit.htm#CfgEditAttrs">EditAttrs</a> cell attributes like if they were listed in <a href="#Upload_Attrs">Upload_Attrs</a>. For <tt>Upload_Type="Changes,Cells,Body,Data,All"</tt></td></tr>
+<tr><td><u><b>NoEmpty</b></u></td><td><i>(Since 12.0)</i> Does <u>not</u> send rows without any attribute set. For <tt>Upload_Type="Cells,Body,Data,All"</tt></td></tr>
+<tr><td><u><b>Defaults</b></u></td><td>Sends also default values (from &lt;D> tag) in rows if the row attribute value is null, for <tt>Upload_Type="Changes,Selected,Cells,Body,Data,All"</tt></td></tr>
+<tr><td><u><b>AllCols</b></u></td><td>Sends all column values in rows, including calculated cells, for <tt>Upload_Type = "Changes,Selected,Cells,Body,Data,All"</tt></td></tr>
+<tr><td><u><b>NoGantt</b></u></td><td><i>(Since 12.0)</i> Does not send the Gantt column attributes, for <tt>Upload_Type = "Cells,Body,Data,All"</tt></td></tr>
+<tr><td><u><b>Spanned</b></u></td><td><i>(Since 7.0)</i> Sends also changes in colspan (Span) and rowspan (RowSpan) attributes in &lt;Changes> tag, for <tt>Upload_Type="Changes"</tt><br />
+   It must be set on grid start to store required information for the comparing changes.</td></tr>
+<tr><td><u><b>NewId</b></u></td><td><i>(Since 9.1)</i> Sends all changes in row <b>id</b> in <b>NewId</b> attribute. For <tt>Upload_Type="Changes"</tt> and &lt;Cfg> FullId or IdNames set.<br />
+   All attributes referring the id like Parent or Next always contain the original id, not the NewId. The NewId is set to row id attribute after the changes are accepted.</td></tr>
+<tr><td><u><b>Accepted</b></u></td><td>Does <u>not</u> send deleted rows and does not send state attributes Added, Moved and Changed, for <tt>Upload_Type="Cells,Body,Data,All"</tt>.</td></tr>
+<tr><td><u><b>NoIO</b></u></td><td>Does <u>not</u> send &lt;IO> tag. The IO contains Session attribute.</td></tr>
+<tr><td><u><b>NoGrid</b></u></td><td>Does <u>not</u> include &lt;Grid> tag, if you need to append some other tags to XML. <i>The XML is not valid in this case!</i></td></tr>
+</table>
+
+<!-- Upload_Attrs -->
+<a name="Upload_Attrs"></a>
+<div class="XML">
+   <u><i>upd <b>11.0</b></i></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string[ ]</i>
+   <h4>Upload_Attrs</h4> <s></s>
+</div>
+Comma separated list of names of row attributes that are uploaded. The names must be in <b>Internal</b> format (col+name).<br />
+<i>(Since 11.0)</i> If the attribute name starts with '*', it is replaced by all column names to be the attribute uploaded for all cells.<br /><br />
+
+For <tt>Upload_Type="<b>Changes</b>"</tt> specifies all <u>custom</u> attributes to upload with the changed rows. It adds all these attribute values to all the uploaded rows.<br /> 
+<i>These attributes must not interfere with standard uploaded names like id, Added or Parent.</i><br />
+The Attrs are ignored when set <a href="#CfgSaveOrder">SaveOrder</a>='1'.<br /><br />
+
+For <tt>Upload_Type="<b>Selected</b>,<b>Body</b>,<b>Data</b>,<b>All</b>"</tt> specifies all attributes except <b>id</b> and <b>Def</b>.<br /> 
+If this attribute is omitted, fills all rows' attributes. <i>For large grids it can be significantly slower.</i><br />
+The row has always set <b>id</b> and <b>Def</b> attributes, do not include them to Attrs list.<br />
+
+<!-- Upload_Format -->
+<a name="Upload_Format"></a>
+<div class="XML">
+   <u>chg <b>6.0</b> <i>upd <b>6.6</b></i></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>Upload_Format</h4> <s>["Internal"]</s>
+</div>
+If set to "DTD", the uploaded XML will be in <u><b>DTD</b></u> format instead of the Internal.<br />
+If set to "JSON", the uploaded data will be JSON string.<br />
+Used for uploading data or for request, input data format is always automatically recognized.<br />
+
+<!-- Upload_Xml -->
+<a name="Upload_Xml"></a>
+<div class="XML">
+   <u><i>upd <b>8.1</b></i></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>int</i>
+   <h4>Upload_Xml</h4> <s>[0]</s>
+</div>
+If the uploaded data will be send as is or will be sent with coded XML entities.<br />
+For <b>0</b> (default) are uploaded data encoded to string (&amp; and &lt;,> are replaced by &amp;amp; &amp;lt; &amp;gt;).<br />  
+For <b>1</b> data are uploaded as XML without any change.<br />
+For <b>2</b> <i>(since 8.1)</i> are uploaded data encoded to JSON string (&amp; and &lt;,> are replaced by \u0026, \u003C, \u003E). <i>To upload data in JSON format, set <a href="#Upload_Format">Upload_Format</a>="JSON".</i><br />
+
+<!-- Upload_Sync -->
+<a name="Upload_Sync"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>bool</i>
+   <h4>Upload_Sync</h4> <s></s>
+</div>
+Sets synchronous upload for AJAX communication.<br />
+The grid is disabled during upload and waits for server response.<br />
+
+<!-- SaveOrder -->
+<a name="CfgSaveOrder"></a>
+<div class="XML">
+   <u>new <b>6.4</b> <i>upd <b>10.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SaveOrder</h4> <s>[0]</s>
+</div>
+If set to <b>1</b> and uploads all changes in &lt;Changes> tag, it uploads them in the exact order they happened.<br />
+If set to <b>2</b> <i>(since 10.0)</i> it also separates all changes in one row.<br />
+If row is changed more times, it can be included more times.<br />
+All changes done in one row together (without changing another row between changes) are merged together, except SaveOrder is <b>2</b>.<br />
+Undeleted deleted row is ignored. Deleted added row is ignored.<br />
+All changes done in row immediately deleted after (without changing other row) are ignored, except SaveOrder is <b>2</b>.<br />
+All undone or redone changes are taken as new changes.<br />
+
+<!-- CalculatedChanges -->
+<a name="CfgCalculatedChanges"></a>
+<div class="XML">
+   <u>new <b>9.0</b> <i>upd <b>9.2</b></i></u> <b>&lt;Cfg></b> <i>type</i>
+   <h4>CalculatedChanges</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, it marks as changed all changed calculated cells and rows.<br />
+<i>(Since 9.2)</i> If set to <b>2</b>, it marks as changed also the cell calculated for first time if resulted to different value.<br />
+<i>(Since 9.1)</i> It can be set to comma separated list of columns to affect only these columns. Cannot be set by API to this list.<br />
+In the first cell calculation it stores the calculated value. If some next calculation returns different result the stored one, it marks the cell changed.<br />
+If the next calculation returns the same result as the first stored result, the changed flag is cleared.<br />
+It will also upload these changes to server.<br />
+
+<!-- DateStrings -->
+<a name="CfgDateStrings"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;Cfg></b> <i>type</i>
+   <h4>DateStrings</h4> <s>[0/1]</s>
+</div>
+If set to <b>0</b>, Date values are uploaded as numbers (milliseconds from 1/1/1970), see also <a href="TypeDate.htm#FormatGMT">GMT</a> attribute.<br />
+If set to <b>1</b>, Date values are uploaded as strings in English format (M/d/yyyy HH:mm:ss).<br />
+If set to <b>2</b>, Date values are uploaded as strings in JAVA format (yyyy-MM-dd HH:mm:ss).<br />
+If set to <b>string</b>, it specifies the full date format for upload.<br />
+By default it is set to <b>0</b>, if some date in input XML is set as number of milliseconds, otherwise is set to <b>1</b>.<br />
+
+<!-- AutoUpdate -->
+<a name="CfgAutoUpdate"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>AutoUpdate</h4> <s>[0] It is saved to and loaded from cookies</s>
+</div>
+If automatically uploads all changes immediately to server.<br />
+If set to <b>1</b>, after any change in data (edit cell, add, delete, move row) it sends changed data to server like a user clicked to Save button on toolbar.<br />
+
+<!-- NoUpload -->
+<a name="INoUpload"></a>
+<div class="XML">
+   <u><i>upd <b>11.0</b></i></u> <b>&lt;I></b> <i>int</i>
+   <h4>NoUpload</h4> <s>[0/1]</s>
+</div>
+If set to <b>1</b>, ignores changes in this row and does not upload them to server. Often set with also <a href="CellStyle.htm#INoColorState">NoColorState</a>.<br />
+If set to <b>1</b>, it also does <u>not</u> save undo for changed cells except the cell has set <tt><a href="Undo.htm#CellUndo">Undo</a>='1'</tt>.<br />
+<i>(Since 11.0)</i> If set to <b>2</b>, it works like <b>1</b> and if the row contains some pending changes, they are not accepted after save.<br />
+Default value is <b>0</b> for data rows and <b>1</b> for space rows and group rows.<br /> 
+Filter row has always set <b>1</b>.<br />
+To never upload changes in particular cell use <a href="CNoChanged">NoChanged</a> attribute.<br />
+
+<!-- NoUpload -->
+<a name="CNoUpload"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>NoUpload</h4> <s>[0/1]</s>
+</div>
+If the column or its cells will be uploaded to server.<br />
+If set to <b>1</b>, it does <u>not</u> upload this column cells when all cells for the row are uploaded. It is also removed from <a href="#Upload_Attrs">Upload_Attrs</a> items with *.<br />
+If set to <b>2</b>, it is also <u>not</u> uploaded in <a href="#Upload_Type">Upload_Type</a> "Settings" and "Cols".<br />
+Default value is <b>0</b> for all columns except Gantt and Panel that is <b>1</b>.<br />
+To never upload changes in particular column or cell use <a href="CNoChanged">NoChanged</a> attribute instead.<br />
+
+<!-- Changed -->
+<a name="CNoChanged"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C>&lt;cell></b> <i>bool</i>
+   <h4>NoChanged</h4> <s>[0]</s>     
+</div>
+If set to <b>1</b>, the cell is never marked as <a href="#CellChanged">Changed</a> and the row <a href="#IChanged">Changed</a> is never set due changes in this cell.
+
+
+<!-----------------------------------------------------------------------  API for Upload  ------------------------------------------------->
+<a name="API"></a>
+<h2>API for Upload</h2>
+
+<!-- OnSave -->
+<a name="OnSave"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnSave</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>bool</i> <b>autoupdate</b>)</s>
+</div>
+Called before changes are uploaded or submitted to server.<br />
+It is called from <a href="#Save">Save</a> method that is called when a user clicks Save button. It is called after validation (see &lt;Cfg <a href="CellEdit.htm#CfgValidate">Validate</a>>).<br />
+It is also called whenever changes are uploaded by <a href="#CfgAutoUpdate">AutoUpdate</a> (with <b>autoupdate</b> parameter set to 1).<br />
+Return true to suppress saving.<br />
+The <b>row</b> is set if only one row was changed, this is the row to update, only with <tt><b>autoupdate</b> = 1</tt>.<br />
+
+<!-- OnAfterSave -->
+<a name="OnAfterSave"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnAfterSave</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>result</b>, <i>bool</i> <b>autoupdate</b>)</s>
+</div>
+Called after <a href="#Save">Save</a> or <a href="#CfgAutoUpdate">AutoUpdate</a> is done, the server response was received and changes accepted (if succeeded).<br /> 
+The result is the &lt;IO Result/>, &lt;0 error, >=0 success.<br />
+It is called only for AJAX communication.<br />
+
+<!-- OnUpload -->
+<a name="OnUpload"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnUpload</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>xml</b>, <i>TRow</i> <b>row</b>, <i>bool</i> <b>autoupdate</b>)</s>
+</div>
+Called to modify changes in XML data before they are uploaded.<br /> 
+The XML is the XML to upload (<tt>&lt;Grid> ... &lt;/Grid></tt>)<br />
+Return new XML data in string for upload or null to not change the data.<br />
+
+<!-- Save -->
+<a name="Save"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>Save</h4>
+   <s>(<i>Event</i> <b>event</b>)</s>
+</div>
+Uploads all changes to server.<br /> 
+For AJAX it uploads all changes to <a href="#Upload_Url">grid.Source.Upload.Url</a>. If server returns success, it accepts all changes.<br />
+For Submit it fills grid.Source.Upload.Tag input with all changes and submits form where the input is placed.<br />
+The <b>event</b> is set if the method is called from onsubmit event hander to this event. In this case it also validates data. It cancels the event if saving is canceled.<br />
+
+<!-- UploadChanges -->
+<a name="UploadChanges"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>UploadChanges</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>function</i> <b>Func</b>)</s>
+</div>
+Uploads all changes to server, only if <a href="#CfgAutoUpdate">AutoUpdate</a> is true. If row is set, uploads changes in the row only.<br /> 
+After finish, calls function Func: function <b>Func</b> (int <b>result</b>).<br /> 
+Accepts changes only if server Result is ok (>=0), if <b>result</b> &lt; 0 does not accept changes.<br />
+
+<!-- GetChanges -->
+<a name="GetChanges"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>string</i>
+   <h4>GetChanges</h4>
+   <s>(<i>TRow</i> <b>row</b> = null)</s>
+</div>
+Returns all changed rows in XML string to upload to server. If <b>row</b> is set, returns changes of this row only.<br />
+Format of the data is used according to <a href="#Upload_Format">grid.Source.Upload.Format</a>.<br />
+
+<!-- HasChanges -->
+<a name="HasChanges"></a>
+<div class="API">
+   <u><i>upd <b>11.0</b></i></u> <b>API method</b> <i>int</i>
+   <h4>HasChanges</h4>
+   <s>( )</s>
+</div>
+If the grid contains some changed (Added/Deleted/Moved/Changed) or selected (Selected) rows.<br />
+Returns <b>&1</b> if grid contains some change not yet uploaded to server. Only when <a href="CellEdit.htm#CfgSaveValues">SaveValues</a> is not set.<br />
+Returns <b>&2</b> if grid contains some selected rows. Only when <a href="RowSelect.htm#CfgSaveSelected">SaveSelected</a> is not set.<br />
+
+<!-- AcceptChanges -->
+<a name="AcceptChanges"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>AcceptChanges</h4>
+   <s>(<i>TRow</i> <b>row</b> = null)</s>
+</div>
+Accepts all changes in grid - clears all flags <b>Changed</b>, <b>Added</b>, <b>Moved</b> and removes rows marked as <b>Deleted</b>.<br /> 
+Displays all updates in grid.<br />
+Can be called after server accepts sent data.<br /> 
+If <b>row</b> is set, updates only this row.<br />
+
+<!-- GetXmlData -->
+<a name="GetXmlData"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>string</i>
+   <h4>GetXmlData</h4>
+   <s>(<i>string</i> <b>type</b> = Upload_Type+","+Upload_Flags, <i>string</i> <b>attrs</b> = Upload_Attrs)</s>
+</div>
+Returns grid's data in XML or JSON according to <b>Source.Upload.<a href="#Upload_Format">Format</a></b>, <b>type</b> and <b>attrs</b>, see <a href="#Upload_Type">Upload_Type</a> and <a href="#Upload_Flags">Upload_Flags</a>.<br />
+This method is used to upload changes to server by <a href="#Save">Save</a> and <a href="#CfgAutoUpdate">AutoUpdate</a>.<br />
+
+<!-- Action Save -->
+<a name="ActionsSave"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>Save</h4>
+   <s>Attached to event <b>OnClickButtonSave</b></s>
+</div>
+Uploads all changes to server and accepts them. See <a href="#Save">Save</a> method.<br />
+
+<!-----------------------------------------------------------------------  XML structure sent to server ------------------------------------------------->
+<a name="XML"></a>
+<h2>XML structure sent to server</h2>
+
+Data sent from grid to server. Used when uploading changes to server. This format is generated by grid.<br />
+<i>Here is described <span style="font-weight:bold;">default</span> structure used for <tt>&lt;treegrid <a href="#Upload_Type">Upload_Type</a>='Changes'/></tt>. For other settings the uploaded XML will contain other requested tags similar to Layout and Data XML.</i><br />
+Used as <b>request</b> sent to data source <b>Upload</b>.<br />
+<i>Uploaded files in <a href="TypeHtml.htm#TFile">File</a> type are <u>not</u> sent in the XML, but apart like the standard <tt>&lt;input type="file"></tt> values.</i><br /><br />
+
+<tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Grid</b>></tt> (Root tag, can accept any count of introduced child tags in any order)<br />
+  <div class="L1">
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">IO</b></tt> <i>... attributes with client request ...</i> <tt style="font-size:150%;color:red;">/></tt><br />
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Changes</b>></tt> (list of changed rows)<br />
+    <div class="L1">
+    <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">I</b></tt> <b>id</b>='...' <i>... row and cell attributes ...</i> <tt style="font-size:150%;color:red;">/></tt><br /> 
+    <i>... More tags &lt;I> ...</i><br />
+    </div> 
+  <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Changes</b>></tt><br />
+  </div>
+<tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Grid</b>></tt><br /><br /> 
+
+<b>The uploaded rows can have set these attributes:</b><br />
+<b><a href="RowId.htm#Iid">id</a></b> - this attribute is always set to identify uploaded row. There are many ways to set this attribute, see <b><a href="RowId.htm">rows identity</a></b>.<br />
+<b><a href="RowId.htm#INewId">NewId</a></b> - it is set to new id if the row id will be changed after save. For IdNames or FullId settings changes. Set only when <tt>Upload_Flags='NewId'</tt><br />
+<b><a href="RowDelete.htm#IDeleted">Deleted</a></b> - The row has been deleted by a user. No other attribute is set.<br />
+<b><a href="CellEdit.htm#IChanged">Changed</a></b> - Some cell value of the row has been changed. The row contains values of all changed cell. The row can also contain the <b><a href="RowMove.htm#IMoved">Moved</a></b> attribute.<br />
+<b><a href="RowMove.htm#IMoved">Moved</a></b> - The row has been moved to new position. The <b><a href="RowMove.htm#IParent">Parent</a></b> and <b><a href="RowMove.htm#INext">Next</a></b> attributes specify new position. The row can also contain <b><a href="CellEdit.htm#IChanged">Changed</a></b> attribute.<br />
+<b><a href="RowAdd.htm#IAdded">Added</a></b> - The row is new row. The row contains new generated id. The <b><a href="RowAdd.htm#IParent">Parent</a></b> and <b><a href="RowAdd.htm#INext">Next</a></b> attributes specify new position. The <b><a href="RowDefaults.htm#IDef">Def</a></b> attribute specifies default values.<br />
+<div class="L2">The row also contains all cell values, that are not the same as default values and are not calculated.</div>
+<b><a href="RowMove.htm#IParent">Parent</a></b> - (set for <b>Added</b> or <b>Moved</b>) - the parent row or page where the row has been moved row added. It is string for row id or number for page position.<br />
+<b><a href="RowMove.htm#INext">Next</a></b> - (set for <b>Added</b> or <b>Moved</b>) - the next row before it the row has been added or moved. It is string for row id.<br />
+<b><a href="RowMove.htm#IPrev">Prev</a></b> - (set for <b>Added</b> or <b>Moved</b>) - the previous row after it the row has been added or moved. It is string for row id.<br />
+<b><a href="RowAdd.htm#ICopy">Copy</a></b> - (set for <b>Added</b>) - set only if the row is copy of another row and the source row does not have downloaded its children yet (in server child paging).<br />  
+<div class="L2">It is string for row id.</div><br />
+
+When server returns HTTP error or &lt;<b>IO <a href="DataCommunication.htm#IOResult">Result</a></b> &lt; 0, the TreeGrid shows message if provided and does not accept changes. The changes can be sent again.<br />
+If server return HTTP OK and &lt;<b>IO <a href="DataCommunication.htm#IOResult">Result</a></b> is not set or is >= 0, the TreeGrid accepts all changes - deleted rows are physically deleted and other flags are cleared.<br /><br />
+
+<b>Example of changed data sent to server:</b><br />
+<tt>
+&lt;Grid><br />
+  <div class="L2">
+  &lt;Changes><br />
+    <div class="L2">
+    &lt;I id='xy' Changed='1' A='12'/><br />
+    &lt;I id='xa' Moved='1' Parent='aa' Next='xc' Prev='xb'/><br />
+    &lt;I id='xz' Added='1' Parent='1' Next='' Prev='xx' A='3' B='7' C='5.4' D='-3' E='twenty six'/><br />
+    &lt;I id='xg' Deleted='1'/><br />
+    </div>
+  &lt;/Changes><br />
+  </div>
+&lt;/Grid><br />
+</tt>
+
+</div>
+</body>	
+</html>

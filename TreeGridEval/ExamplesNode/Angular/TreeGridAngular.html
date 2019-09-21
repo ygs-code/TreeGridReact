@@ -1,0 +1,272 @@
+<html>
+<body>
+<style>
+b { color:#D08; }
+tt { color:#080; font-weight:bold; }
+h3 i { color:#666; }
+ul { list-style-type:lower-alpha; }
+li { margin-bottom:5px; }
+h1,h2 { text-align:center; }
+h4 { font-weight:bold; margin:0px; font-style:italic; }
+h4 b { color:#B60; }
+body { padding:10px; }
+</style>
+
+<!-- ---------------------------------------------------------- Examples --------------------------------------------------------------- -->
+
+<h2>How to run TreeGrid Angular examples</h2>
+
+<h3>0) Run and test TreeGrid Angular examples <i>(optional)</i></h3>
+Download TreeGrid examples package from <a href="http://www.treegrid.com/Download#Trial">http://www.treegrid.com/Download#Trial</a> and unzip it to some directory, preserve its directories structure.<br />
+<br />
+<h4><b>Angular examples</b> per Angular version</h4>
+TreeGrid examples package contains simple examples for Angular framework located in <b>/ExamplesNode/Angular/</b>. There are examples for different Angular versions.<br />
+All the examples create TreeGrid statically by &lt;treegrid> tag, only <b>V7-dynamic</b> example creates TreeGrid dynamically by TreeGrid() function.<br />
+<ul>
+   <li>
+      Go to directory according to chosen Angular version, e.g. to <b>/ExamplesNode/Angular/V7/</b> 
+   </li>
+   <li>
+      Run here command <b>npm install</b> to install the node modules and wait until they are installed.
+   </li>
+   <li>
+      Next run <b>npm start</b> to serve the example and wait until it is compiled (shows message in console: Compiled successfully).
+   </li>
+   <li>
+      Finally navigate your browser to <a href="http://localhost:4200/" target="_blank"><b>http://localhost:4200/</b></a> to run the examples.
+   </li>
+</ul>
+
+<h4>Optionally install and run sample <b>NodeJS server</b> that serves data for the Angular example from SQLLite database.</h4>
+<ul>
+   <li>
+      Go to directory <b>/ExamplesNode/Server/</b>.
+   </li>
+   <li>
+      Run here command <b>npm install</b> to install the node modules and wait until they are installed.
+   </li>
+   <li>
+      Next run <b>npm start</b> to start the NodeJS server. The server serves at <a href="http://localhost:8000/" target="_blank"><b>http://localhost:8000/</b></a>.
+   </li>
+</ul>
+
+
+
+
+<br />
+<hr />
+<br />
+<h1>Using TreeGrid in <b>Angular</b> project</h1>
+<br />
+<hr />
+
+<!-- ---------------------------------------------------------- Install --------------------------------------------------------------- -->
+
+<h2>Installation</h2>
+
+<h3>1) Copy TreeGrid distribution <i>(/Grid)</i></h3>
+Copy TreeGrid required files from TreeGrid examples package to the Angular project. 
+The TreeGrid examples package can be downloaded from <a href="http://www.treegrid.com/Download#Trial">http://www.treegrid.com/Download#Trial</a><br />
+<ul>
+   <li>
+      Copy the whole <b>/Grid</b> directory, including all subdirectories, from TreeGrid package to your Angular project.<br />
+      The destination location can be chosen freely, it just must be accessible for the Angular server for reading.<br /> 
+      <i>In Angular 5 and older it must be copied into /src directory or some its subdirectory!</i><br />
+      It can be also shared among more Angular projects if the location is accessible for all the project servers.<br />
+   </li>
+   <li>
+      <i>Optionally</i> copy the whole <b>/GridSrc</b> directory, including all subdirectories, from TreeGrid package to your Angular project. <br />
+      If you plan to modify TreeGrid css files and want to link the source css files to TreeGrid for simpler debugging.<br />
+   </li>
+   <li>
+      <i>Optionally</i> if you purchased the <b>debug sources</b>, copy the whole TreeGrid debug sources package, including all subdirectories, to your Angular project. <br />
+      If you want to include the TreeGrid plain sources instead of compiled GridE.js file for easy debugging.<br />
+      <i>Remember, the TreeGrid source files must not be accessible outside your company!</i>.<br />
+   </li>
+</ul>
+
+<h3>2) Add paths to static files <i>(assets)</i></h3>
+Modify <b>angular.json</b> (or .angular-cli.json in 5.x and older), add to <b>assets</b> array all the files and directories that will be served directly without processing them by Angular.<br />
+<i>Note that there can be more assets sections in angular.js, e.g. for "build" and "test", modify all of them.</i><br />
+<i>In Angular 5 and older the served static files must be inside /src directory or some its subdirectory!</i><br />
+<ul>
+<li>
+Add here path to <b>/Grid</b> directory where are the required TreeGrid files (copied in point 1)), for example add <tt>{ "glob": "**/*", "input": "../../Grid/", "output": "/Grid/" }</tt> to serve directory "../../Grid/" as "Grid/".<br /> 
+The <b>input</b> is relative to root directory with <b>angular.json</b> file, the <b>output</b> is relative to the served root with <b>index.html</b>.<br />
+</li>
+<li>
+<i>Optionally</i> add here path to <b>GridSrc</b> directory if you plan to modify TreeGrid css files and want to link the source css files to TreeGrid for simpler debugging, for example add <tt>{ "glob": "**/*", "input": "../../GridSrc/", "output": "/GridSrc/" }</tt>.<br />
+</li>
+<li>
+<i>Optionally</i> add here path to TreeGrid <b>debug source</b> files directory if you purchased the sources and want to include the TreeGrid plain sources instead of compiled GridE.js file for easy debugging.<br />
+</li>
+<li>
+Add here path to TreeGrid static layout and data files if you use them and they are not located in the assets directory, for example add <tt>{ "glob": "**/*", "input": "Layouts/", "output": "/Layouts/" }</tt> to serve root directory Layouts as root directory Layouts.<br />
+</li>
+</ul>
+
+<h3>3) Include TreeGrid script <i>(GridE.js)</i></h3>
+Link TreeGrid script file <b>GridE.js</b> to the Angular main file <b>src/index.html</b> into &lt;head> section as <tt>&lt;script src="Grid/GridE.js">&lt;/script></tt>, 
+the path to the GridE.js file is defined in previous point 2).<br />
+Or if your Angular project displays TreeGrid only conditionally, you can link <b>GridED.js</b> short script instead of GridE.js main script to download the GridE.js automatically on demand.<br />
+
+<h3>4) Copy TreeGrid API definition <i>(TreeGrid.TypeScript.API.d.ts)</i></h3>
+Copy file <b>TreeGrid.TypeScript.API.d.ts</b> (located in the TreeGrid examples package in <b>/ExamplesNode/</b> directory) to the <b>/src</b> directory.<br />
+This file contains TypeScript declaration of all TreeGrid API methods, properties and events.<br />
+If you use <b>isolatedModules</b>, import the TreeGrid.TypeScript.API.d.ts to all files where the TreeGrid API is used.<br />
+
+<h3>5) Copy and link TreeGrid component definition <i>(TreeGrid.component.ts)</i></h3>
+<ul>
+<li>
+Copy file <b>TreeGrid.component.ts</b> (located in the TreeGrid examples package in <b>/ExamplesNode/</b> directory) to the <b>/src</b> directory.<br />
+</li>
+<li>
+Link this file to all modules where &lt;treegrid> tag is used. <br />
+Import it as <tt>import { TreeGridComponent } from '../TreeGrid.component';</tt> (optionally change the path to the file). <br />
+And add it to the <b>@NgModule</b> <b>declarations</b> array like <tt>@NgModule({ ... declarations: [ TreeGridComponent, ... </tt><br />
+</li>
+</ul>
+<i>It is required only if TreeGrid is created statically by &lt;treegrid> tag and not dynamically by TreeGrid() function.</i><br />
+It is possible to modify this file e.g. to assign specific TreeGrid API events.<br />
+<br />
+<hr />
+
+<!-- ---------------------------------------------------------- Create --------------------------------------------------------------- -->
+
+<h2>Create TreeGrid grid / Gantt / sheet</h2>
+
+<h3>6) Create TreeGrid statically by HTML tag <i>(&lt;treegrid>)</i></h3>
+Create TreeGrid statically somewhere in your page by adding <b>&lt;treegrid></b> tag to some html file. <br />
+Include &lt;treegrid> tag in some &lt;div> element that will be used as TreeGrid container (called MainTag). <br />
+For example add such code <tt>&lt;div style="height:500px;">&lt;treegrid Debug='check' Layout_Url="Layouts/StaticDef.js" Data_Url="Layouts/StaticData.js">&lt;/treegrid>&lt;/div></tt>.<br />
+For more information about &lt;treegrid> tag see <a href="http://www.treegrid.com/Doc/Create.htm#Creating">Creating TreeGrid</a>.<br />
+
+<h3>7) Create TreeGrid dynamically by script <i>(TreeGrid(...))</i></h3>
+Or create TreeGrid dynamically from TypeScript by <b>TreeGrid( )</b> function. For this way the point 5) is not required.<br />
+For example: <tt>var grid = TreeGrid({Debug:'check', Layout: { Url:"Layouts/StaticDef.js" }, Data: { Url:"Layouts/StaticData.js" } },"MyTag");</tt>, where MyTag is an id of &lt;div> tag where TreeGrid will be created (it will be TreeGrid MainTag).<br />
+For more information about TreeGrid( ) function see <a href="http://www.treegrid.com/Doc/Create.htm#Creating">Creating TreeGrid</a>.<br />
+<br />
+Existing grid can be deleted by <b>grid.Dispose( )</b> method. For more information see <a href="http://www.treegrid.com/Doc/Create.htm#Deleting">Deleting TreeGrid</a>.<br />
+To reload grid with new content use <b>grid.ReloadBody( )</b> method, to recreate grid completely from new layout and data use <b>grid.Reload( )</b> method. For more information see <a href="http://www.treegrid.com/Doc/Create.htm#Reloading">Reloading TreeGrid</a>.<br />
+To access existing grid on page by API link the TreeGrid with Angular component in point 8) or use global Grids object as <b>Grids[grid_id]</b> or for the only grid on page use <b>Grids[0]</b>, for example <tt>Grids[0].Reload();</tt>.<br />
+For more information see <a href="http://www.treegrid.com/Doc/Create.htm#API">Accessing TreeGrid by API</a>.<br />
+
+<h3>8) Link created TreeGrid with Angular component <i>(for API)</i></h3>
+The simplest way is to assign a reference to Angular component in TreeGrid object and assign a reference to TreeGrid object in Angular component.<br />
+<ul>
+   <li>
+      Define some property in the Angular component that will contain a reference to the created TreeGrid.<br />
+      Name it e.g. <b>Grid</b>. If required, initialize it to null or undefined.<br />
+   </li>
+   <li>
+      <i>If TreeGrid is created statically by &lt;treegrid> tag</i>, do the assignment in Angular component constructor:<br />
+      <tt>export class AppComponent { ... public Grid: any; constructor(...){ ... var Component = this; Grids.OnInit = function(grid){ grid!.Component = Component; Component.Grid = grid; } ... } ...</tt><br />
+      The Grids.OnInit can be used only if there is only one TreeGrid on page. For more grids on page assign the event only for particular grid as: <tt>... TGSetEvent("OnInit",grid_id,function(grid){ grid.Component = Component; Component.Grid = grid; });</tt><br />
+      In TreeGrid versions prior 14.1 use OnLoaded event instead of OnInit.<br />
+   </li>
+   <li>
+      <i>If TreeGrid is created dynamically by TreeGrid() function</i>, you can do the assignment directly on TreeGrid() function call. <i>In TreeGrid versions prior 14.1 use the previous way.</i><br />
+      For example: <tt>export class AppComponent { ... public Grid: any; ... <b>this.Grid</b> = TreeGrid({Debug:'check', Layout: { Url:"Layouts/StaticDef.js" }, Data: { Url:"Layouts/StaticData.js" } },"MyTag",<b>{Component:this}</b>); ... </tt>.<br />
+   </li>
+   <li>
+      After that, the Angular component will be accessible in TreeGrid data event handlers (actions) and formulas as <b>Grid.Component</b> and TreeGrid will be accessible from Angular component code as <b>this.Grid</b>.<br />
+   </li>
+</ul>
+<br />
+<hr />
+<!-- ---------------------------------------------------------- Data --------------------------------------------------------------- -->
+
+<h2>Create TreeGrid data (structure and content)</h2>
+
+<h3>9) TreeGrid data formats <i>(JSON / XML)</i></h3>
+<ul>
+   <li><b>Download data format</b><br />
+      TreeGrid creates the grid from data in XML or JSON format. This format is proprietary for TreeGrid. The XML/JSON data contains all required definitions: configuration, columns, rows, cells, values, etc.<br />
+      You need to create this XML/JSON data and pass it to TreeGrid. How this XML/JSON data is created depends fully on you. It can be created statically in some file or dynamically by some server or client script.<br />
+      <i>In this package there is NodeJS server with sample JavaScript code in <b>Server/index.js</b> that creates the JSON data for TreeGrid from SQLLite database or serves static file.</i><br />
+      For more information about the TreeGrid XML/JSON data format for download see <a href="http://www.treegrid.com/Doc/DataDownload.htm#LayoutXML">Layout format</a> and <a href="http://www.treegrid.com/Doc/DataDownload.htm#DataXML">Data format</a>.
+      The documentation is for XML, the JSON format has the same tags, just different structure, see <a href="http://www.treegrid.com/Doc/DataFormats.htm#JSONFormat">JSON format</a><br />
+   </li>
+   <li><b>Upload data format</b><br />
+      TreeGrid uploads the changes to server in XML or JSON format, similar to download format. See documentation <a href="http://www.treegrid.com/Doc/DataUpload.htm#XML">Upload format</a><br />
+      TreeGrid can upload only changes (added/deleted/moved/changed rows and their cells) or the whole data (all rows or even all data), it is controlled <a href="http://www.treegrid.com/Doc/DataUpload.htm#Upload_Type">Upload_Type</a>.<br />
+      The server should parse this uploaded data and save it to its data source (database, file, etc.). This server side code is created you. <br />
+      <i>In this package there is NodeJS server with sample JavaScript code in <b>Server/index.js</b> that parses uploaded TreeGrid JSON data and saves the changes to SQLLite database or to static file.</i><br />
+   </li>
+</ul>
+
+<h3>10) Defining TreeGrid layout <i>(columns and configuration)</i></h3>
+TreeGrid layout defines the grid / Gantt structure: configuration, columns (types, formats, widths, ...), toolbars, control rows, Gantt definition, etc.
+Simply it contains the whole TreeGrid definition except body rows and their cells. See <a href="http://www.treegrid.com/Doc/DataDownload.htm#LayoutXML">Layout format</a> and <a href="http://www.treegrid.com/Doc/DataFormats.htm#JSONFormat">JSON format</a>.<br />
+TreeGrid layout is usually static JSON or XML file located in assets (see point 2)).<br />
+But TreeGrid layout can be also dynamically created on server or by API or merged to TreeGrid data.<br />
+The layout definition is assigned in Layout object in TreeGrid() method (e.g. <tt>TreeGrid({Layout:{Url:'test.json'},...},...)</tt>) or with Layout_ prefix in &lt;treegrid> tag (e.g. <tt>&lt;treegrid Layout_Url='test.json' ... ></tt>).<br />
+For more information about the TreeGrid layouts see especially the <b>Tutorial</b> examples in this package that describe individual features and how defined and use them.<br />
+
+<h3>11) Creating TreeGrid data <i>(rows and cells)</i></h3>
+TreeGrid data defines the grid data rows and their cells with values. see <a href="http://www.treegrid.com/Doc/DataDownload.htm#DataXML">Data format</a> and <a href="http://www.treegrid.com/Doc/DataFormats.htm#JSONFormat">JSON format</a>.<br />
+TreeGrid data is usually created dynamically on server side from database or any other data source.<br />
+But TreeGrid data can be also static JSON / XML file or it can be generated dynamically by API.<br />
+The data definition is assigned in Data object in TreeGrid() method (e.g. <tt>TreeGrid({Data:{Url:'testdata.json'},...},...)</tt>) or with Data_ prefix in &lt;treegrid> tag (e.g. <tt>&lt;treegrid Data_Url='testdata.json' ... ></tt>).<br />
+
+<h3>12) TreeGrid data communication <i>(AJAX / REST)</i></h3>
+There are three usual ways of passing data to TreeGrid.<br />
+<ul>
+   <li><b>Built-in AJAX communication</b><br />
+      By default TreeGrid loads its data from server and uploads changes back to server by built-in AJAX.<br />
+      You just specify the urls where to download and upload and their parameters and TreeGrid communicates directly with server.<br />
+      For example <tt>&lt;treegrid Layout_Url='Layouts/TableDef.js' Data_Url='http://localhost:8000/get?table=TableData&idcol=ID' Upload_Url='http://localhost:8000/set?table=TableData&idcol=ID' Upload_Format='JSON' Upload_Data='Data'></tt><br />
+      or <tt>TreeGrid({ Layout:{Url:'Layouts/TableDef.js'}, Data:{Url:'http://localhost:8000/get?table=TableData&idcol=ID'}, Upload:{Url:'http://localhost:8000/set?table=TableData&idcol=ID', Format:'JSON', Data:'Data'},"MyTag");</tt><br />
+      For more information about the default AJAX communication see <a href="http://www.treegrid.com/Doc/DataCommunication.htm#AJAX">AJAX communication</a>.<br />
+   </li>
+   <li><b>Custom communication</b><br />
+      For custom communication (AJAX or another type) define the TreeGrid data sources in the same way as in the previous point a.<br />
+      And define API event <b>OnCustomAjax</b>. In this event you get all the required information for the communication. Start the custom communication and return true. And after the communication finished call the provided callback function with the result.<br />
+      For example <tt>Grids.OnCustomAjax = function(G,IO,data,func){ MyAjax(IO.Url,data,function(result){ if(result<0) func(result,"Error"); else func(0,result); }); return true; }</tt>
+      For more information see <a href="http://www.treegrid.com/Doc/DataCommunication.htm#OnCustomAjax">OnCustomAjax</a>.<br />
+   </li>
+   <li><b>Direct data</b><br />
+      It is possible to create TreeGrid from already loaded or created data.<br />
+      Pass the data to <b>Data</b> parameter as string or JSON object or to <b>Script</b> parameter as global JavaScript variable name.<br />
+      For example you can define <tt>MyObject = { MyData: {Cols:[{Name:'A'},{Name:'B'}]} }; </tt> <br />
+      and <tt>TreeGrid({Layout:{Script:"MyObject.MyData"},Data:{Data:{Body:[[{id:1,A:10,B:20},{id:2,A:20,B:40}]]}}},"MyTag");</tt><br />
+      or <tt>&lt;treegrid Layout_Script:"MyObject.MyData" Data_Data="{Body:[[{id:1,A:10,B:20},{id:2,A:20,B:40}]]}"></tt><br />
+      For more information see <a href="http://www.treegrid.com/Doc/DataCommunication.htm#Data">Directly included data</a> and <a href="Data from JavaScript">Data from JavaScript</a>.<br />
+   </li>
+</ul>
+
+<br />
+<hr />
+
+<!-- ---------------------------------------------------------- Events --------------------------------------------------------------- -->
+
+<h2>TreeGrid events and API</h2>
+
+<h3>13) Catch TreeGrid XML/JSON events <i>(Actions in data)</i></h3>
+The XML/JSON event handlers are defined in TreeGrid Defaults.xml (located in /Grid directory), in layout XML/JSON file or data or in another input XML/JSON data.<br />
+The XML/JSON events are mostly mouse and key events like OnClick or OnMouseMove. There are also a few special events like OnChange.<br />
+The handlers are defined by <b>On...</b> attribute in <b>Actions</b> tag for the whole grid or by <b>On...</b> attribute assigned to particular column, default column, row, default row, row cell, default row cell.<br />
+The handlers are defined as JavaScript code in string. For example <tt>Actions: { ... OnClick:"alert('Clicked cell '+Row.id+','+Col);return 1;" ... }</tt> or <tt>Body:[[{... Col1OnClick:"alert('Clicked cell '+Row.id+','+Col);return 1;" ...},...]]</tt><br />
+The Angular component (linked in point 8)) can be accessed in the handler code by <b>Grid.Component</b>, for example <tt>Actions: { ... OnClick:"Grid.Component.MyProcessClick(Row,Col)" ... }</tt><br />
+The handler should return 1 to cancel event propagation or 0 to continue propagation and run next event handlers.<br />
+For more information see <a href="http://www.treegrid.com/Doc/Events.htm#Mouse">TreeGrid mouse events</a> and <a href="http://www.treegrid.com/Doc/Events.htm#Key">TreeGrid key events</a>.<br />
+
+<h3>14) Catch TreeGrid API events <i>(in script)</i></h3>
+TreeGrid API event handlers are JavaScript callbacks, they are defined as standard JavaScript / TypeScript functions that are called from TreeGrid code when the API event happens.<br />
+The API events can be used to run some code after TreeGrid is loaded, ready or rendered or some action is started or finished like data communication, editing, sorting, filtering, mouse actions like click, etc.<br />
+The event handlers can be assigned before any TreeGrid is created, e.g. in <b>constructor</b> of Angular component that uses TreeGrid.<br />
+For example: <tt>export class AppComponent { ... constructor(...){ ... Grids.OnReady = function(G){ alert(G.id+" grid is ready to render"); } ... } ... </tt><br />
+For more information about assigning API events see <a href="http://www.treegrid.com/Doc/Events.htm#API">TreeGrid API events</a>.<br />
+
+<h3>15) Using TreeGrid API <i>(API methods)</i></h3>
+The most of TreeGrid API methods are methods of (TGrid) grid object. 
+The grid object can be got by <b>this.Grid</b> if called in the Angular component linked with created TreeGrid as described in point 8).<br />
+Or grid object can be got by global <b>Grids</b> object as <b>Grids[grid_id]</b> or for the only grid on page use <b>Grids[0]</b>, for example <tt>Grids[0].Reload();</tt>.
+For more information see <a href="http://www.treegrid.com/Doc/Create.htm#API">Accessing TreeGrid by API</a>.<br />
+Many TreeGrid methods require (TRow) row object. The row object can be got by its id by <a href="http://www.treegrid.com/Doc/RowAPI.htm#GetRowById">GetRowById</a> API method or by iterating rows, see <a href="www.treegrid.com/Doc/RowAPI.htm#Iteration">Row iteration</a>.<br />
+The column are passed to TreeGrid methods by their names as strings. The columns can be also iterated see <a href="http://www.treegrid.com/Doc/ColAPI.htm">Column iteration</a>.<br />
+
+<script> if(location.protocol.search(/http/i)<0 || location.pathname.search(/examplesnode/i)<0) for(var i=0,AE=document.getElementsByClassName("Local");i<AE.length;i++) AE[i].removeAttribute("href");  </script>
+
+</body>
+</html>

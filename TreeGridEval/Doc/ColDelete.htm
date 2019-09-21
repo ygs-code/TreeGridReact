@@ -1,0 +1,240 @@
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Deleting columns</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Column deleting</h1>
+<p>TreeGrid documentation</p>
+
+
+<!-- ColDeleting -->
+<a name="CfgColDeleting"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ColDeleting</h4>
+   <s>[0]</s>
+</div>
+If it is possible to delete columns from grid.<br />
+<i>By default it is disabled!</i><br />
+
+<!-- ShowDeleted -->
+<a name="CfgShowDeleted"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ShowDeleted</h4>
+   <s>[1] Saved to cookies</s>
+</div>
+If deleted rows and columns are visible and colored. <br />
+If set to <b>1</b>, deleted rows and columns are still visible and can be undeleted. The deleted rows are colored in red, it can be changed in Grid.css.<br />
+If set to <b>0</b>, deleted rows and columns are hidden and cannot be undeleted by a user.<br />
+Setting to <b>1</b> when AutoUpdate is true has no effect - the rows are immediately deleted.<br />
+
+<!-- DeleteMessage -->
+<a name="CfgDeleteMessage"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>DeleteMessage</h4>
+   <s>[1]</s>
+</div>
+If the confirmation message for deleting row, selected rows, column and selected columns will be shown.<br />
+<b>0</b> - never, <b>1</b> - only if <a href="#CfgShowDeleted">ShowDeleted</a> is on, <b>2</b> always.<br />
+
+<!-- CanDelete -->
+<a name="CCanDelete"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>CanDelete</h4>
+   <s>[1/0]</s>
+</div>
+If the column can be deleted. <br />
+It is 1 for all columns except Panel, Index and Gantt.<br />
+
+<!-- Deleted -->
+<a name="CDeleted"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>Deleted</h4>
+   <s>[0]</s>
+</div>
+It is set to <b>1</b> when the column has been deleted. <br />
+The column is hidden if <a href="CfgShowDeleted">ShowDeleted</a>='0' or visible and colored red (by default setting in Grid.css) when <a href="CfgShowDeleted">ShowDeleted</a>='1'.<br />
+If the column is shown, it can be undeleted.<br />
+The deleted column is ignored in summary calculations. The deleted column cannot be moved.<br />
+After uploading changes to server or calling <b>AcceptChanges</b>() the deleted column is physically removed from grid.<br />
+
+<!-- OnCanColDelete -->
+<a name="OnCanColDelete"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>OnCanColDelete</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>col</b>, <i>int</i> <b>type</b>, <i>string[]</i> <b>cols</b>)</s>
+</div>
+Called before column is deleted or undeleted. 
+Called to find out if and how can the column be deleted or undeleted. <br />
+<b>type</b> = <b>0</b> - cannot delete, 
+<b>1</b> - user must confirm deleting, <b>2</b> - delete, <b>3</b> - undelete. <br />
+Return new <b>type</b>. Or return the <b>type</b> to not change the behavior. <br />
+Returning 2 for deleted column and 3 for not deleted column has no effect.<br />
+If fires when deleting selected rows, <b>type</b> = <b>1</b> has no meaning.<br />
+<b>cols</b> are set if called on deleting selected columns and contains all the selected columns to delete or undelete. 
+For every of these columns is called the OnCanColDelete.<br />
+
+<!-- OnColDelete -->
+<a name="OnColDelete"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>void</i>
+   <h4>OnColDelete</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Called when the column is deleted.
+
+<!-- OnColUndelete -->
+<a name="OnColUndelete"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>void</i>
+   <h4>OnColUndelete</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Called when the column is undeleted.
+
+<!-- DeleteCol -->
+<a name="DeleteCol"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>DeleteCol</h4>
+   <s>(<i>string</i> <b>col</b>, <i>int</i> <b>type</b>, <i>bool</i> <b>test</b>)</s>
+</div>
+Deletes / undeletes column from grid. Displays changes. Prepares deleting and calls DeleteColT ( ).<br />
+<b>type</b> = <b>1</b> - delete + confirm dialog, <b>2</b> - delete, <b>3</b> - undelete. <br />
+Only marks the column as deleted.<br />
+Returns true if the deletion was done.<br />
+If set <b>test</b> = <b>1</b>, does not delete column, only tests if it is possible, but does not show confirm message, takes it as confirmed.<br />
+
+<!-- DeleteColT -->
+<a name="DeleteColT"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>DeleteColT</h4>
+   <s>(<i>string</i> <b>col</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Deletes / undeletes column from grid. Displays changes. 
+<b>type</b> =  <b>2</b> - delete, <b>3</b> - undelete.<br />
+
+<!-- RemoveCol -->
+<a name="RemoveCol"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>void</i>
+   <h4>RemoveCol</h4>
+   <s>(<i>string</i> <b>col</b>)</s>
+</div>
+Physically removes the column from grid and data. 
+The column is really deleted, not just marked!<br />
+For marking column as <a href="#CDeleted">Deleted</a> use <a href="#DeleteCol">DeleteCol</a>() instead.<br />
+<i>Remember, removed column cannot be used in any API function, 
+especially take care in loops, you cannot use GetNextCol / GetPrevCol functions with removed column.</i>
+
+<!-- DeleteCols -->
+<a name="DeleteCols"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>int</i>
+   <h4>DeleteCols</h4>
+   <s>(<i>string[]</i> <b>cols</b>, <i>int</i> <b>del</b> = 1)</s>
+</div>
+Deletes (<b>del</b> = <b>1</b>), or undeletes (<b>del</b> = <b>0</b>) or removes (<b>del</b> = <b>2</b>) all given columns in grid.<br />
+Returns final count of affected columns.
+
+Deletes / undeletes column from grid. Displays changes. 
+<b>type</b> =  <b>2</b> - delete, <b>3</b> - undelete.<br />
+
+<!-- DeleteCol -->
+<a name="ActionDeleteCol"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteCol <i>...F</i></h4>
+   <s>Attached to <b>OnClickPanelColDelete</b> event</s>
+</div>
+Deletes actual or focused column, the column is marked as <a href="#CDeleted">Deleted</a>.
+
+<!-- UndeleteCol -->
+<a name="ActionUndeleteCol"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>UndeleteCol <i>...F</i></h4>
+   <s>Attached to <b>OnClickPanelColDelete</b> event</s>
+</div>
+Undeletes actual or focused column.
+
+<!-- RemoveCol -->
+<a name="ActionRemoveCol"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>RemoveCol <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Physically removes actual or focused column.
+
+<!-- DeleteCols -->
+<a name="ActionDeleteCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteCols <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Deletes all focused columns, the columns are marked as <a href="#CDeleted">Deleted</a>.
+Without ...F fails if the actual column is not focused.
+
+<!-- UndeleteCols -->
+<a name="ActionUndeleteCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>UndeleteCols <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Undeletes all focused columns.
+Without ...F fails if the actual column is not focused.
+
+<!-- RemoveCols -->
+<a name="ActionRemoveCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>RemoveCols <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Physically removes all focused columns.
+Without ...F fails if the actual column is not focused.
+
+<!-- DeleteSelectedCols -->
+<a name="ActionDeleteSelectedCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteSelectedCols <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Deletes all selected columns, the columns are marked as <a href="#CDeleted">Deleted</a>.
+Without ...F fails if the actual column is not selected.
+
+<!-- UndeleteSelectedCols -->
+<a name="ActionUndeleteSelectedCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>UndeleteSelectedCols <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Undeletes all selected columns.
+Without ...F fails if the actual column is not selected.
+
+<!-- RemoveSelectedCols -->
+<a name="ActionRemoveSelectedCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>RemoveSelectedCols <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Physically removes all selected columns.
+Without ...F fails if the actual column is not selected.
+
+</div>
+</body>	
+</html>

@@ -1,0 +1,82 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+
+      /* Styles special for this example */
+      .Bold { font-size:12px; font-weight:bold; }
+      
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>9. Nested master detail with server paging</h1>
+   <h2>Simple master detail relation with deeper tree of detail tables downloaded on demand</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='09-Master.xml'>09-Master.xml</a> &nbsp; <a href='09-Detail.xml'>09-Detail.xml</a> &nbsp; <a href='09-DetailDetail.xml'>09-DetailDetail.xml</a>
+         &nbsp; <a href='09-Page1.xml'>09-Page1.xml</a> &nbsp; <a href='09-Page1$1$1.xml'>09-Page1$1$1.xml</a> &nbsp; <a href='09-Page1$1$3.xml'>09-Page1$1$3.xml</a>
+         &nbsp; <a href='09-Page2.xml'>09-Page2.xml</a> &nbsp; <a href='09-Page2$1$1.xml'>09-Page2$1$1.xml</a>
+      </div>
+      <div class="Main" style='width:100%; height:600px;'>
+         <bdo Debug='check' DebugCheckIgnore='ADDRESS,NOTE,REMARK' Data_Url='09-Master.xml' Page_Url="09-Page*id.xml" Page_Method="Get" Upload_Tag="debug" Upload_Flags="newid"></bdo>
+      </div>
+   </center>
+   <ul>
+      <li>
+         The example shows three levels as the master -> detail -> detail relation.<br />
+         There is set server child paging in master and the first detail grid to download its nested grids only on demand.<br />
+      </li>
+      <li>
+         All data for all detail grids must be defined in the main master grid, in appropriate tree.<br />
+         The example defines tree of rows with Defs: MAIN - > DETAIL -> DETAILROW -> DETAILDETAIL -> DETAILDETAILROW.<br />
+         MAIN - data rows in master grid. Downloads its children on demand.<br />
+         DETAIL - child rows in master grid that show the first detail grid.<br />
+         DETAILROW - data rows in the first detail grid. Downloads its children on demand.<br />
+         DETAILDETAIL - child rows in the first detail grid that show the second detail grid.<br />
+         DETAILDETAILROW - data rows in the second detail grid.<br />
+      </li>
+      <li>
+         To download the nested grids in master grid on demand set &lt;Cfg ChildPaging='3'/> in the master grid.<br />
+         Set Count='1' in the MAIN rows and serve the DETAIL child of MAIN rows on demand. Serve the DETAIL row with all its DETAILROW children.<br />
+      </li>
+      <li>
+         To download the second nested grids in the first nested grid on demand set &lt;Cfg ChildPaging='3'/> in the first detail grid.<br />
+         Set Count='1' in the DETAILROW rows and serve the DETAILDETAIL child of DETAILROW rows on demand. Serve the DETAILDETAIL row with all its DETAILDETAILROW children.<br />
+         Set also DetailTreeGrid attribute in DETAIL row to specify Page_Url to download the children from.<br />
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialMaster\s*=\s*(\d+)/), TGIndex = 256;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridMaster9", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialMaster="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+
+</body>
+</html>

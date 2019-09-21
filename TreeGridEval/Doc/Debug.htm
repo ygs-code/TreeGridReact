@@ -1,0 +1,237 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Debugging</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Debugging and testing</h1>
+<p>TreeGrid documentation</p>
+
+<!-----------------------------------------------------------------------  Debug window  -------------------------------------------------------------------->
+<a name="window"></a>
+<h2>Debug window</h2>
+
+TreeGrid since 6.0 contains new feature for debugging: a debug window.<br />
+The window shows various information from TreeGrid runtime. Errors, warning, timer, status and so on.<br />
+This window is displayed on bottom of page by default, the position can be changed in Grid.css, CSS attribute GridDebugTag.<br />
+The window is shown automatically if some message is printed or on click to Debug icon on toolbar.<br />
+What will be printed to the debug window is controlled by &lt;treegrid> / &lt;bdo> attribute <a href="#Debug">Debug</a>.<br />
+<br />
+To <b>turn off</b> the debug set &lt;treegrid> / &lt;bdo> Debug=""<br />
+To print the information to browser <b>console</b> instead of debug window set &lt;treegrid> / &lt;bdo> DebugTag="Console".<br />
+
+<!-- Debug -->
+<a name="Debug"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b style="margin-left:-20px;margin-right:20px;">&lt;treegrid,bdo></b> <i>string[ ]</i>
+   <h4>Debug</h4> <s>["Problem,IOError"]</s>
+</div>
+Global debugging settings.<br />
+A list of comma separated keywords specified what information will be printed to the <b>Debug</b> window. The keywords are case insensitive.<br />
+<i>Default setting of Debug is to print all errors and warning, it strongly recommended to use at least this settings during development!<br />
+In final release you should set Debug="" to disable debugging.<br /></i><br />
+
+<table>
+<tr><td style="width:90px;"><b>Error</b></td><td>Prints <b>errors</b> (<b style="color:red;">red</b> , if something failed in grid - data communication, action, formula) and <b>fatal errors</b> (<b style="color:red;">big red</b>, TreeGrid cannot render)</td></tr>
+<tr><td><b>Problem</b></td><td>Prints <b>warnings</b> (<b style="color:brown;">brown</b>, something is wrong in TreeGrid, but it may or may not have influence on running), <b>errors</b> and <b>fatal errors</b></td></tr>
+<tr><td><b>Info</b></td><td>Prints <b>status</b> (<b>black</b>, something started, something finished, something called), <b>timers</b> (<b>black</b>, profiling information), <b>warnings</b>, <b>errors</b> and <b>fatal errors</b></td></tr>
+<tr><td><b>Check</b></td><td>Checks all input XML attributes and prints all unknown attributes that are not used by TreeGrid</td></tr>
+<tr><td>&nbsp;</td><td>It is useful when upgrading to see unsupported attributes and also to find typing errors.</td></tr>
+<tr><td>&nbsp;</td><td>Remember, it can do false alarms if you use custom grid, row, col, cell attributes, you can define them in <a href="#DebugCheckIgnore">DebugCheckIgnore</a>.</td></tr>
+<tr><td>&nbsp;</td><td><i>This option can remarkably slow down data loading in large grids!</i></td></tr>
+<tr><td><b>IOError</b></td><td>Lists input / output <b>data</b> from <b>erroneous</b> communication</td></tr>
+<tr><td><b>IO</b></td><td>Lists <b>all</b> input / output <b>data</b>. Sets *_Debug="In,Out" for every data source that has not set its Debug attribute, except Defaults and Text.</td></tr>
+<tr><td><b>Cookie</b></td><td>Prints all information about grid configuration loaded from cookies.</td></tr>
+<tr><td><b>Page</b></td><td>Prints status information for downloading pages, cells (DefaultsServer), AutoUpdate</td></tr>
+<tr><td><b>Event</b></td><td>All mouse over events to see what part in grid is marked by what action event name. Useful for attaching events. <i>Very talkative.</i></td></tr>
+</table>
+
+<!-- xxx_Debug -->
+<a name="xxx_Debug"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b style="margin-left:-20px;margin-right:20px;">&lt;treegrid,bdo></b> <i>string[ ]</i>
+   <h4>xxx_Debug</h4> <s></s>
+</div>
+Debugging settings for appropriate data source (e.g. <tt>Upload_Debug="Out"</tt>)<br />
+A list of comma separated keywords specified what information will be printed to the <b>Debug</b> window. The keywords are case insensitive.<br /><br />
+
+<table>
+<tr><td style="width:90px;"><b>In</b></td><td>Lists all input XML downloaded from server</td></tr>
+<tr><td><b>Out</b></td><td>Lists all output XML uploaded to server</td></tr>
+<tr><td><b>Raw</b></td><td>Lists all output XML directly as it is uploaded to server</td></tr>
+</table>
+
+<!-- DebugCheckIgnore -->
+<a name="DebugCheckIgnore"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b style="margin-left:-20px;margin-right:20px;">&lt;treegrid,bdo></b> <i>string[ ]</i>
+   <h4>DebugCheckIgnore</h4> <s></s>
+</div>
+Comma separated list of all attributes that Debug["Check"] will ignore.<br />
+These attributes will be ignored for every tag except &lt;treegrid> / &lt;bdo>.<br /> 
+These attributes are also ignored for every cell.<br />
+
+<!-- DebugTag -->
+<a name="DebugTag"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>12.1</b></i></u> <b style="margin-left:-20px;margin-right:20px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>DebugTag</h4> <s></s>
+</div>
+An id of existing tag on HTML page to print the debug information to.<br />
+If not set, default TreeGrid debug tag is created and used.<br />
+<i>Since 12.1</i> If set to "Console", it prints the debug information to browser console.<br />
+
+<!-- DebugWindow -->
+<a name="DebugWindow"></a>
+<div class="XML">
+   <u>new <b>6.1</b></u> <b style="margin-left:-20px;margin-right:20px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>DebugWindow</h4> <s></s>
+</div>
+Name of new window to print debug list to another window instead of DebugTag.<br />
+
+<!-- AlertError -->
+<a name="AlertError"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b style="margin-left:-20px;margin-right:20px;">&lt;treegrid,bdo></b> <i>bool</i>
+   <h4>AlertError</h4> <s></s>
+</div>
+If set to <b>1</b> it alerts a message to user when communication with server failed.<br />
+
+<!-- Debug -->
+<a name="debug"></a>
+<div class="API">
+   <u>new <b>6.1</b></u> <b>API method</b> <i>void</i>
+   <h4>Debug</h4>
+   <s>(<i>int</i> <b>type</b>, <i>string</i> <b>arg1</b>, <i>string</i> <b>arg2</b>, <i>string</i> <b>arg3</b>,...)</s>
+</div>
+Prints information to the TreeGrid Debug window<br />
+<b>type</b> is <b>0</b> - fatal error, <b>1</b> - error, <b>2</b> - warning (shown when Debug contains Problem), <b>3</b> - list (shown always), <b>4</b> - info (shown when Debug contains Info).<br /> 
+The <b>arg</b> are strings to display, are shown without any separator, every even string is displayed bold.<br />
+
+<!-- OnDebug -->
+<a name="OnDebug"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnDebug</h4>
+   <s>(<i>int</i> <b>level</b>, <i>type[ ]</i> <b>arguments</b>)</s>
+</div>
+Called for every debug print, regardless on debug level, except input / output data.<br /> 
+Return true to suppress default action.<br />
+Can be used for redirecting the debug prints to another output.<br />
+<b>level</b> is debug level (importance), like type in <a href="#Debug">Debug</a> function.<br />
+<b>arguments</b> is array of the printed strings, the first item is also the level.<br />
+
+<!-- Action DebugUndo -->
+<a name="ActionsDebugUndo"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DebugUndo</h4>
+   <s>Attached to <b>OnCtrlAltD</b> event</s>
+</div>
+Prints to new window all actions done from last clearing undo. Prints only actions that can be undone.<br /> 
+It prints the actions as calling API methods, so the developer can easily redo the actions by simply adding the list to the script.<br />
+Works only when set <tt>&lt;Cfg <a href="Undo.htm#CfgUndo">Undo</a>='1'/></tt> and <a href="#Debug">Debug</a> contains "Error".<br />
+It can be used when reporting bugs, to get the action list that led to incorrect behavior:<br /><br />
+
+<i>
+When you face some incorrect behavior during testing, press Ctrl+Alt+D to show the window.<br /> 
+Click to <b>Test</b> button to reload grid and to do automatically all the actions again.<br />
+If the problem rises again, it means it can be simulated by this action list.<br /> 
+Press again Ctrl+Alt+D and select and copy all the message text to clipboard and send it to developer with all the example data to simulate the bug.<br /></i>
+
+<!-----------------------------------------------------------------------  Automated testing  -------------------------------------------------------------------->
+<a name="test"></a>
+<h2>Automated testing</h2>
+
+<!-- TestIds -->
+<a name="CfgTestIds"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>TestIds</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, many TreeGrid and Gantt HTML elements get unique id attribute to be accessible by automated testing tools like <b>Selenium WebDriver</b>.<br />
+<i><b>It is strongly recommended to use the ids only for testing, not for controlling the TreeGrid HTML - for it use API instead.</b></i><br /><br />
+
+The id has mostly this syntax: TG<b>name</b>-<b>grid</b>-<b>row</b>-<b>col</b>-<b>part</b>, where<br />
+  <div class="L1">
+  <b>name</b> is the TreeGrid internal name of element,<br /> 
+  <b>grid</b> is grid index (starts from 0 for first grid on page),<br /> 
+  <b>row</b> is row id attribute,<br /> 
+  <b>col</b> is column name,<br /> 
+  <b>part</b> is specific identification of the element, usually its index inside its cell<br />
+  - is a separator defined by <a href="#CfgTestIdSeparator">TestIdSeparator</a>, be default it is '-'.<br />
+  </div><br />
+  
+Every <u><b>cell</b></u>, including header and space cells, gest id: <b>TGCell</b>-<i>grid-row-col</i><br />
+The cell is &lt;td> tag and includes also its side Icon (e.g. the Enum or Filter icon). It does <u>not</u> include its side Button (e.g. calendar, defaults or sort buttons) and tree button.<br /><br />
+
+Because the side <u><b>Icon</b></u> is included in cell and cannot get its separate id, you can use for testing purposes right side Button instead of the Icon.<br /> 
+For Enum do <tt>&lt;C Type="Enum" Icon="" Button="Enum"/></tt>. For filter row do for every related cell <tt>&lt;Filter Col1Button="Filter" ... /></tt>.<br /><br />
+
+Every cell right side <u><b>Button</b></u> gets id: <b>TGButton</b>-<i>grid-row-col</i><br />
+The id is attached to the &lt;td> tag containing the button or icon.<br /><br />
+
+Every <u><b>tree</b></u> part gets id: <b>TGTree</b>-<i>grid-row-col</i><br />
+The id is attached to the &lt;td> tag containing the whole tree part, not only the expand/collapse buttons.<br /> 
+For testing purposes you can attach the Expand / Collapse actions to the whole tree part by: <tt>&lt;Actions OnClickTree="Expand OR Collapse" OnDblClickTree="Expand OR Collapse"/></tt><br /><br />
+
+The <u><b>resizing</b></u> grid button (placed bottom right in the grid) gets id: <b>TGResize</b>-<i>grid</i>. In IE quirks mode there will be also defined <b>TGResizeIE</b>-<i>grid</i> for parent tag.<br /><br />
+
+The &lt;<u><b>input</b></u>> or &lt;<u><b>textarea</b></u>> tag shown for in-cell editing in grid gets id: <b>TGInput</b>-<i>grid</i>.<br /><br />
+
+In <u><b>Gantt chart</b></u> there are defined these ids:<br />
+Main bar: <b>TGMain</b><i>plan-grid-row-col-index; <b>plan</b></i> is number of plan, 0 for the first plan<br />
+Main bar side icons: <b>TGMain</b><i>plan</i><b>SideIcon1</b>-<i>grid-row-col-index</i>; <b>TGMain</b><i>plan</i><b>SideIcon2</b>-<i>grid-row-col-index</i><br />
+Main bar side manual constraint: <b>TGMain</b><i>plan</i><b>SideManual</b>-<i>grid-row-col-index</i>;<br />
+Main bar side html: <b>TGMain</b><i>plan</i><b>SideLeft</b>-<i>grid-row-col-index</i>; <b>TGMain</b><i>plan</i><b>SideRight</b>-<i>grid-row-col-index</i><br />
+Run bar: <b>TGRun</b>-<i>grid-row-col-index</i><br />
+Run bar side manual constraint: <b>TGRunSideManual</b>-<i>grid-row-col-index</i>;<br />
+Run bar side html: <b>TGRunSideLeft</b>-<i>grid-row-col-index</i>; <b>TGRunSideRight</b>-<i>grid-row-col-index</i><br />
+Flags icon: <b>TGFlag</b>-<i>grid-row-col-index</i>;<br /> 
+Flags text: <b>TGFlagText</b>-<i>grid-row-col-index</i><br />
+Points: <b>TGPoint</b>-<i>grid-row-col-index</i><br />
+Constraints: <b>TGMinStart</b>-<i>grid-row-col</i>, <b>TGMaxStart</b>-<i>grid-row-col</i>, <b>TGMinEnd</b>-<i>grid-row-col</i>, <b>TGMaxEnd</b>-<i>grid-row-col</i><br />
+Gantt Base: <b>TGBase</b>-<i>grid-col</i><br />
+Gantt Finish: <b>TGFinish</b>-<i>grid-col</i><br />
+Gantt Header cell: <b>TGGanttHeader</b>-<i>grid-col-index-date</i>, where <b>index</b> is the GanttHeader index from 1 and <b>date</b> is starting date of the cell in milliseconds since 1/1/1970<br />
+Paged Gantt Header line: <b>TGGanttHeaderPage</b>-<i>grid-col-index</i> (defined only in GanttPaging when the header line is paged by GanttHeaderPaging)<br /><br />
+
+In side <u><b>pager</b></u> there are defined these ids:<br />
+Every pager page gets id: <b>TGPager</b>-<i>grid-name-index</i>, where <b>name</b> is name of the pager and <b>index</b> is the pager page index from 0.<br />
+The pager caption gets id: <b>TGPagerCaption</b>-<i>grid-name</i>.<br /><br />
+
+Every link to page in <u><b>Pages</b></u> type cell get id: <b>TGPages</b>-<i>grid-row-col-page</i>, where <b>page</b> is the index (from <b>1</b>) the link points to.<br /><br />
+
+Every item in <u><b>DropCols</b></u> type cell get id: <b>TGDropCols</b>-<i>grid-row-col-index</i>. The Text part of the DropCols get id: <b>TGDropColsText</b>-<i>grid-row-col</i><br /><br />
+
+In popup <u><b>calendar</b></u> dialog there are defined these ids:<br />
+Every calendar date button has this id: <b>TGCalendar</b>-<i>grid-type-date</i>, where <b>type</b> is: "WD" as workday, "Sa" as Saturday, "Su" as Sunday, "OM" as other month day, "Now" as today, "Sel" as selected day. <b>date</b> is date of the day as count of milliseconds since 1/1/1970<br />
+The time &lt;input> gets id: <b>TGCalendarTime</b>-<i>grid</i>.<br />
+The empty button gets id: <b>TGCalendarEmpty</b>-<i>grid</i>.<br />
+The control buttons get ids: <b>TGCalendarOk</b>-<i>grid</i>, <b>TGCalendarClear</b>-<i>grid</i>, <b>TGCalendarToday</b>-<i>grid</i>, <b>TGCalendarYesterday</b>-<i>grid</i>.<br /><br />
+
+In popup <u><b>menu</b></u> dialog (used by Menu, Enum Defaults, CfgMenu, Columns, ...) there are defined these ids:<br />
+Every menu item gets id: <b>TGMenu</b>-<i>grid-itemid</i>, where <b>itemid</b> is the id attribute of the item. If the menu item has not defined its id, it is its Name or Text with replaced all white characters by '_'<br />
+Every submenu item gets id: <b>TGMenu</b>-<i>grid-submenuindex-itemid</i>, where <b>sumbenuindex</b> is 1 for first submenu, 2 for the second submenu, etc..<br />
+The control buttons get ids: <b>TGMenuOk</b>-<i>grid</i>, <b>TGMenuCancel</b>-<i>grid</i>, <b>TGMenuClear</b>-<i>grid</i>.<br />
+The control buttons in submenu get ids: <b>TGMenuOk</b>-<i>grid-submenuindex</i>, <b>TGMenuCancel</b>-<i>grid-submenuindex</i>, <b>TGMenuClear</b>-<i>grid-submenuindex</i>.<br /><br />
+
+The <u><b>custom scrollbar</b></u> (set by &lt;Cfg CustomScroll/>) buttons get these ids: <b>TGScrollUp</b>-<i>grid</i>, <b>TGScrollDown</b>-<i>grid</i>, <b>TGScrollLeft</b>-<i>grid-sec</i>, <b>TGScrollRight</b>-<i>grid-sec</i>, where the <b>sec</b> is "Left", "Mid" or "Right"<br /><br />
+
+Other <u><b>internal</b></u> ids used by TreeGrid: <b>TGFastColumns</b>-<i>grid</i>, <b>TGHoverCursors</b>-<i>grid</i>, <b>TGFocusCursors</b>-<i>grid</i>, <b>TGTmpFocusGrid</b>-<i>grid</i><br />
+Special <u><b>global</b></u> <u><b>internal</b></u> ids: <b>TreeGridStyle</b>-<i>prefix</i> (the prefix is e.g. 'TS' for Standard style), <b>TreeGridMessageStyle</b>, <b>TreeGridControls</b><br />
+
+<!-- TestIdSeparator -->
+<a name="CfgTestIdSeparator"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>TestIdSeparator</h4> <s>['-']</s>
+</div>
+Separator used in <a href="#CfgTestIds">TestIds</a>. Define it different is some your row id or column name contains the '-' to some character not used in any your row id and column name.<br />
+                            
+</div>
+</body>	
+</html>

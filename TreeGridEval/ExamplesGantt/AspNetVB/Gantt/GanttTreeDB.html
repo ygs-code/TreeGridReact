@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+      <style>
+         /* Examples shared styles */
+         .ExampleHeader { font:normal 16px Arial; color:blue; }
+         .ExampleHeader b { color:#800; }
+         .ExampleHeader i { color:black; font-style:normal; font-weight:bold; }
+         .ExampleHeader u { text-decoration:none; color:#0B0; font-weight:bold; padding:0px 2px 0px 2px; }
+         .ExampleName { font:bold 30px Arial; padding:5px 0px 5px 0px; }
+         .ExampleShort { font:italic 15px Arial; margin-bottom:10px; padding-top:5px; }
+         .ExampleDesc { margin:0px 5px 10px 5px; padding:5px; border:1px solid #AAA; }
+         .ExampleErr { margin:50px auto 10px auto; padding:5px; line-height:30px; border:1px solid black; color:red; width:800px; text-align:center; display:none; }
+         .ExampleBorder { margin:0px 5px 0px 5px; clear:both; zoom:1; }
+         .ExampleDesc ul { padding:0px 0px 0px 15px; margin:10px 0px 0px 0px; }
+         .ExampleDesc li { padding-bottom:8px; line-height:18px; }
+         .ExampleDesc h4 { display:inline; font:bold 15px Arial; line-height:20px; padding-left:6px; padding-right:6px; background:#87DAE5; border:1px solid #888; color:black; margin:0px; font-style:normal; }
+         .ExampleDesc u { text-decoration:none; font-size:11px; }
+         .ExampleDesc .Link { text-decoration:underline; color:blue; cursor:pointer; }
+      </style>
+   </head>
+   <body>
+      <center class="ExampleHeader"><script>document.write(location.href.replace(/(.*)(\/Examples\/|\/ExamplesGantt\/)([^\/]+)\/([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+      <center class="ExampleName">Gantt SQL database tree</center>
+      <center class="ExampleShort">Creates Gantt tree data from plain database table by grouping; uses <b>AJAX</b> and .NET <b>IDbCommand</b> and <b>IDataReader</b> interfaces</center>
+      <div class="ExampleErr">
+         <script> if(location.protocol=="file:") document.write("<style>.ExampleDesc, .ExampleBorder {display:none;} .ExampleErr { display:block; } </style>"); </script>
+         Do <b>not</b> run this file locally!<br />Run it from your local or remote web http server where is installed IIS and ASP.NET (1.0, 1.1, 2.0, 3.0, 3.5, 4.0, 4.5, ...).<br>
+      </div>
+      <div class="ExampleDesc">
+         <i>Source files:</i> <h4>GanttTreeDB.html</h4> (this html page), <a href="GanttTreeDef.xml" target="_blank"><h4>GanttTreeDef.xml</h4></a> (static XML layout), 
+         <a href="GanttTreeDBData.aspx" target="_blank"><h4>GanttTreeDBData.aspx</h4></a> (server script generates XML data), 
+         <a href="GanttTreeDBUpload.aspx" target="_blank"><h4>GanttTreeDBUpload.aspx</h4></a> (server script saves XML data to database), 
+         <h4>../Database.db</h4> (source SQL database, table <b>GanttTree</b>)
+      </div>
+      <div class="ExampleDesc">
+         This example uses <h4>SQLite</h4> <b>../Database.db</b> file as source SQL database.</h4>
+         You can switch to <h4>MS Access</h4> <b>MDB database</b> by setting <b>UseMDB</b> property to true in GanttTreeDBData.aspx and GanttTreeDBUpload.aspx. <br />
+         <u>
+            The MS Access MDB database can be used only in <span class="Link" onclick="document.getElementById('32bitIIS').style.display='';this.className='';"><b>32bit</b> mode of IIS</span>. 
+            Also the ASP.NET service program must have <b>write</b> access to the Database.mdb file.<br />
+            <i id="32bitIIS" style="display:none">
+               To permit 32bit application on 64bit IIS, go to IIS manager, display application pools list (usually in root under computer name).
+               Choose DefaultAppPool (or the pool you use for the ASP.NET applications the TreeGrid examples are run on), select Advanced configuration and set Permit 32bit application to true.
+            </i>
+         </u>
+      </div>
+      <div class="ExampleDesc">
+         This example supports also free adding, moving and deleting tasks in tree levels.<br />
+         The level names are shown in Levels columns. 
+         The Levels and ID columns are shown just for debugging.<br />
+
+         For more Gantt features see Gantt <b>Local examples</b> or <b>Gantt tutorials</b>. 
+         For more ways of database communication see <b>Basic Ajax</b> or <b>Form Submit</b> ASP.NET examples.
+      </div>
+      <div class="ExampleBorder">
+         <div class="ExampleMain" style="width:100%;height:530px;">
+            <bdo Debug="problem" DebugTag='debug'
+               Layout_Url="GanttTreeDef.xml" 
+               Data_Url="GanttTreeDBData.aspx" Data_Debug='in,out'
+               Upload_Url="GanttTreeDBUpload.aspx" Upload_Attrs='ToDelete' Upload_Debug='in,out'
+            ></bdo>
+         </div>
+      </div>
+      <div style='font:10px Arial;margin-top:5px;'>IO communication with server and executed SQL commands</div>
+      <div id='debug' style='background:#DDD; height:150px; border:1px solid black; padding-left:5px; overflow:auto;'></div>
+
+      <script>
+
+// ------------------------------------------------------------------------------------------
+// Does updates when moving or adding row to the new parent
+// P is the new parent
+function UpdateAdd(G,row,P){
+if(!P.Def) return; // For page is Def null
+for(var p=P.firstChild;p;p=p.nextSibling) if(p.Visible && !p.Deleted && p!=row) return; // Checks if the parent has some children, ends if it had already some
+
+// --- Updates parent node if it is not Task yet ---
+P.Added = 0;           // Clears flag if set in UpdateRemove
+if(P.id-0) {           // If the id is number, it was probably loaded from database
+   P.ToDelete = 1;     // Must delete this task from database, because it became automatically generated. The ToDelete is custom flag used only by the server script.
+   P.NoUpload = 0;     // Sets it to 0, because by default grouping task has set to 1 to not upload changes
+   P.Changed = 1;      // Sets it to 1 to upload this row as changed, because custom ToDelete flag is used instead of standard Delete flag
+   } 
+}
+
+// ------------------------------------------------------------------------------------------
+// Does updates when moving or deleting row from the old parent
+// P is the old parent
+function UpdateRemove(G,row,P){
+if(!P.Def) return; // For page is Def null
+for(var p=P.firstChild;p;p=p.nextSibling) if(p.Visible && !p.Deleted) return; // Checks if the parent has some children, end if it has still some
+
+// --- When the old parent does not contain any not delete child, it is switched back to data row ---
+if(P.id-0) { 
+   P.ToDelete = null; P.NoUpload = null; // Clears the flags if set by UpdateAdd
+   P.Changed = 0; for(var c in G.Cols) if(P[c+"Changed"]) { P.Changed = 1; break; } // Clears Changed attribute, only if there is no changed cell
+   } 
+else {
+   P.Added = 1; // The parent became data row and needs to be added to dabatabase now, because it does not exist here yet
+   G.SetValue(P,"id",G.GenerateId(),1); // Sets new number id for the parent
+   }
+}
+
+// ------------------------------------------------------------------------------------------
+// API Event definitions
+Grids.OnRowAdd = function(G,row){ UpdateAdd(G,row,row.parentNode); }
+Grids.OnRowMove = function(G,row,par){ UpdateAdd(G,row,row.parentNode); UpdateRemove(G,row,par); }
+Grids.OnRowDelete = function(G,row){ UpdateRemove(G,row,row.parentNode); }
+Grids.OnRowUndelete = function(G,row){ UpdateAdd(G,row,row.parentNode); }
+// ------------------------------------------------------------------------------------------
+
+      </script>
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGTrialVB\s*=\s*(\d+)/), TGIndex = 0x2000000;
+         if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunTrialVBGanttTreeDB", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialVB="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+
+   </body>
+</html>

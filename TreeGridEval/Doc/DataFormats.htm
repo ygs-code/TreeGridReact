@@ -1,0 +1,357 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Data formats</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>TreeGrid data formats</h1>
+<p>TreeGrid documentation</p>
+
+TreeGrid uses <b style="color:blue;">XML</b> structure to describe all input and output data.<br /> 
+Instead of XML there can be used also <b style="color:blue;">JSON</b> data format, the tag names are the same as in the XML<br />
+The root XML tag is always &lt;<b>Grid</b>>.<br /> 
+Immediate children of &lt;Grid> tag are root tags and describe the parts of the grid:<br /><br />
+
+<table border="1" rules="all" width="100%">
+  <tr><td style="width:280px;"><i>Tag Description</i></td><td style="width:100px;"><i>Tag name</i></td><td><i>Possible children tags</i></td></tr>
+  <tr><td><b>Communication</b> with server</td><td>&lt;<b>IO</b>></td><td></td></tr>
+  <tr><td><b>Configuration</b> of the entire grid</td><td>&lt;<b>Cfg</b>></td><td></td></tr>
+  <tr><td>Key and mouse <b>action schema</b></td><td>&lt;<b>Actions</b>></td><td></td></tr>
+  <tr><td><b>Default</b> rows</td><td style="color:grey;">&lt;<b>Def</b>></td><td>&lt;<b>D</b>></td></tr>
+  <tr><td><b>Default</b> columns</td><td style="color:grey;">&lt;<b>DefCols</b>></td><td><<b>D</b>></td></tr>
+  <tr><td>First left fixed <b>panel</b> column</td><td>&lt;<b>Panel</b>></td><td>&lt;<b>C</b>></td></tr>
+  <tr><td><b>Left</b> fixed <b>columns</b></td><td style="color:grey;">&lt;<b>LeftCols</b>></td><td>&lt;<b>C</b>></td></tr>
+  <tr><td>Variable <b>columns</b></td><td style="color:grey;">&lt;<b>Cols</b>></td><td>&lt;<b>C</b>></td></tr>            
+  <tr><td><b>Right</b> fixed <b>columns</b></td><td style="color:grey;">&lt;<b>RightCols</b>></td><td>&lt;<b>C</b>></td></tr>
+  <tr><td>Main <b>Header row</b> with column captions</td><td><<b>Header</b>></td><td></td></tr>
+  <tr><td>Special <b>solid rows</b></td><td style="color:grey;">&lt;<b>Solid</b>></td><td>&lt;<b>Space</b>> (or &lt;<b>I</b>>), &lt;<b>Group</b>>, &lt;<b>Search</b>>, &lt;<b>Toolbar</b>>, &lt;<b>Tabber</b>></td></tr>
+  <tr><td><b>Top</b> fixed <b>rows</b></td><td style="color:grey;">&lt;<b>Head</b>></td><td>&lt;<b>I</b>>, &lt;<b>Filter</b>>, &lt;<b>Header</b>></td></tr>  
+  <tr><td>Variable <b>rows</b> in pages</td><td style="color:grey;">&lt;<b>Body</b>></td><td>&lt;<b>B</b>> (&lt;B> can contain &lt;I> tags that can contain nested &lt;I> tags and so on, unlimited levels of nesting)</td></tr>
+  <tr><td><b>Bottom</b> fixed <b>rows</b></td><td style="color:grey;">&lt;<b>Foot</b>></td><td>&lt;<b>I</b>>, &lt;<b>Filter</b>>, &lt;<b>Header</b>></td></tr>
+  <tr><td><b>Toolbar</b></td><td>&lt;<b>Toolbar</b>></td><td></td></tr>
+  <tr><td><b>Configuration menu</b></td><td>&lt;<b>MenuCfg</b>></td><td></td></tr>
+  <tr><td><b>Columns menu</b></td><td>&lt;<b>MenuColumns</b>></td><td></td></tr>
+  <tr><td><b>Print menu</b></td><td>&lt;<b>MenuPrint</b>></td><td></td></tr>
+  <tr><td><b>Export menu</b></td><td>&lt;<b>MenuExport</b>></td><td></td></tr>
+  <tr><td>First vertical <b>Pager</b></td><td>&lt;<b>Pager</b>></td><td></td></tr>            
+  <tr><td>Vertical <b>pagers</b></td><td style="color:grey;">&lt;<b>Pagers</b>></td><td>&lt;<b>P</b>></td></tr>
+  <tr><td>Gantt <b>zoom</b></td><td style="color:grey;">&lt;<b>Zoom</b>></td><td>&lt;<b>Z</b>></td></tr>
+  <tr><td>Gantt <b>resources</b></td><td style="color:grey;">&lt;<b>Resources</b>></td><td>&lt;<b>R</b>></td></tr>
+  <tr><td><b>Language</b> settings</td><td style="color:grey;">&lt;<b>Lang</b>></td><td>&lt;<b>Alert</b>>, &lt;<b>Text</b>>, &lt;<b>Gantt</b>>, &lt;<b>MenuButtons</b>>, &lt;<b>MenuCopy</b>>, &lt;<b>MenuCfg</b>>, &lt;<b>MenuFilter</b>>, &lt;<b>Format</b>></td></tr>
+  <tr><td><b>Short format</b> setting</td><td style="color:grey;">&lt;<b>Par</b>></td><td>&lt;<b>P</b>></td></tr>
+  <tr><td><b>Uploading or</b> downloading <b>changes</b></td><td style="color:grey;">&lt;<b>Changes</b>></td><td>&lt;<b>I</b>></td></tr>
+  <tr><td><b>Uploading spanned</b> cells</td><td style="color:grey;">&lt;<b>Spanned</b>></td><td>&lt;<b>I</b>></td></tr>
+  <tr><td>Actual <b>filters</b> in request for data</td><td style="color:grey;">&lt;<b>Filters</b>></td><td>&lt;<b>I</b>> (instead of &lt;Filter>, for backward compatibility)</td></tr>            
+  <tr><td></td><td></td><td></td></tr>
+</table>
+<i>The parent tags (Def, LeftCols, Cols, RightCols, Solid, Head, Body, Foot, Pagers, Changes, Filters, Par) can have <u>no</u> attributes.</i><br /><br />
+
+Order of root tags is optional. <u>Not</u> all root tags must be present, most of their attributes are pre-defined in <i><b>required</b></i> files <b>Defaults.xml</b> and <b>Text.xml</b>.<br /><br />
+
+If tags are defined in more files, their attributes and children are merged. Existing attributes are overwritten by new value.<br /> 
+Defaults (&lt;<b>D</b>>), columns (&lt;<b>C</b>>)  and resources (&lt;<b>R</b>>) tags are merged by <b>Name</b> attribute.<br /> 
+Fixed and Space rows (&lt;<b>I</b>>) are merged by <a href="RowId.htm#Iid">id</a>.<br /> 
+Other tags are single and are merged by tag name.<br /> 
+Pages (&lt;<b>B</b>>) and variable rows (&lt;<b>I</b>>) are <b><u>not</u> merged</b>, just added, even if they are the same id - this will cause an error. To change existing variable rows or add new rows from server use &lt;Changes> tag.<br /><br />
+
+XML Data are loaded in this order: <a href="Files.htm#TextXml">Text.xml</a> + Bonus, <a href="Files.htm#DefaultsXml">Defaults.xml</a> + Bonus, <a href="DataDownload.htm#Base_">Base</a> + Bonus, <a href="DataDownload.htm#Layout_">Layout</a> + Bonus, <a href="DataDownload.htm#Data_">Data</a> + Bonus.<br />
+
+<!--------------------  Formats  ------------------------->
+<a name="CustomFunc"></a>
+<h2>Formats</h2>
+
+TreeGrid accepts data in <b style="color:blue;">XML</b> format. The XML format can use one of four sub-formats: <b><a href="#InternalFormat">Internal</a></b>, <b><a href="#ShortFormat">Short</a></b>, <b><a href="#ExtraShortFormat">Extra short</a></b>, <b><a href="#DTDFormat">DTD</a></b>. These formats differ in speed of processing, data length and <b style="color:blue;">DTD</b> standard compatibility. The format structure differs in storing cell values and cell and row attributes.<br /><br />
+
+The preferred format for standard use <b>Internal format</b>.<br /> 
+For large grids you can use <b>Short</b> or <b>Extra short</b> format.<br />
+
+<!-----------------------------------------------------------------------  Internal XML format  ------------------------------------------------->
+<a name="InternalFormat"></a>
+<h2>Internal XML format</h2>
+<p class="H2">Preferred format for standard use</p>
+
+The format is fast to process and is shorter then <i><b><a href="#DTDFormat">DTD</a></b></i> format. It can be generated and processed on server side by standard XML parser but without <b style="color:blue;">DTD</b> validation and cannot use standard function to locate rows by their ids.<br />
+You cannot use predefined DTD, but you can define you own DTD for your data.<br />
+<i><b>This format is also used in all samples and in TreeGrid server.</b></i><br /><br />
+
+<b>This format uses TreeGrid as internal format to store data.</b> So if you use JavaScript API to browse TreeGrid data on client, the data is in internal format.<br /><br /> 
+
+Internal format stores cell values as row attributes named as column name. And cell attributes stores in row attributes named as column name joined with attribute name.<br />
+<br />
+
+<!--------------------  Internal format example  ------------------------->
+<h3>Internal format example</h3>
+
+<tt style="color:blue;">
+&lt;<span style="color:darkred;">Grid</span>&lt;<span style="color:darkred;">Body</span>>&lt;<span style="color:darkred;">B</span>><br />
+&lt;<span style="color:darkred;">I</span> <span style="color:red;">id</span='r1' <span style="color:red;">c1</span>='1' <span style="color:red;">c2</span>='xx' <span style="color:red;">CanDelete</span>='0'><br />
+  <div class="L1">
+  &lt;<span style="color:darkred;">I</span> <span style="color:red;">id</span>='r11' <span style="color:red;">c2</span>='xx-aa' <span style="color:red;">c3</span>='10' <span style="color:red;">CanEdit</span>='0' <span style="color:red;">c2CanEdit</span>='1'/><br />
+  &lt;<span style="color:darkred;">I</span> <span style="color:red;">id</span>='r12' <span style="color:red;">c2</span>='xx-bb' <span style="color:red;">c3</span>='20'/><br />
+  </div>
+&lt;/<span style="color:darkred;">I</span>><br />
+&lt;<span style="color:darkred;">I</span> <span style="color:red;">id</span>='r2' <span style="color:red;">c1</span>='2' <span style="color:red;">c2</span>='yy'><br />
+  <div class="L1">
+  &lt;<span style="color:darkred;">I</span> <span style="color:red;">id</span>='r21' <span style="color:red;">c1</span>='10' <span style="color:red;">c2</span>='yy-aa' <span style="color:red;">Calculated</span>='1' <span style="color:red;">c3Formula</span>='c1*2'/><br />
+  </div> 
+&lt;/<span style="color:darkred;">I</span>><br />
+&lt;/<span style="color:darkred;">B</span>>&lt;/<span style="color:darkred;">Body</span>>&lt;/<span style="color:darkred;">Grid</span>><br />
+</tt>
+
+<!-----------------------------------------------------------------------  Short XML format  ------------------------------------------------->
+<a name="ShortFormat"></a>
+<h2>Short XML format</h2>
+<p class="H2">Use for large grids</p>
+
+It is <i><b>shorter then <a href="#InternalFormat">internal</a> or <a href="#DTDFormat">DTD</a> format</b></i> and is <i><b>fast</b></i> to process. It can be generated and processed on server side by standard parser <i><b>with</b></i> <b style="color:blue;">DTD</b> validation and using <i><b>getElementById</b></i> (or similar) method to find row by id, same as <a href="#DTDFormat">DTD</a> format. But cell values and attributes are stored as text node and <i><b>needs another parsing</b></i> on server side.<br /><br />
+
+Short format stores cell values and row and cell attributes except <b>id</b> attribute in text node in row according to predefined Par tag.<br /> 
+Cell attribute names in text use <a href="#InternalFormat">Internal</a> format naming (column name + cell attribute name).<br />
+For short format you need to define <tt>&lt;<b>P Name</b>='...' <b>List</b>='...'></tt> tag, with list of attributes to use in the short format part. <strong>The &lt;P> tag must be defined in XML before it is used!</strong><br />
+It is possible to mix short format and internal format, even in one node - some attribute define in node text (short format) and other in node attributes (internal format).<br /><br />
+
+Text node has this format: <span style="color:red;">@</span><b>par</b><span style="color:red;">@</span>attr1<span style="color:red;">@</span>attr2<span style="color:red;">@</span>...<span style="color:red;">@</span>attrN<br />
+<span style="color:red;">@</span> is chosen character that is not present in any attribute value (attr1-attrN). You can choose any character you want, but take care to not have it in any attribute value.<br />
+<b>par</b> is name of <tt>&lt;<b>P</b> <a href="#PName">Name</a>=''></tt> tag.<br /> 
+<b>attr1</b>, <b>attr2</b>, ..., <b>attrN</b> are separated values of attributes in <tt><<b>P</b> <a href="#PList">List</a>=''></tt>. Count of attributes (the N) must be the same as count of attributes in <b>List</b>. If any attribute value is missing, just leave the space empty, but separator must be present.<br />
+<strong>Don't append any empty characters to node texts. Always append enclosing tag or first child's tag immediately after the text.</strong><br />
+
+<!-- Name -->
+<a name="PName"></a>
+<div class="XML">
+   <u></u> <b>&lt;P></b> <i>string</i>
+   <h4>Name</h4> <s></s>
+</div>
+Name of parameter. The row points to this name by the first item in its text node list.<br />
+
+<!-- List -->
+<a name="PList"></a>
+<div class="XML">
+   <u></u> <b>&lt;P></b> <i>string</i>
+   <h4>List</h4> <s></s>
+</div>
+ Comma separated list of row attribute names listed in text node, in this order.<br /> 
+Attribute names always use <a href="DataFormats.htm#InternalFormat">Internal format</a> (column name + cell attribute name)<br />
+For example: <tt>&lt;P Name='PP' List='B,C'/> ... &lt;I A='a'><span style="color:rgb(153,204,0);">@</span>PP<span style="color:rgb(153,204,0);">@</span>b<span style="color:rgb(153,204,0);">@</span>c&lt;/I></tt>  is the same as  <tt>&lt;I A='a' B='b' C='c'/></tt>
+<br />
+
+<!--------------------  Short format example  ------------------------->
+<h3>Short format example</h3>
+
+<tt style="color:blue;">
+&lt;<span style="color:darkred;">Grid</span>><br />
+&lt;<span style="color:darkred;">Par</span>><br />       
+&lt;<span style="color:darkred;">P</span> <span style="color:red;">Name</span>='P1' <span style="color:red;">List</span>='CanDelete,c1,c2'/><br />
+&lt;<span style="color:darkred;">P</span> <span style="color:red;">Name</span>='P2' <span style="color:red;">List</span>='Calculated,CanEdit,c1,c2,c2CanEdit,c3,c3Formula'/><br />
+&lt;/<span style="color:darkred;">Par</span>><br />
+&lt;<span style="color:darkred;">Body</span>>&lt;<span style="color:darkred;">B</span>><br />
+&lt;<span style="color:darkred;">I</span> <span style="color:red;">id</span>='r1'><span style="color:rgb(153,204,0);">@</span><span style="color:black;">P1</span><span style="color:rgb(153,204,0);">@@</span><span style="color:black;">1</span><span style="color:rgb(153,204,0);">@</span><span style="color:black;">xx</span>&lt;<span style="color:darkred;">I</span> <span style="color:red;">id</span>='r11'><span style="color:rgb(153,204,0);">@</span><span style="color:black;">P2</span><span style="color:rgb(153,204,0);">@</span><span style="color:black;">0</span><span style="color:rgb(153,204,0);">@</span><span style="color:black;">0</span><span style="color:rgb(153,204,0);">@@</span><span style="color:black;">xx-aa</span><span style="color:rgb(153,204,0);">@</span><span style="color:black;">1</span><span style="color:rgb(153,204,0);">@</span><span style="color:black;">10</span><span style="color:rgb(153,204,0);">@</span>&lt;/<span style="color:darkred;">I</span>><br />
+  <div class="L1">
+  &lt;<span style="color:darkred;">I</span> <span style="color:red;">id</span>='r12'><span style="color:rgb(153,204,0);">@</span><span style="color:black;">P2</span><span style="color:rgb(153,204,0);">@@@@</span><span style="color:black;">xx-bb</span><span style="color:rgb(153,204,0);">@@</span><span style="color:black;">20</span><span style="color:rgb(153,204,0);">@</span>&lt;/<span style="color:darkred;">I</span>>
+  </div>
+&lt;/<span style="color:darkred;">I</span>><br />
+&lt;<span style="color:darkred;">I</span> <span style="color:red;">id</span>='r2'><span style="color:rgb(153,204,0);">@</span><span style="color:black;">P1</span><span style="color:rgb(153,204,0);">@</span><span style="color:black;">1</span><span style="color:rgb(153,204,0);">@</span><span style="color:black;">2</span><span style="color:rgb(153,204,0);">@</span><span style="color:black;">yy</span>&lt;<span style="color:darkred;">I</span> <span style="color:red;">id</span>='r21'><span style="color:rgb(153,204,0);">@</span><span style="color:black;">P2</span><span style="color:rgb(153,204,0);">@</span><span style="color:black;">1</span><span style="color:rgb(153,204,0);">@@</span><span style="color:black;">10</span><span style="color:rgb(153,204,0);">@</span><span style="color:black;">yy-aa</span><span style="color:rgb(153,204,0);">@@@</span><span style="color:black;">c1*2</span>&lt;/<span style="color:darkred;">I</span>><br />
+&lt;/<span style="color:darkred;">I</span>><br />
+&lt;/<span style="color:darkred;">B</span>>&lt;/<span style="color:darkred;">Body</span>>&lt;/<span style="color:darkred;">Grid</span>><br />   
+</tt>
+
+<!-----------------------------------------------------------------------  Extra short XML format  ------------------------------------------------->
+<a name="ExtraShortFormat"></a>
+<h2>Extra short XML format</h2>
+<p class="H2">Use for very large grids or for long page list in server paging</p>
+
+It is the <i><b>shortest</b></i> and is the <i><b>fastest</b></i> to process. It can be generated and processed on server side by standard XML parser <i><b>with</b></i> <b style="color:blue;">DTD</b> validation, but without access rows by their id attribute.<br /> 
+But cell values, row and cell attributes and immediate leaf children row's attributes and cells are stored as text node, therefore it <i><b>needs another parsing</b></i> on the server side.<br /><br />
+
+Extra short format stores row attributes, cell values and <b>attributes and attributes of all immediate leaf child rows</b> (rows without children) in text node.<br /> 
+Cell attribute names in text use <a href="#InternalFormat">Internal</a> format naming (column name + cell attribute name).<br /><br />
+
+The text node has this format: <span style="color:red;">@</span><b>par</b><span style="color:red;">@</span>attr1<span style="color:red;">@</span>attr2<span style="color:red;">@</span>...<span style="color:red;">@</span>attrN<span style="color:red;">@</span><b>parchild</b><span style="color:red;">@</span><b>childcount</b><span style="color:red;">@</span>attr1-1<span style="color:red;">@</span>...<span style="color:red;">@</span>attr1-N<span style="color:red;">@</span>attr2-1<span style="color:red;">@</span>...<span style="color:red;">@</span>attr2-N<span style="color:red;">@</span>... ... <span style="color:red;">@</span>attrChildCount-1<span style="color:red;">@</span>...<span style="color:red;">@</span>attrChildCount-N<br />
+<b style="color:red;">@</b> is chosen character that is not present in any attribute value (attr1 to attrChildCount-N). You can choose any character you want, but take care to not have it in any attribute value.<br />
+<b>par</b> is name of <tt>&lt;<b>P</b> <a href="#PNameE">Name</a>=''></tt> tag for the parent node attributes.<br />
+<b>attr1</b>, <b>attr2</b>, ..., <b>attrN</b> are separated values of attributes in <tt>&lt;<b>P</b> <a href="#PListE">List</a>=''></tt>. Count of attributes (the N) must be the same as count of attributes in <b>List</b>. If any attribute value is missing, just leave the space empty, but separator must be present.<br />
+<b>parchild</b> is name of <tt>&lt;<b>P</b> <a href="#PNameE">Name</a>=''></tt> tag for all the children and their attributes.<br />
+<b>childcount</b> is count of children listed here.<br />
+<b>attr1-1</b>, ... <b>attr1-N</b> are attribute values of the first child row, their names are listed it <tt>&lt;P Name='parchild' List='...'/></tt>.<br />
+<b>attr2-1</b>, ... <b>attrChildCount-N</b> are attribute values for next children.<br /><br />
+
+If the main row has no attributes and first part is empty, just let it empty, like "<span style="color:red;">@@</span><b>parchild</b><span style="color:red;">@</span><b>childcount</b><span style="color:red;">@</span>..." - two starting separators.<br /><br />
+
+If there are too many children (>1000), it is possible to use another separator to divide children to sections. This speeds up data parsing in IE.<br /> 
+You can use "<span style="color:blue;">#</span><span style="color:red;">@</span><b>par</b><span style="color:red;">@</span>attr1<span style="color:red;">@</span>attr2<span style="color:red;">@</span>...<span style="color:red;">@</span>attrN<span style="color:red;">@</span><b>parchild</b><span style="color:red;">@</span><b>childcount</b><span style="color:red;">@</span><span style="color:blue;">#</span>attr1-1<span style="color:blue;">#</span>...<span style="color:blue;">#</span>attr1-N<span style="color:blue;">#</span> ... <span style="color:blue;">#</span>attr100-1<span style="color:blue;">#</span>...<span style="color:blue;">#</span>attr100-N<span style="color:red;">@</span><span style="color:blue;">#</span>attr101-1<span style="color:blue;">#</span>...<span style="color:blue;">#</span>attr101-N<span style="color:blue;">#</span> ... <span style="color:blue;">#</span>attrChildCount-1<span style="color:blue;">#</span>...<span style="color:blue;">#</span>attrChildCount-N".<br /> 
+The <span style="color:red;">@</span> is second separator, it is usually added for every 100 children.<br /><br />
+
+<strong>Don't append any empty characters to node texts. Always append enclosing tag or first child's tag immediately after the text.</strong><br />
+
+<!-- Name -->
+<a name="PNameE"></a>
+<div class="XML">
+   <u></u> <b>&lt;P></b> <i>string</i>
+   <h4>Name</h4> <s></s>
+</div>
+Name of parameter. The row points to this name by the first item in its text node list.<br />
+
+<!-- List -->
+<a name="PListE"></a>
+<div class="XML">
+   <u></u> <b>&lt;P></b> <i>string</i>
+   <h4>List</h4> <s></s>
+</div>
+Comma separated list of row attribute names listed in text node, in this order.<br /> 
+Attribute names always use <a href="DataFormats.htm#InternalFormat">Internal format</a> (column name + cell attribute name).<br />
+For example: <tt>&lt;P Name='PP' List='B,C'/> ... &lt;I A='a'><span style="color:rgb(153,204,0);">@</span>PP<span style="color:rgb(153,204,0);">@</span>b<span style="color:rgb(153,204,0);">@</span>c&lt;/I></tt>  <i>is the same as</i> <tt>&lt;I A='a' B='b' C='c'/></tt><br />
+<br />
+
+<!--------------------  Extra short format example  ------------------------->
+<h3>Extra short format example</h3>
+
+<tt style="color:blue;">
+&lt;<span style="color:darkred;">Grid</span>><br />
+&lt;<span style="color:darkred;">Par</span>><br />
+&lt;<span style="color:darkred;">P</span> <span style="color:red;">Name</span>='N' <span style="color:red;">List</span>='id,CanDelete,c1,c2'/><br />
+&lt;<span style="color:darkred;">P</span> <span style="color:red;">Name</span>='D' <span style="color:red;">List</span>='id,Calculated,CanEdit,c1,c2,c2CanEdit,c3,c3Formula'/><br />
+&lt;/<span style="color:darkred;">Par</span>><br />
+&lt;<span style="color:darkred;">Body</span>>&lt;<span style="color:darkred;">B</span>><br />
+&lt;<span style="color:darkred;">I</span>><span style="color:black;"><span style="color:rgb(153,204,0);">@</span>N<span style="color:rgb(153,204,0);">@</span>r1<span style="color:rgb(153,204,0);">@@</span>1<span style="color:rgb(153,204,0);">@</span>xx<span style="color:rgb(153,204,0);">@</span>D<span style="color:rgb(153,204,0);">@</span>2<span style="color:rgb(153,204,0);">@</span>r11<span style="color:rgb(153,204,0);">@</span>0<span style="color:rgb(153,204,0);">@</span>0<span style="color:rgb(153,204,0);">@@</span>xx-aa<span style="color:rgb(153,204,0);">@</span>1<span style="color:rgb(153,204,0);">@</span>10<span style="color:rgb(153,204,0);">@@</span>r12<span style="color:rgb(153,204,0);">@@@@</span>xx-bb<span style="color:rgb(153,204,0);">@@</span>20<span style="color:rgb(153,204,0);">@</span></span>&lt;/<span style="color:darkred;">I</span>><br />
+&lt;<span style="color:darkred;">I</span>><span style="color:black;"><span style="color:rgb(153,204,0);">@</span>N<span style="color:rgb(153,204,0);">@</span>r2<span style="color:rgb(153,204,0);">@</span>1<span style="color:rgb(153,204,0);">@</span>2<span style="color:rgb(153,204,0);">@</span>yy<span style="color:rgb(153,204,0);">@</span>D<span style="color:rgb(153,204,0);">@</span>1<span style="color:rgb(153,204,0);">@</span>r21<span style="color:rgb(153,204,0);">@</span>1<span style="color:rgb(153,204,0);">@@</span>10<span style="color:rgb(153,204,0);">@</span>yy-aa<span style="color:rgb(153,204,0);">@@@</span>c1*2</span>&lt;/<span style="color:darkred;">I</span>><br />
+&lt;/<span style="color:darkred;">B</span>>&lt;/<span style="color:darkred;">Body</span>>&lt;/<span style="color:darkred;">Grid</span>><br />
+</tt>
+<br />
+
+<!--------------------  Extra short format example 2  ------------------------->
+<h3>Extra short format example 2</h3>
+<p style="text-align:center;">Use for very large grids or for long page list in server paging</p>
+
+<tt style="color:blue;">
+&lt;<span style="color:darkred;">Grid</span>><br />
+&lt;<span style="color:darkred;">Par</span>><br />
+&lt;<span style="color:darkred;">P</span> <span style="color:red;">Name</span>='B' <span style="color:red;">List</span>='Name,Csum'/><br />
+&lt;/<span style="color:darkred;">Par</span>><br />
+&lt;<span style="color:darkred;">Body</span>>#<span style="color:rgb(153,204,0);">@@</span><span style="color:black;">B</span><span style="color:rgb(153,204,0);">@</span><span style="color:black;">10000</span><span style="color:rgb(153,204,0);">@</span>#<span style="color:black;">P1</span>#<span style="color:black;">43</span>#<span style="color:black;">P2</span>#<span style="color:black;">76</span>#<span style="color:black;">P3</span>#<span style="color:black;">45</span>#<span style="color:black;"> ... </span>#<span style="color:black;">P99</span>#<span style="color:black;">65</span><span style="color:rgb(153,204,0);">@</span>#<span style="color:black;">P100</span>#<span style="color:black;">23</span>#<span style="color:black;">P101</span>#<span style="color:black;">56</span>#<span style="color:black;"> ... </span>#<span style="color:black;">P199</span>#<span style="color:black;">34</span><span style="color:rgb(153,204,0);">@</span>#<span style="color:black;">P200</span>#<span style="color:black;">89</span>#<span style="color:black;"> ... </span>#<span style="color:black;">P9999</span>#<span style="color:black;">123</span>&lt;/<span style="color:darkred;">Body</span>><br />
+&lt;/<span style="color:darkred;">Grid</span>><br /> 
+</tt>
+
+<!-----------------------------------------------------------------------  DTD XML format  ------------------------------------------------->
+<a name="DTDFormat"></a>
+<h2>DTD XML format</h2>
+<p class="H2">Use only when needed DTD validation</p>
+
+It is <i><b>largest</b></i> and has <i><b>slowest</b></i> processing. Use it for short data that need to be generated and processed on server side by standard XML parser <i><b>with</b></i> <b style="color:blue;">DTD</b> validation and using <i><b>getElementById</b></i> (or similar) method to find row by id.<br /><br />
+
+DTD format contains each cell data and settings in separate tag <span style="color:red;">&lt;<b style="color:blue;">U</b>></span>. This tag has attribute <b style="color:blue;">N</b> with column name and can have attribute <b style="color:blue;">V</b> with cell value and other attributes named as cell parameters.<br />
+<br />
+
+<!--------------------  DTD format example  ------------------------->
+<h3>DTD format example</h3>
+
+<tt style="color:blue;">
+&lt;<span style="color:darkred;">Grid</span>>&lt;<span style="color:darkred;">Body</span>>&lt;<span style="color:darkred;">B</span>><br />
+&lt;<span style="color:darkred;">I</span> <span style="color:red;">id</span>='r1' <span style="color:red;">CanDelete</span>='0'>&lt;<span style="color:darkred;">U</span> <span style="color:red;">N</span>='c1' <span style="color:red;">V</span>='1'/>&lt;<span style="color:darkred;">U</span> <span style="color:red;">N</span>='c2' <span style="color:red;">V</span>='xx'/><br />
+  <div class="L1">
+  &lt;<span style="color:darkred;">I</span> <span style="color:red;">id</span>='r11' <span style="color:red;">CanEdit</span>='0'>&lt;<span style="color:darkred;">U</span> <span style="color:red;">N</span>='c2' <span style="color:red;">V</span>='xx-aa' CanEdit='1'/>&lt;<span style="color:darkred;">U</span> <span style="color:red;">N</span>='c3' <span style="color:red;">V</span>='10'/>&lt;/<span style="color:darkred;">I</span>>
+  &lt;<span style="color:darkred;">I</span> <span style="color:red;">id</span>='r12'>&lt;<span style="color:darkred;">U</span> <span style="color:red;">N</span>='c2' <span style="color:red;">V</span>='xx-bb'/>&lt;<span style="color:darkred;">U</span> <span style="color:red;">N</span>='c3' <span style="color:red;">V</span>='20'/>&lt;/<span style="color:darkred;">I</span>>
+  </div>
+&lt;/<span style="color:darkred;">I</span>><br />
+&lt;<span style="color:darkred;">I</span> <span style="color:red;">id</span>='r2'>&lt;<span style="color:darkred;">U</span> <span style="color:red;">N</span>='c1' <span style="color:red;">V</span>='2'/>&lt;<span style="color:darkred;">U</span> <span style="color:red;">N</span>='c2' <span style="color:red;">V</span>='yy'/><br />
+  <div class="L1">
+  &lt;<span style="color:darkred;">I</span> <span style="color:red;">id</span>='r21' <span style="color:red;">Calculated</span>='1'>&lt;<span style="color:darkred;">U</span> <span style="color:red;">N</span>='c1' <span style="color:red;">V</span>='10'/>&lt;<span style="color:darkred;">U</span> <span style="color:red;">N</span>='c2' <span style="color:red;">V</span>='yy-aa'/>&lt;<span style="color:darkred;">U</span> <span style="color:red;">N</span>='c3' <span style="color:red;">Formula</span>='c1*2'/>&lt;/<span style="color:darkred;">I</span>>
+  </div>
+&lt;/<span style="color:darkred;">I</span>><br />
+&lt;/<span style="color:darkred;">B</span>>&lt;/<span style="color:darkred;">Body</span>>&lt;/<span style="color:darkred;">Grid</span>><br />
+</tt>
+
+<!-----------------------------------------------------------------------  JSON format  ------------------------------------------------->
+<a name="JSONFormat"></a>
+<h2>JSON format</h2>
+<p class="H2">Use if you are more familiar with JavaScript than with XML</p>
+
+It is <b>shorter</b> than <b>Internal</b> format, but <b>longer</b> than <b>Short</b> formats. It can be <b>slower</b> than other formats for long data, especially in IE7 and below.<br />
+It does <u>not</u> require to replace characters &lt; and & by XML entities, it simplifies including HTML code into the data.<br /> 
+<span style="color:red;">In strings must be replaced '\' by '\\' and if required " by \".</span><br /><br />
+
+JSON format used standard JavaScript Object Notation. The strings must be quoted, the number value need not. The bool values must be set as number 0 or 1.<br /><br />
+
+The root &lt;Grid> tag is defined as not named object { }.<br /> 
+Before and after the root object can be any characters except &lt; and {, for example  <tt>var MyData = { /* grid data here */ }</tt><br /> 
+The definition can contains standard JavaScript comments - block /*...*/ and line //<br /><br />
+
+The <b>simple</b> root tags <b style="color:blue;">&lt;Cfg></b>, <b style="color:blue;">&lt;IO></b>, <b style="color:blue;">&lt;Panel></b>, <b style="color:blue;">&lt;Header></b>, <b style="color:blue;">&lt;Toolbar></b>, <b style="color:blue;">&lt;MenuCfg></b>, <b style="color:blue;">&lt;Pager></b>, <b style="color:blue;">&lt;Filter></b>, are defined as object named as the tag,<br /> 
+  <div class="L1">for example <tt>&lt;Cfg MainCol='A'/></tt> is defined as <tt>Cfg:&#123;MainCol:'A'}</tt></div> 
+The <b>list</b> root tags <b style="color:blue;">&lt;Cols></b>, <b style="color:blue;">&lt;LeftCols></b>, <b style="color:blue;">&lt;RightCols></b>, <b style="color:blue;">&lt;Def></b>, <b style="color:blue;">&lt;DefCols></b>, <b style="color:blue;">&lt;Head></b>, <b style="color:blue;">&lt;Foot></b>, <b style="color:blue;">&lt;Body></b>, <b style="color:blue;">&lt;Solid></b>, <b style="color:blue;">&lt;Pagers></b>, <b style="color:blue;">&lt;Resources></b>, <b style="color:blue;">&lt;Zoom></b>, <b style="color:blue;">&lt;Filters></b> and <b style="color:blue;">&lt;Changes></b> tags are arrays in [ ],<br /> 
+  <div class="L1">for example <tt>&lt;Body> ... &lt;/Body></tt> is defined as  <tt>Body:[ ... ]</tt></div> 
+<i>The tags &lt;Cols>, &lt;LeftCols>, &lt;RightCols>, &lt;Def> and &lt;DefCols> are arrays since version <b>7.0</b>, in previous versions were objects with named children.</i><br />
+The <b style="color:blue;">&lt;D></b> and <b style="color:blue;">&lt;C></b> tags are defined in array as unnamed objects with id or Name attribute and other attributes,<br /> 
+  <div class="L1">for example: <tt>&lt;Cols>&lt;C Name='<b style="color:blue;">A</b>' Type='Int'/>&lt;/Cols></tt> is defined as <tt>Cols:[&#123;Name:'<b style="color:blue;">A</b>',Type:'Int'} ]</tt></div>
+<b>Nested</b> <b style="color:blue;">&lt;I></b> tags (in &lt;B>, &lt;I> or &lt;D>) are defined in array named <b style="color:blue;">Items</b>,<br /> 
+  <div class="L1">for example <tt>&lt;I id='R1'>&lt;I id='R1-1'/>&lt;/I></tt> is defined as <tt>&#123;id:'R1',<b style="color:blue;">Items:[</b>&#123;id:'R1-1'}<b style="color:blue;">]</b>}</tt></div> 
+&lt;B> tag without attributes can be defined as array of row objects, with attributes normally with Items tag, for example &lt;B>&lt;I/>&lt;I/>&lt;/B> is defined as [{},{}]<br /> 
+<span style="color:red;">It is <u>not</u> possible to define two objects with the same name!</span> For example you <b>cannot define</b> <tt>&#123; Cfg:&#123;id:"grid"}, Cfg:&#123;MainCol:"A"} }</tt><br /> 
+<i>Since 14.0</i> it is possible to define more same root tags with different suffix separated by "_" like Cfg: , Cfg_1:, Cfg_XXX:, etc.<br />
+It is <u>not</u> possible to use tag names (except root tags) <b>Header</b>, <b>Filter</b>, <b>Group</b>, <b>Search</b>, <b>Toolbar</b> and <b>Tabber</b>, they must be defined by <b style="color:red;">Kind</b> attribute like <tt>&lt;Group ... /></tt> is defined as <tt>&#123; <b style="color:blue;">Kind</b>:"Group" ... }</tt><br /> 
+The <b style="color:blue;">&lt;Lang></b> tag is defined as object with nested named objects,<br />
+	<div class="">for example <tt>&lt;Lang>&lt;Format ValueSeparator=','/>&lt;/Lang></tt> is defined as <tt>Lang: &#123; Format: &#123; ValueSeparator:':' } }</tt></div>
+<br />
+  
+<!--------------------  JSON format example  ------------------------->
+<h3>JSON format example</h3>
+  
+<tt>
+<b style="color:red;">var</b> Test = &#123;<br />
+Cfg: &#123; id:<span style="color:#FF00FF;">"Json"</span>, MainCol:<span style="color:#FF00FF;">"A"</span>, Paging:3 },<br />
+Cols: [<br />
+  <div class="L1">
+  &#123; Name:<span style="color:#FF00FF;">"A"</span> },<br />
+  &#123; Name:<span style="color:#FF00FF;">"B"</span>, Type:<span style="color:#FF00FF;">"Int"</span>, Formula:<span style="color:#FF00FF;">"1+1"</span> },<br />
+  &#123; Name:<span style="color:#FF00FF;">"C"</span>, Format:<span style="color:#FF00FF;">"d.M.yyyy"</span> }<br />
+  ],<br />
+  </div>
+RightCols: [<br />
+  <div class="L1">
+  &#123; Name:<span style="color:#FF00FF;">"D"</span>, Type:<span style="color:#FF00FF;">"Date"</span>, Format:<span style="color:#FF00FF;">"hh:mm"</span> }<br />
+  ],<br />
+  </div>
+Def: [<br />
+  <div class="L1">
+  &#123; Name:<span style="color:#FF00FF;">"R"</span>, CType:<span style="color:#FF00FF;">"Date"</span> }<br />
+  ],<br />
+  </div>
+Header: &#123; A:<span style="color:#FF00FF;">"AAA"</span> },<br />
+Head: [<br />
+  <div class="L1">
+  &#123; Kind:<span style="color:#FF00FF;">"Header"</span>, A:<span style="color:#FF00FF;">"H1"</span> },<br />
+  &#123; A:<span style="color:#FF00FF;">"H2"</span> },<br />
+  &#123; Kind:<span style="color:#FF00FF;">"Filter"</span>, B:3, BFilter:3 }<br />
+  ],<br />
+  </div>
+Foot: [<br />
+  <div class="L1">
+  &#123; A:<span style="color:#FF00FF;">"F1"</span> }<br />
+  ],<br />
+  </div>
+Body: [<br />
+  <div class="L1">
+  [<br />
+  &#123; A:<span style="color:#FF00FF;">"R1"</span>, id:<span style="color:#FF00FF;">"R1"</span>, Deleted:1, C:<span style="color:#FF00FF;">'1/1/2000'</span> },<br />
+  &#123; A:<span style="color:#FF00FF;">"R2"</span>, id:<span style="color:#FF00FF;">"R2"</span>, Added:1, Items: [<br />
+    <div class="L1">  
+    &#123; A:<span style="color:#FF00FF;">"R2-1"</span>, Changed:1, AChanged:1 },<br />
+    &#123; A:<span style="color:#FF00FF;">"R2-2"</span>, Items: [<br />
+      <div class="L1">
+      &#123; A:<span style="color:#FF00FF;">"R2-2-1"</span>, Selected:1 }<br />
+      ]}<br />
+      </div>
+    ]}
+    </div>
+  ],<br />
+  &#123; id:<span style="color:#FF00FF;">'B2'</span>,Count:1 }<br />
+  ]<br />
+  </div>
+}
+</tt>
+
+</div>
+</body>	
+</html>

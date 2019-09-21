@@ -1,0 +1,283 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Default rows</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Default rows</h1>
+<p>TreeGrid documentation</p>
+
+Every row &lt;<b>I</b>> has predefined attribute values in its default row &lt;<b>D</b>>. The values from &lt;D> are used when the row &lt;I> has some attribute not set. If row has attribute set to empty value, the default value is not used.<br />
+<i>Using defaults helps you to reduce data size and also to control adding and moving rows. But using defaults is not required.</i><br />
+Using defaults is good especially for trees with different levels, at least to differentiate tree nodes and data rows.<br />
+Default rows are used for restrictions in dragging and copying rows in tree.<br /><br />
+
+Defaults &lt;D> are identified by their attribute <b><a href="#DName">Name</a></b>. By this <b>Name</b> string are referenced from rows or other defaults by attributes <b><a href="#IDef">Def</a></b> or <b><a href="#ICDef">CDef</a></b>.<br /><br />
+
+<b><a href="#IDef">Def</a></b> attribute specifies default for the row itself.<br /> 
+You can use <b>Def</b> attribute even in &lt;D> tag to reference one or more other &lt;D>. This means that you define &lt;I> that references to its &lt;D> that references to another &lt;D>, that ...<br />
+If you don't set <b>Def</b> attribute for any &lt;D> or &lt;I> tag the default is always <tt>&lt;D Name="<b>R</b>"></tt>. Only for fixed rows is predefined <tt>&lt;D Name="<b>Fixed</b>"></tt> that references "R" default too. This means that any attribute value not set in branch of &lt;I> and &lt;D> tags is at last read from "R" default.<br />
+Pay attention to cross-references among &lt;D> tags.<br /><br />
+
+<b><a href="#ICDef">CDef</a></b> attribute specifies default for all immediate children rows, but only if they have not set their own <b><a href="#IDef">Def</a></b> attribute.<br /> 
+When adding rows to children of the row, the new row will implicitly have default the same as parent rows' <b>CDef</b>.<br />
+You can use <b>CDef</b> attribute even in &lt;D> tag to predefine <b>CDef</b> attribute for all rows that use this default (the <b>CDef</b> attribute does not concern &lt;D> tag itself, unlike <b>Def</b> attribute).<br /> 
+The <b>CDef</b> attribute can be also set in tag &lt;<b>Root</b>>, this specifies default for all root rows. In this case &lt;Root> acts as parent for all variable root rows, including adding and dragging rows to root.<br /><br />
+
+You can specify to row which default to use by many ways, all can be done in every case, but some are better for some cases and some for other cases.<br />
+Using <b>Def</b> attribute only is simpler but by <b>CDef</b> attribute you can control more. Remember, <b>CDef</b> attribute you can set even in &lt;D> and &lt;Root> tags too.<br /><br />
+
+If you don't use any <b>Def</b> or <b>CDef</b> attributes, all variable rows will have default <tt>&lt;D Name="<b>R</b>"></tt>, header rows <tt>&lt;D Name="<b>Header</b>"></tt>, other fixed rows <tt>&lt;D Name="<b>Fixed</b>"></tt> and solid rows <tt>&lt;D Name="<b>Solid</b>"></tt>. These &lt;D> are defined in basic file <b><a href="Files.htm#DefaultsXml">Defaults.xml</a></b>. It means, if you don't need to use defaults, you need not do it. You can change attributes of "R" or "Fixed" if you use &lt;D> tag with this name in your data. New attributes you specify are merged or overwrite attributes specified in <b>Defaults.xml</b> => you don't need to edit this file for every new grid.<br />
+
+<!-----------------------------------------------------------  Example of default rows  ----------------------------------------------------------->
+<a name="DefaultsExample"></a>
+<h2>Example of default rows</h2>
+
+<i>This example show basic usage of default rows and Def and CDef attributes.</i><br /><br />
+
+<div style="float:left;width:450px;">
+<tt>
+&lt;Grid><br />
+&lt;Cols>&lt;C Name='A'/>&lt;/Cols><br />
+&lt;Def><br />
+  <div class="L1"> 
+  &lt;D Name='<b>R</b>' Expanded='0'/><br />
+	&lt;D Name='<b>Fixed</b>' CanEdit='0'/><br />
+	&lt;D Name='D1' AType='Int'/><br />
+	&lt;D Name='D2' AType='Lines'/><br />
+	&lt;D Name='D3' <b>AcceptDef</b>='D1,D3'/><br />
+  &lt;D Name='D4' <b>CDef</b>='D3' <b>Def</b>='D2'/><br />
+  </div>
+&lt;/Def><br />
+&lt;<b>Root</b> <b>CDef</b>='D4'/><br />
+&lt;Head><br />
+  <div class="L1">  
+  &lt;I/> 
+  </div>
+&lt;/Head><br />  
+&lt;Body><br />
+  <div class="L1">
+  &lt;B>
+    <div class="L1">
+    &lt;I/>					
+      <div class="L1">
+      &lt;I <b>Def</b>='D1' <b>CDef</b>='D3'>			
+        <div class="L1">
+        &lt;I/>				
+        </div>
+      </div>
+    &lt;/I>
+    </div>
+  &lt;/B>
+  </div>
+&lt;/Body><br />
+&lt;/Grid><br />  
+</tt>
+</div>
+
+<div style="float:left;font-size:98%;">
+<br /><br /><br />
+All rows in grid will be collapsed<br />
+All fixed rows in grid will be read only<br />
+This custom default sets type of column 'A' to integer<br />
+This custom default sets type of column 'A' to multiline text<br />
+This custom default permits dragging rows with <tt>Def='D1'</tt> and <tt>Def='D3'</tt> as children of rows that have <tt>Def='D3'</tt><br />
+This custom default sets all children Def attributes to D3. And inherits all settings from D2.<br /><br />
+
+All root variable rows without Def attribute will have set <tt>Def='D4'</tt><br /><br />
+
+Has <tt>Def='Fixed'</tt> (has <tt>AType='Text'</tt>, because all undefined Type are <tt>'Text'</tt>)<br /><br /><br /><br />
+
+Has <tt>Def='D4'</tt> because of setting Root CDef (has <tt>AType='Lines'</tt>)<br />
+Has <tt>Def='D1'</tt> because of its own setting (has <tt>AType='Int'</tt>)<br />
+Has <tt>Def='D4'</tt> because of its parent CDef setting (has <tt>AType='Lines'</tt>)<br />
+</div>
+<div style="clear:both;"></div>
+
+<!-----------------------------------------------------------  Example of changing default row  ----------------------------------------------------------->
+<a name="DefaultsChangeExample"></a>
+<h2>Example of changing default row</h2>
+
+<i>This example shows updating row when it gets children and becomes parent row or looses its children and becomes empty.</i><br />
+<i>The change can be done by adding new row, deleting row or moving row.</i><br /><br />
+
+<div style="float:left;width:450px;">
+<tt>
+&lt;Grid><br />
+&lt;Cfg MainCol="A"/><br />
+&lt;Cols><br />
+      <div class="L1">
+      &lt;C Name="A" Width="500"/>
+      </div>
+&lt;/Cols><br />
+&lt;Def><br />
+      <div class="L1">
+      &lt;D Name="<b>R</b>" <b>DefParent</b>="Node" <b>DefEmpty</b>="Item"/><br />		
+      &lt;D Name="<b>R</b>" <b>CDef</b>="Item"/><br />					
+      &lt;D Name="Node" Color="220,220,200"/><br />			
+      &lt;D Name="Item"/><br />
+      </div>
+&lt;/Def><br />
+&lt;<b>Root</b> <b>CDef</b>="Item"/><br />						
+&lt;Body><br />
+      <div class="L1">
+      &lt;B>
+            <div class="L1">
+            &lt;I Def="Node" A="1">					
+                  <div class="L1">
+                  &lt;I A="1-1"/>	
+                  </div>				
+            &lt;/I><br />
+            &lt;I A="2"/><br />						
+            &lt;I A="3"/><br />
+            &lt;I A="4"/><br />
+            </div>
+      &lt;/B>
+      </div>
+&lt;/Body><br />
+&lt;/Grid><br />
+</tt>
+</div>
+
+<div style="float:left;font-size:98%;">
+<br /><br /><br /><br /><br /><br />
+Any row if becomes parent its Def is set to "Node" and if becomes empty the Def is set to "Item".<br />
+Any row's new children will have set <tt>Def="Item"</tt>. Any children without Def has <tt>Def="Item"</tt>.<br />
+Parent row is colored, to show the change.<br /><br /><br />
+
+Any new root rows will have set <tt>Def="Item"</tt>. Any root rows without Def has <tt>Def="Item"</tt>.<br /><br /><br />
+
+It is parent row, so it has explicitly set <tt>Def="Node"</tt>.<br />
+This child has set <tt>Def="Item"</tt> due setting <tt>&lt;D Name="R" CDef="Item"/></tt>.<br /><br />
+
+This and next children have set Def=”Item” due setting <tt>&lt;Root CDef="Item"/></tt>.<br />
+</div>
+<div style="clear:both;"></div>
+
+<!-----------------------------------------------------------  Items related to default rows  ----------------------------------------------------------->
+<a name="DefaultsAttributes"></a>
+<h2>Items related to default rows</h2>
+
+<!-- Name -->
+<a name="DName"></a>
+<div class="XML">
+   <u></u> <b>&lt;D></b> <i>string</i>
+   <h4>Name</h4> <s>required attribute</s>
+</div>
+Name of the default row. Required. This name is referenced in row attributes <a href="#IDef">Def</a>, <a href="#ICDef">CDef</a>, <a href="#IAcceptDef">AcceptDef</a>, <a href="#IDefEmpty">DefEmpty</a>, <a href="#IDefParent">DefParent</a>.<br />
+Any custom name can be used for default row, but there are predefined default row names (in <a href="Files.htm#DefaultsXml">Defaults.xml</a>):<br /> 
+	<div class="L2">
+  "<b style="color:blue;">R</b>" - default row for all rows and defaults without <b>Def</b> attribute.<br />
+	"<b style="color:blue;">Fixed</b>" - default row for all fixed (head and foot) rows without Def attribute. Except Header. By default it inherits the <b>Def</b> "<b>R</b>".<br />
+	"<b style="color:blue;">Solid</b>" - default row for all solid space rows without Def attribute.<br />
+	"<b style="color:blue;">Header</b>" - default row for all <b>Header</b> rows.<br />
+	"<b>Group</b>" - default row for all created grouping rows (parent rows automatically created when grouping). By default it inherits the <b>Def</b> "<b>R</b>".<br />
+      <div class="L2">
+      In fact, any default with <tt><b>Group</b> = '1'</tt> is default for grouping rows.
+      </div>
+  </div>
+
+<!-- Def -->
+<a name="IDef"></a>
+<div class="XML">
+   <u><i>upd <b>10.0</b></i></u> <b>&lt;I>&lt;D></b> <i>string</i>
+   <h4>Def</h4> <s>["<b style="color:blue;">R</b>"]</s>
+</div>
+The name of default row &lt;<b>D</b>> used for this row or default row. From this default the row inherits (reads) all its <u>not set</u> attribute values.<br />
+<i>In &lt;D> tag is this attribute is used only during loading data - fills the default by values from its parent default (and its parents).</i><br /> 
+<i>Since 10.0</i> the &lt;D Def/> can contain more default names, comma separated. But the &lt;I Def/> can contain only one default!<br />
+If the &lt;D Def/> derives from more default rows and they define the same attribute, the first default row listed in Def is used.<br />
+<i>In space row it is not possible to define cells in the Def, use <a href="RowSpace.htm#SpaceMirror">Mirror</a> attribute instead.</i><br />
+
+<!-- Def -->
+<a name="TRowDef"></a>
+<div class="API">
+   <u></u> <b style="margin-left:-10px;width:105px;">API TRow var.</b> <i>TRow</i>
+   <h4>Def</h4> 
+   <s><span style="color:red;">read only</span></s>
+</div>
+On runtime the row Def attribute points to default row object instead of its name, the Def name is accessible by row.Def.Name.<br />
+
+<!-- CDef -->
+<a name="ICDef"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;I>&lt;Root></b> <i>string</i>
+   <h4>CDef</h4> <s>["<b style="color:blue;">R</b>"]</s>
+</div>
+The name of default row for row's children. This value is used as child's <a href="#IDef">Def</a> attribute value only for children without its own <a href="#IDef">Def</a> attribute set.<br />
+This attribute is used only on load, here it fills the row <a href="#IDef">Def</a> attribute value.<br />
+This value is also used as value of <a href="#IDef">Def</a> attribute for new child rows added to this parent.<br />
+The &lt;<b>Root</b> <b>CDef</b>/> controls all root variable rows (like children of the hidden root row).<br />
+
+<!-- AcceptDef -->
+<a name="IAcceptDef"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;I>&lt;Root></b> <i>string[ ]</i>
+   <h4>AcceptDef</h4> <s></s>
+</div>
+Comma separated array of names of default rows that are accepted as children of this row.<br />
+Only rows with <a href="#IDef">Def</a> attribute present in this array can be moved or copied to the row's children.<br />
+If this attribute is missing, the row accepts all rows. If it is empty, it accepts no rows.<br />
+The &lt;<b>Root</b> <b>AcceptDef</b>/> controls moving and copying into root (like children of the hidden root row).<br />
+
+<!-- DefEmpty -->
+<a name="IDefEmpty"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>DefEmpty</h4> <s></s>
+</div>
+Name of default row that will be set to row's <a href="#IDef">Def</a> attribute when the row loses all its children.<br />
+After change the row will be re-rendered to show all the changes related to the change.<br /> 
+<i>This attribute is used only after the change, not on loading, on loading the row should have set correct Def attribute.</i><br />
+<i>Hidden rows are valid children, but deleted rows (even visible) are not children!</i><br />
+
+<!-- DefParent -->
+<a name="IDefParent"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>DefParent</h4> <s></s>
+</div>
+Name of default row that will be set to row's <a href="#IDef">Def</a> attribute when the row gets first children and becomes parent row.<br />
+After change the row will be re-rendered to show all the changes related to the change.<br /> 
+<i>This attribute is used only after the change, not on loading, on loading the row should have set correct Def attribute.</i><br />
+<i>Hidden rows are valid children, but deleted rows (even visible) are not children!</i><br />
+
+<!-- Def -->
+<a name="Def"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>TRow[ ]</i>
+   <h4>Def</h4> 
+   <s></s>
+</div>
+Named array of all default rows in grid, including the base defaults: <tt>"R"</tt>, <tt>"Fixed"</tt>, <tt>"Solid"</tt>, <tt>"Header"</tt> and <tt>"Group"</tt>.<br />
+To access or change some default attribute value use <tt>grid.Def[def_name].attribute</tt>.<br /> 
+To get some row attribute including default value use global function <tt>Get(row,"attribute")</tt>.<br />
+
+<!-- ChangeDef -->
+<a name="ChangeDef"></a>
+<div class="API">
+   <u><i>upd <b>6.4</b></i></u> <b>API method</b> <i>void</i>
+   <h4>ChangeDef</h4> 
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>def</b>, <i>bool</i> <b>show</b> = 1, <i>bool</i> <b>undo</b> = 0)</s>
+</div>
+Changes Def attribute of the row to default named <b>def</b>. If <tt><b>show</b> = 1</tt> it refreshes row and shows the changes.<br />
+It does not update row values, so cell types should <u>not</u> be changed by switching to the new default or must be updated externally.<br />
+
+<!-- OnChangeDef -->
+<a name="OnChangeDef"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnChangeDef</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>def</b>)</s>
+</div>
+Called when changing default row due <a href="#IDefEmpty">DefEmpty</a> and <a href="#IDefParent">DefParent</a>.<br />
+It is called before the change, def is name of the new default row.<br />
+Return different default row name to change it, or null to continue or empty string to suppress the change.<br />
+<i>It is called from ChangeDef method.</i><br />
+
+</div>
+</body>	
+</html>

@@ -1,0 +1,353 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Row identification</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Row id - identification on server</h1>
+<p>TreeGrid documentation</p>
+
+The rows must be somehow identified on server for <b>uploading changes</b> to server and for <b>server paging</b>.<br />
+The rows in TreeGrid are identified by <a href="#IId">id</a> attribute, this attribute is always sent to server in every request.<br /><br />
+
+<i>To be sure what id the rows have, you can define new id column <tt>&lt;C Name='id'/></tt>.</i><br />
+
+<!------------------------------------------------------------------ Setting row id attribute -------------------------------------------------------------->
+<a name="RowId"></a>
+<h2>Setting row id attribute</h2>
+
+This is the basic option. Set <a href="#IId">id</a> attribute of every row to unique string. By default this string can contain only letters and '_'.  It can be changed by <a href="#CfgIdChars">IdChars</a>.<br />
+New row will get new id generated from the same characters.<br /> 
+The new generated id is always the highest id in the grid.<br />
+If row has neither set its id nor generated according to IdNames, it automatically set to "R"+number from 1.<br />
+
+<!-- id -->
+<a name="IId"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>string</i>
+   <h4>id</h4> <s><i>Both letters lowercase!</i></s>
+</div>
+Unique ID of the row.<br />
+Set it in input XML for every row. It can contain only characters defined in &lt;Cfg <a href="#CfgIdChars">IdChars</a> />.<br />
+For new rows it will be automatically generated from the characters defined in &lt;Cfg <a href="#CfgIdChars">IdChars</a> />.<br />
+<i>The id attribute must <u>not</u> be changed by API.</i><br />
+
+<!-- IdChars -->
+<a name="CfgIdChars"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>IdChars</h4> <s><tt>["_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"]</tt></s>
+</div>
+Accepted characters when generating new id. In this order.<br />
+Example for the default setting: if the last id was "ab" the next id is "ac", for "az" is "b_", for "zzz" is "____".<br />
+
+<!-- NumberId -->
+<a name="CfgNumberId"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>NumberId</h4> <s>[0]</s>
+</div>
+Set it to <b>1</b> for generating number ids. And set <tt><a href="#CfgIdChars">IdChars</a> = '0123456789'</tt>.
+This attribute says, that the id cannot start with 0.<br />
+In fact, this attribute says, that id cannot start with count of NumberId characters from start of <a href="#CfgIdChars">IdChars</a>.<br />
+The start from some higher number than 0 set <a href="#CfgLastId">LastId</a> attribute.<br />
+
+<!-- IdPrefix -->
+<a name="CfgIdPrefix"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>IdPrefix</h4> <s></s>
+</div>
+This string is inserted before generated new id (before the last part).<br />
+In this case all ids in XML must contain this prefix.<br />
+
+<!-- IdPostfix -->
+<a name="CfgIdPostfix"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>IdPostfix</h4> <s></s>
+</div>
+This string is appended at the end of generated new id.<br />
+In this case all ids in XML must contain this postfix.<br />
+
+<!-- LastId -->
+<a name="CfgLastId"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>LastId</h4> <s></s>
+</div>
+Last (maximal) id when used <a href="PagingServer.htm">server paging</a> or server child paging, to not generate duplicated ids on client.<br /> 
+<i>Can be used only when <a href="#CfgIdNames">IdNames</a> contains only one item!</i><br />
+New generated id (of new added row) will get next id.<br />
+If <a href="#CfgIdPrefix">IdPrefix</a> and / or <a href="#CfgIdPostfix">IdPostfix</a> are used, the LastId attribute can, but need not contain them.<br />
+
+<!-- DuplicateId -->
+<a name="CfgDuplicateId"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>DuplicateId</h4> <s>[0]</s>
+</div>
+What to do if two rows have the same id. Bit array. <br />
+<table>
+   <tr><td style="width:40px;">1. bit</td><td style="width:20px;">&amp;<b>1</b></td><td>
+      For <b>0</b> it generates unique id of the actual row that's id is being set. Default behavior.<br />
+      For <b>1</b> it generates unique id of the old row that collides with the new row.
+      Useful when changing more row ids by &lt;Changes> tag and rows can get duplicate ids temporary.
+   </td></tr>
+   <tr><td>2. bit</td><td>&amp;<b>2</b></td><td>If set, does not show warning about duplicate row id.</td></tr>
+   <tr><td>3. bit</td><td>&amp;<b>4</b></td><td>If set, applies the DuplicateId also when loading data.</td></tr>
+</table>
+
+<!-- NewId -->
+<a name="INewId"></a>
+<div class="XML">
+   <u><i>upd <b>9.1</b></i></u> <b>&lt;I></b> <i>string</i>
+   <h4>NewId</h4> <s></s>
+</div>
+New row id returned from server.<br />
+To change row id attribute from server you cannot set it directly, because the row will not be found, you need to set it to <b>NewId</b>.<br />
+The server should return the new row id in save response in &lt;Changes> tag like: <tt>&lt;Grid>&lt;Changes>&lt;I id='orig id' Changed='1' NewId='new id'/>&lt;/Changes>&lt;/Grid></tt><br />
+<i>(Since 9.1)</i> It is set also in uploaded data if the row id will be changed due IdNames or FullId settings. Only when set <tt>Upload_Flags='NewId'</tt><br /> 
+
+<!-- AutoIdPrefix -->
+<a name="CfgAutoIdPrefix"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>AutoIdPrefix</h4> <s>["AR"]</s>
+</div>
+This string is inserted before every automatically generated id.<br />
+For every row without id is created unique number id from 1 with this prefix: AR1, AR2, AR3 ...<br />
+The number is increased for every row and is never restarted, except reloading whole grid by Reload method (but <u>not</u> ReloadBody).<br />
+
+<!-- AutoId -->
+<a name="AutoId"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API variable</b> <i>int</i>
+   <h4>AutoId</h4>
+   <s></s>
+</div>
+The automatically generated id that will be get by the next new row. Starts on 1 and is increased after any new row added.<br />
+Change it carefully to never generate duplicate ids.<br />
+
+<!-- GroupIdPrefix -->
+<a name="CfgGroupIdPrefix"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>GroupIdPrefix</h4> <s>["GR"]</s>
+</div>
+This string is inserted before automatically generated id for group rows.<br />
+For every group row is created unique number id from 1 with this prefix: GR1, GR2, GR3 ... It is independent on AutoId for normal rows.<br />
+The id number is set back to 1 on every grouping change.<br />
+
+<!-- GroupIdValue -->
+<a name="CfgGroupIdValue"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>GroupIdValue</h4> <s>[0]</s>
+</div>
+For <b>0</b> it creates the group row ids as <a href="RowId.htm#CfgGroupIdPrefix">GroupIdPrefix</a> + ascending number<br />
+For <b>1</b> it creates the group row ids as column name + <a href="RowId.htm#CfgGroupIdPrefix">GroupIdPrefix</a> + grouping value<br />
+For <b>2</b> it creates the group row ids as column name + <a href="RowId.htm#CfgGroupIdPrefix">GroupIdPrefix</a> + first child row id<br />
+For <b>3</b> it creates the group row ids as row Level + <a href="RowId.htm#CfgGroupIdPrefix">GroupIdPrefix</a> + grouping value<br />
+For <b>4</b> it creates the group row ids as row Level + <a href="RowId.htm#CfgGroupIdPrefix">GroupIdPrefix</a> + first child row id<br />
+
+<!-- ChildIdPrefix -->
+<a name="CfgChildIdPrefix"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>ChildIdPrefix</h4> <s>["CR"]</s>
+</div>
+This string is inserted before automatically generated id for child page rows (created by <a href="TreePaging.htm#IMaxChildren">MaxChildren</a> attribute).<br />
+For every child page is created unique number id from 1 with this prefix: CR1, CR2, CR3 ... It is independent on AutoId for normal rows.<br />
+The number is increased for every child page and is never restarted, except reloading whole grid by Reload method (but not ReloadBody).<br />
+
+<!------------------------------------------------------------------  Row id in tree  -------------------------------------------------------------->
+<a name="RowIdTree"></a>
+<h2>Row id in tree</h2>
+In tree you can identify rows according to their parents by setting <a href="#CfgFullId">FullId</a>.<br />
+
+<!-- FullId -->
+<a name="CfgFullId"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>FullId</h4> <s>[0]</s>
+</div>
+If set to 1, row <a href="#IId">id</a> contains all its parent ids as id prefix, separated by '$'.<br />
+In input XML the ids can be full or only parts. If the id is only part, it is updated on load and for API it is always full.<br />
+If parent id is "R1" the input row id can be "R2" or "R1$R2", for upload and in API is the id always "R1$R2".<br />
+For example: <tt>&lt;I id='1'> &lt;I id='1-1'/> &lt;I id='1-2'>&lt;I id='1-2-1'/>&lt;/I>&lt;/I></tt> will be replaced as full ids:<br /> 
+<tt>&lt;I id='1'> &lt;I id='1$1-1'/> &lt;I id='1$1-2'>&lt;I id='1$1-2$1-2-1'/>&lt;/I>&lt;/I></tt>. Or you can set it straight in the input XML.<br />
+If row is moved, the <b>id</b> attribute is <u>not</u> changed immediately, it is updated after server accept the changes.<br />
+
+<!-- NewId -->
+<a name="GetRowById"></a>
+<div class="XML">
+   <u><i>upd <b>9.1</b></i></u> <b>&lt;I></b> <i>string</i>
+   <h4>NewId</h4> <s></s>
+</div>
+New row id returned from server.<br />
+To change row id attribute from server you cannot set it directly, because the row will not be found, you need to set it to <b>NewId</b>.<br />
+<i>(Since 9.1)</i> It is set also in uploaded data if the row id will be changed due IdNames or FullId settings. Only when set <tt>Upload_Flags='NewId'</tt><br />
+
+<!------------------------------------------  Using one or more (editable) columns as row identity  -------------------------------------------------->
+<a name="RowIdColumn"></a>
+<h2>Using one or more (editable) columns as row identity</h2>
+
+As row identity (like database primary key) you can use any row attributes or column names set to <a href="#CfgIdNames">IdNames</a>.<br />
+If used editable columns as id source, the last attribute in IdNames is automatically updated to be the primary key always unique.<br />
+The row id attribute is generated from these attributes, so on upload and in API you can use this id attribute.<br /><br />
+
+<i>All the primary keys set in input XML must be unique!<br />
+The values in the last attribute from <a href="#CfgIdNames">IdNames</a> must contain only characters from <a href="#CfgIdChars">IdChars</a> or must be set <tt><a href="#CfgAppendId">AppendId</a>='1'</tt>.<br />
+The row attribute <b>id</b> is changed only after server accepts changes, never on source attribute value change!</i><br />
+
+<!-- IdNames -->
+<a name="CfgIdNames"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>IdNames</h4> <s>["id"]</s>
+</div>
+Comma separated list of attributes fully identifies the row, these attributes are like <i><b>unique primary key</b></i> in database table.<br />
+The list can contain column names, attributes like <a href="RowDefaults.htm#IDef">Def</a> or any user defined row attribute, but must <u>not</u> contain the <b>id</b> attribute itself.<br /><br />
+
+The row <a href="#IId">id</a> attribute is automatically created from the attribute values from the list, separated by '$'. If any value contains '$', it is replaced by '_'.<br /><br />
+
+The <b>last attribute</b> in list is specific, because its value is generated automatically for new rows from <a href="#CfgIdChars">IdChars</a>, <a href="#CfgIdPrefix">IdPrefix</a> and <a href="#CfgIdPostfix">IdPostfix</a>.<br />
+If the list item is <b>editable column</b> and its value is changed, there is possibility that the <b>id</b> will <u>not</u> be unique.<br />
+In this case the <b>last attribute</b> value is re-generated (before changes are sent to server).<br />
+After changes are sent to server, the row <b>id</b> is updated according to changed attribute (column) values.<br />
+<i>Remember, after a user changes the source of id, the <b>id</b> attribute itself is <u>not</u> changed, it is changed after server accepts the changes.</i><br /><br />
+
+When <b>new row</b> is added, the last attribute value is generated to ensure the id to be unique.<br />
+
+<!-- AppendId -->
+<a name="CfgAppendId"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>AppendId</h4> <s>[0]</s>
+</div>
+When a user changes some editable cell as source id part and the id becomes <u>not</u> unique:<br />
+  <div class="L1">
+  if set to <b>0</b>, the last attribute in <a href="#CfgIdNames">IdNames</a> is automatically re-generated.<br />
+	if set to <b>1</b>, the generated id is appended to the existing value in the last attribute in <a href="#CfgIdNames">IdNames</a>.<br />
+  </div>
+When new row is added, the cells get default values and if the row id becomes <u>not</u> unique:<br /> 
+  <div class="L1">
+  if set to <b>0</b>, the last attribute in <a href="#CfgIdNames">IdNames</a> is set to new generated id.<br />
+  if set to <b>1</b>, the generated id is appended to the default value in the last attribute in <a href="#CfgIdNames">IdNames</a>.<br />
+  </div>
+
+<!-- CaseSensitiveId -->
+<a name="CfgCaseSensitiveId"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>CaseSensitiveId</h4> <s>[1]</s>
+</div>
+How to compare ids if they are unique.<br /> 
+If used case insensitive ids, all the ids are always lower case.<br />
+
+<!-- IgnoreIdNames -->
+<a name="IIgnoreIdNames"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;I></b> <i>bool</i>
+   <h4>IgnoreIdNames</h4> <s>[0]</s>
+</div>
+If set to 1, this row does not set its id by IdNames. Use for auto generated rows like group rows with auto set ids.<br />
+
+<!-- FullId -->
+<a name="GetRowById"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>FullId</h4> <s>[0]</s>
+</div>
+If set to 1, to row <a href="#IId">id</a> there are added all its parent ids as id prefix, separated by '$'.<br />
+It means that the row primary key must be unique only within its parent.<br />
+If row is moved, the <b>id</b> attribute is <u>not</u> changed immediately, it is updated after server accept the changes.<br />
+
+<!-- NewId -->
+<a name="GetRowById"></a>
+<div class="XML">
+   <u><i>upd <b>9.1</b></i></u> <b>&lt;I></b> <i>string</i>
+   <h4>NewId</h4> <s></s>
+</div>
+New row id returned from server.<br />
+To change row id attribute from server you cannot set it directly, because the row will not be found, you need to set it to <b>NewId</b>.<br />
+<i>(Since 9.1)</i> It is set also in uploaded data if the row id will be changed due IdNames or FullId settings. Only when set <tt>Upload_Flags='NewId'</tt><br />
+
+<!-------------------------------------------------------------  API for row ids  ---------------------------------------------------------------->
+<a name="RowIdAPI"></a>
+<h2>API for row ids</h2>
+
+<!-- OnSetRowId -->
+<a name="OnSetRowId"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>string</i>
+   <h4>OnSetRowId</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>newid</b>)</s>
+</div>
+Called when new <a href="#IId">id</a> attribute is generated for the row. Returns new id. The row has still old id.<br />
+The <b>newid</b> and returned id is value for row <a href="#IId">id</a> attribute. It is full id, includes all parts and optionally parent id.<br />
+It is called when new row is added or row is copied or server returns NewId for the row or the id is changed by accepting changes.<br />
+
+<!-- OnChangeId -->
+<a name="OnChangeId"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnChangeId</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>oldvalue</b>)</s>
+</div>
+Called when the id column (the last column in <a href="#CfgIdNames">IdNames</a>) value has been automatically changed to be the id unique.<br />
+Called after a user changed some cell from <a href="#CfgIdNames">IdNames</a> and row id became non unique and has been automatically corrected.<br />
+Called also after row move when set <a href="#CfgFullId">FullId</a> and the id became non unique due the move to another parent.<br />
+It is called after the change, the row contains new value in the column, the <b>oldvalue</b> is original value.<br />
+
+<!-- OnGenerateId -->
+<a name="OnGenerateId"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>string</i>
+   <h4>OnGenerateId</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>newid</b>)</s>
+</div>
+Called when new unique part of id is generated or updated for the row. Returns new id value.<br />
+The <b>newid</b> and returned id is the generated part of id, this is the value for the last attribute from <a href="#CfgIdNames">IdNames</a> list.<br /> 
+
+<!-- GenerateId -->
+<a name="GenerateId"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>string</i>
+   <h4>GenerateId</h4>
+   <s>(<i>TRow</i> <b>row</b>)</s>
+</div>
+Generates new row's id and saves it to <a href="#CfgLastId">LastId</a>. Returns it. The id is only the last part for multi ids.<br />
+It does <u>not</u> change the row id.<br />
+
+<!-- Rows -->
+<a name="Rows"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API variable</b> <i>TRow[ ]</i>
+   <h4>Rows</h4>
+   <s><span style="color:red;">read only</span> JavaScript named array of row objects by their id</s>
+</div>
+All rows in grid by their <a href="#IId">id</a>. Including fixed and Space rows.<br />
+If the row has set its id neither in XML nor by IdNames, the id is automatically generated as "AR"+number from 1.<br />
+
+<!-- GetRowById -->
+<a name="GetRowById"></a>
+<div class="API">
+   <u><i>upd <b>7.0</b></i></u> <b>API method</b> <i>TRow</i>
+   <h4>GetRowById</h4>
+   <s>(<i>string</i> <b>id</b>, <i>string</i> <b>attr</b>, <i>bool</i> <b>nofixed</b>)</s>
+</div>
+Searches for the row by its id.<br />
+If the row exists in <a href="RowBasics.htm#Rows">Rows</a>, it returns the row from <a href="RowBasics.htm#Rows">Rows</a>, otherwise it iterates all rows in grid to find the row.<br />
+The advantage to <a href="RowBasics.htm#Rows">Rows</a> is that it can be used also before the Rows array is filled during grid creating.<br />
+The disadvantage is that it will be slow when the <a href="RowBasics.htm#Rows">Rows</a> does <u>not</u> contain given <b>id</b>.<br />
+<i>(Since 7.0)</i> If set <b>attr</b>, it searches the row according to this attribute value instead of id, in this case it always iterates all the rows.<br />
+<i>(Since 7.0)</i> If set <b>nofixed</b>, it does <u>not</u> search in fixed and space rows<br />
+
+</div>
+</body>	
+</html>

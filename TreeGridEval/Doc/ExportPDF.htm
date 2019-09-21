@@ -1,0 +1,370 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Export to PDF</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Print / export to PDF</h1>
+<p>TreeGrid documentation</p>
+
+Print and export of grid data to PDF document.<br /><br />
+
+The printing to PDF shares setting with standard printing, see <a href="Print.htm#Items">Choosing items to print</a> and <a href="Print.htm#Page">Page size</a>.<br /><br />
+
+In TreeGrid print menu it is possible to choose which columns or rows to print and set various printing options. <br />
+See <a href="GlobalSettings.htm#CfgMenu">Configuration menu</a> for basic settings or <a href="GlobalSettings.htm#MenuPrint">Print menu</a> for special settings.<br />
+<br />
+
+The printing must be done on server side by some third party tool that converts HTML to PDF.<br /> 
+By default (<i>since 14.0</i>) we use (headless) <b>Chrome</b> for the HTML to PDF conversion.<br />
+The examples for PDF export using Chrome are included in default trial package for various server scripts (ASP.NET, PHP, JSP).<br />
+<br />
+If the Chrome solution does not support your required features, we provide also two sample tools, WKHtmlToPdf as GPL command line tool using WebKit for rendering and EVOHtmlToPdf Converter as commercial ASP.NET library using IE for rendering. 
+There can be use also any other HTML to PDF conversion tool.<br />
+These two tools and examples with them are in extra package at <a href="http://www.treegrid.com/treegrid/Download/TreeGridEvalPDFExport.zip">http://www.treegrid.com/treegrid/Download/TreeGridEvalPDFExport.zip</a><br />
+<br />
+
+<i><b>The PDF export works in this way:</b></i><br />
+1) On client side in main TreeGrid application a user chooses what and how will be printed (in menu, see <a href="#CfgExportPDFCols">ExportPDFCol</a> and <a href="Print.htm#page">page size printing options</a>).<br />
+2) The client side TreeGrid uploads the chosen setting and other configuration to server (the url is defined by <a href="#ExportPDF_Url">ExportPDF_Url</a>).<br />
+3) The server side script creates HTML of the same TreeGrid according to received configuration by <a href="#PrintTreeGrid">PrintTreeGrid</a> function. It shows simple page that loads TreeGrid script and creates the grid by PrintTreeGrid() instead of &lt;bdo> or TreeGrid(). It should use the same data as the client side TreeGrid.<br />
+4) The server side script converts the HTML to PDF by some automation tool, e.g. WKHtmlToPdf or EVOHtmlToPdf.<br />
+5) The server side script returns the created binary PDF file as response of the client's request (received in point 2).<br /><br />
+
+
+<!-----------------------------------------------------------------------  Client side settings  ------------------------------------------------->
+<a name="Client"></a>
+<h2>Client side settings</h2>
+<p class="H2">Settings to set up the communication from client side to server side</p> 
+
+<!-- ExportPDF_Url -->
+<a name="ExportPDF_Url"></a>
+<div class="XML">
+   <u>new <b>6.7</b></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>ExportPDF_Url</h4> <s></s>
+</div>
+Destination for page that receives the grid configuration and creates and returns the binary PDF data.<br />
+This server URL should return the exported data as PDF file in HTTP <tt>content-type="application/pdf"</tt>.<br />
+This communication is <u>not</u> done by AJAX, but always by hidden form, so it can be used even if no ActiveX is supported.<br />
+Export cannot use Soap or Get communication.<br />
+To this URL is uploaded actual grid configuration and the server script should create and return the exported data by itself.<br />
+
+<!-- ExportPDF_Data -->
+<a name="ExportPDF_Data"></a>
+<div class="XML">
+   <u>new <b>6.7</b></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>ExportPDF_Data</h4> <s>["Data"]</s>
+</div>
+The name of form input in that will be uploaded exported data or configuration to Export_Url<br />
+
+<!-- ExportPDF_Type -->
+<a name="ExportPDF_Type"></a>
+<div class="XML">
+   <u>new <b>6.7</b></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>ExportPDF_Type</h4> <s>["settings"]</s>
+</div>
+Which configuration will be sent to server for export, case insensitive.<br />
+
+<u><b>Settings</b></u><br />
+To server will be send configuration (sorting, grouping, filters) and columns (positions, visibility and widths) and print settings in XML.<br />
+The server must generate the requested report in <b>PDF</b> according to the settings and stored data and return it to client.<br />
+
+<u><b>Expanded</b></u><br />
+Sends ids of all expanded rows in &lt;Cfg <a href="Tree.htm#CfgExpanded">Expanded</a>/> attribute, comma separated.<br />
+
+<u><b>Changes</b></u><br />
+Sends modified rows - rows with set attribute <b>Added</b>, <b>Deleted</b>, <b>Moved</b> or <b>Changed</b> (modified values). The rows are sent in &lt;<a href="DataUpload.htm#XML">Changes</a>> tag.<br />
+When set, the export does <u>not</u> save the changes to server before export, but includes them in the export request.<br /><br />
+
+<i>This attribute supports also all other settings like <b>Cookie</b> or <b>Data</b> defined for _Type, see <a href="DataUpload.htm#Upload_Type">Upload_Typey</a>.</i><br /><br />
+
+<strong>PDF Export supports also other Upload_ attributes: <b>ExportPDF_Flags</b> (see <a href="DataUpload.htm#Upload_Flags">Upload_Flags</a>), <b>ExportPDF_Attrs</b> (see <a href="DataUpload.htm#Upload_Attrs">Upload_Attrs</a>), <b>ExportPDF_Format</b> (see <a href="DataUpload.htm#Upload_Format">Upload_Format</a>) and <b>ExportPDF_XML</b> (see <a href="DataCommunication.htm#xxx_XML">xxx_XML</a>).</strong><br />
+
+<!-----------------------------------------------------------------------  Printing options  ------------------------------------------------->
+<a name="Print"></a>
+<h2>Printing options</h2>
+<p class="H2">Settings specific to PDF chosen on client side and used on server side<br />
+<b style="color:red;">Other printing setting are described at <a href="Print.htm#Items">Choosing items to print</a> and <a href="Print.htm#Page">Page size</a></b></p>
+
+<!-- ExportPDFCols -->
+<a name="CfgExportPDFCols"></a>
+<div class="XML">
+   <u>new <b>6.7</b> chg <b>9.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ExportPDFCols</h4> <s>[2]</s>
+</div>
+If and which menu will be shown before doing export to PDF.<br />
+<b>0</b> - no menu<br />
+<b>1</b> - menu with columns to select which columns will be exported. Only columns with <tt>CanPrint>='1'</tt> are listed. <i>(In TG prior 9.0 was tested CanExport instead of CanPrint.)</i><br />
+<b>2</b> - <i>(new 6.7)</i> menu with column and also with options for export to PDF<br />
+See <a href="GlobalSettings.htm#CfgMenu">Configuration menu</a> for basic settings or <a href="GlobalSettings.htm#MenuPrint">Print menu</a> for special settings.<br />
+
+<!-- PDFFormat -->
+<a name="CfgPDFFormat"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>PDFFormat</h4> <s>["pdf"] Saved to cookies, avoid it by &lt;Cfg PrintLap='1'/></s>
+</div>
+Format to export. TreeGrid provides server code and converters only for "pdf" format. Other formats must be handled by some custom converter. Case insensitive.<br />
+It is also file extension to save the report by, always lowercase.<br />
+
+<!-- PDFName -->
+<a name="CfgPDFName"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>PDFName</h4> <s>["Export"] Saved to cookies, avoid it by &lt;Cfg PrintLap='1'/></s>
+</div>
+File name to save the exported PDF by. It is without extension, extension is set by <b>PDFFormat</b>.<br />
+
+<!-- PDFFitPage -->
+<a name="CfgPDFFitPage"></a>
+<div class="XML">
+   <u>new <b>6.7</b> chg <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PDFFitPage</h4> <s>[0]  Saved to cookies, avoid it by &lt;Cfg PrintLap='1'/></s>
+</div>
+It can be set also in Print to PDF menu (when <a href="#CfgExportPDFCols">ExportPDFCols</a> = 2) and is sent to server along with the request.<br />
+The options are defined in Text.xml, by default are: <b>0</b> = Real size, <b>1</b> = Width, <b>2</b> = Height <i>(since 9.0)</i>, <b>3</b> = Single page.<br />
+<i>Since 9.0</i> it is used by TreeGrid to calculate DPI and page size and apply page breaks.<br />
+<i>Since 12.0 this attribute is used not only for PDF export, but also for normal printing to printer if set <a href="Print.htm#CfgPrintZoomFit">PrintZoomFit</a>.</i><br />
+
+<!-- PDFText -->
+<a name="CfgPDFText"></a>
+<div class="XML">
+   <u>new <b>6.7</b> chg <b>9.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PDFText</h4> <s>[1]  Saved to cookies, avoid it by &lt;Cfg PrintLap='1'/></s>
+</div>
+It can be set also in Print to PDF menu (when <a href="#CfgExportPDFCols">ExportPDFCols</a> = 2) and is sent to server along with the request. It is <u>not</u> used by TreeGrid.<br />
+<b><i>Since 9.0</i> it is hidden in menu by default, to show it set <tt>&lt;Lang>&lt;Text PDFText='the text'/>&lt;/Lang></tt></b><br />
+The options are defined in Text.xml, by default are: 0 = Image only, 1 = Selectable text, 2 = Selectable text with embedded fonts<br />
+
+<!-- PDFPageSize -->
+<a name="CfgPDFPageSize"></a>
+<div class="DEL">
+   <u>new <b>6.7</b> deleted <b>9.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PDFPageSize</h4> <s>[8] Saved to cookies, to not load it, set <tt><b>PrintLap</b>='1'</tt></s>
+</div>
+Replaced by <a href="Print.htm#CfgPrintPageSize">PrintPageSize</a>.<br />
+
+<!-- PDFPageOrientation -->
+<a name="CfgPDFPageOrientation"></a>
+<div class="DEL">
+   <u>new <b>6.7</b> deleted <b>9.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PDFPageOrientation</h4> <s>[0] Saved to cookies, to not load it, set <tt><b>PrintLap</b>='1'</tt></s>
+</div>
+Replaced by <a href="Print.htm#CfgPrintPageOrientation">PrintPageOrientation</a>.<br />
+
+<!-----------------------------------------------------------------------  Client side API  ------------------------------------------------->
+<a name="ClientAPI"></a>
+<h2>Client side API</h2>
+
+<!-- Action ExportPDF -->
+<a name="ActionsExportPDF"></a>
+<div class="ACT">
+   <u>new <b>6.7</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ExportPDF</h4>
+   <s>Attached to event <b>OnClickButtonExportPDF</b></s>
+</div>
+Creates a request for report in PDF and sends it to server.<br />
+
+<!-- OnExportStart -->
+<a name="OnExportStart"></a>
+<div class="API">
+   <u>new <b>6.0</b> <i>upd <b>7.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnExportStart</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>bool</i> <b>pdf</b>)</s>
+</div>
+Called before the export report is generated.<br /> 
+<i>(since 7.0)</i> <b>pdf</b> is true for export to PDF.<br />
+Return true to cancel export.<br />
+
+<!-- OnExportInit -->
+<a name="OnExportInit"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnExportInit</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string[Name]</i> <b>Cols</b>, <i>string[id]</i> <b>Rows</b>, <i>object</i> <b>source</b>)</s>
+</div>
+Called after the options are chosen by a user in menu and before the export is generated.<br />
+<b>Cols</b> is array of all columns to export, by column name. If the column is not listed, it is <u>not</u> exported.<br />
+<b>Rows</b> is array of rows to export, by row id. If the row is not listed, it is exported according to its <a href="#ICanExport">CanExport</a> value.<br />
+It is possible to modify these arrays.<br />
+Other settings like ExportFormat or ExportType are already read from configuration and can be modified in the grid attributes.<br />
+<b>source</b> is data source used, for PDF export it is grid.Source.ExportPDF.<br />
+<i>Can be used for custom export or export to different formats.</i><br />
+Return true to cancel export.<br />
+
+<!-- OnExport -->
+<a name="OnExport"></a>
+<div class="API">
+   <u><i>upd <b>7.0</b></i></u> <b>API event</b> <i>string</i>
+   <h4>OnExport</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>data</b>, <i>bool</i> <b>pdf</b>)</s>
+</div>
+Called after the export or configuration is created and before it is sent to server.<br /> 
+<b>data</b> is the created export or configuration.<br /> 
+<i>(since 7.0)</i> <b>pdf</b> is true for export to PDF.<br />
+Return true to suppress the export.<br />
+Or return new or updated data to send.<br />
+
+<!-- SaveExport -->
+<a name="SaveExport"></a>
+<div class="API">
+   <u>new 12.1</u> <b>API method</b> <i>void</i>
+   <h4>SaveExport</h4>
+   <s>(<i>string</i> <b>data</b>, <i>object</i> <b>source</b> = null)</s>
+</div>
+Saves exported <b>data</b> to file (<b>source</b> = null) or sends it to server to <b>source</b> like grid.Source.Export or grid.Source.ExportPDF.<br />
+
+<!-- SendExport -->
+<a name="SendExport"></a>
+<div class="API">
+   <u>chg <b>12.1</b></u> <b>API method</b> <i>void</i>
+   <h4>SendExport</h4>
+   <s>(<i>string</i> <b>data</b>, <i>string</i> <b>url</b>, <i>string</i> <b>name</b>)</s>
+</div>
+Sends the data to server as export or configuration.<br />
+<i>Since 12.1 is does <u>not</u> call <a href="#OnExport">OnExport</a>.</i><br />
+
+<!-----------------------------------------------------------------------  Server side API  ------------------------------------------------->
+<a name="ServerAPI"></a>
+<h2>Server side API</h2>
+<p class="H2">API to generate the HTML for the HTML to PDF tool.</H2>
+
+<!-- PrintTreeGrid -->
+<a name="PrintTreeGrid"></a>
+<div class="API">
+   <u>new <b>6.7</b> <i>upd <b>14.1</b></i></u> <b>global func.</b> <i>TGrid</i>
+   <h4>PrintTreeGrid</h4>
+   <s>(<i>object</i> <b>Source</b>, <i>string</i> <b>tag</b> = "", <i>object</i> <b>param</b> = null, <i>object</i> <b>Page</b>)</s>
+</div>
+Creates and renders new grid by API according to settings in <b>Source</b>.<br />
+It renders inactive grid for printing purposes, especially when printing to PDF.<br /> 
+<i>Use it only with <b>GridE.js</b> static script and <u>not</u> with <a href="Files.htm#GridEDJs">GridED.js</a> on demand script, because with GridED.js script is asynchronous.</i><br />
+It prints the grid synchronously, without scrollbars, loads also all pages and child pages in server paging, so it can be very slow for long grids.<br />
+For long grids and routines that use IE for exporting to PDF it can be useful to disable slow script message in IE by:<br />
+  <div class="L1">HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer\Styles\MaxScriptStatements = 0xFFFFFFFF</div>
+Its attributes and other behavior is similar to <a href="Create.htm#TreeGrid">TreeGrid</a> method.<br />
+<b>Source</b> can be:<br />
+  <div class="L1">
+	a) string with &lt;treegrid> or &lt;bdo> tag with all settings like it is included directly to HTML<br />
+    <div class="L1">Example: <tt>TreeGrid("&lt;treegrid Data_Url='Grid2.xml'>&lt;/treegrid>","Main");</tt></div>
+	b) string with XML to create the grid from. The grid will have only Data_Data source defined.<br />
+    <div class="L1">Example: <tt>TreeGrid("&lt;Grid>&lt;Cols>&lt;C Name='A'/>&lt;/Cols>&lt;Body>&lt;B>&lt;I A='xxx'/>&lt;/B>&lt;/Body>&lt;/Grid>","Main");</tt></div>
+	c) object with parsed &lt;treegrid> / &lt;bdo> tag.<br /> 
+    <div class="L1">
+    All multilevel attributes (data sources) containing '_' must be set as nested objects, split by the '_',<br /> 
+      <div class="L1">for example Data_Param_Test is accessed as Source.Data.Param.Test and set as <tt>&#123;Data:&#123;Param:&#123;Test:'val'}}}</tt></div>
+		Eample: <tt>PrintTreeGrid(&#123;Layout:&#123;Url:"Grid2Def.xml"},Data:&#123;Url:"Grid2.xml"}},"Main");</tt><br />
+    </div>
+  </div> 
+<b>tag</b> is the <b>main div tag</b> to render grid into. The <b>tag</b> can be an id of the tag or the HTMLElement itself. The htm tag must exist in time of calling the function.<br />
+  <div class="L1">If the parameter is missing, the id of the tag must be set in input XML by attribute &lt;Cfg <b>Tag</b>/>. See &lt;<a href="Create.htm#HTMLtagtreeGrid">treegrid</a>> tag description.</div>
+<b>param</b> are <i>(since 14.1)</i> the attributes that will be set to the created grid.<br />
+<div class="L1">It is useful to pass here some link to the parent object that creates TreeGrid, e.g. <tt>this.Grid = TreeGrid({Data:{Url:"Test.xml"}},"Main",{id:"TestGrid",Component:this});</tt></div>
+The <b>param</b> can contain <b>id</b> attribute or the <b>param</b> can be a string to be used as the <b>id</b> attribute. 
+   <div class="L1">The <b>id</b> is the unique id of the grid, used to identify it, to access the grid object globally by Grids[id].</div>
+   <div class="L1">The <b>id</b> is also used in saving configuration to the cookies if not set <a href="Cookie.htm#CfgCfgId">CfgId</a> attribute.</div>
+   <div class="L1">If the <b>id</b> is not set in/by <b>param</b>, the id of the grid can be set in the <b>Source</b> or input XML by attribute &lt;Cfg id/> or it is autogenerated.</div> 
+<b>Page</b> <i>since 14.0</i> are parameters for printing every page:<br />
+  <div class="L1"><b>Width</b> - width of the printed page in millimeters, including margin.</div> 
+  <div class="L1"><b>Height</b> - height of the printed page in millimeters, including margin.</div>
+  <div class="L1"><b>MarginWidth</b> - width of the left+right page margin in millimeters.</div> 
+  <div class="L1"><b>MarginHeight</b> - height of the top+bottom page margin in millimeters.</div> 
+  <div class="L1"><b>Dpi</b> - dpi (scale) ratio, 96 is 1 (default), higher value decreases page scale and vice versa.</div> 
+  <div class="L1"><b>FitPage</b> - How to fit content to page 0 - none, 1 - to width, 2 - to height, 3 - single page. <i>Set only for server paging, when client side cannot calculate dpi for fit</i></div> 
+  <div class="L1"><b>Header</b> - html displayed in top margin on every page.</div> 
+  <div class="L1"><b>HeaderLink</b> - url assigned to Header.</div>
+  <div class="L1"><b>HeaderBackground</b> - background color for the Header.</div>
+  <div class="L1"><b>Footer</b> - html displayed in bottom margin on every page. By default it displays white background to hide the default Chrome footer. In case of problems set Footer="" to ignore it at all.</div> 
+  <div class="L1"><b>FooterBackground</b> - background color for the Footer.</div>
+  <div class="L1"><b>FooterLink</b> - url assigned to Footer.</div>
+  <div class="L1"><b>Update</b> - value of <a href="DataServerChanges.htm#CfgChangesUpdate">ChangesUpdate</a>, default value is <b>0</b> for printing to PDF.</div>
+
+The function returns created <a href="Create.htm#ClassTGrid">TGrid</a> object.<br /> 
+<i>Since 14.1</i> if used <a href="Files.htm#GridEDJs">GridED.js</a> on demand script instead of GridE.js static script, the function downloads the <b>GridE.js</b> asynchronously and always returns before the TreeGrid is initialized and loaded - the returned grid object has set only its Source attribute.<br />
+It returns null for fatal error. It fails if the <b>Source</b> is null or cannot be used as one of the three options.<br />
+The <b>Source</b> is accessible by API by grid.<a href="Create.htm#Source">Source</a> attribute.<br />
+It calls all loading events like <b>OnLoaded</b> or <b>OnReady</b>.<br /> 
+<i>(Since 7.0)</i> It calls also <b>OnRenderStart</b> event, when all data are loaded, even for server paging and <b>OnRenderFinish</b> when the grid is fully rendered (even for paging).<br />
+
+<!-- OnGetHtmlValue -->
+<a name="OnGetHtmlValue"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>string</i>
+   <h4>OnGetHtmlValue</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>val</b>)</s>
+</div>
+Called to get formatted cell value to display. <i>val</i> is unformatted cell value.<br />
+Returns formatted value. If returned value is <u>not</u> <u>null</u>, it is used instead of internal formatting by Format or Enum attributes.<br />
+Return null to use default formatting behavior.<br />
+
+<!-----------------------------------------------------------------------  Data sent from client to server  ------------------------------------------------->
+<a name="Data"></a>
+<h2>Data sent from client to server</h2>
+
+To server is sent just actual grid configuration - sorting, grouping, filters, search and column width, positions and visibility.<br /> 
+In "custom" parameter "<b>ExportFormat</b>" is sent "pdf" (to distinguish it from other export formats when sharing the export url)<br />
+In "custom" parameters <b>PrintPageSize</b>, <b>PrintPageOrientation</b>, <b>PrintDPI</b>, <b>PrintMarginWidth</b>, <b>PrintMarginHeight</b>, <b>PDFFitPage</b> and <b>PDFText</b> are sent chosen PDF options, see them in <a href="Print.htm#Page">Page size</a> and <a href="#Print">Printing options</a>.<br />
+<i>Since 14.0</i> in "custom" parameters <b>PrintPageWidth</b> and <b>PrintPageHeight</b> is sent the page size in millimeters, including margins.<br />
+<br />
+
+It is possible to upload also other data from client like changes, set <tt>Export_Type="Settings,Changes"</tt>.<br />
+The configuration is sent as standard TreeGrid XML in <a href="DataCommunication.htm#xxx_Data">Data</a> attribute.<br />
+<br />
+
+<!--------------------  XML structure of request for PDF export  ------------------------->
+<a name=""></a>
+<h3>XML structure of request for PDF export</h3>
+
+Used as <b>request sent</b> to data source <b>ExportPDF</b> to get the exported grid when set <b>server side export</b> (<tt><b>ExportPDF_Type</b>="<b>Settings</b>"</tt>).<br />
+It contains session identification and grid configuration to sort, group, filter and search exported data on server.<br /> 
+It contains also columns settings - width, position and visibility.<br /><br />
+
+<tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Grid</b>></tt><br />
+  <div class="L1">
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">IO</b></tt> <i>... attributes with request settings ...</i> <tt style="font-size:150%;color:red;">/></tt> (<a href="DataCommunication.htm#IOSession">Session</a> attribute) <br />
+  <span style="float:left;">
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Cfg</b></tt> <i>... attributes with grid settings read from cookies ...</i> <tt style="font-size:150%;color:red;">/></tt>
+  </span>
+    <div style="float:left;">
+    (Sort, Group, ReSort, ReCalc, TimeZone attributes)<br />
+    (SearchAction, SearchExpression, SearchType, SearchMethod, SearchDefs, SearchCols attributes)<br />
+  	(Focused, FocusedCol, FocusedPos attributes)<br />
+    (PrintPageBreaks, PrintRows, PrintExpanded, PrintFiltered)<br />
+    </div>
+  <div style="clear:both;"><tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Filter</b>></tt> (list of filters)</div>
+    <div class="L1">
+    <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">I</b></tt> <i>... row and cell attributes ...</i> <tt style="font-size:150%;color:red;">/></tt> (<b>id</b> attribute, cell <b>values</b> and cell <b>Filter</b> attributes)<br />
+    <i>... More tags &lt;I> if more filters are in grid ...</i><br />
+    </div>
+  <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Filter</b>></tt><br /><br />
+
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">LeftCols</b>></tt><br />
+    <div class="L1">
+    <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">C</b></tt> <tt><b style="color:green;">Name</b>='<i>column name</i>' Width='...' Visible='0/1'</tt> <tt style="font-size:150%;color:red;">/></tt><br />
+    <i>... more tags &lt;C> for other columns ...</i><br />
+    </div>
+  <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">LeftCols</b>></tt><br />
+  
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Cols</b>></tt><br />
+    <div class="L1">
+    <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">C</b></tt> <tt><b style="color:green;">Name</b>='<i>column name</i>' Width='...' Visible='0/1'</tt> <tt style="font-size:150%;color:red;">/></tt><br />
+    <i>... more tags &lt;C> for other columns ...</i><br />
+    </div>
+  <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Cols</b>></tt><br />
+
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">RightCols</b>></tt><br />
+    <div class="L1">
+    <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">C</b></tt> <tt><b style="color:green;">Name</b>='<i>column name</i>' Width='...' Visible='0/1'</tt> <tt style="font-size:150%;color:red;">/></tt><br />
+    <i>... more tags &lt;C> for other columns ...</i><br />
+    </div>
+  <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">RightCols</b>></tt><br />
+  </div><br />
+  
+<tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Grid</b>></tt>  
+
+</div>
+</body>	
+</html>

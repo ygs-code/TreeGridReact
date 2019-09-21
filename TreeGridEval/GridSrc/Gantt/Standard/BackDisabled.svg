@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+<pattern id="P" width="10" height="10" patternUnits="userSpaceOnUse">
+   <line x1="-1" y1="11" x2="11" y2="-1" stroke="#888"/>
+</pattern>
+<rect x="0" y="0" width="100%" height="100%" fill="url(#P)"/>
+</svg>

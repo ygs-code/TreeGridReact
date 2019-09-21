@@ -1,0 +1,691 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Server paging</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Server paging</h1>
+<p>TreeGrid documentation</p>
+
+<!---------------------------------------------------  Server paging for root rows (Paging='3')  ------------------------------------------------------------>
+<a name="RootPaging"></a>
+<h2>Server paging for root rows (Paging='3')</h2>
+
+<i>For basic information about paging and client paging see <a href="Paging.htm">Paging documentation</a>.</i><br /><br />
+
+Server paging is expected to use for large grids with more than 10,000 root rows.<br />
+In server paging are pages downloaded on demand when they are visible by scroll.<br />
+The server script is responsible for sending data for requested page and also for <b>sorting</b>, <b>filtering</b>, <b>grouping</b>, <b>searching</b> and <b>aggregate calculation</b>. This means that all the required features must be done on server side by server script.<br /><br />
+
+There is available <b style="color:red;">TreeGrid server DLL/SO</b> that can be used to as support library for TreeGrid server paging - if you provide to the library the whole XML data, it will generate pages to client and will also provide all requested features like sorting, filtering, grouping and aggregate calculations.<br /> 
+<i>See <a href="DLL.htm">TreeGrid.dll/so documentation</a>.</i><br /><br />
+
+If you are not able to do sorting, filtering or grouping on server and you still want to use server paging, you can set <a href="#CfgOnePage">OnePage</a> attribute (and <tt><a href="Paging.htm#CfgAllPages">AllPages</a>=0</tt>) to do them partially in actual page.<br /><br />
+
+You can mix server and client Paging, for pages that should use client paging fill their data in body response.<br /><br /> 
+
+<b>Paging</b> can be set to <b>3</b> independently of <a href="#CfgChildPaging">ChildPaging</a> value.<br />
+<i>Server paging <u>cannot</u> be used with <b>Gantt chart</b>.</i><br />
+
+<!-- Paging -->
+<a name="CfgPaging"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>Paging</h4> <s>[0]	<tt>&lt;Cfg Paging='3'/></tt></s>
+</div>
+To use server paging of root rows set Paging to <b>3</b>.<br />
+
+<!-- PageLength -->
+<a name="CfgPageLength"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PageLength</h4> <s>[20]</s>
+</div>
+Average count of rows in page.<br /> 
+For client paging there are all pages created to contain this number of rows (except the last one).<br />
+For server paging it determines height of page - it is default value of &lt;B <a href="#BCount">Count</a>> attribute.<br />
+Exact count of rows in pages can differ due to adding or deleting rows or in last incomplete page.<br />
+Every page must contain at least one row otherwise it is deleted. Exception is when grid does not contain any row, so it contains one empty page.<br />
+In TreeGrid server DLL/SO is this parameter used to set count of rows in page.<br />
+
+<!-- RootCount -->
+<a name="CfgRootCount"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RootCount</h4> <s></s>
+</div>
+Count of all rows in root. Used to compute <a href="#BCount">Count</a> parameter of the last page when server paging used and pages have not <a href="#BCount">Count</a> attribute set.<br />             
+
+<!-- OnePage -->
+<a name="CfgOnePage"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>OnePage</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, sorts, filters or groups rows only in actual page. Only when <tt><a href="Paging.htm#CfgAllPages">AllPages</a> = <b>0</b></tt> (one page visible at a time).<br />
+Bit array: 1. bit (<b>&1</b>) sorting, 2. bit (<b>&2</b>) filtering, 3. bit (<b>&4</b>) grouping. Set to <b>7</b> for all actions done at one page only.<br />
+Use this attribute only for <b>server paging</b> (<tt><a href="#CfgPaging">Paging</a>=<b>3</b></tt>) if you are not able to do sorting, filtering or grouping on server.<br />
+
+<!-- ReloadChanged -->
+<a name="CfgReloadChanged"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ReloadChanged</h4> <s>[5]</s>
+</div>
+If permits reloading grid if not uploaded changes are pending.<br />
+<b>0</b> - no (does not allow neither reloading nor server side sorting/filtering/searching/grouping)<br />
+<b>1</b> - yes, save them (only when reloading as request for server side filtering/sorting/searching/grouping, for reload by Reload button always discards changes),<br /> 
+<b>2</b> - yes, discard changes (should be used only when changes are not saved to server at all and server paging is used)<br />
+<b>3</b> - show confirmation message to user<br />
+<b>&4</b> - test also selected rows (values 4,5,6,7 are related to 0,1,2,3)<br />
+
+<!-- PreserveReload -->
+<a name="CfgPreserveReload"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PreserveReload</h4> <s>[0]</s>
+</div>
+Which row states are restored after reloading grid body rows. Bit array.<br />
+1. bit &amp;<b>1</b> - selected rows, 2. bit &amp;<b>2</b> - expanded / collapsed rows.<br />
+The row state is saved according to the row <b>id</b>, so the rows must be reloaded with the same ids.<br />
+
+
+<!-- id -->
+<a name="BId"></a>
+<div class="XML">
+   <u></u> <b>&lt;B></b> <i>string</i>
+   <h4>id</h4> <s>(<i>Both letters lowercase !</i>)</s>
+</div>
+Unique ID of the page. By this ID is page identified when downloading data for this page. Used only if <a href="#BRows">Rows</a> are not set.<br />
+If set neither <b>id</b> nor <b>Rows</b> attribute, the page is identified by attribute <b>Pos</b> as its position inside body. But this position can change if any page is deleted.<br />
+
+<!-- Rows -->
+<a name="BRows"></a>
+<div class="XML">
+   <u></u> <b>&lt;B></b> <i>string</i>
+   <h4>Rows</h4> <s></s>
+</div>
+User string to identify the page. If set, the page is identified by this string when downloading data for this page. It can for example contain a list of row ids the page contains.<br />
+It can also be used to specify different url for every page by using <a href="DataDownload.htm#Page_">Page_Url</a> with wildcard <b>*Rows</b>.<br />
+
+<!-- Pos -->
+<a name="BPos"></a>
+<div class="XML">
+   <u></u> <b>&lt;B></b> <i>int</i>
+   <h4>Pos</h4> <s></s>
+</div>
+Page position inside body (from 0), identifies the page, if <b>id</b> and <b>Rows</b> not set.<br />
+
+<!-- Name -->
+<a name="BName"></a>
+<div class="XML">
+   <u></u> <b>&lt;B></b> <i>string</i>
+   <h4>Name</h4> <s></s>
+</div>
+Name of the page, displayed in right side pager. It can contain HTML code (coded).<br />
+
+<!-- Title -->
+<a name="BTitle"></a>
+<div class="XML">
+   <u></u> <b>&lt;B></b> <i>string</i>
+   <h4>Title</h4> <s></s>
+</div>
+Title of page, displayed in pager as tool tip. It can contain HTML if set <tt>&lt;Cfg StandardTip='0'/></tt><br />
+
+<!-- NameXY -->
+<a name="BNameXY"></a>
+<div class="XML">
+   <u></u> <b>&lt;B></b> <i>string</i>
+   <h4>Name<span style="font-style:italic;color:blue;">X<span style="color:red;">Y</span></span></h4> <s></s>
+</div>
+There can be predefined names according to sorting. If these are set, the <a href="#BName">Name</a> and <a href="#BTitle">Title</a> are created from them.<br />
+These names specifies the first and last value on page in sorting columns.<br />
+<b>X</b> is boundary  = 0 - both (both values are the same in this column), 1 - top, 2 - bottom. Can be used either 0 or 1+2.<br />
+<b>Y</b> is sorting column 0,1,2.<br />
+There are possible combinations of XY (separated by #):<br /> 
+  <div class="L1">
+  <tt>10 => 20 <span style="color:blue;">#</span> 10,11 => 20,21 <span style="color:blue;">#</span> 10,11,12 => 20,21,22 <span style="color:blue;">#</span> 00 <span style="color:blue;">#</span> 00 | 11 => 21 <span style="color:blue;">#</span> 00 | 11,12 => 21,22 <span style="color:blue;">#</span> 00, 01 <span style="color:blue;">#</span> 00, 01 | 12 => 22</tt><br />
+  </div>
+For example: <tt>Name00='blue' Name11='100' Name21='154'</tt> means that page shows all blue values from 100 to 154.<br />
+
+<!-- Count -->
+<a name="BCount"></a>
+<div class="XML">
+   <u></u> <b>&lt;B></b> <i>int</i>
+   <h4>Count</h4> <s>[0]</s>
+</div>
+Count of rows the page contains. It specifies height of the page when it does not show rows yet. It is also result of count function in formulas.<br />
+If not set, it is used <tt>&lt;Cfg <a href="#CfgPageLength">PageLength</a></tt> value. Or for the last page is Count computed from <tt>&lt;Cfg <a href="#CfgRootCount">RootCount</a>></tt> and row count in other pages.<br />
+
+<!-- sum, count -->
+<a name="BCellsum"></a>
+<div class="XML">
+   <u></u> <b>&lt;B cell></b> <i>string</i>
+   <h4>sum, count, ...</h4> <s></s>
+</div>
+If any fixed or space row in grid in server paging contains some aggregate function like sum or count, the server must pre-calculate and fill all the results of these functions, because TreeGrid cannot do it on client without the page data.<br />
+For more information see <a href="CellFormula.htm#AggFunc">aggregate functions</a>.<br />
+For example if some fixed row contains <tt>AFormula='sum()'</tt> the all the pages should contain for example <tt><b>Asum='123.50'</b></tt><br />
+
+<!-----------------------  Server communication in root paging  ------------------------>
+<a name="RootCommunication"></a>
+<h3>Server communication in root paging</h3>
+<i>For server Paging you must define &lt;treegrid/bdo <b style="color:red;">Page_Url</b>/> to download the page(s) data from.</i><br /><br />
+
+If <b><a href="#CfgPaging">Paging</a></b> is set to <b>3</b> (<b>Server</b>) TreeGrid loads actual configuration from cookies, inserts it to the <a href="#DataRequest">request for Data</a> (to <b>Data_Url</b>), sends it to server and downloads prepared pages without data. This request contains sorting, grouping, filter and search settings.<br />
+Server prepares pages - calculates, sorts, filters and groups rows and distributes rows to pages. It also sets page names and results of aggregate functions for page and column.<br />
+<a href="#DataDownload">Server Data response</a> contains only &lt;Body> tag with only &lt;B> tags with attributes, but without any child &lt;I> tags. Some pages (&lt;B>) can contain their rows to use client paging only for them.<br /><br />
+
+When any not loaded page is displayed, TreeGrid downloads data for this page by sending the <a href="#PageRequest">request for Page</a> (to <b>Page_Url</b>). The request for page (&lt;B> tag) contains <b><a href="#BRows">Rows</a></b> attribute of page (if was set) or <b><a href="#Bid">id</a></b> attribute (if was set) and (always) <b><a href="#BPos">Pos</a></b> attribute as page index (position from 0).<br />
+The request also contains sorting, grouping, filter and search settings, the same as when pages body was downloaded.<br />
+<a href="#PageDownload">Server Page response</a> contains the one requested page in &lt;B> tag with the same identification attributes (Pos, id, Rows).<br /><br />
+
+When user changes sorting, grouping, filter or search, TreeGrid reloads all data from data source <b>Data_Url</b> with new configuration in <a href="#DataRequest">request for Data</a>. And repeats loading of pages.<br />
+Re-calculations after cell change are still done on client. Calculated cells are not sent to server. Therefore server must also recalculate appropriate cells if changed values are saved to server.<br />
+If you are not able to do sorting, filtering or grouping on server and you still want to use these features, you can set <a href="Paging.htm#CfgOnePage">OnePage</a> attribute (and <tt><a href="Paging.htm#CfgAllPages">AllPages</a>=0</tt>) to do them partially in actual page.<br /><br />
+
+The data of returned page can contain also defaults (&lt;<b><a href="RowDefaults.htm">D</a></b>> tags). These defaults are added to grid layout, but should be used only for data in the page they were loaded with.<br /><br />
+
+<u><i>Example of request for body (grid has columns named A,B,C,D,E)</i></u><br />
+<tt>
+&lt;Grid>
+  <div class="L2">
+  <b>&lt;Cfg Sort='C,-A' Group='P' SearchExpression='new' SearchAction='Select'/></b><br />
+  <b>&lt;Filters>&lt;I id='MyFilter' C='10' CFilter='1' E='A' AFilter='10'/>&lt;/Filters></b><br />
+  </div>
+&lt;/Grid>
+</tt><br /><br />
+
+Example of resulted body (grid has also one foot row: <tt>&lt;I AFormula='sum()' CFormula='sum("D")/2+A'/></tt>)<br />
+<tt>
+&lt;Grid>
+  <div class="L2">  
+  &lt;Body>
+    <div class="L2">
+    &lt;B Count='20' Asum='123' Dsum='312' /><br />
+    &lt;B Count='20' Asum='453' Dsum='6.5' /><br />
+    &lt;B Count='20' Asum='1297' Dsum='-142.76' /><br />
+    &lt;B Count='12' Asum='145' Dsum='349.7' /><br />
+    </div>
+  &lt;/Body>
+  </div>
+&lt;/Grid>
+</tt><br /><br />
+
+<u><i>Example of request for second page (grid has columns named A,B,C,D,E)</i></u><br />
+<tt>
+&lt;Grid>
+  <div class="L2">
+  &lt;Cfg Sort='C,-A' Group='P' SearchExpression='new' SearchAction='Select'/><br />
+  &lt;Filters>&lt;I id='MyFilter' C='10' CFilter='1' E='A' AFilter='10'/>&lt;/Filters><br />
+  &lt;Body><b>&lt;B Pos='1'/></b>&lt;/Body><br />
+  </div>
+&lt;/Grid>
+</tt><br /><br />
+
+Example of resulted second page<br />
+<tt>
+&lt;Grid>
+  <div class="L2">
+  &lt;Body>
+    <div class="L2">
+    <b>&lt;B Pos='1'></b>
+      <div class="L2">
+      &lt;I id='xa' A='10' B='20' C='10.3' D='-4.5' E='one'/><br />
+      ... 18 rows ...<br />
+      &lt;I id='xu' A='3' B='12' C='4.6' D='-3.5' E='twenty'/><br />
+      </div>
+    &lt;/B>
+    </div>
+  &lt;/Body>
+  </div>
+&lt;/Grid>
+</tt><br /><br />
+
+<!--  Root paging in very large tables  -->
+<a name="LargeTables"></a>
+<h5>Root paging in very large tables</h5>
+There are few advices how to use TreeGrid for grids with more then about 10 000 <b>root</b> rows. It is <b>not</b> related to huge <b>trees</b>, the tree can handle unlimited count of rows.<br /> 
+All these advices are used only to speed up rendering and using TreeGrid, they do not concern about handling of such amount of rows, TreeGrid can handle unlimited rows count.<br /><br />
+
+For grids with more than <b>20 000</b> rows always use <b><a href="#CfgPaging">server paging</a></b> (<tt>&lt;Cfg <a href="#CfgPaging">Paging</a>='3'/></tt>). Your server script must provide data for grid's pages. You can use <b><a href="DLL.htm">TreeGrid server</a></b> component to help you with this task. The TreeGrid server can do nearly all functions required in server paging as creating pages according to sorting and filter settings. Also pre-calculates aggregate functions. Saves changes returned from client. And more.<br /><br />
+
+For grids with more than <b>50 000</b> rows use <b><a href="DataFormats.htm#ExtraShortFormat">Extra short format</a></b> to send list of pages. The <b><a href="DLL.htm">TreeGrid server</a></b> does it automatically.<br /> 
+If possible, use all page of the same width and don't return rows count for every page, but set &lt;Cfg <b><a href="#CfgPageLength">PageLength</a></b> and <b><a href="#CfgRootCount">RootCount</a></b> /> attributes. The <b><a href="DLL.htm">TreeGrid server</a></b> does it automatically.<br />
+Also increase &lt;Cfg <b><a href="#CfgPageLength">PageLength</a></b>/> attribute according to count of columns in your grid. For 1 - 5 columns use <b>100</b>, for 5-10 use <b>50</b> and for more columns use <b>30</b>.<br />
+Also use &lt;Cfg <b><a href="#CfgFastPages">FastPages</a></b>/> attribute. Set it to value about <b>100</b>. Higher value speeds up initial rendering but can slow down work with the grid and vice versa.<br /><br />
+
+For grids with more than <b>500 000</b> rows and all pages visible (<tt>&lt;Cfg <a href="Paging.htm#CfgAllPages">AllPages</a>='1' /></tt>) use &lt;Cfg <b><a href="#CfgPageLengthDiv">PageLengthDiv</a></b>/> attribute to reduce page size and all grid scroll height because browsers have problems with too high scroll height.<br /> 
+<b>Firefox</b> can display only tags high up to 17 895 166 pixels => 596 505 rows with 30px height. IE has limit 21M px and Chrome has limit 33M px.<br />
+Set <b><a href="#CfgPageLengthDiv">PageLengthDiv</a></b> to <i>average_rows_count</i> * <i>average_row_height</i> / 1.5e8. For 1 000 000 rows with 30px height set it to 2.<br /><br />
+
+For grids with more than <b>2 000 000</b> rows display only one page at once by using <tt>&lt;Cfg <b><a href="Paging.htm#CfgAllPages">AllPages</a></b>='0' /></tt>. If you use configuration menu, set <tt>&lt;MenuCfg <a href="GlobalSettings.htm#MenuCfgShowAllPages">ShowAllPages</a>='0'/></tt>. Also to suppress loading defaults for AllPages use <tt>&lt;Cfg AllPagesLap='1'/></tt>.<br />
+If you use TreeGrid server, remember that for such amount of rows it allocates about 400 MB memory. Of course, it does <u>not</u> concern client browser memory consumption; it is independent on row count.<br />
+
+<!-- FastPages -->
+<a name="CfgFastPages"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FastPages</h4> <s>[0]</s>
+</div>
+Speeds large tables with more than 40 000 root rows.<br /> 
+Set it to default value of <b>100</b> to speed up rendering of large tables.<br />
+Bigger value speeds up initial rendering, but can slow down TreeGrid usage and vice versa.<br />
+
+<!-- PageLengthDiv -->
+<a name="CfgPageLengthDiv"></a>
+<div class="XML">
+   <u>chg <b>14.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PageLengthDiv</h4> <s>[1]</s>
+</div>
+Page length divider for large tables with more than 500 000 root rows (plus expanded child rows) with <tt><a href="Paging.htm#CfgAllPages">AllPages</a>==1</tt> and <tt><a href="#CfgFastPages">FastPages</a>>0</tt>.<br />
+This divides <a href="#CfgPageLength">PageLength</a> to display smaller non rendered pages.<br />
+Set this attribute to <i>average_rows_count</i> * <i>average_row_height</i> / 1.5e8. For 1 000 000 rows with 30px height set it to 2. In this case set <a href="#CfgPageLength">PageLength</a> to be enough high, for example to 100.<br />
+This attribute is used due problems in browsers with too high tags (Firefox can display only tags high up to 17 895 166 pixels =&gt; 596 505 rows with 30px height).<br />
+<i>If used <a href="ColPaging.htm#CfgColPaging">ColPaging</a> the limit in IE / Edge is only 5 000 000 pixels => 166 000 rows with 30px height.</i><br />
+<i>In TreeGrid prior 14.0 the limit in IE / Edge is only 1 342 177.28 pixels (0x8000000/100) => 44739 rows with 30px height).</i><br /></i><br />
+
+
+<!---------------------------------------------------  Server paging in tree (ChildPaging='3')  ------------------------------------------------------------>
+<a name="ChildPaging"></a>
+<h2>Server paging in tree (ChildPaging='3)</h2>
+
+<i>For basic information about paging in tree and client ChildPaging see <a href="Tree.htm#Paging">Paging in tree documentation</a>.</i><br /><br />
+
+Server paging in tree (ChildPaging) downloads children from server on collapsed parent expand or <i>(since 7.0)</i> on scroll to already expanded parent.<br />
+It downloads children only if the row has not any children yet and it has <a href="#ICount">Count</a> attribute.<br />
+By default it downloads children only on the first expand, you can change it by <a href="#CfgRemoveCollapsed">RemoveCollapsed</a> attribute.<br /><br />
+
+The server script is responsible for sending data for requested page and also for <b>aggregate calculation</b> of children. This means that if grid uses aggregate functions like sum() or count() the children must be pre-calculated on server side by server script.<br />
+Opposite to server root paging, server does not need to care about the <b>sorting</b> and <b>filtering</b>, but still needs to provide <b>grouping</b> and <b>searching</b> (except Filter action).<br />
+There is available <b style="color:red;">TreeGrid server DLL/SO</b> that can be used to as support library for TreeGrid server paging - if you provide to the library the whole XML data, it will generate children to client and will also provide all requested aggregate calculations.<br /> 
+<i>See <a href="DLL.htm">TreeGrid.dll/so documentation</a>.</i><br /><br />
+
+You can mix server and client ChildPaging, for rows that download children on demand set Count attribute, for other rows just fill their children in data.<br /><br />
+
+<b>ChildPaging</b> can be set to <b>3</b> independently of <a href="#CfgPaging">Paging</a> value.<br />
+<br />
+<i>Since 14.0</i> it is possible to download only visible (due scroll) parts of immediate children, if there are many immediate children, if set <a href="#CfgChildPageLength">ChildPageLength</a>.<br />
+In this case the server must provide also <b>sorting</b> and <b>filtering</b> like in server root paging.<br />
+
+<!-- ChildPaging -->
+<a name="CfgChildPaging"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ChildPaging</h4> <s>[0] <tt>&lt;Cfg ChildPaging='3'/></tt></s>
+</div>
+To use server paging in tree set ChildPaging to <b>3</b>.<br />
+
+<!-- ChildPageLength -->
+<a name="CfgChildPageLength"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ChildPageLength</h4> <s>[0]</s>
+</div>
+<i>Only for ChildPaging=3.</i> To download many immediate children in parts only for demand.<br />
+Set it to positive value to split many immediate children to sub pages to download only visible parts of the children.<br />
+If set and the parent row <a href="#ICount">Count</a> is higher than ChildPageLength + ChildPageDiff, it adds new hidden children to that parent row and these children will download the original children as their children.<br />
+If set, it automatically sets also &lt;Cfg Paging='3' ChildParts='2'/>. If the Paging was 0, it also presets PageLength='100000' and NoPager='1'.<br />
+If set, the server code must be able to sort, filter, group, search data on server side.<br />
+<br />
+The request to server contains the parent row <a href="#Iid">id</a> and <a href="#IPos">Pos</a> attribute from 0 as position of the page, e.g. &lt;B id='XXX' Pos='0'/> for the first page of the XXX row.<br />
+<br />
+For example by default ChildPageLength='<b>0</b>' and the row <tt>&lt;I id='R1' Count='25'/></tt> is sent to server one request as <tt>&lt;Grid>...&lt;Body>&lt;B id="R1"/>&lt;/Body>&lt;/Grid></tt>.<br />
+For ChildPageLength='<b>10</b>' there are added 3 hidden sub children/pages as: 
+<tt>&lt;I id='R1'>&lt;I Def='SPage' Count='10'/>&lt;I Def='SPage' Count='10'/>&lt;I Def='SPage' Count='5'/>&lt;/I></tt>
+The 3 children have preset Expanded='3' Visible='0' AggChildren='1' as defined in SPage default.<br />
+To server are sent up to 3 requests to download the children for the sub pages, only if the individual page is visible due scroll. For the first page it is 
+<tt>&lt;Grid>...&lt;Body>&lt;B id="R1" Pos="0"/>&lt;/Body>&lt;/Grid></tt>. For the second page is Pos="1" and for the third page Pos="2".<br />
+
+<!-- ChildPageDiff -->
+<a name="CfgChildPageDiff"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ChildPageDiff</h4> <s>[0]</s>
+</div>
+How much must row's Count exceed the ChildPageLength to split the children to sub pages.<br />
+Set to negative value of ChildPageLength (e.g. ChildPageLength='10' ChildPageDiff='-10') to always split the children to pages, including creating one page.<br />
+
+<!-- RemoveCollapsed -->
+<a name="CfgRemoveCollapsed"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RemoveCollapsed</h4> <s>[0]</s>
+</div>
+If children are removed when parent row collapses.<br />
+Set it to <b>3</b>, if you want to download children on <u>every</u> parent expand. But remember, all pending changes in rows will be discarded.<br />
+
+<!-- OnRemoveCollapsed -->
+<a name="OnClick"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnRemoveCollapsed</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>)</s>
+</div>
+Called after the row is collapsed and its children are deleted from data, only if set <tt>&lt;Cfg <a href="#CfgRemoveCollapsed">RemoveCollapsed</a>='3'/></tt><br />
+
+<!-- RemoveChanged -->
+<a name="CfgRemoveChanged"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RemoveChanged</h4> <s>[0]</s>
+</div>
+How will behave changed rows on RemoveCollapsed or RemoveUnused.<br />
+<b>0</b> - Don't remove changed rows and selected rows. If there is any such row, the removing is not done.<br />
+<b>1</b> - Don't remove changed rows. If there is any such row, the removing is not done.<br />
+<b>2</b> - Remove changed rows<br />
+<b>3</b> - Save changes and remove rows immediately<br />
+<b>4</b> - Save changes and wait for the server success response before removing rows.<br />
+
+<!-- OnRemoveChanged -->
+<a name="OnRemoveChanged"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API event</b> <i>int</i>
+   <h4>OnRemoveChanged</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>page</b>)</s>
+</div>
+Called if removing page containing some changed (or selected row for <tt>RemoveChanged==0</tt>)<br />
+For <tt>RemoveChanged==2</tt> is called always.<br />
+Return new value for RemoveChanged to use - 1, 2, 3, 4<br />
+
+<!-- Count -->
+<a name="ICount"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>int</i>
+   <h4>Count</h4> <s>[0]</s>
+</div>
+Count of not downloaded children rows the row contains. Used when <a href="#CfgChildPaging">ChildPaging</a> is set to <b>3</b>.<br /> 
+Must be set to > <b>0</b> if you want to download children from server.<br /> 
+It is set to null after the children are downloaded from server.<br />
+It also specifies height of the children after expand when downloading data. Set it to expected count of all children, including subchildren of expanded children to correctly calculate the row height.<br />
+
+
+<!-- id -->
+<a name="IId"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>string</i>
+   <h4>id</h4> <s>(Both letters lowercase !)</s>
+</div>
+Unique ID of the parent row. By this ID is the row identified when downloading its children. Used only if <a href="#IRows">Rows</a> are not set.<br />
+
+<!-- Pos -->
+<a name="IPos"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;I></b> <i>int</i>
+   <h4>Pos</h4> <s></s>
+</div>
+Page position inside children (from 0), identifies the child page when downloading row's children.<br />
+Sent along with <b>id</b>, used only if set <a href="#CfgChildPageLength">ChildPageLength</a>.<br />
+
+<!-- Rows -->
+<a name="IRows"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>string</i>
+   <h4>Rows</h4><s></s>
+</div>
+User string to identify the parent row. If set, the row is identified by this string when downloading its children. It can contain for example a list of children rows ids.<br />
+It can also be used to specify different url for every page by using <a href="DataDownload.htm#Page_">Page_Url</a> with wildcard <b>*Rows.</b><br />
+
+<!-- sum, count -->
+<a name="Cellsum"></a>
+<div class="XML">
+   <u></u> <b>&lt;cell></b> <i>string</i>
+   <h4>sum, count, ...</h4> <s></s>
+</div>
+If the parent row in server paging contains some aggregate function like sum or count, the server must pre-calculate and fill all the results of these functions, because TreeGrid cannot do it on client without the children.<br />
+For more information see <a href="CellFormula.htm#AggFunc">aggregate functions</a>.<br />
+For example if the row contains <tt>AFormula='sum()'</tt> the row should contain for example <tt><b>Asum='123.50'</b></tt><br />
+
+<!---------------------------------------------------  Communication with server in ChildPaging  ------------------------------------------------------------>
+<a name="ChildPagingCommunication"></a>
+<h2>Communication with server in ChildPaging</h2>
+
+<i>For server ChildPaging you must define &lt;treegrid/bdo <b style="color:red;">Page_Url</b>/> to download the children data from.</i><br /><br />
+
+If <b><a href="#CfgChildPaging">ChildPaging</a></b> is set to <b>3</b> (<b>Server</b>), the communication for body is the same as for client or no paging, see <a href="DataDownload.htm">data download documentation</a>.<br /><br />
+
+When user expands collapsed not yet loaded row with <a href="#ICount">Count</a> attribute, TreeGrid sends the <a href="#PageRequest">request for Page</a> to <b>Page_Url</b>. The requested row is set as &lt;<b>B</b>> tag with row's attribute <a href="#IId">id</a>. (For example: <tt>&lt;Grid>...&lt;Body>&lt;B id='r123'/>&lt;/Body>&lt;/Grid></tt>).<br /> 
+The request also contains sorting, grouping, filter and search settings, the same as for root paging.<br />
+<a href="">Server Page response</a> contains the one requested page in &lt;B> tag with the same identification attributes (id, Rows) and with content of the row's children. Server must return all immediate children and children of all expanded rows. Some of the downloaded children can be also collapsed with <a href="#ICount">Count</a> attribute to download their children on demand.<br /><br />
+
+The parent row must have set the <b><a href="#ICount">Count</a></b> attribute to at least <b>1</b>. It is better if <b>Count</b> is set to real count of immediate children the row contains + count of sub children of expanded children.<br /><br />
+
+Example of request for children of row 'xy' (grid has columns named A,B,C,D,E):<br />
+<tt>
+&lt;Grid>
+  <div class="L2">
+  &lt;Cfg SortCols='C,A' SortTypes='0,1'/><br />
+  &lt;Filters>&lt;I id='MyFilter' C='10' CFilter='1' E='A' AFilter='10'/>&lt;/Filters><br />
+  &lt;Body><b>&lt;B id='xy'/></b>&lt;/Body><br />
+  </div>
+&lt;/Grid>
+</tt>
+
+<!---------------------------------------------------  XML Request for Data in server root paging  ------------------------------------------------------------>
+<a name="DataRequest"></a>
+<h2>XML Request for Data in server root paging</h2>
+
+Used as <b>request sent</b> to data source <b>Data</b> when layout is already downloaded and grid configuration is known.<br />
+It contains session identification and grid configuration to sort, group, filter and search data on server. It contains also cursor position.<br />
+It is <u>not</u> sent if <tt>Data_Method="Get"</tt> - Get is default if no or client paging is used.<br /><br />
+
+<tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Grid</b>></tt><br /> 
+  <div class="L1">
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">IO</b></tt> <i>... attributes with request settings  ...</i> <tt style="font-size:150%;color:red;">/></tt> (<a href="DataCommunication.htm#IOSession">Session</a> attribute)<br />
+  <span style="float:left;">
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Cfg</b></tt> <i>... attributes with grid settings read from cookies  ...</i> <tt style="font-size:150%;color:red;">/></tt>&nbsp;
+  </span> 
+    <div style="float:left;">
+    (Sort, Group, ReSort, ReCalc, TimeZone attributes)<br />
+    (SearchAction, SearchExpression, SearchType, SearchMethod, SearchDefs, SearchCols attributes)<br />
+  	(Focused, FocusedCol, FocusedPos attributes)<br />
+    (ScrollLeft, ScrollTop attributes) <i>(new 6.3)</i><br />
+    </div>
+  <div style="clear:both;"><tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Filters</b>></tt> (list of filters)</div>
+    <div class="L1">
+    <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">I</b></tt> <i>... row and cell attributes ...</i> <tt style="font-size:150%;color:red;">/></tt> (<b>id</b> attribute, cell <b>values</b> and cell <b>Filter</b> attributes)<br />
+    <i>... More tags &lt;I> if more filters are in grid  ...</i><br /> 
+    </div>
+  <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Filters</b>></tt><br />
+  </div>    
+<tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Grid</b>></tt> 
+
+<!---------------------------------------------------  XML Download Data in server root paging  ------------------------------------------------------------>
+<a name="DataDownload"></a>
+<h2>XML Download Data in server root paging</h2>
+
+<b>Data XML</b> for <b>server paging</b> defines pages and <u>optionally</u> their rows.<br /> 
+It is sent from server to grid. It is generated by server script. It is usually generated from server database or by TreeGrid server DLL / SO.<br />
+Used when downloading grid for first time or reloading all data for the grid (function Reload) or reloading only body (function ReloadBody) or downloading new data for changed <b>sorting</b>, <b>filtering</b>, <b>grouping</b> or <b>searching</b> - in server paging these functions must be done on server side.<br /><br />
+
+If the &lt;B> tag contains some rows, the page will be filled by these rows and will <u>not</u> request to download its content.<br />
+If the &lt;B> tag is empty it must contain <b>Count</b> attribute to set to count of expected rows. The page will be shown empty and will request to download its content by Page request when it will be visible by scroll.<br /><br />
+
+It can also contain some parts from <a href="DataDownload.htm#LayoutXML">Layout XML</a>, like fixed rows or configuration settings if they need to generate dynamically to let the rest of the layout to be in static file.<br />
+It can also contain configuration settings like sort, filter or group if you want to change them when reloading body.<br /><br />
+
+<tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Grid</b>></tt><br />
+  <div class="L1">
+  <span style="color:#999;">
+  <tt style="font-size:150%;color:grey;">&lt;<b>Par</b>></tt> (list of prepared parameters for <span style="color:darkred">short</span> formats) 
+    <div class="L1">
+    <tt style="font-size:150%;color:grey;">&lt;<b>P</b></tt> <b>Name</b>="list name" <b>List</b>="parameter names, comma separated"<tt style="font-size:150%;color:grey;">/></tt>
+    </div>
+  <tt style="font-size:150%;color:grey;">&lt;/<b>Par</b>></tt><br />
+  </span>
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Body</b>></tt> (List of all pages)
+    <div class="L1">
+    <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">B</b></tt> <i>... page attributes ...</i> <tt style="font-size:150%;color:red;">></tt> (page with or without rows, if the page does not contain rows, the rows will be requested in <b>Page</b> request on scroll)      
+      <div class="L1">
+      <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">I</b></tt> <i>... row and cell attributes ...</i> <tt style="font-size:150%;color:red;">></tt> (data row)<br />      
+      <i>... More tags &lt;I> ...</i>
+      </div>       
+    <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">B</b>></tt><br />    
+    <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">B</b></tt> <i>... page attributes ...</i> <tt style="font-size:150%;color:red;">></tt> (next page with or without rows, its position is 1)<br />
+    <i>... More tags &lt;B> ...</i><br /> 
+    </div> 
+  <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Body</b>></tt> 
+  </div>
+<tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Grid</b>></tt> 
+
+<!---------------------------------------------------  XML Request for Page or children  ------------------------------------------------------------>
+<a name="PageRequest"></a>
+<h2>XML Request for Page or children</h2>
+
+Used as <b>request sent</b> to data source <b>Page</b> to get the content of the page or child page.<br />
+It contains the page identification by Pos, id or Rows attribute(s).<br />
+It also contains grid configuration to check if it is the same as it was in body request.<br /><br />
+
+<tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Grid</b>></tt><br /> 
+  <div class="L1">
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">IO</b></tt> <i>... attributes with request settings  ...</i> <tt style="font-size:150%;color:red;">/></tt> (<a href="DataCommunication.htm#IOSession">Session</a> attribute)<br />
+  <span style="float:left;">
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Cfg</b></tt> <i>... attributes with grid settings read from cookies  ...</i> <tt style="font-size:150%;color:red;">/></tt>&nbsp;
+  </span> 
+    <div style="float:left;">
+    (Sort, Group, ReSort, ReCalc, TimeZone attributes)<br />
+    (SearchAction, SearchExpression, SearchType, SearchMethod, SearchDefs, SearchCols attributes)<br />
+  	(Focused, FocusedCol, FocusedPos attributes)<br />
+    (ScrollLeft, ScrollTop attributes) <i>(new 6.3)</i><br />
+    </div>
+  <div style="clear:both;"><tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Filters</b>></tt> (list of filters)</div>
+    <div class="L1">
+    <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">I</b></tt> <i>... row and cell attributes ...</i> <tt style="font-size:150%;color:red;">/></tt> (<b>id</b> attribute, cell <b>values</b> and cell <b>Filter</b> attributes)<br />
+    <i>... More tags &lt;I> if more filters are in grid  ...</i><br /> 
+    </div>
+  <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Filters</b>></tt><br /><br />
+  
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Body</b>></tt>
+    <div class="L1">
+    <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">B</b></tt> <i>... attributes identifying the requested page or child page ...</i> <tt style="font-size:150%;color:red;">/></tt> (<a href="#BPos">Pos</a> or id or Rows for page or <a href="RowId.htm#Iid">id</a> and <a href="#IPos">Pos</a> or Rows for child page (row))    
+    </div>  
+  <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Body</b>></tt>
+  </div>    
+<tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Grid</b>></tt>
+
+<!---------------------------------------------------  XML Download Page or children  ------------------------------------------------------------>
+<a name="PageDownload"></a>
+<h2>XML Download Page or children</h2>
+
+<b>Page XML</b> contains <u>one</u> page definition with content for the requested page. If the XML contains more pages, all the others are ignored.<br /><br />
+
+The &lt;B> tag must have set <b>Pos</b>, <b>id</b> or <b>Rows</b> attribute to identify it on client as the requested page.<br /><br />
+
+For <b>server child paging</b> some or all rows with children can have set <b>Count</b> attribute as the count of the expected children instead of the children themselves. The children will be downloaded on demand.<br /><br />
+
+<tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Grid</b>></tt> (Root tag)<br />
+  <div class="L1">
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Body</b>></tt> (List of all variable rows in pages, must not contain rows in root (only in pages)) 
+    <div class="L1">
+    <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">B</b></tt> <i>... identification attributes ...</i> <tt style="font-size:150%;color:red;">></tt> (The one requested page or child page with rows)
+      <div class="L1">
+      <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">I</b></tt> <i>... row and cell attributes ...</i> <tt style="font-size:150%;color:red;">></tt> (data row)
+        <div class="L1">  
+        <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">I</b></tt> <i>... row and cell attributes ...</i> <tt style="font-size:150%;color:red;">></tt> (data row)
+          <div class="L1">
+          <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">I</b></tt> <i>... row and cell attributes ...</i> <tt style="font-size:150%;color:red;">></tt> (data row)
+            <div class="L1">
+            <i>... More tags &lt;I>, with possible children tags &lt;I> with possible children and so on - <strong>unlimited levels of tree ...</strong></i>
+            </div> 
+          <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">I</b>></tt><br /> 
+          <i>... More tags &lt;I> ...</i>
+          </div> 
+        <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">I</b>></tt><br /> 
+        <i>... More tags &lt;I> ...</i>
+        </div> 
+      <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">I</b>></tt><br />                       
+      <i>... More tags &lt;I> ...</i>
+      </div> 
+    <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">B</b>></tt>
+    </div> 
+  <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Body</b>></tt> 
+  </div>
+<tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Grid</b>></tt>
+
+<!---------------------------------------------------  API for server paging and child paging  ------------------------------------------------------------>
+<a name="API"></a>
+<h2>API for server paging and child paging</h2>
+
+<!-- GetCfgRequest -->
+<a name="GetCfgRequest"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>string</i>
+   <h4>GetCfgRequest</h4>
+   <s>(<i>string</i> <b>format</b> = "internal")</s>
+</div>
+Returns sorting, grouping, filter and search settings for download request, without enclosing &lt;Grid> tag.<br /> 
+<b>format</b> can be "<a href="DataFormats.htm#InternalFormat">internal</a>" or "<a href="DataFormats.htm#DTDFormat">dtd</a>"<br />
+
+<!-- OnDownloadPage -->
+<a name="OnDownloadPage"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnDownloadPage</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>function</i> <b>func</b>)</s>
+</div>
+Called when data for page or row's children are requested.<br />
+Returns true to suppress default downloading. If it does return true, must call function func(int result), where result&lt;0 is error code or 0 for ok.<br />
+To catch and modify the data after they are loaded use <a href="DataCommunication.htm#OnDataReceive">OnDataReceive</a> or <a href="DataCommunication.htm#OnDataGet">OnDataGet</a> event and test their source.Row attribute to get the page.<br />
+
+<!-- OnPageReady -->
+<a name="OnPageReady"></a>
+<div class="API">
+   <u>new <b>8.1</b></u> <b>API event</b> <i>void</i>
+   <h4>OnPageReady</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>)</s>
+</div>
+Called when page is downloaded and updated and is ready to render.<br />
+
+<!-- DownloadPage -->
+<a name="DownloadPage"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>DownloadPage</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>function</i> <b>Func</b>)</s>
+</div>
+Downloads data of page or children of row. Sends to server <a href="#PageRequest">request</a> with page index or row id and sort, group, filter and search settings.<br />
+Alerts server message if any and permitted. Asynchronous function. After finish, calls function Func. function <i><b>Func</b></i> (<i>int</i> code).<br />
+
+<!-- ReloadPage -->
+<a name="ReloadPage"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>ReloadPage</h4>
+   <s>(<i>TRow</i> <b>page</b>)</s>
+</div>
+Clears page data or row's children and reloads them from server.<br />
+
+<!-- LoadPage -->
+<a name="LoadPage"></a>
+<div class="API">
+   <u>new <b>7.0</b> <i>upd <b>14.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>LoadPage</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>bool</i> <b>render</b>, <i>function</i> <b>func</b>)</s>
+</div>
+Loads and processes the page data. The page will be fully loaded and prepared for render and rendered if it is visible (due scroll).<br />
+To catch the event the page is loaded use <b>OnDataReceive</b> event or <i>since 14.0</i> pass callback <b>func</b><br />
+<i>Since 14.0</i> if <b>render</b> is true, it also renders the page, if it can be rendered.<br />
+<i>Since 14.0</i> function <b>func</b> (int result) is called after the page is loaded or rendered.<br />
+<i>Since 14.0</i> it can be used to load and render row children in server child paging.<br />
+For example you can write such code to download all root pages asynchronously on start:<br />
+<div class="L1">
+  <tt>Grids.OnDataReceive = function(G,IO)&#123; if(IO.Row) G.LoadPage(IO.Row.nextSibling); }</tt>
+</div>
+
+<!-- State -->
+<a name="State"></a>
+<div class="API">
+   <u></u> <b>API TRow var.</b> <i>int</i>
+   <h4>State</h4>
+   <s></s>
+</div>
+Page or parent row state of loading / rendering its children.<br />
+<b>0</b> - not yet loaded, <b>1</b> - children are loading, <b>2</b> - children are loaded, but not rendered, <b>3</b> - children are rendering, <b>4</b> - fully rendered.<br />
+
+
+</div>
+</body>	
+</html>

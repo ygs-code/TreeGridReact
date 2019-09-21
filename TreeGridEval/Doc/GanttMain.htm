@@ -1,0 +1,1183 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Gantt main bar</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Main bar and Milestone</h1>                 
+<p>TreeGrid documentation</p>                
+                                                
+Base Gantt chart task.<br />
+Defined by <a href="#CGanttStart">GanttStart</a> (start date) and <a href="#CGanttEnd">GanttEnd</a> (due date) or by <a href="#CGanttStart">GanttStart</a> (start date) and <a href="#CGanttDuration">GanttDuration</a> (length) as one continuous bar.<br />
+Or defined by <a href="#CGanttParts">GanttParts</a> as more discrete bars.<br />
+Supports more tasks (plans) in one cell, the count of the plans is defined by <a href="#CGanttCount">GanttCount</a>. The plans are independent, can have their own dependencies, resources or percentage completion. Every task in individual plan can be discrete or continuous.<br /><br />
+
+<strong>Since 10.0 the Main bar can be also discrete and has replaced the Real Flow.</strong><br />
+
+<!-----------------------------------------------------------------------  Definition  ------------------------------------------------->
+<a name="Definition"></a>
+<h2>Definition</h2>
+<p class="H2">Defining the individual main bars and plans</p>
+
+<!-- GanttCount -->
+<a name="CGanttCount"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttCount</h4> <s>[1]</s>
+</div>
+A number of available plains of main bars in the chart. Like Baseline count in MS Project.<br />
+To have the individual plans dependencies, resources, percent complete and disabled/locked state, list them in <a href="GanttObjects.htm#CGanttTask">GanttTask</a>.<br />
+The individual plans are defined by attributes below with the <span style="color:#00B0F0"><b>X</b></span> replaced by a number.<br />
+For example GanttStartX can be GanttStart, GanttStart1, GanttStart2, GanttStart3,  ...., GanttStart10<br />
+Default value <b>1</b> means one plan of main bars without the number, like GanttStart.<br />
+There is no limit of the plan count, there can be e.g. 1000 plans.<br />
+
+<!-- GanttStartX -->
+<a name="CGanttStart"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttStart<span style="color:#00B0F0">X</span></h4> <s>Gantt source - column name or exact value</s>
+</div>
+Start date of the main bar, usually column name, but can be also date string (M/d/yyyy hh:mm:ss) or count of milliseconds.<br />
+If set to column, the column must be <b>Type='Date'</b><br />
+If the start date is edited, the bar is <u>moved</u>.<br />
+
+<!-- GanttEndX -->
+<a name="CGanttEnd"></a>
+<div class="XML">
+   <u><i>upd <b>6.3</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttEnd<span style="color:#00B0F0">X</span></h4> <s>Gantt source - column name or exact value</s>
+</div>
+Due date of the main bar, usually column name, but can be also date string (M/d/yyyy hh:mm:ss) or count of milliseconds.<br />
+If set to column, the column must be <b>Type='Date'</b><br />
+The end date can be last date or last unit, depending on <a href="GanttCompute.htm#CGanttLastUnit">GanttLastUnit</a> setting <i>(new in 6.3)</i>.<br />
+When the GanttEnd date is empty (or the column value it points to), the milestone is displayed instead of main bar.<br />
+If the end date is edited, the bar is <u>resized</u>.<br />
+
+<!-- GanttDurationX -->
+<a name="CGanttDuration"></a>
+<div class="XML">
+   <u><i>upd <b>6.3</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttDuration<span style="color:#00B0F0">X</span></h4> <s>Gantt source - column name or exact value</s>
+</div>
+Duration between start date and end date in <a href="GanttCompute.htm#CGanttDataUnits">GanttDataUnits</a>. Can be column name or float or string.<br />
+The length can contain also unit modifier set by <a href="GanttCompute.htm#CGanttDataModifiers">GanttDataModifiers</a>, for example one day is usually 1d or 8h or 0.2w <i>(new in 6.3)</i>.<br />
+When the GanttDuration value is empty or 0 (or the column value it points to), the milestone is displayed instead of main bar.<br />
+For milestone and GanttDuration as column is the value set to empty or 0 according to <a href="TypeNumber.htm#CCanEmpty">CanEmpty</a> value regardless on cell type.<br />
+If set GanttStart and GanttEnd, the GanttDuration is calculated from them and ignores its value.<br />
+<br />
+<i>The duration is always in work time, without excluded dates.</i><br />
+To display duration in full time, just as end - start, don't use GanttDuration attribute, but define calculated column instead, for example:<br />
+<tt>&lt;C Name="DurFull" Formula="!End||!Start?0:(End-Start)/1000/60/60/24" CanEdit="1" OnChange="var val = Grid.CheckGantt(Row,'End',Get(Row,'Start')+Get(Row,'DurFull')*1000*60*60*24); if(val!==false) Grid.SetValue(Row,'End',val,1)"/></tt> 
+defines duration in days (day = 1000*60*60*24 ms), where "Start" and "End" are column names for GanttStart and GanttEnd.
+To mark the cell as Changed if modified by change in Gantt add it to <a href="CellFormula.htm#CfgCalculatedChanges">CalculatedChanges</a>.<br />
+
+<!-- GanttPartsX -->
+<a name="CGanttParts"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttParts<span style="color:#00B0F0">X</span></h4> <s>Gantt source - column name or exact value</s>
+</div>
+Discrete parts of the main bar, can be column name or direct value. If set to column, the column must be <tt><b>Type='Date' Range='1'</b></tt>.<br />
+The format is standard TreeGrid date range as "start1~end1;start2~end2;start3~end3;...", where the start and end can be (date string (M/d/yyyy hh:mm:ss) or count of milliseconds.<br />
+The end date of range can be exact last date or last unit, depending on <a href="GanttCompute.htm#CGanttLastUnit">GanttLastUnit</a> setting.<br />
+If not defined, the main bar cannot contain more discrete parts and the value is read from GanttStart, GanttEnd and GanttDuration attributes.<br />
+If set the GanttParts, it calculates and sets automatically the GanttStart, GanttEnd and GanttDuration.<br />
+It can define also milestones, start milestone as "d1~" and end milestone by "~d2". Setting one date without the separator '~' defines bar with duration one GanttDataUnits.<br />
+<div class="L1">For example <tt>"1/1/2000~1/10/2000;1/12/2000~;1/14/2000;~1/16/2000"</tt> defines one bar 1/1-1/10, one start milestone at 1/12, one bar 1/14-1/15 and one end milestone at 1/16</div>
+<i>Since 10.0.</i> it replaces the <a href="#CGanttFlow">GanttFlow</a>.<br />
+
+<!-----------------------------------------------------------------------  Task  ------------------------------------------------->
+<a name="Task"></a>
+<h2>Task</h2>
+<p class="H2">
+Main bar as Gantt task attributes<br />
+<strong>Used only if the main bar plan is listed in <a href="GanttObjects.htm#CGanttTask">GanttTask</a></strong><br />
+<i>Main bar as task can have also <a href="GanttCompute.htm#Dependencies">dependencies</a> and <a href="GanttResources.htm#Assign">resources</a></i><br />
+</p>
+
+<!-- GanttCompleteX -->
+<a name="CGanttComplete"></a>
+<div class="XML">
+   <u>chg <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttComplete<span style="color:#00B0F0">X</span></h4> <s>Gantt source - column name or exact value</s>
+</div>
+% of completion (0 - 100) of the task, can be column name or float.<br />
+<i>(Since 10.0)</i> <b>Used only if the main bar plan is listed in <a href="GanttObjects.htm#CGanttTask">GanttTask</a></b><br />
+
+<!-- GanttRoundComplete -->
+<a name="CGanttRoundComplete"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRoundComplete</h4> <s>[0]</s>
+</div>
+If the percentage complete will be rounded to specified units (<b>1</b> - GanttUnits, <b>2</b> - GanttDataUnits) when entering it by SetGanttPercent.<br />
+Affects Main bar and Run. See also <a href="GanttCalendars.htm#CGanttExcludeComplete">GanttExcludeComplete</a> to round the percentage complete to workdays.<br /> 
+Setting it also restricts to have boxes incomplete by very small amount (due not precise setting of the percentage complete).<br />
+
+<!-- GanttManualX -->
+<a name="CGanttManual"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttManual<span style="color:#00B0F0">X</span></h4> <s>Gantt source - column name or exact value</s>
+</div>
+Manual start date of the main bar, can be column name or direct value.<br />
+Used as minimal start date when correcting dependencies, the task is never moved before this date when correcting dependencies.<br />
+It is changed to main bar start date whenever the main bar is manually moved or resized by a user or by API.<br />
+<b>Used only if the main bar plan is listed in <a href="GanttObjects.htm#CGanttTask">GanttTask</a></b><br />
+
+<!-- GanttManualChange -->
+<a name="CGanttManualChange"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttManualChange</h4> <s>[2]</s>
+</div>
+How the GanttManual will be changed when moved or resized the task.<br />
+<b>0</b> - Never displayed, changed, used.<br /> 
+<b>1</b> - Displayed and used, but never automatically changed.<br />
+<b>2</b> - Changed only if defined as column.<br />
+<b>3</b> - Changed also when defined as attribute.<br />
+<b>4</b> - Like 3 and if empty it is set to the task start date.<br />
+
+<!-- GanttManualSide -->
+<a name="CGanttManualSide"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttManualSide</h4> <s>[2]</s>
+</div>
+Where the GanttManual lock will be placed and used. <b>0</b> - bar left side (start), <b>1</b> - bar right side (end), <b>2</b> - like <a href="GanttCompute.htm#CGanttDirection">GanttDirection</a>, <b>3</b> - opposite to <a href="GanttCompute.htm#CGanttDirection">GanttDirection</a>.<br />
+<i>Note, the attribute is used also for Run bars.</i><br />
+
+<!-- GanttDisabledX -->
+<a name="CGanttDisabled"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttDisabled<span style="color:#00B0F0">X</span></h4> <s>Gantt source - column name or exact value</s>
+</div>
+If the main bar is disabled or locked.<br /> 
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>None.</td></tr>
+<tr><td><b>1</b></td><td>Disabled. Disabled bar is colored gray and its dependencies are inactive. If set <tt><a href="#CGanttEditDisabled">GanttEditDisabled</a>='0'</tt>, it cannot be changed by a user.</td></tr>
+<tr><td><b>2</b></td><td>Locked. Locked bar cannot be moved when correcting dependencies. If set <tt><a href="#CGanttEditDisabled">GanttEditDisabled</a>='0'</tt>, it cannot be changed by a user. Ignored when calculating critical path.</td></tr>
+</table>
+<b>Used only if the main bar plan is listed in <a href="GanttObjects.htm#CGanttTask">GanttTask</a></b><br />
+
+<!-- GanttEditDisabled -->
+<a name="CGanttEditDisabled"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttEditDisabled</h4> <s>[0]</s>
+</div>
+If the disabled or locked bar can be moved, resized, changed and dependencies can be attached to it by a user.<br />
+
+<!-- DisableGanttMain -->
+<a name="DisableGanttMain"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>object</i>
+   <h4>DisableGanttMain</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>plan</b>, <i>int</i> <b>disable</b>)</s>
+</div>
+Disables, locks or enables the main bar, sets the GanttDisable value.<br />
+<b>plan</b> is number of plan, 0 for base main plan. See <a href="#CGanttCount">GanttCount</a>.<br />
+<b>disable</b> = <b>0</b> - enable / unlock, <b>1</b> - disable, <b>2</b> - lock<br />
+
+<!-----------------------------------------------------------------------  Edit  ------------------------------------------------->
+<a name="Edit"></a>
+<h2>Edit</h2>
+<p class="H2">Special attributes for editing main bar</p>
+
+<!-- GanttEdit -->
+<a name="CGanttEdit"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b> <i>upd <b>10.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>GanttEdit</h4> <s>["all"]</s>
+</div>
+Which Gantt objects can be edited / moved / changed / deleted / added by user. Comma separated list of flag names, case insensitive.<br />
+<i><strong>It does not affect editing values in the source cells</strong> - use standard attributes like <a href="CellEdit.htm#CCanEdit">CanEdit</a> to restrict source cell editing.</i><br />
+<table>
+<tr><td style="width:70px;"><b>Main</b></td><td>Main bars and milestones can be created, deleted and modified directly in Gantt chart. <i>Since 10.0</i> individual actions can be set by <b>MainMove</b>, <b>MainResize</b> (resize+split), <b>MainNew</b> (add+delete), <b>MainComplete</b>, <b>MainText</b>, <b>MainState</b> (disable, lock).</td></tr>
+<tr><td><b>Main<span style="color:#00B0F0">X</span></b></td><td><i>Since 10.0</i> it can contain also the <b>Main1</b>, <b>Main2</b>, <b>Main3</b>, ... <b>Main<span style="color:#00B0F0">X</span></b>, the individual actions can be set by <b>Main<span style="color:#00B0F0">X</span>Move</b>, <b>Main<span style="color:#00B0F0">X</span>Resize</b> (resize+split), <b>Main<span style="color:#00B0F0">X</span>New</b> (add+delete), <b>Main<span style="color:#00B0F0">X</span>Complete</b>, <b>Main<span style="color:#00B0F0">X</span>Text</b>, <b>Main<span style="color:#00B0F0">X</span>State</b> (disable, lock).</td></tr>
+</table>
+For editing other Gantt objects see <a href="GanttObjects.htm#CGanttEdit">GanttEdit</a> full description.<br />
+
+<!-- GanttEditStartMove -->
+<a name="CGanttEditStartMove"></a>
+<div class="XML">
+   <u>new <b>6.5</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttEditStartMove</h4> <s>[1]</s>
+</div>
+If set to <b>0</b>, editing start resizes the task (preserves end and changes duration).<br />
+If set to <b>1</b>, editing start moves the task (changes end and preserves duration).<br />
+
+<!-- GanttEditSoleDuration -->
+<a name="CGanttEditSoleDuration"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttEditSoleDuration</h4> <s>[0]</s>
+</div>
+If permitted entering duration if no start and end date is set.<br />
+Useful when entering values for new tasks starting by duration.<br />
+
+<!-- GanttJoinX -->
+<a name="CGanttJoin"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttJoin<span style="color:#00B0F0">X</span></h4> <s>[1]</s>
+</div>
+By default, when set to <b>1</b>, the overlaid and adjacent parts are automatically merged to one part.<br />
+When set to <b>0</b>, the main bar can contain adjacent parts and parts cannot be moved or resized through another part.<br />
+When set to <b>-1</b>, the main bar can contain adjacent and also overlaid parts, the parts can be moved or resized through another part.<br />
+<i>If set GanttJoin to 0 or -1, the main bar should not be editable by calendar, because it does not support adjacent or overlaid parts.</i><br />
+<i>Since 10.0</i> it replaces the <a href="#CGanttFlowJoin">GanttFlowJoin</a>.<br />
+
+<!-- GanttMilestonesX -->
+<a name="CGanttMilestones"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttMilestones<span style="color:#00B0F0">X</span></h4> <s>[1]</s>
+</div>
+If new milestones can be created in the main bar plan. <i>Note, it differs from run bar GanttRunMilestones attribute.</i><br />
+<b>0</b> - no, <b>1</b> - yes, <b>2</b> - only milestones<br />
+
+<!-- GanttDifferMilestones -->
+<a name="CGanttDifferMilestones"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttDifferMilestones</h4> <s>[1]</s>
+</div>
+If start milestones (defined by GanttStart) and end milestones (defined by GanttEnd) behave differently on edges of excluded dates.<br />
+If set to <b>1</b>, the start milestones cannot be placed to start of excluded dates and end milestone cannot be placed to end of excluded dates.<br />
+Affects dragging and also moving tasks by correcting dependencies.<br />
+
+<!-- GanttResizeDelete -->
+<a name="CGanttResizeDelete"></a>
+<div class="XML">
+   <u>new <b>6.1</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttResizeDelete</h4> <s>[1]</s>
+</div>
+If the Main and Run bars can be deleted by resizing them to zero width.<br />
+<b>0</b> - the box cannot be deleted by resizing. Both the run box and the main bar can be resized to one unit width.<br />
+<b>1</b> - if the box is resized to zero width, it is deleted.<br />
+<b>2</b> - if the box is resized to zero width, it shows confirm message and is deleted if confirmed, otherwise original state is restored.<br />
+
+<!-- GanttResizeBeforeMove -->
+<a name="CGanttResizeBeforeMove"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttResizeBeforeMove</h4> <s>[2]</s>
+</div>
+If resizing the Main and Run bars is accessible even if another object is above the bar.<br /> 
+For <b>0</b> it moves the object above, for <b>1</b> it resizes the bar under, for <b>2</b> it resizes the bar only under icon (e.g. flag, point, milestone or constraint), otherwise it moves the bar above.<br />
+
+<!-----------------------------------------------------------------------  Text  ------------------------------------------------->
+<a name="Text"></a>
+<h2>Text</h2>
+<p class="H2">Main bar HTML content and side HTML</p>
+
+<!-- GanttTextX -->
+<a name="CGanttText"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttText<span style="color:#00B0F0">X</span></h4> <s>Gantt source - column name or exact value</s>
+</div>
+Text for the main bar. It can be displayed inside the bar set as <b>*Text*</b> in <a href="#CGanttHtml">GanttHtml</a>, next to the bar in <a href="#CGanttHtmlLeft">GanttHtmlLeft</a> / <a href="#CGanttHtmlRight">GanttHtmlRight</a> or as tooltip in <a href="#CGanttTip">GanttTip</a>.<br />
+For milestone it can be displayed next to the milestone set as <b>*Text*</b> in <a href="#CGanttHtmlLeft">GanttHtmlLeft</a> / <a href="#CGanttHtmlRight">GanttHtmlRight</a> or as tooltip in <a href="#CGanttMilestoneTip">GanttMilestoneTip</a>.<br />
+
+<!-- GanttHtmlX -->
+<a name="CGanttHtml"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttHtml<span style="color:#00B0F0">X</span></h4> <s></s>
+</div>
+Main bar html content. It can contain any HTML code to display inside the main bar(s).<br />
+It can also show values from other cells in row, set by <b>*col*</b> where col is the column name.<br />
+It can show also the specials: <b>*Text*</b> - the <a href="#CGanttText">GanttText</a>, <b>*Plan*</b> - the plan index from 0, the plan 0 name is defined in Text.xml as Plan0,<br /> 
+<div class="L1">
+<b>*Index*</b> - the bar index inside cell from 1, <b>*Start*</b> - start date of the bar, <b>*End*</b> - end date of the bar, <b>*Duration*</b> - length of the bar,<br />
+<b>*StartAll*</b> - start date of the whole bar, <b>*EndAll*</b> - end date of the whole bar, <b>*DurationAll*</b> - length of the whole bar,<br />
+<b>*Resources*</b> - actual resources assigned to the bar.<br />
+</div>
+Example: <tt>"*Start* - *End*&lt;br>*Text*"</tt><br />
+To have custom background defined by the html set also <tt><a href="#CGanttClass">GanttClass</a>='Html'</tt> to disable default box background.<br />
+
+<!-- OnGetGanttHtml -->
+<a name="OnGetGanttHtml"></a>
+<div class="API">
+   <u>new <b>9.1</b> chg <b>10.0</b> <i>upd <b>11.0</b></i></u> <b>API event</b> <i>string</i>
+   <h4>OnGetGanttHtml</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>width</b>, <i>int</i> <b>comp</b>, <i>int</i> <b>crit</b>, <i>int</i> <b>plan</b>, <i>int</i> <b>index</b>, <i>string</i> <b>txt</b>, <i>int</i> <b>left</b>, <i>int</i> <b>maxwidth</b>, <i>string[ ]</i> <b>cls</b>)</s>
+</div>
+Called to get the main bar html content to render it. It can return any HTML code or text. Used for <a href="#CGanttHtml">GanttHtml</a>.<br />
+<b>width</b> is actual width of the bar outer tag in pixels, it is wider than the space for the HTML.<br />
+<b>comp</b> is percent complete<br />
+<b>crit</b> is 0 for normal bar, 1 for critical bar, 2 for error bar.<br />
+<b>plan</b> <i>(new 10.0)</i> is a number of plan, from 0. (0 = GanttStart, 1 = GanttStart1, 2 = GanttStart2 ... ). See <a href="#CGanttCount">GanttCount</a>.<br />
+<b>index</b> <i>(new 10.0)</i> is an index of main bar part, from 0.<br />
+<b>side</b> <i>(new 10.0)</i> is <b>0</b> for inner html (GanttHtml), <b>1</b> for left side (GanttHtmlLeft), <b>2</b> for right side (GanttHtmlRight)<br />
+<b>txt</b> <i>(new 10.0)</i> is predefined HTML content to be shown in the bar.<br />
+<b>left</b> <i>(new 10.0)</i> is left position of the bar inside the Gantt cell (or in horizontal Gantt page), in pixels.<br />
+<b>maxwidth</b> <i>(new 10.0)</i> is actual width of the Gantt cell (or horizontal Gantt page), in pixels.<br />
+<b>cls</b> <i>(new 11.0)</i> contains CSS classes to be set to the bar. Items of the array are intended to change in this handler to specify the CSS classes for the bar.<br />
+<div class="L1">[<b>GanttClass</b>, <b>OutClass</b>, <b>InClass</b>, <b>TextClass</b>] - <b>GanttClass</b> is the actual <a href="#CGanttClass">GanttClass</a> value. It is the only item preset in this array and the only partial class.</div>
+<div class="L2"><b>OutClass</b> - full css class(es) added to the outer box. <b>InClass</b> - full css class(es) added to the inner box, <b>TextClass</b> - full css class(es) added inside incomplete bar</div>
+The height of the box is set according to its content height except is set <a href="#CGanttHeight">GanttHeight</a>.<br />
+
+<!-- GanttHtmlDateFormat -->
+<a name="CGanttHtmlDateFormat"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttHtmlDateFormat</h4> <s></s>
+</div>
+Date format for <a href="#CGanttHtml">GanttHtml</a>, <a href="#CGanttHtmlLeft">GanttHtmlLeft</a> and <a href="#CGanttHtmlRight">GanttHtmlRight</a> values *Start*, *End*, *StartAll*, *EndAll*<br />
+
+<!-- GanttHtmlLeftX -->
+<a name="CGanttHtmlLeft"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttHtmlLeft<span style="color:#00B0F0">X</span></h4> <s>[""]</s>
+</div>
+Html text displayed on left side of the bar. Right aligned.<br />
+<b>It can contain the same special settings like <a href="#CGanttHtml">GanttHtml</a>.</b><br />
+
+<!-- GanttHtmlLeftEdgeX -->
+<a name="CGanttHtmlLeftEdge"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttHtmlLeftEdge<span style="color:#00B0F0">X</span></h4> <s>[0]</s>
+</div>
+Where the GanttLeftSide text will be displayed<br />
+<b>0</b> - before the first box, <b>1</b> - before every box, <b>2</b> - inside every box next to right edge, <b>3</b> - centered inside every box, <b>4</b> - centered in every box, but left side to milestone.<br />
+<b>5</b> - before the first box from all main bar plans, <b>6</b> - before the first box from all main bar plans and run boxes<br />
+
+<!-- GanttHtmlLeftClassX -->
+<a name="CGanttHtmlLeftClass"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttHtmlLeftClass<span style="color:#00B0F0">X</span></h4> <s></s>
+</div>
+CSS class used to display the side text.<br />
+There are predefined 17 classes for all basic background colors: <u><b>Aqua</b></u>, <u><b>Black</b></u>, <u><b>Blue</b></u>, <u><b>Fuchsia</b></u>, <b>Gray</b>, <u><b>Green</b></u>, <u><b>Lime</b></u>, <u><b>Maroon</b></u>, <b>Navy</b>, <b>Olive</b>, <u><b>Orange</b></u>, <b>Purple</b>, <u><b>Red</b></u>, <u><b>Silver</b></u>, <b>Teal</b>, <b>White</b>, <u><b>Yellow</b></u>. <i>The 10 underlined colors are defined also for milestones and dependency lines.</i><br />
+There is also predefined class <b>None</b> for HTML without any formatting, especially without padding.<br />
+For custom classes you need to define CSS class GxGanttHtmlXXX, where XXX is the value set to this attribute and Gx is the style prefix.<br />
+
+<!-- GanttHtmlRightX -->
+<a name="CGanttHtmlRight"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttHtmlRight<span style="color:#00B0F0">X</span></h4> <s>["*Resources*"]</s>
+</div>
+Html text displayed on right side of the bar. Left aligned.<br />
+<b>It can contain the same special settings like <a href="#CGanttHtml">GanttHtml</a>.</b><br />
+By default it shows <a href="GanttResources.htm#CGanttResources">GanttResources</a>.<br />
+
+<!-- GanttHtmlRightEdgeX -->
+<a name="CGanttHtmlRightEdge"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttHtmlRightEdge<span style="color:#00B0F0">X</span></h4> <s>[0]</s>
+</div>
+Where the GanttRightSide text will be displayed<br />
+<b>0</b> - after the last box, <b>1</b> - after every box, <b>2</b> - inside every box next to left edge, <b>3</b> - centered inside every box, <b>4</b> - centered in every box, but right side to milestone.<br />
+<b>5</b> - after the last box from all main bar plans, <b>6</b> - after the last box from all main bar plans and run boxes<br />
+
+<!-- GanttHtmlRightClassX -->
+<a name="CGanttHtmlRightClass"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttHtmlRightClass<span style="color:#00B0F0">X</span></h4> <s></s>
+</div>
+CSS class used to display the side text.<br />
+There are predefined 17 classes for all basic background colors: <u><b>Aqua</b></u>, <u><b>Black</b></u>, <u><b>Blue</b></u>, <u><b>Fuchsia</b></u>, <b>Gray</b>, <u><b>Green</b></u>, <u><b>Lime</b></u>, <u><b>Maroon</b></u>, <b>Navy</b>, <b>Olive</b>, <u><b>Orange</b></u>, <b>Purple</b>, <u><b>Red</b></u>, <u><b>Silver</b></u>, <b>Teal</b>, <b>White</b>, <u><b>Yellow</b></u>. <i>The 10 underlined colors are defined also for milestones and dependency lines.</i><br />
+There is also predefined class <b>None</b> for HTML without any formatting, especially without padding.<br />
+For custom classes you need to define CSS class GxGanttHtmlXXX, where XXX is the value set to this attribute and Gx is the style prefix.<br />
+
+<!-- GanttHtmlShiftX -->
+<a name="CGanttHtmlShift"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttHtmlShift<span style="color:#00B0F0">X</span></h4> <s>[""]</s>
+</div>
+Vertical shift in pixels of the Left and Right side Html inside cell. Negative top, positive bottom.<br />
+It is possible to use it to display some text also above the box.<br />
+
+<!-- GanttShowHtml -->
+<a name="CGanttShowHtml"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttShowHtml</h4> <s>[1]</s>
+</div>
+If the side html (GanttHtmlLeft and GanttHtmlRight) will be displayed in chart.<br />
+For <b>0</b> the side html will be hidden.<br />
+For <b>1</b> the side html will be shown, but the chart will not resize to show them.<br />
+For <b>2</b> <i>reserved</i><br />
+For <b>3</b> the side html will be shown and the chart will resize to show them if required, like for the other Gantt objects. <i>Can remarkably slow down large charts!</i><br />
+
+<!-- OnGetGanttSideHtml -->
+<a name="OnGetGanttSideHtml"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetGanttSideHtml</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>width</b>, <i>int</i> <b>comp</b>, <i>int</i> <b>crit</b>, <i>int</i> <b>plan</b>, <i>int</i> <b>index</b>, <i>string</i> <b>txt</b>, <i>int</i> <b>side</b>)</s>
+</div>
+Called to get the main bar side html to render it. It can return any HTML code or text. Used for <a href="#CGanttHtmlLeft">GanttHtmlLeft</a> and <a href="#CGanttHtmlRight">GanttHtmlRight</a>.<br />
+<b>width</b> is actual width of the bar outer tag in pixels.<br />
+<b>comp</b> is percent complete.<br />
+<b>crit</b> is 0 for normal bar, 1 for critical bar, 2 for error bar.<br />
+<b>plan</b> is a number of plan, from 0. (0 = GanttStart, 1 = GanttStart1, 2 = GanttStart2 ... ). See <a href="#CGanttCount">GanttCount</a>.<br />
+<b>index</b> is an index of main bar part, from 0.<br />
+<b>txt</b> is predefined HTML content to be shown in the bar.<br />
+<b>side</b> is <b>1</b> for left side (<a href="#CGanttHtmlLeft">GanttHtmlLeft</a>), <b>2</b> for right side (<a href="#CGanttHtmlRight">GanttHtmlRight</a>).<br />
+
+<!-----------------------------------------------------------------------  Tip  ------------------------------------------------->
+<a name="Tip"></a>
+<h2>Tip</h2>
+<p class="H2">HTML shown on mouse hover the bar</p>
+
+<!-- GanttTipX -->
+<a name="CGanttTip"></a>
+<div class="XML">
+   <u>renamed <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttTip<span style="color:#00B0F0">X</span></h4> <s></s>
+</div>
+Tip shown on mouse hover the main bar, but <u>not</u> milestone. It can contain HTML code.<br />
+<i>Since 10.0 renamed from <b>GanttMainTip</b>.</i><br />
+<b>It can contain the same special settings like <a href="#CGanttHtml">GanttHtml</a>.</b><br />
+To dynamically generate the tip text use <a href="GanttAPI.htm#OnGanttTip">OnGanttTip</a> API event.<br />
+
+<!-- GanttMilestoneTipX -->
+<a name="CGanttMilestoneTip"></a>
+<div class="XML">
+   <u>new <b>6.4</b> chg <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttMilestoneTip<span style="color:#00B0F0">X</span></h4> <s></s>
+</div>
+Tip shown on mouse hover the milestone, similar to <a href="#CGanttTip">GanttTip</a>.<br />
+<i>Since 10.0</i>, if not set, used <a href="#CGanttTip">GanttTip</a>.<br />
+
+<!-- GanttTipDateFormat -->
+<a name="CGanttTipDateFormat"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttTipDateFormat</h4> <s></s>
+</div>
+Date format for <a href="#CGanttTip">GanttTip</a> values *Start*, *End*, *StartAll*, *EndAll*<br />
+
+<!-- GanttMainTip -->
+<a name="CGanttMainTip"></a>
+<div class="DEL">
+   <u>new <b>6.4</b> deleted <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttMainTip</h4> <s></s>
+</div>
+Renamed to <a href="#CGanttTip">GanttTip</a>.<br />
+
+<!-----------------------------------------------------------------------  Position  ------------------------------------------------->
+<a name="Position"></a>
+<h2>Position</h2>
+<p class="H2">Vertical position and size</p>
+
+<!-- GanttTopX -->
+<a name="CGanttTop"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttTop<span style="color:#00B0F0">X</span></h4> <s></s>
+</div>
+Vertical position in pixels of the bar inside its cell. To display the different main bars on different vertical levels.<br />
+Default value is used according to actual TreeGrid CSS style, usually 1 pixel.<br />
+Top position of milestone is calculated as (GanttHeight - milestoneheight) + GanttTop, where milestoneheight is defined in style Grid.css.<br />
+
+<!-- GanttHeightX -->
+<a name="CGanttHeight"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttHeight<span style="color:#00B0F0">X</span></h4> <s></s>
+</div>
+Inner height of the bar in pixels.<br />
+Default value is calculated according to the box content. Minimal default value is read from actual TreeGrid CSS style, usually 9 pixels.<br />
+Remember, it affects the bar background and the side icons if used.<br />
+
+<!-- GanttMilestoneTopMin -->
+<a name="CGanttMilestoneTopMin"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttMilestoneTopMin</h4> <s>[0]</s>
+</div>
+Minimal top position of milestones in Gantt.<br /> 
+Useful to set to permit or restrict negative milestone position if the milestone is higher than bars.<br />
+
+<!-----------------------------------------------------------------------  Style  ------------------------------------------------->
+<a name="Style"></a>
+<h2>Style</h2>
+<p class="H2">Shape, color and side icons</p>
+
+<!-- GanttClassX -->
+<a name="CGanttClass"></a>
+<div class="XML">
+   <u>chg <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttClass<span style="color:#00B0F0">X</span></h4> <s></s>
+</div>
+The custom prefix for all CSS classes of main bars and milestones. Case sensitive.<br />
+The CSS classes with the custom prefix are added to the base class and are intended to change color or shape of the main bars and milestones for particular rows.<br />
+There is one predefined black and white class <b>Group</b> for various purposes, e.g. grouped rows.<br />
+There are special classes: <b>None</b> <i>(since 9.3)</i> - no border, no padding, no margin, no background, <b>Void</b> <i>(since 10.0)</i> - transparent border, no background, <b>Html</b> <i>(since 10.0)</i> - no background.<br />
+There are 17 predefined classes for bars in all 17 base colors: <u><b>Aqua</b></u>, <u><b>Black</b></u>, <u><b>Blue</b></u>, <u><b>Fuchsia</b></u>, <b>Gray</b>, <u><b>Green</b></u>, <u><b>Lime</b></u>, <u><b>Maroon</b></u>, <b>Navy</b>, <b>Olive</b>, <u><b>Orange</b></u>, <b>Purple</b>, <u><b>Red</b></u>, <u><b>Silver</b></u>, <b>Teal</b>, <b>White</b>, <u><b>Yellow</b></u>. <i>The 10 underlined colors are defined also for milestones and dependency lines.</i><br />
+You can easily add or update the Gantt classes in the Grid.css file.<br />
+<i>Remember, before the class is always added "GxGantt" as style prefix. Before 10.0. there was added only "Gx" prefix!</i><br />
+<strong>Before 10.0 this attribute was used for all Gantt objects in the cell, since 10.0 it was replaced by individual attributes GanttFlagsClass, GanttPointsClass, GanttMarkClass, GanttConstraintsClass. For Run it was removed completely, use the Class of GanttRun or OnGetGanttRunClass event.</strong><br />
+
+<!-- GanttMilestoneClassX -->
+<a name="CGanttMilestoneClass"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttMilestoneClass<span style="color:#00B0F0">X</span></h4> <s></s>
+</div>
+The custom prefix for all CSS classes of milestones. Case sensitive. If not set, used <a href="#CGanttClass">GanttClass</a>.<br />
+The CSS classes with the custom prefix are added to the base class and are intended to change color or shape of the main bars and milestones for particular rows.<br />
+There is one predefined black and white class <b>Group</b> for various purposes, e.g. grouped rows.<br />
+There are 17 predefined classes for milestones in (only) 10 base colors: <b>Aqua</b> (<b>Teal</b>), <b>Black</b> (<b>Gray</b>), <b>Blue</b> (<b>Navy</b>), <b>Fuchsia </b>(<b>Purple</b>), <b>Green</b>, <b>Lime</b>, <b>Orange</b>, <b>Red</b> (<b>Maroon</b>), <b>Silver</b> (<b>White</b>), <b>Yellow</b> (<b>Olive</b>).<br />
+<i>Remember, before the class is always added "GxGantt" as style prefix. Before 10.0. there was added only "Gx" prefix!</i><br /><br />
+
+It can be used also to define custom milestone icon. For example set GanttMilestoneClass="Test" and if used White style, define CSS:<br />
+<div class="L1">.G<b>W</b>Gantt<b>Test</b>Milestone { background:url(Test.gif) no-repeat; } .G<b>W</b>GanttTestMilestoneHover { background:url(TestHover.gif) no-repeat; }</div>
+
+<!-- GanttIconsX -->
+<a name="CGanttIcons"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b> <i>upd <b>10.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttIcons<span style="color:#00B0F0">X</span></h4> <s>[0]</s>
+</div>
+   If and what icons are shown on left and / or right side of the task.<br /> 
+<b>0</b> - no icons<br />
+<b>1</b> - standard summary icons on both outer sides, defined in selected CSS style (outer)<br />
+<b>2</b> - left outer custom icon defined by <a href="#CGanttIconLeft">GanttIconLeft</a><br />
+<b>3</b> - right outer custom icon defined by <a href="#CGanttIconRight">GanttIconRight</a><br />
+<b>4</b> - both outer custom icons defined by <a href="#CGanttIconLeft">GanttIconLeft</a> and <a href="#CGanttIconRight">GanttIconRight</a><br />
+<b>5</b> - <i>(new 10.0)</i> standard summary icons on both outer sides of bars and interrupt icons on inner sides of bars (outer + inner)<br />
+<b>6</b> - <i>(new 10.0)</i> standard interrupt icons on inner sides of bars (inner)<br />
+<b>7</b> - <i>(new 10.0)</i> both custom icons defined by <a href="#CGanttIconLeft">GanttIconLeft</a> and <a href="#CGanttIconRight">GanttIconRight</a> on both outer and inner sides of all bars<br />
+It is just visual effect.<br />
+
+<!-- GanttIconLeftX -->
+<a name="CGanttIconLeft"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttIconLeft<span style="color:#00B0F0">X</span></h4> <s></s>
+</div>
+Left custom icon shown when set <tt><a href="#CGanttIcons">GanttIcons</a> = 2</tt> or <tt>4</tt>.<br />
+It is direct url of the icon. If relative, it is relative to the main page shown in browser.<br />
+
+<!-- GanttIconLeftShiftX -->
+<a name="CGanttIconLeftShift"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttIconLeftShift<span style="color:#00B0F0">X</span></h4> <s>[-10]</s>
+</div>
+Shift of the left custom icon to the left edge of the bar. In pixels. Can be negative, positive or zero.<br />
+
+<!-- GanttIconLeftWidthX -->
+<a name="CGanttIconLeftWidth"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttIconLeftWidth<span style="color:#00B0F0">X</span></h4> <s>[20]</s>
+</div>
+Width of the left side icon in pixels. Used only for <a href="#CGanttIconsHover">GanttIconsHover</a><br />
+
+<!-- GanttIconRightX -->
+<a name="CGanttIconRight"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttIconRight<span style="color:#00B0F0">X</span></h4> <s></s>
+</div>
+Right custom icon shown when set <tt><a href="#CGanttIcons">GanttIcons</a> = 3</tt> or <tt>4</tt>.<br />
+It is direct url of the icon. If relative, it is relative to the main page shown in browser.<br />
+
+<!-- GanttIconRightShiftX -->
+<a name="CGanttIconRightShift"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttIconRightShift<span style="color:#00B0F0">X</span></h4> <s>[-10]</s>
+</div>
+Shift of the right custom icon to the right edge of the bar. In pixels. Can be negative, positive or zero.<br />
+
+<!-- GanttIconRightWidthX -->
+<a name="CGanttIconRightWidth"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttIconRightWidth<span style="color:#00B0F0">X</span></h4> <s>[20]</s>
+</div>
+Width of the right side icon in pixels. Used only for <a href="#CGanttIconsHover">GanttIconsHover</a><br />
+
+<!-- GanttIconsHover -->
+<a name="CGanttIconsHover"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttIconsHover</h4> <s>[0]</s>
+</div>
+If the side icons will be available for mouse events and tip. Used for all main bar plans.<br />
+If set to <b>1</b>, the mouse over event will be generated also if mouse moves between the bar side icon and the bar itself.<br />
+It will be possible to show e.g. different tip for the side icon using <a href="GanttAPI.htm#OnGanttTip">OnGanttTip</a> and testing <a href="GanttAPI.htm#GetGanttXY">XY</a>.MainIcon (0 none, 1 left, 2 right).
+
+<!-- GanttAdjacentBars -->
+<a name="CGanttAdjacentBars"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttAdjacentBars</h4> <s>[0]</s>
+</div>
+By default the adjacent Main and Run boxes have few pixels between for just visual effect. If set <tt>GanttAdjacentBars='1'</tt>, the adjacent boxes have no visible space between them.<br />
+
+<!-- GanttCenter -->
+<a name="CGanttCenter"></a>
+<div class="XML">
+   <u>new <b>13.2</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttCenter</h4> <s>[1]</s>
+</div>
+If and how the Flags, Points and main bar milestones will be centered.<br />
+<b>0</b> - no, left side of the icon is placed to the exact date, 
+<b>1</b> - yes, center of the icon is placed to the exact date, 
+<b>2</b> - yes, center of the unit is placed to center of the GanttUnits unit.<br />
+<i>It is not used in GanttUnits months and years.</i><br />
+
+
+<!-----------------------------------------------------------------------  API  ------------------------------------------------->
+<a name="API"></a>
+<h2>API</h2>
+<p class="H2">
+Controlling main bar by JavaScript<br />
+<strong>Some other API methods and events are also listed in individual features above in this document</strong>
+</p>
+
+<!-- GetGanttMain -->
+<a name="GetGanttMain"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>object</i>
+   <h4>GetGanttMain</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>plan</b>)</s>
+</div>
+Returns parsed main bar as two dimensional array of individual parts [[start1,end1],[start2,end2],[start3,end3],...].<br />
+For continuous bar the array contains only one item.<br />
+The start and end are dates in milliseconds since 1/1/1970. To get duration of the part in units use <a href="GanttAPI.htm#DiffGanttDate">DiffGanttDate</a> API method.<br />
+Milestone has the fifth item set as 1 for start milestone or 2 for end milestone, like [[start1,end1,null,null,1/2],...].<br />
+The returned object contains also properties <u>StartDate</u> and <u>EndDate</u> as the first and last date of the main bar in milliseconds.<br />
+plan is number of plan, 0 for base main plan. See <a href="#CGanttCount">GanttCount</a>.<br />
+
+<!-- SetGanttMain -->
+<a name="SetGanttMain"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>object</i>
+   <h4>SetGanttMain</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>plan</b>, <i>object</i> <b>main</b>)</s>
+</div>
+Saves the parsed main bar back to the Gantt cell and updates the chart.<br />
+<b>plan</b> is number of plan, 0 for base main plan. See <a href="#CGanttCount">GanttCount</a>.<br />
+Updates cells GanttStart, GanttEnd, GanttDuration, GanttParts and GanttManual.<br />
+
+<!-- OnGanttMainChange -->
+<a name="OnGanttMainChange"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>object</i>
+   <h4>OnGanttMainChange</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>plan</b>, <i>object</i> <b>new</b>, <i>object</i> <b>old</b>, <i>string</i> <b>action</b>)</s>
+</div>
+Called before changed any main bar date or duration, by dragging or by editing.<br />
+<i>To catch changed completion state or bar text use standard <a href="GanttAPI.htm#OnGanttChange">OnGanttChange</a> API event instead.</i><br />
+<b>plan</b> is number of plan, 0 for base main plan. See <a href="#CGanttCount">GanttCount</a>.<br />
+<b>new</b> is main object to be set, the format is the same as returned <a href="#GetGanttMain">GetGanttMain</a> method.<br />
+<b>old</b> is original main object that will be changed.<br />
+<b>action</b> is the action lead to the change, can: be Resize, Move, New, Delete, DeleteAll, Correct.<br />
+When creating new box by dragging, it is called twice, once on start dragging, for one unit bar and second after finish resizing the new bar.<br />
+Return <b>true</b> to suppress the change.<br />
+Return new main object or modified <b>new</b> or <b>old</b> object to be set instead of the <b>new</b>.<br />
+
+<!-- OnGanttMainChanged -->
+<a name="OnGanttMainChanged"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnGanttMainChanged</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>plan</b>, <i>object</i> <b>new</b>, <i>object</i> <b>old</b>, <i>string</i> <b>action</b>)</s>
+</div>
+Called after changed any main bar date or duration, by dragging or by editing.<br />
+<i>To catch changed completion state or bar text use standard <a href="GanttAPI.htm#OnGanttChanged">OnGanttChanged</a> API event instead.</i><br />
+<b>plan</b> is number of plan, 0 for base main plan. See <a href="#CGanttCount">GanttCount</a>.<br />
+<b>new</b> is main object actually set, the format is the same as returned <a href="#GetGanttMain">GetGanttMain</a> method.<br />
+<b>old</b> is original main object that was changed.<br />
+<b>action</b> is the action lead to the change, can: be Resize, Move, New, Delete, DeleteAll, Correct.<br />
+When creating new box by dragging, it is called twice, once on start dragging, for one unit bar and second after finish resizing the new bar.<br />
+
+<!-----------------------------------------------------------------------  Actions  ------------------------------------------------->
+<a name="Actions"></a>
+<h2>Actions</h2>
+<p class="H2">Interactive main bar</p>
+
+<!-- Action MoveGanttMain -->
+<a name="ActionsMoveGanttMain"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>MoveGanttMain</h4>
+   <s>Attached to <b>OnRightDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+Moves main bar part by mouse dragging.<br />
+Fails, if mouse is not above main bar or main bar cannot be moved.<br />
+
+<!-- Action MoveGanttMainAll -->
+<a name="ActionsMoveGanttMainAll"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>MoveGanttMainAll</h4>
+   <s>Not attached to any event, can be attached to <b>OnDragGantt</b></s>
+</div>
+Moves whole main bar by mouse dragging.<br />
+Fails, if mouse is not above main bar or main bar cannot be moved.<br />
+
+<!-- Action MoveGanttMainFirst -->
+<a name="ActionsMoveGanttMainFirst"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>MoveGanttMainFirst</h4>
+   <s>Attached to <b>OnDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+If dragged the first main bar part, moves whole main bar.<br />
+If dragged other main bar part, moves only this main bar part.<br />
+
+<!-- Action ResizeGanttMain -->
+<a name="ActionsResizeGanttMain"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ResizeGanttMain</h4>
+   <s>Attached to <b>OnDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+Resizes main bar part by mouse dragging<br />
+Fails, if mouse is not above main bar edge or main bar part cannot be resized<br />
+
+<!-- Action CreateGanttMain -->
+<a name="ActionsCreateGanttMain"></a>
+<div class="ACT">
+   <u>new <b>7.0</b> <i>upd <b>10.0</b></i></u> <b>&lt;Actions></b> <i></i>
+   <h4>CreateGanttMain</h4>
+   <s>Not attached to any event, can be attached to <b>OnDragGantt</b></s>
+</div>
+Creates new main bar by mouse dragging.<br />
+Fails, if there is already one main bar in the cell or main bar cannot be created here<br />
+<i>Since 10.0</i> it is <u>not</u> attached to OnDragGantt, it was replaced by CreateGanttBar.<br />
+
+<!-- Action CreateGanttBar -->
+<a name="ActionsCreateGanttBar"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CreateGanttBar</h4>
+   <s>Attached to <b>OnDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+Creates new main or run bar. It creates the one that can be created. It chooses the bar to create according to the y axis.<br />
+If more new bars can be created on actual position, it chooses them in this order: main, main1, main2, ..., mainX, run.<br />
+
+<!-- Action DeleteGanttMain -->
+<a name="ActionsDeleteGanttMain"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttMain</h4>
+   <s>Attached to <b>OnCtrlClickGantt</b> event</s>
+</div>
+Deletes Main bar or Milestone if it is under mouse cursor.<br />
+It fails if there is neither Main bar nor Milestone under mouse cursor.<br />
+The main bar can be deleted also by resizing to zero width, if permitted by <b>GanttResizeDelete</b>.<br />
+
+<!-- Action DisableGanttMain -->
+<a name="ActionsDisableGanttMain"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DisableGanttMain</h4>
+   <s>Not attached to any event</s>
+</div>
+Disables or enables Main bar or Milestone if it is under mouse cursor.<br />
+It fails if there is neither Main bar nor Milestone under mouse cursor.<br />
+
+<!-- Action LockGanttMain -->
+<a name="ActionsLockGanttMain"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>LockGanttMain</h4>
+   <s>Not attached to any event</s>
+</div>
+Disables or enables Main bar or Milestone if it is under mouse cursor.<br />
+It fails if there is neither Main bar nor Milestone under mouse cursor.<br />
+
+<!-- Action SetGanttPercent -->
+<a name="ActionsSetGanttPercent"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetGanttPercent</h4>
+   <s>Attached to <b>OnCtrlRightClickGantt</b> event</s>
+</div>
+Changes % of completed to position under mouse cursor.<br /> 
+It fails if mouse is not above Main bar.<br />
+
+<!-- Action EditGanttPercent -->
+<a name="ActionsEditGanttPercent"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>EditGanttPercent</h4>
+   <s>Attached to <b>OnShiftRightClickGantt</b> event</s>
+</div>
+Lets a user to edit percentage completion of main bar or milestone under mouse cursor<br />
+
+<!-- Action EditGanttText -->
+<a name="ActionsEditGanttText"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>EditGanttText</h4>
+   <s>Attached to <b>OnDblClickGantt</b> event</s>
+</div>
+Lets a user to edit tooltip text of main bar or milestone under mouse cursor.<br />
+
+<!-- Action NewGanttMilestone -->
+<a name="ActionsNewGanttMilestone"></a>
+<div class="ACT">
+   <u>chg <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NewGanttMilestone</h4>
+   <s>Attached to <b>OnDblClickGantt</b> event</s>
+</div>
+Adds new start milestone or run milestone. It creates the one that can be created. It chooses the bar to create according to the y axis.<br />
+If more new bars can be created on actual position, it chooses them in this order: main, main1, main2, ..., mainX, run.<br />
+<i>Before 10.0 its functionality was the same as NewGanttStartMilestone.</i><br />
+
+<!-- Action NewGanttStartMilestone -->
+<a name="ActionsNewGanttStartMilestone"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NewGanttStartMilestone</h4>
+   <s>Not attached to any event</s>
+</div>
+Adds new start milestone on mouse position<br />
+
+<!-- Action NewGanttEndMilestone -->
+<a name="ActionsNewGanttEndMilestone"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NewGanttEndMilestone</h4>
+   <s>Not attached to any event</s>
+</div>
+Adds new end milestone on mouse position.<br />
+
+<!-- Action SplitGanttMain -->
+<a name="ActionsSplitGanttMain"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SplitGanttMain</h4>
+   <s>Attached to <b>OnShiftClickGantt</b> event</s>
+</div>
+Splits main bar under mouse cursor on actual position to two parts.<br />
+
+<!-- DragGantt -->
+<a name="ActionsDragGantt"></a>
+<div class="DEL">
+   <u>deleted <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DragGantt</h4> <s>Not attached to any event, cannot be attached elsewhere</s>
+</div>
+Replaced by individual actions like <a href="#ActionsMoveGanttMain">MoveGanttMain</a>.<br />
+
+<!-- DragGanttResize -->
+<a name="ActionsGanttResize"></a>
+<div class="DEL">
+   <u>deleted <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DragGanttResize</h4> <s>Not attached to any event, can be attached to <b>OnDragGantt</b> only</s>
+</div>
+Replaced by individual actions like <a href="#ActionsResizeGanttMain">ResizeGanttMain</a>.<br />
+
+<!-- DragGanttNew -->
+<a name="ActionsDragGanttNew"></a>
+<div class="DEL">
+   <u>deleted <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DragGanttNew</h4> <s>Not attached to any event, can be attached to <b>OnDragGantt</b> only</s>
+</div>
+Replaced by individual actions like <a href="#ActionsCreateGanttBar">CreateGanttBar</a>.<br />
+
+<!-- DragGanttMove -->
+<a name="ActionsDragGanttMove"></a>
+<div class="DEL">
+   <u>deleted <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DragGanttMove</h4> <s>Not attached to any event, can be attached to <b>OnDragGantt</b> only</s>
+</div>
+Replaced by individual actions like <a href="#ActionsMoveGanttMain">MoveGanttMain</a>.<br />
+
+<!-----------------------------------------------------------------------  Deprecated side text  ------------------------------------------------->
+<a name="Format"></a>
+<h2>Deprecated side text</h2>
+<p class="H2"><strong>Since 10.0 replaced by <a href="#CGanttHtmlLeft">GanttHtmlLeft</a> / <a href="#CGanttHtmlRight">GanttHtmlRight</a>.</strong></p>
+
+<!-- GanttFormat -->
+<a name="CGanttFormat"></a>
+<div class="DEL">
+   <u>new <b>6.4</b> deleted <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>GanttFormat</h4> <s>[Resources]</s>
+</div>
+Replaced by <a href="#CGanttHtmlLeft">GanttHtmlLeft</a> / <a href="#CGanttHtmlRight">GanttHtmlRight</a> attributes.<br />
+<del>
+Text(s) displayed right to <a href="#CGanttFormatObject">GanttFormatObject</a> object.<br />
+By default it displays GanttResources value.<br />
+It can display any HTML text. It can also show values from other cells in row, set by <b>*col*</b> where col is the column name.<br />
+For example: <tt>GanttFormat="$&lt;span style='color:#77F'>*P*&lt;/span> *R*"</tt> => shows value from P column (as price) and from R column (as resources).<br />
+It is one string if GanttFormatObject contains one item, or more strings first character separated if GanttFormatObject contains more items.<br />
+</del>
+
+<!-- OnGetGanttFormat -->
+<a name="OnGetGanttFormat"></a>
+<div class="DEL">
+   <u>new <b>9.1</b> deleted <b>10.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetGanttFormat</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>text</b>)</s>
+</div>
+Replaced by <a href="#CGanttHtmlLeft">GanttHtmlLeft</a> / <a href="#CGanttHtmlRight">GanttHtmlRight</a> attributes.<br />
+<del>
+Called to get <a href="#CGanttFormat">GanttFormat</a> value dynamically.<br />
+The text is original value of GanttFormat. Return new HTML value or text.<br />
+The returned is next processed like the GanttFormat attribute, the *col* names are replaced by the values.<br />
+</del>
+
+<!-- GanttFormatWidth -->
+<a name="CGanttFormatWidth"></a>
+<div class="DEL">
+   <u>new <b>7.0</b> deleted <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int[ ]</i>
+   <h4>GanttFormatWidth</h4> <s></s>
+</div>
+Replaced by <a href="#CGanttHtmlLeft">GanttHtmlLeft</a> / <a href="#CGanttHtmlRight">GanttHtmlRight</a> attributes.<br />
+<del>
+Expected width in pixels of the text(s) displayed by <a href="#CGanttFormat">GanttFormat</a>.<br /> 
+Set this value to speed up Gantt chart creating (especially for Paging), to use this value instead of measuring width of the GanttFormat.<br />
+This width is reserved when calculating the whole chart width to completely show the GanttFormat text.<br />
+It is one integer if GanttFormatObject contains one item, or more integers comma separated if GanttFormatObject contains more items.<br />
+</del>
+
+<!-- GanttFormatObject -->
+<a name="CGanttFormatObject"></a>
+<div class="DEL">
+   <u>new <b>6.4</b> deleted <b>10.0</b></u> <b>&lt;C></b> <i>string[ ]</i>
+   <h4>GanttFormatObject</h4> <s>["Last"]</s>
+</div>
+Replaced by <a href="#CGanttHtmlLeft">GanttHtmlLeft</a> / <a href="#CGanttHtmlRight">GanttHtmlRight</a> attributes.<br />
+<del>
+Object next to the <a href="#CGanttFormat">GanttFormat</a> text will be displayed.<br />
+<b>Last</b> - the object from Main, Flow and Run positioned rightmost.<br />
+<b>First</b> - <i>(since 9.1)</i> the object from Main, Flow and Run positioned leftmost.<br />
+<b>Object</b> - <a href="GanttObjects.htm#CGanttTask">GanttTask</a> object (the first one, if there are more objects)<br />
+<b>Main</b>, <b>Main</b>, <b>Main1</b>, <b>Main2</b>,... <b>Main10</b>, <b>Run</b> - only for this object<br />
+If the selected object is not present in the cell, the text is not shown.<br /><br />
+
+<i>Since 9.1</i> it can contain more object names, comma separated. And there will be printed more texts, one text per one object.<br />
+In this case the <a href="#CGanttFormat">GanttFormat</a> contains more strings, first character separated. And GanttFormatWidth can contain more values, comma separated.<br />
+<i>Since 9.1</i> the object name can contain suffix to specify position of the text: <b>Prev</b> (before box), <b>Left</b> (on the box, left side), <b>Right</b> (on the box, right side), <b>Next</b> (right next to the box, default position).<br /> 
+For example: <tt>"MainPrev,MainNext,FlowLeft"</tt> will print three texts from GanttFormat, one before main bar, one after main bar and one into flow bar from left edge.<br />
+</del>
+
+<!-----------------------------------------------------------------------  Real Flow  ------------------------------------------------->
+<a name="Flow"></a>
+<h2>Real Flow</h2>
+<p class="H2">
+Real process of planned task - <i>one or more discrete bars with the same meaning</i><br />
+<strong>Since 10.0. replaced by Main bar <a href="#CGanttParts">Parts</a></strong>
+</p>
+<del>
+Defined by <a href="#CGanttFlow">GanttFlow</a> (date ranges).<br />
+It is one task divided to one or more discrete parts. Adjacent parts are merged to one part except set <tt><a href="#CGanttFlowJoin">GanttFlowJoin</a>='0'</tt>.<br />
+It can be discrete, can contain more date ranges. The first and last date in range are separated by tilde (~), ranges itself by semicolon (;).<br />
+</del>
+
+<!-- GanttFlow -->
+<a name="CGanttFlow"></a>
+<div class="DEL">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttFlow</h4> <s>Gantt source - column name or exact value</s>
+</div>
+<del>
+Real flow times, can be column name or date range string "d1~d2;d3~d4;d5;..." (date string (M/d/yyyy hh:mm:ss) or count of milliseconds).<br />
+These dates extend the displayed date range in chart when needed.<br />
+The end date of range can be last date or last unit, depending on <a href="GanttCompute.htm#CGanttLastUnit">GanttLastUnit</a> setting.<br />
+</del>
+
+<!-- GanttFlowComplete -->
+<a name="CGanttFlowComplete"></a>
+<div class="DEL">
+   <u>new <b>6.4</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttFlowComplete</h4> <s>Gantt source - column name or exact value</s>
+</div>
+<del>
+% of completion (0 - 100) of the task, can be column name or float.<br />
+<i>When set, the flow replaces the main task! It should <u>not</u> be used with main task!</i><br /> 
+This attribute is intended to use when the main task should be able to contain more parts, to replace it by Flow.<br />
+Remember, to attach dependencies to Flow instead of main task you need to set <tt><a href="GanttObjects.htm#CGanttTask">GanttTask</a>='Flow'</tt>.<br />
+It is possible also to define milestone as range with only one part and with the range separator,<br /> 
+<div class="L1">for example <tt>"1/1/2000~"</tt> is start milestone, <tt>"~1/1/2000"</tt> is end milestone and <tt>"1/1/2000"</tt> is standard bar part one unit wide.</div>
+<i>Since 7.0</i> for calculating summary of the GanttFlow can be used <a href="GanttSummary.html#ganttpercent">ganttpercent</a> Formula function.<br />
+</del>
+
+<!-- GanttFlowJoin -->
+<a name="CGanttFlowJoin"></a>
+<div class="DEL">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttFlowJoin</h4> <s>[1]</s>
+</div>
+<del>
+By default, when set to <b>1</b>, the overflowed and adjacent parts are automatically merged to one part.<br />
+When set to <b>0</b>, the Flow can contain adjacent part and parts cannot be moved or resized through another part.<br />
+When set to <b>-1</b>, the Flow can contain adjacent and also overflowed parts, the parts can be moved or resized through another part.<br />
+<i>If set GanttFlowJoin to 0 or -1, the Flow should <u>not</u> be editable by calendar, because it does not support adjacent or overflowed parts.</i><br />
+</del>
+
+<!-- GanttFlowText -->
+<a name="CGanttFlowText"></a>
+<div class="DEL">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttFlowText</h4> <s>Gantt source - column name or exact value</s>
+</div>
+<del>
+Text displayed as tooltip when mouse hovers real flow bar.<br />
+</del>
+
+<!-- GanttFlowTip -->
+<a name="CGanttFlowTip"></a>
+<div class="DEL">
+   <u>new <b>6.4</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttFlowTip</h4> <s></s>
+</div>
+<del>
+Tip shown on mouse hover the flow bar. It can contain HTML code.<br />
+By default it shows the value of <a href="#CGanttFlowText">GanttFlowText</a>.<br />
+It can also show values from other cells in row, set by <b>*col*</b> where col is the column name.<br />
+It can show also the specials: <b>*Text*</b> - show the <a href="#CGanttFlowText">GanttFlowText</a>, <b>*Start*</b> - start date of the bar, <b>*End*</b> - end date of the bar, <b>*Duration*</b> - length of the bar, <b>*Index*</b> - the bar index (from 1).<br />
+Example: <tt>"*Index*. *Start* - *End*&lt;br>*Text*"</tt><br />
+</del>
+
+<!-- OnGetGanttFlowHtml -->
+<a name="OnGetGanttFlowHtml"></a>
+<div class="DEL">
+   <u>new <b>9.1</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetGanttFlowHtml</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>index</b>, <i>int</i> <b>width</b>, <i>int</i> <b>comp</b>, <i>int</i> <b>crit</b>)</s>
+</div>
+<del>
+Called to get the flow bar HTML content to render it. It can return any HTML code or text.<br />
+<b>index</b> is the Flow bar index inside the Flow.<br />
+<b>width</b> is actual width of the bar outer tag in pixels, it is wider than the space for the HTML.<br />
+<b>comp</b> is percent complete or null if not set GanttFlowComplete.<br />
+<b>crit</b> is 0 for normal bar, 1 for critical bar, 2 for error bar.<br />
+If the handler returns something, the bar is always rendered as gray, without completion.<br />
+The height of the box is according to its content height.<br />
+</del>
+
+<!-- sumflow -->
+<a name="sumflow"></a>
+<div class="DEL">
+   <u>new <b>7.0</b></u> <b>formula</b> <i>string</i>
+   <h4>sumflow</h4> <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>condition</b> = null, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+<del>
+Sums all dates in column with <tt>Range=1 Type="Date"</tt>. It just creates new range from all intervals and updates it to not contain duplicate value cross intervals.<br />
+The difference to sumrange is that sumflow is affected by <a href="GanttCompute.htm#CGanttLastUnit">GanttLastUnit</a>.<br />
+For its attributes see <u>sum</u> function.<br />
+</del>
+
+<!-- MoveGanttFlow -->
+<a name="ActionsMoveGanttFlow"></a>
+<div class="DEL">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>MoveGanttFlow</h4> <s>Attached to <b>OnDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+<del>
+Moves one flow bar by mouse dragging.<br />
+Fails, if mouse is not above flow bar or the flow bar cannot be moved.<br />
+</del>
+
+<!-- ResizeGanttFlow -->
+<a name="ActionsResizeGanttFlow"></a>
+<div class="DEL">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ResizeGanttFlow</h4> <s>Attached to <b>OnDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+<del>
+Moves one flow bar by mouse dragging.<br />
+Fails, if mouse is not above flow bar edge or the flow bar cannot be resized.<br />
+</del>
+
+<!-- CreateGanttFlow -->
+<a name="ActionsCreateGanttFlow"></a>
+<div class="DEL">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CreateGanttFlow</h4> <s>Attached to <b>OnDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+<del>
+Creates new flow bar by mouse dragging.<br />
+Fails, if flow bar cannot be created here.<br />
+</del>
+
+<!-- DeleteGanttFlow -->
+<a name="ActionsDeleteGanttFlow"></a>
+<div class="DEL">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttFlow</h4> <s>Attached to <b>OnCtrlClickGantt</b> event</s>
+</div>
+<del>
+Deletes one Flow bar under mouse cursor.<br />
+It fails if there is no Flow under mouse cursor.<br />
+</del>
+
+<!-- NewGanttFlowMilestone -->
+<a name="ActionsNewGanttFlowMilestone"></a>
+<div class="DEL">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NewGanttFlowMilestone</h4> <s>Attached to <b>OnDblClickGantt</b> event</s>
+</div>
+<del>
+Adds new Flow milestone defined by start on mouse position. There can be more milestones defined by Flow in one cell.<br />
+</del>
+
+<!-- NewGanttFlowEndMilestone -->
+<a name="ActionsNewGanttFlowEndMilestone"></a>
+<div class="DEL">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NewGanttFlowEndMilestone</h4> <s>Not attached to any event</s>
+</div>
+<del>
+Adds new Flow milestone defined by end on mouse position. There can be more milestones defined by Flow in one cell.<br />
+</del>
+
+<!-- SetGanttFlowPercent -->
+<a name="ActionsSetGanttFlowPercent"></a>
+<div class="DEL">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetGanttFlowPercent</h4> <s>Attached to <b>OnCtrlRightClickGantt</b> event</s>
+</div>
+<del>
+Changes % of completed to position under mouse cursor.<br /> 
+It fails if mouse is not above Flow bar.<br />
+</del>
+
+<!-- EditGanttFlowPercent -->
+<a name="ActionsEditGanttFlowPercent"></a>
+<div class="DEL">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>EditGanttFlowPercent</h4> <s>Attached to <b>OnShiftRightClickGantt</b> event</s>
+</div>
+<del>
+Lets a user to edit percentage completion of main bar or milestone under mouse cursor.<br />
+</del>
+
+<!-- EditGanttFlowText -->
+<a name="ActionsEditGanttFlowText"></a>
+<div class="DEL">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>EditGanttFlowText</h4> <s>Attached to <b>OnDblClickGantt</b> event</s>
+</div>
+<del>
+Lets a user to edit tooltip text of real flow bar under mouse cursor.<br />
+</del>
+
+<!-- SplitGanttFlow -->
+<a name="ActionsSplitGanttFlow"></a>
+<div class="DEL">
+   <u>new <b>9.2</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SplitGanttFlow</h4> <s>Attached to <b>OnShiftClickGantt</b> event</s>
+</div>
+<del>
+Splits the flow bar under mouse cursor to two bars.<br />
+</del>
+
+</div>
+</body>
+</html>

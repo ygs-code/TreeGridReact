@@ -1,0 +1,161 @@
+<!--
+Example of TreeGrid using asynchronous (AJAX) communication with server
+Example of using Extended API functions like Reload or Save
+-->
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+      <style>
+         /* Examples shared styles */
+         .ExampleHeader { font:normal 16px Arial; color:blue; }
+         .ExampleHeader b { color:#800; }
+         .ExampleHeader i { color:black; font-style:normal; font-weight:bold; }
+         .ExampleHeader u { text-decoration:none; color:#0B0; font-weight:bold; padding:0px 2px 0px 2px; }
+         .ExampleName { font:bold 30px Arial; padding:5px 0px 5px 0px; }
+         .ExampleShort { font:italic 15px Arial; margin-bottom:10px; padding-top:5px; }
+         .ExampleDesc { margin:0px 5px 10px 5px; padding:5px; border:1px solid #AAA; }
+         .ExampleErr { margin:50px auto 10px auto; padding:5px; line-height:30px; border:1px solid black; color:red; width:800px; text-align:center; display:none; }
+         .ExampleBorder { margin:0px 5px 0px 5px; clear:both; zoom:1; }
+         .ExampleDesc ul { padding:0px 0px 0px 15px; margin:10px 0px 0px 0px; }
+         .ExampleDesc li { padding-bottom:8px; line-height:18px; }
+         .ExampleDesc h4 { display:inline; font:bold 15px Arial; line-height:20px; padding-left:6px; padding-right:6px; background:#87DAE5; border:1px solid #888; color:black; margin:0px; font-style:normal; }
+         .ExampleDesc u { text-decoration:none; font-size:11px; }
+         .ExampleDesc .Link { text-decoration:underline; color:blue; cursor:pointer; }
+
+         .ExampleBorder { padding-left:155px; }
+         .ExampleControls { width:150px; float:left; margin-left:-155px; }
+         .ExampleControls button { width:150px; }
+         .ExampleControls h2 { display:block; text-align:center; margin:0px; padding:0px 0px 5px 0px; font-size:25px; }
+         .ExampleControls center { padding-bottom:10px; }
+         .ExampleControls .Status { border:1px solid #ddd; background:#eee; text-align:center; }
+         .ExampleControls .XML { font-size:13px; padding:10px 0px 10px 0px; }
+         .ExampleControls button { margin:2px 0px 2px 0px; }
+      </style>
+   </head>
+   <body>
+      <center class="ExampleHeader"><script>document.write(location.href.replace(/(.*)(\/Examples\/|\/ExamplesGantt\/)([^\/]+)\/([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+      <center class="ExampleName">TreeGrid API for communication and reloading</center>
+      <center class="ExampleShort">Demonstrates Extended API functions for reloading, changing data source when reloading and catching data events</center>
+      <div class="ExampleErr">
+         <script> if(location.protocol=="file:") document.write("<style>.ExampleDesc, .ExampleBorder {display:none;} .ExampleErr { display:block; } </style>"); </script>
+         Do <b>not</b> run this file locally!<br />Run it from your local or remote web http server where is installed JAVA JRE.<br>
+      </div>
+      <div class="ExampleDesc">
+         <h4 style="background:#FCC;">You have to copy file <b style="color:red;">hsqldb.jar</b> to your JRE shared lib directory and <b style="color:red;">restart</b> your http server.</h4> <h4 style="background:#FCC;">The JSP service program must have <b style="color:red;">write</b> access to all files <b style="color:red;">database.*</b></h4>
+      </div>
+      <div class="ExampleBorder">
+         <div class="ExampleControls">
+            <h2>First grid</h2>
+            <center>Grids[0]</center>
+            <button onclick="Save(0)">Save changes</button><br />
+            <button onclick="Reload(0)">Cancel changes</button><br />
+            <button onclick="Load(0,this)">Load Tree example</button><br />
+            <div class="XML" id="XML0">Layout: <a href="DBDef.xml" target="_blank">DBDef.xml</a><br />Data: <a href="Framework.jsp" target="_blank">Framework.jsp</a><br />DB table: TableData</div>
+            <center>Automatic updates <input type="checkbox" id="IAuto0" onclick='AutoUpdateClick(0,this)'></center>
+            <div id="Status0" class="Status">Loading</div>
+         </div>
+         <div class="ExampleMain">
+            <bdo Debug='problem'
+               Layout_Url="DBDef.xml" Layout_Bonus="<Grid><Cfg MinTagHeight='260'/></Grid>"
+               Data_Url="Framework.jsp"
+               Upload_Url="Framework.jsp" Upload_Format="Internal" Upload_Data="TGData"
+               Export_Url="../Framework/Export.jsp"
+               ></bdo>
+         </div>
+      </div>
+      <div class="ExampleBorder" style="margin-top:10px;">
+         <div class="ExampleControls">
+            <h2>Second grid</h2>
+            <center>Grids[1]</center>
+            <button onclick="Save(1)">Save changes</button><br />
+            <button onclick="Reload(1)">Cancel changes</button><br />
+            <button onclick="Load(1,this)">Load Table example</button><br />
+            <div class="XML" id="XML1">Layout: <a href="TreeDef.xml" target="_blank">TreeDef.xml</a><br />Data: <a href="TreeFramework.jsp" target="_blank">TreeFramework.jsp</a><br />DB table: TreeData</div>
+            <center>Automatic updates <input type="checkbox" id="IAuto1" onclick='AutoUpdateClick(1,this)'></center>
+            <div id="Status1" class="Status">Loading</div>
+         </div>
+         <div class="ExampleMain">
+            <bdo Debug='problem'
+               Layout_Url="TreeDef.xml" Layout_Bonus="<Grid><Cfg MinTagHeight='260'/></Grid>"
+               Data_Url="TreeFramework.jsp"
+               Upload_Url="TreeFramework.jsp" Upload_Format="Internal" Upload_Data="TGData"
+               Export_Url="../Framework/Export.jsp"
+               ></bdo>
+         </div>
+      </div>
+
+      <script>
+      
+      function Save(idx){ // Uploads changes to server
+      Grids[idx].Save(); 
+      }
+      
+      function Reload(idx){ // Reloads body - cancels changes
+      var S = document.getElementById("Status"+idx);
+      S.innerHTML = "Reloading";
+      Grids[idx].ReloadBody(function(){ S.innerHTML = "Ready";} ); 
+      }
+      
+      function Load(idx,B){  // Loads new data, Table or Tree
+      var D = Grids[idx].Data;
+      if(B.innerHTML=="Load Tree example"){ // Loads tree
+         D.Layout.Url = "TreeDef.xml";
+         D.Data.Url = "TreeFramework.jsp";
+         D.Upload.Url = "TreeFramework.jsp";
+         D.Export.Param.File = "Tree.xls";
+         B.innerHTML = "Load Table example";
+         document.getElementById("XML"+idx).innerHTML = 'Layout: <a href="TreeDef.xml" target="_blank">TreeDef.xml</a><br />Data: <a href="TreeFramework.jsp" target="_blank">TreeFramework.jsp</a><br />DB table: TreeData';
+         }
+      else { // Loads table
+         D.Layout.Url = "DBDef.xml";
+         D.Data.Url = "Framework.jsp";
+         D.Upload.Url = "Framework.jsp";
+         D.Export.Param.File = "Table.xls";
+         B.innerHTML = "Load Tree example";
+         document.getElementById("XML"+idx).innerHTML = 'Layout: <a href="DBDef.xml" target="_blank">DBDef.xml</a><br />Data: <a href="Framework.jsp" target="_blank">Framework.jsp</a><br />DB table: TableData';
+         }
+      Grids[idx].Reload(D);
+      var S = document.getElementById("Status"+idx);
+      S.innerHTML = "Loading";
+      }
+      
+      function AutoUpdateClick(idx,S){   // Called when user changed Auto update checkbox
+      Grids[idx].AutoUpdate = S.checked;
+      }
+      
+      Grids.OnLoaded = function(G){      // Fired when all data are loaded
+      var S = document.getElementById("IAuto"+G.Index);
+      S.checked = G.AutoUpdate;
+      }
+      
+      Grids.OnRenderStart = function(G){ // Fired when rendering starts
+      var S = document.getElementById("Status"+G.Index);
+      S.innerHTML="Rendering";
+      }
+
+      Grids.OnRenderPageFinish = function(G){ // Fired when (every) page has been rendered
+      var S = document.getElementById("Status"+G.Index);
+      S.innerHTML="Ready";
+      }
+      
+      Grids.OnCfgChanged = function(G){ // Fired when user changed configuration in menu
+      var S = document.getElementById("IAuto"+G.Index);
+      S.checked = G.AutoUpdate; 
+      }
+      
+      </script>     
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGTrialJSP\s*=\s*(\d+)/), TGIndex = 8;
+         if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunTrialJSPAPI", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialJSP="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+
+   </body>
+</html>

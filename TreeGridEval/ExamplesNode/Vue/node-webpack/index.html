@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <script src="<%= htmlWebpackPlugin.files.publicPath %>static/Grid/GridE.js"></script>
+    <title>node-webpack</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+
+<!-- Google Analytics code run once for trial -->
+<script>
+   var TGTrial = document.cookie.match(/TGNode\s*=\s*(\d+)/), TGIndex = 65536;
+   if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+      var n = "RunVueWebpack", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGNode="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+      var u = document.cookie.match(/TGNodeUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGNodeUsed="+u+";path=/;expires="+d;
+      var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+            +(u==1||u==3||u==5||u==10?"UsedNode"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+      var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+      },100);
+</script>
+</html>

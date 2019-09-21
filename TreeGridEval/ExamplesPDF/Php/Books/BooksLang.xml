@@ -1,0 +1,195 @@
+﻿<Grid>
+   <!-- Translations to other languages -->
+
+   <!-- German -->
+
+   <TextDE>
+      <Set Row='Header' A='Titel' B='Autor' C='Verlag' D='Verfügbarkeit' H='Bindung' E='Seiten' F='ISBN' G='Preis'/>
+      <Change Col='H' Paperback='Taschenbuch' Hardcover='Gebunden'/>
+      <Change Col='A' Def='Desc,Info' Books='Bücher'>
+         <U N='Book description' V='Beschreibung'/>
+         <U N='About the author' V='Über den Autor'/>
+         <U N='From Publishers Weekly' V='Aus Publishers Weekly'/>
+         <U N='From the Publisher' V='Vom Verlag'/>
+         <U N='From Booklist' V='Aus Booklist'/>
+         <U N='Review' V='Rezension'/>
+      </Change>
+      <Change Row='Toolbar' Col='Edit'>
+         <U N='Read only' V='Nur Anzeige'/>
+         <U N='Edit values' V='Werte änderbar'/>
+      </Change>
+   </TextDE>
+   <Media>
+      <M Language='DE'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Seite %1H / %4 , %2V / %5&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='margin-top:%0px;width:%7px'>Beispiel 'Bücher', Seite %3 / %6&lt;/center>"/>
+         <Cols>
+            <C Name="D" Width="110"/>
+         </Cols>
+      </M>
+   </Media>
+
+
+   <!-- Brazilian Portuguese -->
+
+   <TextBR>
+      <Set Row='Header' A='Título' B='Autor' C='Editor' D='Disponibilidade' H='Capa' E='Páginas' F='ISBN' G='Preço'/>
+      <Change Col='H' Paperback='Livro de bolso' Hardcover='Capa dura'/>
+      <Change Col='A' Def='Desc,Info' Books='Livros'>
+         <U N='Book description' V='Descrição do livro'/>
+         <U N='About the author' V='Sobre o autor'/>
+         <U N='From Publishers Weekly' V='De editores semanais'/>
+         <U N='From the Publisher' V='Da editora'/>
+         <U N='From Booklist' V='Da Booklist'/>
+         <U N='Review' V='Revisão'/>
+      </Change>
+      <Change Row='Toolbar' Col='Edit'>
+         <U N='Read only' V='Somente leitura'/>
+         <U N='Edit values' V='Editar valores'/>
+      </Change>
+   </TextBR>
+   <Media>
+      <M Language='BR'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Página %1H / %4 , %2V / %5&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='margin-top:%0px;width:%7px'>Exemplos de livros na página %3 / %6&lt;/center>"/>
+      </M>
+   </Media>
+
+
+   <!-- Czech -->
+
+   <TextCS>
+      <Set Row='Header' A='Název' B='Autor' C='Vydavatel' D='Vydání' E='Stran' F='ISBN' H='Vazba' G='Cena'/>
+      <Change Col='H' Paperback='Brožovaná' Hardcover='Pevná'/>
+      <Change Col='A' Def='Desc,Info' Books='Knihy'>
+         <U N='Book description' V='Popis knihy'/>
+         <U N='About the author' V='O autorovi'/>
+         <U N='From Publishers Weekly' V='Z týdeníku nakladatelů'/>
+         <U N='From the Publisher' V='Slovo nakladatele'/>
+         <U N='From Booklist' V='Z Booklistu'/>
+         <U N='Review' V='Hodnocení'/>
+      </Change>
+      <Change Row='Toolbar' Col='Edit'>
+         <U N='Read only' V='Pouze pro čtení'/>
+         <U N='Edit values' V='Povolit editaci'/>
+      </Change>
+   </TextCS>
+   <Media>
+      <M Language='CS'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Stránka %1H / %4 , %2V / %5&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='margin-top:%0px;width:%7px'>Příklad 'Books', stránka %3 / %6&lt;/center>"/>
+      </M>
+   </Media>
+
+
+   <!-- Russian -->
+
+   <TextRU>
+      <Set Row='Header' A='Титул' B='Автор' C='Издатель' D='Выпуск' H='Переплёт' E='Страницы' F='ISBN' G='Цена'/>
+      <Change Col='H' Paperback='Мягкая обложка' Hardcover='Твердая обложка'/>
+      <Change Col='A' Def='Desc,Info' Books='Книги'>
+         <U N='Book description' V='Описание книги'/>
+         <U N='About the author' V='Об авторе'/>
+         <U N='From Publishers Weekly' V='Из еженедельника издателей'/>
+         <U N='From the Publisher' V='Слово издателя'/>
+         <U N='From Booklist' V='Из Booklist'/>
+         <U N='Review' V='Рецензия'/>
+      </Change>
+      <Change Row='Toolbar' Col='Edit'>
+         <U N='Read only' V='Только для чтения'/>
+         <U N='Edit values' V='Редактировать значения'/>
+      </Change>
+   </TextRU>
+   <Media>
+      <M Language='RU'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Страница %1H / %4 , %2V / %5&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='margin-top:%0px;width:%7px'>Пример 'Книги' страница %3 / %6&lt;/center>"/>
+         <Cols>
+            <C Name="D" Width="100"/>
+            <C Name="E" Width="100"/>
+            <C Name="H" Width="140"/>
+         </Cols>
+      </M>
+   </Media>
+
+
+   <!-- Japanese -->
+
+   <TextJP>
+      <Set Row='Header' A='タイトル' B='著者' C='出版社' D='出版日' H='装丁' E='ページ数' F='ISBN' G='価格'/>
+      <Change Col='H' Paperback='ペーパーバック' Hardcover='ハードカバー'/>
+      <Change Col='A' Def='Desc,Info' Books='書籍'>
+         <U N='Book description' V='書籍の説明'/>
+         <U N='About the author' V='著者について'/>
+         <U N='From Publishers Weekly' V='Publishers Weekly の書評'/>
+         <U N='From the Publisher' V='出版社の書評'/>
+         <U N='From Booklist' V='Booklist の書評'/>
+         <U N='Review' V='レビュー'/>
+      </Change>
+      <Change Row='Toolbar' Col='Edit'>
+         <U N='Read only' V='読み取り専用'/>
+         <U N='Edit values' V='編集'/>
+      </Change>
+   </TextJP>
+   <Media>
+      <M Language='JP'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>ページ %1H / %4 , %2V / %5&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='margin-top:%0px;width:%7px'>書籍サンプル印刷ページ %3 / %6&lt;/center>"/>
+         <Cols>
+            <C Name="D" Width="105"/>
+            <C Name="E" Width="90"/>
+            <C Name="H" Width="120"/>
+         </Cols>
+      </M>
+   </Media>
+
+
+   <!-- Persian -->
+
+   <TextFA>
+      <Set Row='Header' A='عنوان' B='مولف' C='ناشر' D='موجود' H='نوع' E='تعداد صفحه' F='ISBN' G='قيمت'/>
+      <Change Col='H' Paperback='پشت جلد' Hardcover='روي جلد'/>
+      <Change Col='A' Def='Desc,Info' Books='كتاب'>
+         <U N='Book description' V='توضيحات كتاب'/>
+         <U N='About the author' V='درباره نويسنده'/>
+         <U N='From Publishers Weekly' V='از ناشر هفتگي'/>
+         <U N='From the Publisher' V='از ناشر'/>
+         <U N='From Booklist' V='از ليست كتاب'/>
+         <U N='Review' V='نظرات'/>
+      </Change>
+      <Change Row='Toolbar' Col='Edit'>
+         <U N='Read only' V='فقط خواندني'/>
+         <U N='Edit values' V='قابل ويرايش'/>
+      </Change>
+   </TextFA>
+   <Media>
+      <M Language='FA'>
+         <Cfg PrintPagePostfix="&lt;center style='width:%7px'>صفحه %1 افقي از %4 , صفحه %2 عمودي  از %5&lt;/center>" PrintPagePrefix="&lt;center style='width:%7px'>صفحه %3 از %6&lt;/center>"/>
+         <Cols>
+            <C Name="D" Width="100"/>
+         </Cols>
+      </M>
+   </Media>
+
+
+   <!-- Framework for translations, English to English -->
+   <!-- To use it, rename the XX to your language code and add the language code also to the ...Def.xml to Languages Code and translate the texts !...! -->
+   <!-- Optionally extend Media tag (with Language set to your language code) to change sizes of cells and columns if translated text have different widths -->
+
+   <TextXX>
+      <Set Row='Header' A='!Title!' B='!Author!' C='!Publisher!' D='!Availability!' H='!Binding!' E='!Pages!' F='!ISBN!' G='!Price!'/>
+      <Change Col='H' Paperback='!Paperback!' Hardcover='!Hardcover!'/>
+      <Change Col='A' Def='Desc,Info' Books='!Books!'>
+         <U N='Book description' V='!Book description!'/>
+         <U N='About the author' V='!About the author!'/>
+         <U N='From Publishers Weekly' V='!From Publishers Weekly!'/>
+         <U N='From the Publisher' V='!From the Publisher!'/>
+         <U N='From Booklist' V='!From Booklist!'/>
+         <U N='Review' V='!Review!'/>
+      </Change>
+      <Change Row='Toolbar' Col='Edit'>
+         <U N='Read only' V='!Read only!'/>
+         <U N='Edit values' V='!Edit values!'/>
+      </Change>
+   </TextXX>
+   <Media>
+      <M Language='XX'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Page %1H / %4 , %2V / %5&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='margin-top:%0px;width:%7px'>Books example printed page %3 / %6&lt;/center>"/>
+      </M>
+   </Media>
+</Grid>

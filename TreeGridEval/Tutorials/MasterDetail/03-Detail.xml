@@ -1,0 +1,22 @@
+<Grid>
+   <Cfg id='DetailSimple' Detail='1' SuppressCfg='1'/>
+   <Cols>
+      <C Name='ADDRESS' Type='Lines' Width='160' VarHeight='2'/>
+      <C Name='NOTE' Type='Lines' Width='80' VarHeight='2'/>
+   </Cols>
+   <Def>
+      <!-- The default row for all detail rows -->
+      <D Name='DETAIL'/>
+   </Def>
+   <Solid>
+      <I Space='0' id='CAPTION' Cells='TEXT' TEXTType='Html' TEXTRelWidth='1' TEXTAlign='Center' TEXTClass='Bold'
+         TEXTFormula='var r = Grid.GetMasterRow(); return r ? r.NAME+" "+r.SURNAME : " --- Empty ---";'
+         />
+   </Solid>
+   <Root CDef='DETAIL' AcceptDef='DETAIL'/>
+   <Body>
+      <B>
+      </B>
+   </Body>
+   <MenuCfg ShowPanel='0'/>
+</Grid>

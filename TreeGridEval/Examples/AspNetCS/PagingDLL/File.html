@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html>
+	<head>
+		<script src="../../../Grid/GridE.js"> </script>
+      <style>
+         /* Examples shared styles */
+         .ExampleHeader { font:normal 16px Arial; color:blue; }
+         .ExampleHeader b { color:#800; }
+         .ExampleHeader i { color:black; font-style:normal; font-weight:bold; }
+         .ExampleHeader u { text-decoration:none; color:#0B0; font-weight:bold; padding:0px 2px 0px 2px; }
+         .ExampleName { font:bold 30px Arial; padding:5px 0px 5px 0px; }
+         .ExampleShort { font:italic 15px Arial; margin-bottom:10px; padding-top:5px; }
+         .ExampleDesc { margin:0px 5px 10px 5px; padding:5px; border:1px solid #AAA; }
+         .ExampleErr { margin:50px auto 10px auto; padding:5px; line-height:30px; border:1px solid black; color:red; width:800px; text-align:center; display:none; }
+         .ExampleBorder { margin:0px 5px 0px 5px; clear:both; zoom:1; }
+         .ExampleDesc ul { padding:0px 0px 0px 15px; margin:10px 0px 0px 0px; }
+         .ExampleDesc li { padding-bottom:8px; line-height:18px; }
+         .ExampleDesc h4 { display:inline; font:bold 15px Arial; line-height:20px; padding-left:6px; padding-right:6px; background:#87DAE5; border:1px solid #888; color:black; margin:0px; font-style:normal; }
+         .ExampleDesc u { text-decoration:none; font-size:11px; }
+         .ExampleDesc .Link { text-decoration:underline; color:blue; cursor:pointer; }
+      </style>
+	</head>
+	<body>
+   <center class="ExampleHeader"><script>document.write(location.href.replace(/(.*)(\/Examples\/|\/ExamplesGantt\/)([^\/]+)\/([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+      <center class="ExampleName">Server side paging with DLL on XML file</center>
+      <center class="ExampleShort">Using <b>TreeGrid server library</b> for server side paging upon XML file on disk</center>
+      <div class="ExampleErr">
+         <script> if(location.protocol=="file:") document.write("<style>.ExampleDesc, .ExampleBorder {display:none;} .ExampleErr { display:block; } </style>"); </script>
+         Do <b>not</b> run this file locally!<br />Run it from your local or remote web http server where is installed IIS and ASP.NET (1.0, 1.1, 2.0, 3.0, 3.5, 4.0, 4.5, ...).<br>
+      </div>
+      <div class="ExampleDesc">
+         <i>Source files:</i> <h4>File.html</h4> (this html page), <a href="FileDef.xml" target="_blank"><h4>FileDef.xml</h4></a> (static XML layout), 
+         <a href="File.aspx" target="_blank"><h4>File.aspx</h4></a> (server script generates and processes XML data and generates XLS export; uses the TreeGrid.dll/so), 
+         <a href="FileData.xml" target="_blank"><h4>FileData.xml</h4></a> (source XML data)<br />
+         <h4>TreeGrid.dll</h4> or <h4>TreeGrid.so</h4> library located in package root directory <b>/Server/</b> or <b>/Server/DLL64</b> depending on server system. 
+         This library is used in File.aspx.
+         <h4>tmp/</h4> directory can be used for temporary data to free ASP.NET memory.
+      </div>
+      <div class="ExampleDesc">
+         This example demonstrates using <a href="../../../Doc/DLL.htm"><h4>TreeGrid server side DLL / SO</h4></a> library
+            for <b>server</b> side <b>paging</b>, <b>calculations</b>, <b>grouping</b>, <b>sorting</b>, <b>filtering</b>, <b>Excel export</b> and <b>updates</b>.
+         It demonstrates also complex <b>grouping</b> feature and cell editing in various groups.<br>
+         This example loads all data from the <b>FileData.xml</b> file and fills them to TreeGrid DLL and uses it for generating data, pages and export for client.<br />
+         Uploaded changes are sent only to TreeGrid DLL and saved to temporary xml in <b>/tmp</b> directory. <b>This example does not modify the source FileData.xml!</b><br>
+         <i>This example does not use any custom JavaScript or server script code, all features are set via XML data definitions and provided by TreeGrid!</i>
+      </div>
+      <div class="ExampleDesc" style="font-size:11px; line-height:11px;">
+         In table there are fictive resellers around the world with their results from the first two months in year 2004.<br>
+         In columns <b>Registered</b>, <b>Since</b>, <b>Calls per</b> and <b>Rabat</b> are data related to partner 
+            and can be edited only when rows are grouped by <b>Partner</b> (or by Location and Partner).
+         In columns <b>Orders</b>, <b>Income</b> and <b>Expenses</b> are results from every partner's month and can be edited in any grouping.<br>
+         Column <b>Gross profit</b> is calculated (Income - Expenses), 
+            <b>Discount</b> is calculated (Gross profit x Rabat) and
+            <b>Profit</b> is calculated (Gross profit - Discount).
+         In bottom <b>Total results</b> row is summary of the results for whole table, 
+            in individual group rows when the grid is grouped is summary for given group.<br>
+         When are rows grouped by <b>Location and Partner</b> you can drag and drop partners to another location, 
+            add new partner to the location or delete the partner. You can also change the whole location by choosing another.<br>
+      </div>
+      <div class="ExampleBorder">
+         <div class="ExampleMain" style="width:100%;height:530px;">
+			   <bdo Debug="problem" 
+			      Layout_Url="FileDef.xml" 
+			
+               Data_Url="File.aspx"
+               Data_Method='Form'
+               Data_Format='Internal'
+               Data_Param_Function='LoadBody'
+               Data_Param_Def='FileDef.xml'
+               Data_Param_File='FileData.xml'
+               Data_Data='Data'
+
+               Page_Url='File.aspx' 
+               Page_Format='Internal'
+               Page_Method='Form'
+               Page_Param_Function='LoadPage'
+               Page_Param_Def='FileDef.xml'
+               Page_Param_File='FileData.xml'
+               Page_Data='Data'
+           
+               Upload_Url='File.aspx' 
+               Upload_Format='Internal'
+               Upload_Method='Form'
+               Upload_Param_Function='Save'
+               Upload_Param_Def='FileDef.xml'
+               Upload_Param_File='FileData.xml'
+               Upload_Data='Data'
+
+               Export_Url='File.aspx' 
+               Export_Format='Internal'
+               Export_Method='Form'
+               Export_Param_Function='Export'
+               Export_Param_Def='FileDef.xml'
+               Export_Param_File='FileData.xml'
+               Export_Data='Data'
+               Export_Type='Settings,Changes'
+			
+			   ></bdo>
+   		</div>
+		</div>
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGTrialCS\s*=\s*(\d+)/), TGIndex = 0x400000;
+         if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunTrialCSFile", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialCS="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+
+	</body>
+</html>

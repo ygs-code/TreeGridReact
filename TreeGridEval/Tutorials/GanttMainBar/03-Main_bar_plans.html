@@ -1,0 +1,99 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+
+      /* Custom icon for MilestoneClass "RedSvg" */
+      .GWGanttRedSvgMilestone,.GSGanttRedSvgMilestone,.GMGanttRedSvgMilestone,.GBGanttRedSvgMilestone,.GTGanttRedSvgMilestone { background:url(Red.svg) no-repeat; }
+      .GWGanttRedSvgMilestoneHover,.GSGanttRedSvgMilestoneHover,.GMGanttRedSvgMilestoneHover,.GBGanttRedSvgMilestoneHover,.GTGanttRedSvgMilestoneHover { background:url(RedHover.svg) no-repeat; }
+
+      /* Custom icon for MilestoneClass "GreenSvg" */
+      .GWGanttGreenSvgMilestone,.GSGanttGreenSvgMilestone,.GMGanttGreenSvgMilestone,.GBGanttGreenSvgMilestone,.GTGanttGreenSvgMilestone { background:url(Green.svg) no-repeat; }
+      .GWGanttGreenSvgMilestoneHover,.GSGanttGreenSvgMilestoneHover,.GMGanttGreenSvgMilestoneHover,.GBGanttGreenSvgMilestoneHover,.GTGanttGreenSvgMilestoneHover { background:url(GreenHover.svg) no-repeat; }
+
+      /* Custom icon for MilestoneClass "YellowSvg" */
+      .GWGanttYellowSvgMilestone,.GSGanttYellowSvgMilestone,.GMGanttYellowSvgMilestone,.GBGanttYellowSvgMilestone,.GTGanttYellowSvgMilestone { background:url(Yellow.svg) no-repeat; }
+      .GWGanttYellowSvgMilestoneHover,.GSGanttYellowSvgMilestoneHover,.GMGanttYellowSvgMilestoneHover,.GBGanttYellowSvgMilestoneHover,.GTGanttYellowSvgMilestoneHover { background:url(YellowHover.svg) no-repeat; }
+
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>3. Main bar plans</h1>
+   <h2>More independent main bars or milestones in one row</h2>
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='03-Main_bar_plans.xml'>03-Main_bar_plans.xml</a></div>
+      <div class="Main" style='width:100%; height:663px;'>
+         <bdo Debug='check' Data_Url='03-Main_bar_plans.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li>
+         There are five tutorials for Gantt task types and features:
+         <ul>
+            <li><a href='01-Main_bar.html'>1. Simple Main bar and Milestone</a> - Continuous bar or one milestone</li>
+            <li><a href='02-Main_bar_parts.html'>2. Main bar parts</a> - Discrete main bar with more milestones</li>
+            <li>3. Main bar plans - More independent main bars or milestones in one row</li>
+            <li><a href='../GanttRunBar/06-Run_bar_as_task.html'>6. Run bar as task</a> - Complex and extended Gantt task from individual parts</li>
+            <li><a href='../GanttRunBar/07-Run_box_as_task.html'>7. Run box as task</a> - Every Run box as independent Gantt task</li>
+         </ul>
+      </li>
+      <li>See documentation for <b><a href="../../Doc/GanttMain.htm">Main bar</a></b></li>
+      <li>
+         The count of main bar plans is defined by <h3>GanttCount</h3>. There is no limit of the plans count. The plans are independent.<br />
+      </li>
+      <li>
+         The individual plan attributes are defined by attributes with the plan number suffix. The first plan (0) has no suffix.<br />
+         For example there are GanttStart for plan 0, GanttStart1 for plan 1, GanttStart2 for plan 2 and so on. 
+     </li>
+     <li>
+         The individual plans can be defined as continuous by <h3>GanttStartX</h3> and <h3>GanttEndX</h3> or <h3>GanttDurationX</h3>.<br />
+         Or can be defined as discrete main bar by <h3>GanttParts</h3> attribute. <br />
+         It is possible to use different attributes to define the individual plans in one grid.
+     </li>
+     <li>
+         To support dependencies, resources, manual start, percentage completion and disabled / locked state there must be set <h3>GanttTask</h3> to the main bar plan like "<b>Main</b>", "<b>Main1</b>", "<b>Main2</b>", ... or for all plans as "<b>All</b>". 
+         Default setting is GanttTask="Main" = only the first main bar plan supports the task features.
+      </li>
+      <li>
+         By default it is not possible to drag dependencies between bars in different plans, to permit them, set <b>GanttDragDependenciesBetween</b>>=1.<br /> 
+         If there are more plans with possible dependencies, the dependency definition must contain the plan identification.
+      </li>
+      <li>
+         <i>For all the other attributes and usage see the previous tutorials <a href='01-Main_bar.html'>1. Simple Main bar and Milestone</a> or <a href='02-Main_bar_parts.html'>2. Main bar parts</a>.</i>
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialGantt\s*=\s*(\d+)/), TGIndex = 8192;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridMain3", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGantt="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<Grid>
+   <Cfg id="ContinuousRunArray" NoVScroll="1" IdChars="0123456789" NumberId="1" Size="Low" StyleDependencyModifier="0"/>
+   <Cfg DefaultDate="1/1/2010" MinMidWidth="100"/>
+   <Cfg FastGantt="0"/>
+   <LeftCols>
+      <C Name="id" Type="Int" CanEdit="0" CanSort="0"/>
+   </LeftCols>
+   <Cols>
+      <C Name="START" Type="Date" Format="dddddd" Width="55"/>
+      <C Name="RUN" Type="Text" Width="325"/>
+   </Cols>
+   <RightCols>
+      <C Name="GANTT" Type="Gantt"
+         GanttDataUnits="d" GanttUnits="d" GanttWidth="22"
+         GanttLeft="1" GanttRight="1"
+         GanttHeader6="d#%d"
+         GanttRun="RUN" GanttRunStart="START"
+         GanttRunShowHtml="2"
+         />
+   </RightCols>
+   <Body>
+      <B>
+         <I id="0"/>
+         <I id="1" 
+            START="5/6/2010" 
+            RUN="10,Box,One normal box with tooltip,,Tooltip for the box"
+            />
+         <I id="3"
+            START="5/4/2010" 
+            RUN="10,,Normal boxes with length: %n;;2,,%n;;4,,%n;;5,,%n days;;1,,%n;;2,,%n" 
+            GANTTGanttRunFormat=""
+            />
+         <I id="4"
+            START="5/4/2010" 
+            RUN="11,,Normal boxes with time: %d;;3,,%d;;4,,%d;;5,,time %d;;3,,%d;;5,,%d" 
+            GANTTGanttRunFormat="hhh:mm"
+            />
+         <I id="5"
+            START="5/2/2010"
+            RUN="9,,Boxes with box side text;2,;4,,inner text,,,,,,,,,,,Left,Right;6,;4,,inner text,,,,,,,,,,,Left text;1,;4,,inner text,,,,,,,,,,,,Right text"
+            />
+         <I id="6"
+            START="5/3/2010" GANTTGanttRunHtmlLeft="*Start*" GANTTGanttRunHtmlLeftEdge="1" GANTTGanttRunHtmlDateFormat="M/d" GANTTGanttRunHtmlRight="*4**Duration* days" GANTTGanttRunHtmlRightEdge="4"
+            RUN="9,,,,Boxes with side text - ;2,;3;3,;4;3,;3;3,;0,milestone"
+            />
+         <I id="7"
+            START="5/2/2010" 
+            RUN="7,,Not adjacent boxes;2,empty;3;1,empty;4;1,empty;3;0,empty;2;2,empty;1;2,empty,Empty;4"
+            />
+         <I id="8"
+            START="5/5/2010" 
+            RUN="6,,Joined boxes;3;4;;5,,Next;2;3;4"
+            />
+         <I id="9"
+            START="5/2/2010" 
+            RUN="9,,Joined boxes with spaces;2,nbsp;3;1,nbsp;4;1,;5,,Next;2;3,nbsp,Empty;3"
+            />
+         <I id="10"
+            START="5/6/2010" GANTTGanttRunNewStart="2,end,Start;;0.0001,box" 
+            RUN="3,end,Start;;6,Box,Task with start;3;;2;;2,empty;2;7,empty;2"
+            />
+         <I id="11"
+            START="5/6/2010" GANTTGanttRunNewStart="0.0001,box;;2,end,End"
+            RUN="6,Box,Task with end;3;;2;;4,empty;2;5,empty;2;;2,end,End"
+            />
+         <I id="12"
+            START="5/6/2010" GANTTGanttRunNewStart="2,end,Start;;0.0001,box;;2,end,End" 
+            RUN="3,end,Start;;6,Box,Task with both;3;;2;6,empty;2;3,empty;2;;2,end,End"
+            />
+         <I id="13"
+            START="5/6/2010" 
+            RUN="3,bound,Start;;11,Box,Task with fixed start and end;;8,empty;2;1,empty;2;;3,bound,End"
+            />
+         <I id="14"
+            START="5/2/2010" 
+            RUN="5,,Fixed boxes;1,empty;3,fixed,Fixed;1,empty;3;1,empty;2;1,empty;4,Left,Fixed left;1,empty;2;1,empty;5,Right,Fixed right;1,empty;2"
+            />
+         <I id="15"
+            START="5/2/2010" 
+            RUN="5,,Solid boxes;2,empty;3,solid,Solid;1,empty;4,solid,Solid;1,empty;3;0,empty;3,solid,Solid;2,empty;1;2,empty;4,solid,Solid"
+            />
+         <I id="16"
+            START="5/2/2010" GANTTOnRightDragGantt="MoveGanttRun"
+            RUN="11,,Milestones and zero width boxes;1,;0,Milestone;1,;0,box;;1;1,;0,Stop;2,;0,Milestone;;3;;0,Milestone;1,;0,box;2,;0,Milestone;0,Milestone;0,Milestone;0,Milestone;3,;0,Milestone;1,;0,Milestone;2,;0,box;;0,box;;0,box;4,;0,Stop"
+            />
+         <I id="17"
+            START="5/2/2010" GANTTGanttRunAdjustRight="Error"
+            RUN="9,,Errors - overlaying boxes;1,empty;3,,1.;-2;3,,2. Error;2,empty;6,,3.;-5;3,,4. Error;1,;0,milestone;2,empty;0,milestone;3,empty;5,,5. Error;-6;3,,6.;2,empty;3,,7. Error"
+            />
+         <I id="18"
+            START="5/2/2010" 
+            RUN="6,,Boxes with class;;2.5,,Red,Red;;2.5,,Blue,Blue;;3,,Green,Green;;3.5,,Fuchsia,Fuchsia;;3,,Aqua,Aqua;;2.5,,Lime,Lime;;3.5,,Maroon,Maroon;;3,,Navy,Navy;;3,,Olive,Olive"
+            />
+         <I id="19"
+            START="5/2/2010" 
+            RUN="6,,Boxes with class;;4,,Orange,Orange;;3,,Purple,Purple;;3,,Silver,Silver;;3,,Teal,Teal;5,nbsp,Yellow (Nbsp),Yellow;3,,Black,Black;;3,,Gray,Gray;;3,,White,White"
+            />
+         <I id="20"
+            START="5/2/2010" 
+            RUN="9,,Boxes with custom class;2,;5,,Custom 1,Custom1;2,;5,,Custom 2,Custom2"
+            />
+         <I id="21"
+            START="5/2/2010"
+            RUN="8,,Milestones with class;2,;0,milestone,,Red;1,;0,milestone,,Blue;1,;0,milestone,,Green;2,;0,milestone,,Fuchsia;;0,milestone,,Aqua;1,;0,milestone,,Lime;1,;0,milestone,,Maroon;1,;0,milestone,,Orange;1,;0,milestone,,Silver;1,;0,milestone,,Yellow;1,;0,milestone,,Black;2,;0,milestone,Red.svg,RedHover.svg;1,;0,milestone,Green.svg,GreenHover.svg;2,;0,milestone,Yellow.svg,Red.svg"
+            />
+         <I id="22"
+            START="5/2/2010"
+            RUN="#*15**Run defined with different separators than , ;#2*empty#4*solid##5"
+            />
+         <I id="23"
+            START="5/14/2010"
+            RUN="2,,1;6,;3,,2;2,;3,,3;-14,;4,,4;-18,;11,,Boxes defined in random order 5"
+            GANTTGanttRunError="Sort"
+            />
+         <I id="24" 
+            START="5/2/2010"
+            RUN="8,,Independent boxes;;2,,1;;1,,2;1,;3,,3;-1,;4,,4;2,;5,,5;-2,;6,,6"
+            GANTTGanttRunError="sort" GANTTGanttRunAdjust="error"
+            />
+         <I id="25" 
+            START="5/2/2010"
+            RUN="13,,Overlaid boxes moved to different levels;-5,;2,,1;1,;1,,2;1,;4,,3;-3,;13,,4;-10,;4,,5;-1,;6,,6;-3,;3,,7;;3,,8;;3,,9"
+            GANTTGanttRunError="sort" GANTTGanttRunErrorsShift="-2" GANTTGanttRunAdjust="error"
+            />
+         <I id="26" 
+            START="5/2/2010"
+            RUN="|,11,,Different height and level boxes|-8,|0,Milestone,,,,,,,20|2,|0,Milestone,Red.svg,Yellow.svg,,,,,30,30|2,|5,,Left&lt;br>&lt;div style='text-align:right;color:red;'>Right&lt;/div>&lt;div style='text-align:center;color:blue;'>Center&lt;/div>,,,,,,20,47|1,|5,,Top|-4,|5,,Middle,Yellow,,,,,22|-8,|6,,Bottom,,,,,,50|3,|0,Milestone,Red.svg,Yellow.svg,,,,,0,30||0,Milestone,Green.svg,Yellow.svg,,,,,20,30||0,Milestone,,,,,,,40||0,Milestone,,,,,,,53|2,|6,,1|-5,|5,,2,,,,,,6|-4,|4,,3,,,,,,12|-3,|3,,4,,,,,,18|-2,|2,,5,,,,,,24|1,|4,,normal&lt;div style='background:red;color:white;text-align:center;'>red&lt;/div>&lt;div style='background:url(Yellow.svg) no-repeat right center'>left&lt;/div>bottom,,,,,,0,65"
+            GANTTGanttRunError="sort" GANTTGanttRunErrors="0" GANTTGanttRunAdjust="error"
+            />
+         <I id="27" 
+            START="5/2/2010"
+            GANTTGanttRunLevels="21" GANTTGanttRunTop="1" GANTTGanttRunErrors="0" GANTTGanttRunMove="Move" GANTTGanttRunAdjust="error" Height="70" GANTTGanttRunHtml="*Index* *Text*"
+            RUN="6,,The run boxes;-4,;6,,can be created,,,,,,22;-6,;6,,or moved,,,,,,43;-4,;6,,on these levels,,,,,,64"
+            />
+         <I id="28"
+            START="5/2/2010"
+            RUN="6,,Custom content;1,;7,,1st text;5,;5,,2nd text;;6,,3rd text"
+            Height="65"
+            />
+      </B>
+   </Body>
+   <Header id="id" SortIcons="2"/>
+</Grid>

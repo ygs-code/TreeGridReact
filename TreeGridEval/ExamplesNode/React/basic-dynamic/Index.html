@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TreeGrid & React</title>
+    <script src="../../../Grid/GridE.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.js"></script> <!-- For JSX syntax -->
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- for production replace development by min and add min to babel -->
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="./Index.js" type="text/babel"></script>
+    <link rel="stylesheet" href="Index.css" />
+    <script type="text/babel">
+      "use strict";
+      ReactDOM.render(<Sample />, document.getElementById("root"));
+    </script>
+  </body>
+
+<!-- Google Analytics code run once for trial -->
+<script>
+   var TGTrial = document.cookie.match(/TGNode\s*=\s*(\d+)/), TGIndex = 256;
+   if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+      var n = "RunReactDynamic", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGNode="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+      var u = document.cookie.match(/TGNodeUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGNodeUsed="+u+";path=/;expires="+d;
+      var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+            +(u==1||u==3||u==5||u==10?"UsedNode"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+      var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+      },100);
+</script>
+
+</html>

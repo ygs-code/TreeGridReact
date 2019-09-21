@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <script src="%PUBLIC_URL%/Grid/GridE.js"></script> <!-- Includes TreeGrid script --> 
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <!-- manifest.json provides metadata used when your web app is installed on a user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/ -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!-- Notice the use of %PUBLIC_URL% in the tags above. It will be replaced with the URL of the `public` folder during the build. Only files inside the `public` folder can be referenced from the HTML. -->
+    <!-- Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will work correctly both with client-side routing and a non-root public URL. Learn how to configure a non-root public URL by running `npm run build`. -->
+    <title>React App</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+
+<!-- Google Analytics code run once for trial -->
+<script>
+   var TGTrial = document.cookie.match(/TGNode\s*=\s*(\d+)/), TGIndex = 1024;
+   if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+      var n = "RunReactApp", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGNode="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+      var u = document.cookie.match(/TGNodeUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGNodeUsed="+u+";path=/;expires="+d;
+      var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+            +(u==1||u==3||u==5||u==10?"UsedNode"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+      var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+      },100);
+</script>
+
+</html>

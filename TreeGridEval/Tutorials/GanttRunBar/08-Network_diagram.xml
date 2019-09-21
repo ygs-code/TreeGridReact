@@ -1,0 +1,43 @@
+<Grid>
+   <Cfg id="NetworkDiagram" NoVScroll="1" IdChars="0123456789" NumberId="1" Undo="1"/>
+   <Cfg FastGantt="1" Pasting="0"/>
+   <Cfg AutoRows="20"/>
+   <LeftCols>
+      <C Name="RUN" Type="Text" Width="60" Visible="0"/>
+      <C Name="DES" Type="Text" Width="100" Visible="0"/>
+   </LeftCols>
+   <Actions
+      OnDragGantt="ResizeGanttRun OR MoveGanttRun OR CreateGanttBar"
+      OnRightDragGantt="DragGanttDependency"
+      OnCtrlRightDragGantt="DragGanttDependency"
+      OnCtrlRightClickGantt="" OnShiftRightClickGantt=""
+      OnDblClickGantt="EditGanttRun"
+      />
+   <Cols>
+      <C Name="GANTT" Type="Gantt" GanttHeader6="1#0"
+         GanttRun="RUN" GanttDescendants="DES" GanttTask="Box" GanttRunIds="2"
+         GanttDataUnits="1" GanttUnits="1" GanttWidth="28" GanttLeft="3" GanttRight="3" GanttSize=""
+         GanttIncorrectDependencies="0" GanttCorrectDependencies="0" GanttCheckDependencies="0"
+         GanttAssignDependencies="3" GanttAdjacentDependencies="2" GanttDragDependenciesMore="2"
+         GanttRunMove="Move,Mouse" GanttRunAdjust=""
+         GanttBaseCanEdit="0" GanttFinishCanEdit="0"
+         GanttMenu="EditGanttRun,EditGanttRunTip,ChooseGanttRunType,-,DelGanttRunPart,DelGanttDep"
+         GanttRunTypes="standard,solid,standard;white,solid,white,White;maroon,solid,maroon,Maroon;resizable,box,resizable;fixed,fixed,fixed"
+         />
+   </Cols>
+   <Head>
+      <I RUN="1,3,solid,standard;5,3,solid,white,White;9,3,solid,maroon,Maroon;13,3,box,resizable;17,3,fixed,fixed" 
+      GANTTGanttRunMove="Copy,All,Mouse"
+      GANTTGanttMenu="EditGanttRun,EditGanttRunTip"
+      GANTTOnCtrlClickGantt="1" GANTTOnRightDragGantt="1" GANTTOnCtrlRightDragGantt="1"
+      />
+   </Head>
+   <Body>
+      <B>
+         <I RUN="1,19" Visible="0"/> <!-- Initial Gantt size for empty Gantt -->
+      </B>
+   </Body>
+   <Panel Visible="0"/>
+   <Header Visible="0"/>
+   <Toolbar Visible="0"/>
+</Grid>

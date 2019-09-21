@@ -1,0 +1,132 @@
+<html>
+<head>
+      <script src="../../../Grid/GridE.js"> </script>
+   </head>
+   <body class="Example">
+      <style>
+         /* Examples shared styles */
+         .Example h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+         .Example h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+         .Example h3,.Example h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+         .Example h3 { background:#EE9; border:1px solid #DD8; }
+         .Example h4 { background:#BDE; border:1px solid #ACD; }
+         .Example a { text-decoration:underline; }      
+         .Example li { padding-bottom:8px; }
+         .Example ul { margin:6px 0px 0px 20px; font:13px Arial; }
+         .Example .Desc { margin:0px 5px 10px 5px; padding:10px; border:1px solid #dfdfdf; }
+         .Example .Desc > ul { margin-left:0px; padding:0px 0px 0px 15px; clear:both; }
+         .Example .Desc b { color:#0585B9; }
+         .Example .Path { font:normal 12px Arial; color:#0585B9; }
+         .Example .Path b { color:#D73938; }
+         .Example .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+         .Example .Path i { color:black; font-style:normal; font-weight:bold; }
+         .Example .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+         .Example .Border { margin:0px 5px 15px 5px; }
+         .Example .Main { }
+      </style>
+      <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Examples\/|\/ExamplesGantt\/)([^\/]+)\/([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+      <h1>Complex grid JSON</h1>
+      <h2>A demonstration of many TreeGrid features using JSON / JSONP data format</h2>
+      <div class="Desc">
+         <b>Features:</b> Tree, sorting, grouping, filtering, searching, calculations, resizing and moving columns, row dragging, row manipulations, selecting rows,
+         fixed rows and columns, many cell types, popup default list, calendar, formatting values and many more.
+      </div>
+      <div class="Border">
+         <div class="Main" style="width:100%;height:600px;">
+            <!-- Standard usage of JSON format - can be loaded / uploaded normally like the XML  -->
+            <!-- <bdo Layout_Url="FirstJsonDef.js" Data_Url="FirstJsonData.js"></bdo>  -->
+
+            <!-- Special usage of JSONP, can be used for cross domain communication and also for loading local files (on file:// protocol). Cannot be used for upload. -->
+            <bdo Layout_Jsonp="FirstJsonDef.js" Data_Jsonp="FirstJsonData.js" Defaults_Jsonp="Defaults.js" Text_Jsonp="Text.js"></bdo>
+         </div>
+      </div>
+      <script>
+// -----------------------------------------------------------------------------------------
+// Shows months May and June in the year 2019 only
+Grids.OnUpdated = function(G){ G.FilterDateRange('D','1/1/2019~1/1/2020','Year',0); G.SetFilter('Month','{5:1,6:1}[(new Date(D)).getUTCMonth()+1]','D',0); }
+
+// -----------------------------------------------------------------------------------------
+// Used if Formula to count unique customers
+function CountUnique(G,Rows,col){
+for(var i=0,O={},cnt=0;i<Rows.length;i++) if(Get(Rows[i],"X")){
+   var v = Get(Rows[i],col);
+   if(!O[v]) { cnt++; O[v] = 1; }
+   }
+return cnt;
+}
+// -----------------------------------------------------------------------------------------
+// Custom event for searching
+// Searches in orders with specified items
+Grids.OnRowSearch = function(G,row,col,found,F,type){
+if(type || G.SearchDefs!="") return found; // Only for "in orders with items" and default call
+if(row.Def.Name=="Data") return -1;        // Only for orders
+for(var r=row.firstChild;r;r=r.nextSibling) { 
+	var found = F(r,col,1);                 // calls F(r,col,type=1)
+	if(!(found<=0)) return found; 
+	}
+return 0;
+}
+// -----------------------------------------------------------------------------------------
+// Creates popup right click menu to manipulate the row
+Grids.OnGetMenu = function(G,row,col,M){
+if(row.Fixed||M) return null;
+var I = [], M = {Items:I}, ident = row.Def.Name=="Node" ? " order":" product";
+I[I.length] = {Name:"Del",Text:(row.Deleted?"Undelete":"Delete")+ident};
+I[I.length] = {Name:"Sel",Text:(row.Selected?"Deselect":"Select")+ident};
+I[I.length] = {Name:"Cpy",Text:"Copy"+ident};
+if(row.firstChild) I[I.length] = {Name:"CpyTree",Text:"Copy order with products"};
+
+if(row.Def.Name=="Node") {
+   I[I.length] = {Name:"AddOrder",Text:"Add new order"};
+   I[I.length] = {Name:"InsItem",Text:"Add new product"};
+   }
+else I[I.length] = {Name:"AddItem",Text:"Add new product"};
+if(row.firstChild) I[I.length] = {Name:"Exp",Text:row.Expanded?"Collapse order":"Expand order"};
+if(row.firstChild) I[I.length] = {Name:"Check",Text:Get(row,'X')?"Uncheck Used":"Check Used"};
+return M;
+}
+// -----------------------------------------------------------------------------------------
+// Called after selecting item in the popup right click menu
+Grids.OnContextMenu = function(G,row,col,N){
+switch(N){
+   case "Del" : G.DeleteRow(row); break;
+   case "Sel" : G.SelectRow(row); break;
+   case "Cpy" : G.CopyRow(row,null,row); break;
+   case "CpyTree" : G.CopyRows([row],null,row,1); break;
+   case "AddItem" : G.ActionAddRow(); break;
+   case "InsItem" : G.ActionAddChildEnd(); break;
+   case "AddOrder" : G.ActionAddRow(); break;
+   case "Exp" : if(row.Expanded) G.Collapse(row); else G.Expand(row); break;
+   case "Check" : G.SetValue(row,"X",!Get(row,'X'),1); break;
+   }
+}
+// -----------------------------------------------------------------------------------------
+// Called when NoVScroll / NoHScroll is set automatically due small window size, disables the checkbox for manual change of NoVScroll / NoHScroll
+Grids.OnLimitScroll = function(G,clr,noh,nov){ 
+G.SetAttribute(G.Rows.Group,"Win","CanEdit",clr,1); 
+var tip = clr?"Disable grid scrollbars and use page scrollbars":"Used page scrollbars because browser window is too small to show this example with its own scrollbars";
+G.SetAttribute(G.Rows.Group,"Win","Tip",tip,1); 
+G.SetAttribute(G.Rows.Group,"WinLabelRight","Tip",tip,1); 
+}
+// -----------------------------------------------------------------------------------------
+// Called after changed language to reset currency and recalculate grid
+Grids.OnLanguageFinish = function(G,code){ 
+var row = G.Rows.Fix3;
+G.SetValue(row,"C",Get(row,Get(row,"D")+"Rate"),1);
+}
+// -----------------------------------------------------------------------------------------
+      </script>
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGTrialGrid\s*=\s*(\d+)/), TGIndex = 64;
+         if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunTrialHtmlFirstJson", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGrid="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+   </body>
+</html>

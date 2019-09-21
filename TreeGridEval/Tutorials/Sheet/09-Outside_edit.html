@@ -1,0 +1,200 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>9. Outside edit</h1>
+   <h2>Second edit cell outside the grid and cell showing focus</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='09-Outside_edit.xml' target="_blank">09-Outside_edit.xml</a></div>
+      <div class="Main" style='width:770px; height:500px;'>
+         <bdo Debug='check' Data_Url='09-Outside_edit.xml'></bdo>
+      </div>
+   </center>
+   <script>
+// -----------------------------------------------------------------------------------------
+// Called whenever cell focus is changed
+Grids.OnFocus = function(G,row,col,orow,ocol,fpos,rect,orect){
+if(G.EditMode) {  // There is edited the FOCUS or EDIT cell
+   if(G.ECol=="FOCUS") G.EndEdit();// FOCUS cell
+   else {                          // EDIT cell
+      var oval = G.Edit.Tag.value; // Reads actually entered value in the EDIT cell before the editing ends
+      G.IgnoreOnEndEdit = 1;       // Must avoid OnEndEdit, because it sets Focused cell row,col, not the original cell orow,ocol
+      G.EndEdit();                 // Cancels editing, the edited value is in oval
+      G.IgnoreOnEndEdit = 0;
+      orow[ocol] = G.OrigEditValue;// Restores original value in the original focused cell to be the cell marked changed for new value only
+      SetEditValue(G,orow,ocol,oval); // Sets the entered value to originally focused cell
+      }
+   }
+if(!row.Space && (row!=orow||col!=ocol)) CellFocused(row,col);       // Mirrors actually focused cell value to top OUT row, EDIT cell
+if(!row.Space){
+   var r = G.GetRowById("OUT"); 
+   r.FOCUS = row ? G.GetCellName(row,col) + (rect ? " => "+G.GetCellName(rect[0],rect[1])+" : "+G.GetCellName(rect[2],rect[3]) : "") : ""; G.RefreshCell(r,"FOCUS"); // Sets the focused cell to top OUT row, FOCUS cell
+   }
+}
+// -----------------------------------------------------------------------------------------
+// Called when grid loses focus
+Grids.OnBlur = function(G,orow,ocol,orect){
+var G = Grids.OutsideEdit;
+var r = G.GetRowById("OUT"); 
+r.EDIT = ""; 
+r.EDITCanEdit = 0;
+G.RefreshCell(r,"EDIT");
+}
+// -----------------------------------------------------------------------------------------
+// Called before editing started
+Grids.OnStartEdit = function(G,row,col){
+if(row.id=="OUT" && col=="EDIT") {                          // Editing in top edit
+   G.OrigEditValue = G.FRow[G.FCol];                        // Saves original displayed value in the edited cell to use if editing is canceled
+   if(G.DynamicFormat==2) G.FRow[G.FCol+"Type"] = "Lines";  // Sets the cell type always to Lines for editing
+   }
+}
+// -----------------------------------------------------------------------------------------
+// Called after editing is finished or canceled
+Grids.OnEndEdit = function(G,row,col,save,val,raw){
+if(G.IgnoreOnEndEdit) return;                 // Set in OnFocus on EndEdit call to temporary disable the OnEndEdit
+if(row.id=="OUT" && col=="EDIT") {
+   G.FRow[G.FCol] = G.OrigEditValue;          // Restores original value in the focused cell to be the cell marked changed for new value only
+   if(!save) G.RefreshCell(G.FRow,G.FCol);    // If edit canceled, displays the original value set above
+   else SetEditValue(G,G.FRow,G.FCol,raw);    // After editing top OUT row EDIT mirrors final value including formulas to focused cell
+   return "";                                 // Clears the edited value in EDIT, especially to not set EFormula
+   }
+else if(row.id=="OUT" && col=="FOCUS" && val && save){  // After editing top OUT row FOCUS cell moves focus to the entered cell or range
+   val = val.toUpperCase();
+   var M = val.match(/\s*([A-Z]+)(\d+)([\s\:\,\.]+([A-Z]+)(\d+))?\s*/);
+   if(M) setTimeout(function(){ G.Focus(G.GetRowById(M[2]),M[1],null,M[4]&&M[5]?[G.GetRowById(M[2]),M[1],G.GetRowById(M[5]),M[4]]:null,1); },10);
+   }
+else if(!save && !row.Space) CellFocused(row,col); // If the edit of table cell was canceled, mirrors old value from focused cell to top OUT row, EDIT cell
+}
+// -----------------------------------------------------------------------------------------
+// Called to find out the cell type according to the cell value
+Grids.OnFindType = function(G,row,col,type,val){
+if(row.id=="OUT") return "Lines"; // Edit cell always Lines
+if(type=="Date"&&!(val-0)&&(val+"").search(/\/\.\-\:/)<0) return "Lines";  // Date should contain some separator
+}
+// -----------------------------------------------------------------------------------------
+// Sets the value val to the cell row,col, including editable formulas and auto type. Simulates editing by a user
+function SetEditValue(G,row,col,val){
+setTimeout(function(){ // Must be in timeout, because it is called from OnEndEdit and other API events and here edits another cell
+   var erow = null, ecol = null;
+   if(G.EditMode){ erow = G.ERow; ecol = G.ECol; G.EndEdit(); } // If something edited, here only the FOCUS cell, interrupts the editing
+   G.StartEdit(row,col);
+   G.Edit.Tag.value = val;
+   G.EndEdit(1);
+   if(G.FRow==row&&G.FCol==col) CellFocused(row,col); // Mirrors the value to EDIT cell if clicked to the same focused cell, because OnFocus is not called in this case
+   if(erow) G.StartEdit(erow,ecol,ecol=="FOCUS"); // Continues original editing, if any
+   },10);
+}
+// -----------------------------------------------------------------------------------------
+// Calls CellChanged with value or formula
+function CellFocused(row,col){
+var G = Grids.OutsideEdit;
+var val = G.GetStringEdit(row,col);
+CellChanged(val,null);
+}
+// -----------------------------------------------------------------------------------------
+// Mirrors actually focused cell value to top OUT row 
+// Called from OnChange in Edit JSON
+function CellChanged(val,old){
+var G = Grids.OutsideEdit;
+var r = G.GetRowById("OUT"); 
+r.EDIT = val; 
+r.EDITCanEdit = 1;
+G.RefreshCell(r,"EDIT");
+}
+// -----------------------------------------------------------------------------------------
+// Mirrors top OUT row cell value to actually focused cell
+// Called from OnChange in Edit JSON
+function EditChanged(val,old){
+var G = Grids.OutsideEdit;
+G.FRow[G.FCol] = val; G.RefreshCell(G.FRow,G.FCol);      
+}
+// -----------------------------------------------------------------------------------------
+// Called after resized any row by a user
+Grids.OnRowResize = function(G,row,height,oheight){
+if(row.id=="OUT"){ // Resized the OUT row
+   if(height<35) height = 35;    // Minimal height of the row is set as 35
+   row.MaxHeight = height-19;    // Sets MaxHeight to not resize the EDIT cell due its content. The 19 is top + bottom padding of the cell.
+   row.EDITHeight = height-19;   // Sets minimal height of the EDIT cell. The 19 is top + bottom padding of the cell.
+   return height;
+   }
+}
+// -----------------------------------------------------------------------------------------
+
+
+   </script>
+   <ul>
+      <li><h4>Outside edit cell</h4>
+         The cell is named "<b>EDIT</b>" and is defined in Topbar. 
+         <ul>
+         <li>
+            Its main definition attributes are: <br />
+            EDIT<b>OnClick</b>="<b>AcceptEdit,StartEditCell</b>,1" to start editing without removing focus from other cell.<br />
+            EDIT<b>Edit</b>="{OnChange:<b>EditChanged</b>}" to call custom API method EditChanged whenever the EDIT changes during editing to mirror the changes to the source cells.<br />
+            The source cells have assigned in column &lt;D Name="Auto" <b>Edit</b>="{OnChange:<b>CellChanged</b>}"/> similar action to mirror the changes to the EDIT during editing source cells.<br />
+         </li>
+         <li>
+            The mirroring values is done by API: <br />
+            API event <b>OnFocus</b> mirrors the focused cell to the EDIT whenever the focus moves to another cells.
+            And also mirrors the EDIT cell to focused cell if the editing was accepted by click to another cell.<br />
+            API event <b>OnBlur</b> clears the EDIT if the grid loses focus. Here it is used because of &lt;Cfg StaticCursor='1'/>.<br />
+            API event <b>OnEndEdit</b> saves the changed EDIT value to mirrored cell. And also restores original value in mirrored cell when editing was canceled.<br />
+            API event <b>OnStartEdit</b> stores original value to use in OnEndEdit if the editing was canceled.<br />
+            API event <b>OnFindType</b> preserves the type in EDIT cell to be always Lines.<br />
+         </li>
+         <li>
+            The EDIT cell can be resized by setting EDIT<b>Resizing</b>="1" in the EDIT definition.<br />
+            API event <b>OnRowResize</b> updates the row heights for correct EDIT resizing. It is used to not resize the EDIT height according to its content to not move the whole grid down for higher cells.<br />
+         </li>
+         </ul>
+      </li>
+      <li><h4>Actual focus cell</h4>
+         The cell is named "<b>FOCUS</b>" and is defined in Topbar. 
+         <ul>
+            <li>
+               Its main definition attribute is: FOCUS<b>OnClick</b>="<b>AcceptEdit,StartEditCell</b>,1" to start editing without removing focus from other cell.<br />
+             </li>
+             <li>
+               Its functionality is done by API:<br />
+               API event <b>OnFocus</b> shows actual focused cell and range in the FOCUS cell value.<br />
+               API event <b>OnEndEdit</b> focuses the cell or cell range entered in the FOCUS cell.<br />
+             </li>
+         </ul>
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialSheet\s*=\s*(\d+)/), TGIndex = 256;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialSheet9", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialSheet="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

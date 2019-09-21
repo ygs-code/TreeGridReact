@@ -1,0 +1,2430 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Gantt run bar</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Run bar</h1>                 
+<p>TreeGrid documentation</p>  
+
+Run is the most complex bar in TreeGrid Gantt that displays one or more individual boxes in one cell.<br />  
+It can be used as replacement of the main bar with many extended features.<br />
+<b>Or it can be used to create any other bar chart, not only Gantt.</b><br />
+In cell with Run there can be also shown other Gantt objects like flag, main bar, milestone or point.<br />              
+
+<!-----------------------------------------------------------------------  Definition  ------------------------------------------------->
+<a name="Definition"></a>
+<h2>Definition</h2>
+<p class="H2">Defining the individual boxes and their features</p>
+
+The Run is defined by <a href="#CGanttRun">GanttRun</a> (list of individual boxes) and eventually by <a href="#CGanttRunStart">GanttRunStart</a> (start date).<br />
+The run can be defined by one start date and list of durations and types of the individual boxes. The boxes are separated directly one by one, but it supports also empty type for space between boxes.<br />
+Or the run can be defined by start dates of individual boxes and their durations or end dates. In this case the empty boxes are automatically added between the boxes.<br />
+If the run boxes override each other, they are marked as error and shown in red.<br />
+The individual run boxes can have different duration, shape, color, caption and tooltip.<br /><br />
+
+To let the whole run bar <b>dependencies</b> and <b>resources</b>, set <b>Run</b> into <a href="GanttObjects.htm#CGanttTask">GanttTask</a>, to have individual boxes <b>dependencies</b> and <b>resources</b>, add <b>Box</b> into <a href="GanttObjects.htm#CGanttTask">GanttTask</a>.<br />
+
+<!-- GanttRun -->
+<a name="CGanttRun"></a>
+<div class="XML">
+   <u>new <b>6.1</b> <i>upd <b>13.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[ ][ ]</i>
+   <h4>GanttRun</h4> <s>Gantt source - column name or exact value</s>
+</div>
+Definition of individual Run boxes.<br /> 
+If the boxes have not specified <i><b>Start</b></i> date, they are displayed from <a href="#CGanttRunStart">GanttRunStart</a> one by one, without any space.<br />
+
+<!-- Array definition -->
+<h5>Array definition</h5>
+The definition of boxes is separated by semicolon, the individual items in the box definition are separated by comma.<br />
+The semicolon and comma must not be present in any item text in the range. Or must be escaped by <a href="#CGanttRunEscape">GanttRunEscape</a>.<br /> 
+It is possible to change the separators by adding them both on start, e.g. <tt>"&amp;*3*End*Start&amp;20*Box&amp;&amp;20*Box"</tt> uses & as box and * as item separator. To be sure that the separator cannot be included in the run data, you can use any Unicode character as separator, e.g. <tt>"<b>&amp;#xF001;&amp;#xF000;</b>3<b>&amp;#xF000;End&amp;#xF000;Start&amp;#xF001;</b>20<b>&amp;#xF000;Box&amp;#xF001;&amp;#xF001;</b>20<b>&amp;#xF000;Box</b>"</tt> uses <tt><b>&amp;#xF001;</b></tt> as box and <tt><b>&amp;#xF000;</b></tt> as item separator.<br />
+To specify the separator for new boxes in empty run, define them in <a href="#CGanttRunNewStart">GanttRunNewStart</a>.<br />
+<i>Do not fill any useless white characters (spaces) in the definition!</i><br /><br />
+
+<table>
+  <tr><td style="width:700px;">The one box definition is: <tt><b style="color:red;">Duration</b>,<b>Type</b>,<b>Text</b>,<b>Class</b>,<b>Tip</b>,<b>Id</b>,<b>Group</b>,<b>State</b>,<b>Top</b>,<b>Height</b>,...</tt></td><td>Must have set also <a href="#CGanttRunStart">GanttRunStart</a> as the start of the whole run</td></tr>
+</table>
+
+<div class="L2">
+<table>
+  <tr><td style="width:600px;">OR <tt><b style="color:red;">Start</b>,<b style="color:red;">Duration</b>,<b>Type</b>,<b>Text</b>,<b>Class</b>,<b>Tip</b>,<b>Id</b>,<b>Group</b>,<b>State</b>,<b>Top</b>,<b>Height</b>,...</tt></td><td><i>(new 6.2)</i> Does <u>not</u> support <b>Empty</b> and <b>Nbsp</b> and <i><b>joined</b></i> boxes</td></tr>
+  <tr><td>OR <tt><b style="color:red;">Start</b>,<b style="color:red;">End</b>,<b>Type</b>,<b>Text</b>,<b>Class</b>,<b>Tip</b>,<b>Id</b>,<b>Group</b>,<b>State</b>,<b>Top</b>,<b>Height</b>,...</tt></td><td><i>(new 6.2)</i> Does <u>not</u> support <b>Empty</b> and <b>Nbsp</b> and <i><b>joined</b></i> boxes and <b>number</b> data units</td></tr>
+</table>
+</div>
+All the fields are optional, e.g. <tt>"3,End,Start;;5;;3,Solid,End" is the same as "3,End,Start,,;0,Empty,,,;5,Box,,,;0,Empty,,,;3,Solid,End,,"</tt><br />
+
+<!-- JSON definition -->
+<h5>JSON definition <i style="font-size:80%;font-weight:normal;">(since 10.0)</i></h5> 
+The GanttRun can be defined also in JSON format, in this case the string must start by these two characters (without spaces): <b style="color:red;">[{</b><br />
+<i>If you define TreeGrid data in JSON format, the GanttRun value is string that contains data in JSON format, it is <u>not</u> embedded JSON object.</i><br />
+The parameter names are case sensitive, but there can be used two variants "Start" or "TextLeft" (first letter uppercase, other lowercase) or "start" or "textleft" (all letters lowercase).<br /> 
+Save is done always as first letter uppercase "Start" or "TextLeft".<br />
+White spaces inside definition are permitted, except the first two characters must be [{.<br />
+All the parameters are optional, e.g. {} is empty separating box, {Duration:xxx} is standard box.<br />
+To use JSON definition for new boxes in empty run, define the <a href="#CGanttRunNewStart">GanttRunNewStart</a> in the JSON format, e.g. <tt><b>GanttRunNewStart="[{Duration:'0.0001'}]"</b></tt>.<br />
+If used <b>custom attributes</b> in the JSON definition, their names must be listed in <a href="#CGanttRunCustom">GanttRunCustom</a> array.<br />
+<i>The JSON definition is slower to parse and save than the Array definition.</i><br /><br />
+
+The run definition is:	<tt><b><i>run</i> = "<span style="color:red;">[{</span> Param1_1:"value1", Param1_2:"value2", ... } , { Param2_1:"value2", Param2_2:"value2", ...}, { ... }, ... ]"</b></tt><br />
+For example: <tt>GanttRun="[{ Start:'1/1/2010', End:'1/8/2010', Type:'Box', Text:'my box' }, {Start:'1/10/2010',Duration:10} , {}, {Duration:5}]"</tt><br />
+The attribute name can be with or without double quotes / apostrophes, the attribute value must be in double quotes or apostrophes. The quotation type when saving the JSON back is controlled by 4.bit of <a href="#CGanttRunSave">GanttRunSave</a>.<br />
+
+<!-- Summary definition -->
+<h5>Summary definition <i style="font-size:80%;font-weight:normal;">(since 9.1)</i></h5>
+GanttRun boxes can be defined also by child main bars (every run box by one main bar with Start, End, Duration and other attributes).<br />
+For more information see <a href="GanttSummary.htm#RunMain">Editable Run bar as summary of child Main bars</a>.<br />
+<i>The Summary definition is slower to parse and save than the Array and JSON definition.</i><br />
+
+
+<!-- Items -->
+<h5>GanttRun definition items</h5>
+
+<!-- Start -->
+<a name="RunStart"></a>
+<div class="XML Short">
+   <u>new <b>6.2</b></u> <b>?</b> <i>date</i>
+   <h4>Start</h4> <s></s>
+</div>
+Start date of the task, if used, the <a href="#CGanttRunStart">GanttRunStart</a> is ignored. Use Start date if the tasks are not continuous. Between tasks will be automatically added the Empty boxes.<br />
+The Start can be count of milliseconds or date string in English format (M/d/yyyy HH:mm:ss or d.M.yyyy HH:mm:ss or yyyy-MM-dd HH:mm:ss).<br />
+<i>Does <u>not</u> support types Empty and Nbsp and joined boxes.</i><br />
+
+<!-- End -->
+<a name="RunEnd"></a>
+<div class="XML Short">
+   <u>new <b>6.2</b></u> <b>0</b> <i>date</i>
+   <h4>End</h4> <s></s>
+</div>
+End date of the task, used instead of <a href="#RunDuration">Duration</a>. Use End date if you know the start and end dates instead of duration.<br />
+The End can be date string in English format (M/d/yyyy HH:mm:ss or d.M.yyyy HH:mm:ss or yyyy-MM-dd HH:mm:ss).<br />
+Due internal implementation the End cannot be <s>count of milliseconds</s> to not confuse with Duration.<br />
+The End can be the exact end date or the last data unit, according to setting <a href="GanttCompute.htm#CGanttLastUnit">GanttLastUnit</a>.<br />
+<i>It is not possible to use it with number data units like <tt>GanttDataUnits='1'</tt>.</i><br />
+
+<!-- Duration -->
+<a name="RunDuration"></a>
+<div class="XML Short">
+   <u></u> <b>0</b> <i>int</i>
+   <h4>Duration</h4> <s></s>                
+</div>
+Duration of the box in <a href="GanttCompute.htm#CGanttDataUnits">GanttDataUnits</a> or in milliseconds, without excluded dates, used instead of <a href="#RunEnd">End</a> date. Use Duration if you know duration and not end date.<br />
+The empty space <tt>(Type=<b>Empty</b>)</tt> can have negative duration for overlaid adjacent boxes, these error boxes are displayed in red.<br />
+
+<!-- Type -->
+<a name="RunType"></a>
+<div class="XML Short">
+   <u><i>upd <b>7.0</b></i></u> <b>1</b> <i>int</i>
+   <h4>Type</h4> <s></s>
+</div>
+Feature of the box, default value is <b>Box</b> if positive Duration is set or <b>Empty</b> if Duration is <u>not</u> set or is negative.<br /> 
+<i>Since 7.0</i> also the Duration + only one comma is shortcut for <b>Empty</b> box.<br /> 
+For example <tt>"1;2<b style="color:red;">,</b>;3;;5"</tt> is shortcut to <tt>"1,Box;2,Empty;3,Box;0,Empty;5,Box"</tt><br />
+Case insensitive keyword, must <u>not</u> contain any spaces. The type is saved back always lowercase.<br /><br />
+
+<table>
+  <tr><td style="width:100px;"><b>Box</b></td><td><b>Normal box</b>. Can be moved or resized by mouse dragging, depending on other settings.</td></tr>
+  <tr><td></td><td>Can be also moved automatically when other box is resized or moved, depending on other settings.</td></tr>
+  <tr><td></td><td><i>To permit moving box from its adjacent sibling, there must be defined <b>Empty</b> space between them (with <tt>Duration=0</tt>).</tt></td></tr>
+  <tr><td></td><td><div class="L1"><i>The <b>Empty</b> space is automatically created when the box is defined by its Start date.</i></div></td></tr>  
+  <tr><td>&nbsp;</td><td></td></tr>  
+  <tr><td><b>Solid</b></td><td>Can be moved, but cannot be resized.</td></tr>
+  <tr><td>&nbsp;</td><td></td></tr>      
+  <tr><td><b>Left</b></td><td>Fixed left - its start cannot be changed, it can be only resized on right side and cannot be moved.</td></tr>  
+  <tr><td>&nbsp;</td><td></td></tr>      
+  <tr><td><b>Right</b></td><td>Fixed right - its end cannot be changed, it can be only resized on left side and cannot be moved.</td></tr>  
+  <tr><td>&nbsp;</td><td></td></tr>      
+  <tr><td><b>Fixed</b></td><td>Fixed both - it cannot be moved or resized.</td></tr>  
+  <tr><td>&nbsp;</td><td></td></tr>      
+  <tr><td><b>Milestone</b></td><td><i>(new 7.0)</i> Zero duration object. Movable, not resizable. Does <u>not</u> show any <b>Text</b>.</td></tr>  
+  <tr><td></td><td><b>Text</b> can be custom icon file, <b>Class</b> can be custom icon file for hover.</td></tr>
+  <tr><td>&nbsp;</td><td></td></tr>      
+  <tr><td><b>Stop</b></td><td><i>(new 7.0)</i> Fixed milestone. Zero duration object, not movable, not resizable. Does <u>not</u> show <b>Text</b>.</td></tr>  
+  <tr><td></td><td><b>Text</b> can be custom icon file, <b>Class</b> can be custom icon file for hover.</td></tr>
+  <tr><td>&nbsp;</td><td></td></tr>      
+  <tr><td><b>Empty</b></td><td><b>Empty space</b> between boxes, it is not interactive. Can have also set <tt>Duration=0</tt>, to only separate adjacent boxes, to let them move separately.</td></tr>  
+  <tr><td></td><td>Can be <u>automatically</u> shrunk or enlarged when other box is moved or resized, depending on other settings.</td></tr>
+  <tr><td></td><td>Two adjacent empty spaces are automatically merged together.</td></tr>
+  <tr><td></td><td>The Empty box is rendered only if set <tt><a href="#CGanttRunEmpty">GanttRunEmpty</a>='<b>1</b>'</tt> and the box has set <a href="#RunText">Text</a> or <a href="#RunClass">Class</a> attribute.</td></tr>
+  <tr><td></td><td><i>Cannot be used when <a href="#RunStart">Start</a> is set for the boxes</i></td></tr>    
+  <tr><td>&nbsp;</td><td></td></tr>      
+  <tr><td><b>Nbsp</b></td><td>Space between boxes to join them. But default it is not breakable, not resizable and not interactive.</td></tr>  
+  <tr><td></td><td>To have interactive Nbsp set <a href="#CGanttRunNbspHover">GanttRunNbspHover</a>. To permit breaking or resizing it set <b>Nbsp</b> keyword to <a href="#CGanttRunResize">GanttRunResize</a>, <a href="#CGanttRunMove">GanttRunMove</a> or <a href="#CGanttRunAdjust">GanttRunAdjust</a>.</td></tr>  
+  <tr><td></td><td>Can be placed only between two boxes to join them. When there is adjacent Empty space, the Nbsp is automatically removed.</td></tr>
+  <tr><td></td><td><i>Cannot be used when <a href="#RunStart">Start</a> is set for the boxes.</i></td></tr>
+  <tr><td>&nbsp;</td><td></td></tr>      
+  <tr><td><b>Bound</b></td><td>If placed as the first box or the only box, it is not resizable, not movable <b>fixed start</b> box and is displayed before the run start date. It is not possible to move boxes <b>before</b> or on the fixed start.</td></tr>
+  <tr><td></td><td>If placed as the last box, it is not resizable, not movable <b>fixed end</b> box and is displayed <b>after</b> the run end date. It is not possible to move boxes after or on the fixed end.</td></tr>
+  <tr><td></td><td>If placed anywhere else, it is <b>fixed not deletable box</b>. It cannot be moved outside the row. <i>If all the boxes outside this box are deleted, they cannot be created again, as the Bound becomes fixed start or end.</i></td></tr>        
+  <tr><td>&nbsp;</td><td></td></tr>
+  <tr><td><b>End</b></td><td>If placed as the first box, it is not resizable, but <b>movable start</b> box and is displayed <b>before</b> the start date. When moving box before or on the start, the start is automatically moved before it.</td></tr>  
+  <tr><td></td><td>If placed as the last box, it is not resizable, but <b>movable end</b> box and is displayed <b>after</b> the run end date. When moving box after or on the end, the end is automatically moved after it.</td></tr>
+  <tr><td></td><td>It should <u>not</u> be placed anywhere else. The run cannot contain only End boxes, in this case they are deleted. To create End boxes in empty run, add them to <a href="#CGanttRunNewStart">GanttRunNewStart</a>, e.g. as <tt>"2,end,Start;;0.0001,box;;2,end,End"</tt></td></tr>  
+  <tr><td>&nbsp;</td><td></td></tr>
+  <tr><td><b>Edge</b></td><td><i>(new 13.0)</i> Left or right edge of Run <a href="#RunContainer">Container</a>. Has sense only if it has set the Container attribute.</td></tr>  
+  <tr><td></td><td>It is hidden box used to let the container to have empty space on its edges and to let to resize the container by dragging.</td></tr>
+  <tr><td></td><td>Must be placed as the first or the last box in its container. Must <u>not</u> be joined with other boxes.</td></tr>
+</table>
+
+<!-- Text -->
+<a name="RunText"></a>
+<div class="XML Short">
+   <u></u> <b>2</b> <i>string</i>
+   <h4>Text</h4> <s></s>
+</div>
+Caption displayed on the box, it can contain also these special strings:<br />
+<b>%d</b> - replaces it by Duration displayed as date formatted by <a href="#CGanttRunFormat">GanttRunFormat</a>.<br />
+<b>%n</b> - replaces it by Duration displayed as integer formatted by <a href="#CGanttRunFormat">GanttRunFormat</a>.<br />
+For <b>Milestone</b> and <b>Stop</b> it is <u>not</u> text, but custom icon file url (like Test/MyIcon.gif). Remember, the icon is shifted left by 8px (the CSS GxGanttMilestone width/2).<br />
+The Text can be set also dynamically by <a href="#OnGetGanttRunText">OnGetGanttRunText</a> API event.<br />
+
+<!-- Class -->
+<a name="RunClass"></a>
+<div class="XML Short">
+   <u>chg <b>10.0</b></u> <b>3</b> <i>string</i>
+   <h4>Class</h4> <s></s>
+</div>
+CSS class used for the box. This class can predefine the shape and color of the box.<br /> 
+There are predefined 17 classes for all basic background colors: <u><b>Aqua</b></u>, <u><b>Black</b></u>, <u><b>Blue</b></u>, <u><b>Fuchsia</b></u>, <b>Gray</b>, <u><b>Green</b></u>, <u><b>Lime</b></u>, <u><b>Maroon</b></u>, <b>Navy</b>, <b>Olive</b>, <u><b>Orange</b></u>, <b>Purple</b>, <u><b>Red</b></u>, <u><b>Silver</b></u>, <b>Teal</b>, <b>White</b>, <u><b>Yellow</b></u>. <i>The 10 underlined colors are defined also for milestones and dependency lines.</i><br />
+<div class="L1">
+<i>(Since 10.0)</i> There is one predefined black and white class <b>Group</b> for various purposes, e.g. grouped rows.<br />
+There are special classes: <b>None</b> <i>(since 9.3)</i> - no border, no padding, no margin, no background <i>(in FastGantt replaced by Void)</i>, <b>Void</b> <i>(since 10.0)</i> - transparent border, no background, <b>Html</b> <i>(since 10.0)</i> - no background<br />
+For custom classes you need to define CSS classes GxGanttXXXIn and GxGanttXXXOut, where XXX is the Class used here and the Gx is style prefix. The <b>Out</b> class defines border, the <b>In</b> class background and font.<br />
+For custom class in <tt><b>FastGantt</b>='1'</tt> are both the custom ...In and ...Out classes set to the same tag, for <tt>FastGantt='1'</tt> these classes must <u>not</u> change padding, margin and border-width.<br />
+</div>
+For <b>Milestone</b> and <b>Stop</b> it is <i>(since 10.0)</i> custom CSS class for milestone, but only if <u>not</u> defined or empty <a href="#RunText">Text</a> property. It can be the same 17 color names as for the box, but only 10 colors are different (the underlined ones).<br />
+<div class="L1">For custom classes you need to define CSS class GxGanttXXXMilestone, where XXX is the Class used here and the Gx is style prefix.</div>
+For <b>Milestone</b> and <b>Stop</b>, if defined <a href="#RunText">Text</a>, it is <u>not</u> CSS class, but custom icon file url (like Test/MyIcon.gif) shown on mouse hover. Remember, the icon is shifted left by 8px (the CSS GxGanttMilestone width/2). Can be used instead of <a href="GanttObjects.htm#CGanttHoverIcons">GanttHoverIcons</a>.<br />
+The Class can be set also dynamically by <a href="#OnGetGanttRunClass">OnGetGanttRunClass</a> API event.<br />
+<i>Note, the custom classes are shared between Run and Main bar.</i><br />
+
+<!-- Tip -->
+<a name="RunTip"></a>
+<div class="XML Short">
+   <u></u> <b>4</b> <i>string</i>
+   <h4>Tip</h4> <s></s>
+</div>
+Tooltip displayed when mouse hovers the box. The final tip content is controlled by <a href="#CGanttRunTip">GanttRunTip</a>.<br />
+
+<!-- Id -->
+<a name="RunId"></a>
+<div class="XML Short">
+   <u>new <b>7.0</b></u> <b>5</b> <i>string</i>
+   <h4>Id</h4> <s></s>
+</div>
+Unique identification of the box (at least in its group), can be used in API methods (e.g <a href="#GetGanttRunBox">GetGanttRunBox</a>) to find the box.<br />
+The id can be also automatically generated, see the <a href="#id">Run box id</a>.<br />
+<i>If the box can have assigned dependencies (<a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains "<b>Box</b>"), <b>the box should have set its id and the id should <u>not</u> be a number to not collide with main bar plan.</b></i><br />
+The <a href="#RunState">State</a> and <a href="#RunManual">Manual</a> are changed only for box with Id set or generated. The Id must be set also to support <b>dependencies</b> for the box.<br />
+
+<!-- Group -->
+<a name="RunGroup"></a>
+<div class="XML Short">
+   <u>new <b>7.0</b></u> <b>6</b> <i>string</i>
+   <h4>Group</h4> <s></s>
+</div>
+Identification of the group of boxes, more boxes can belong to the same group.<br /> 
+If set, it is used for the box identification with the <a href="#RunId">Id</a> part. For dependencies it is used as Group$Id.<br />
+Boxes with the same Group value can be managed (changed, moved or deleted) together. See also <a href="#CGanttRunGroupHover">GanttRunGroupHover</a>.<br />
+
+<!-- State -->
+<a name="RunState"></a>
+<div class="XML Short">
+   <u>new <b>7.0</b> chg <b>10.0</b></u> <b>7</b> <i>string</i>
+   <h4>State</h4> <s></s>
+</div>
+State of the box. It is filled automatically after any change for the box. <b>It is filled only for boxes with <a href="#RunId">Id</a> set.</b><br /> 
+It can be a list of case insensitive flags separated by plus (e.g.  <tt>"moved+resized+changed"</tt>) or a number bit array (e.g. 224 for the <tt>moved+resized+changed</tt>).<br /> 
+<b>For API it is always number.</b> For upload it can be string or number according to the <a href="#CGanttRunStates">GanttRunStates</a>.<br />
+<table>
+  <tr><td style="width:50px;"><b>1</b></td><td style="width:90px;"><b>disabled</b></td><td><i>(since 10.0)</i> box is colored gray and its dependencies are inactive. If set <tt><a href="#CGanttEditDisabled">GanttEditDisabled</a>='0'</tt>, the box cannot be changed by a user.</td></tr>
+  <tr><td></td><td></td><td><b>Used only if the <a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains 'Box'.</b> <i>To define disabled for the whole run use <tt><a href="#CGanttRunDisabled">GanttRunDisabled</a>=1</tt> instead.</i></td></tr>
+  <tr><td><b>2</b></td><td><b>locked</b></td><td><i>(since 10.0)</i> box cannot be moved when correcting dependencies. If set <tt><a href="#CGanttEditDisabled">GanttEditDisabled</a>='0'</tt>, the box cannot be changed by a user.</td></tr>
+  <tr><td></td><td></td><td><b>Used only if the <a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains 'Box'.</b> <i>To define locked for the whole run use <tt><a href="#CGanttRunDisabled">GanttRunDisabled</a>=2</tt> instead. Ignored when calculating critical path.</i></td></tr>
+  <tr><td><b>4</b></td><td><b>selected</b></td><td><i>(since 10.0)</i> box is marked and the group of all selected boxes can be moved, copied or deleted together. <i>How the boxes can be selected is controlled by <a href="#CGanttRunSelect">GanttRunSelect</a>.</i></td></tr>
+  <tr><td><b>8</b></td><td><b>added</b></td><td>box is newly created or moved from another row or grid. <i>Set only if <tt><a href="#CGanttRunStates">GanttRunStates</a>=1</tt>.</i></td></tr>
+  <tr><td><b>16</b></td><td><b>deleted</b></td><td>box is deleted or moved to another row or grid. <i>Set only if <tt><a href="#CGanttRunStates">GanttRunStates</a>=1</tt>.</i></td></tr>
+  <tr><td></td><td></td><td><i>Note, the deleted boxes are not accessible by API <a href="#GetGanttRunBox">GetGanttRunBox</a>, they are accessible only by <a href="#GetGanttRun">GetGanttRun</a>(...).<b>Deleted</b> array.</i></td></tr>
+  <tr><td><b>32</b></td><td><b>moved</b></td><td>box is moved inside its row. <i>If some box is moved from one row to another, it will get <b>deleted</b> flag in source row and <b>added</b> flag in destination row. Set only if <tt><a href="#CGanttRunStates">GanttRunStates</a>=1</tt>.</i></td></tr>
+  <tr><td><b>64</b></td><td><b>resized</b></td><td>box has changed its duration. <i>Set only if <tt><a href="#CGanttRunStates">GanttRunStates</a>=1</tt>.</i></td></tr>  
+  <tr><td><b>128</b></td><td><b>changed</b></td><td>box has changed any other its attribute than its place. <i>Set only if <tt><a href="#CGanttRunStates">GanttRunStates</a>=1</tt>.</i></td></tr>
+</table>
+
+<!-- Top -->
+<a name="RunTop"></a>
+<div class="XML Short">
+   <u>new <b>8.1</b></u> <b>8</b> <i>int</i>
+   <h4>Top</h4> <s></s>
+</div>
+Vertical position of the box, in pixels. It can be set also dynamically by <a href="#OnGetGanttRunRect">OnGetGanttRunRect</a> API event. Default box position is set by <a href="#CGanttRunTop">GanttRunTop</a>.<br />
+
+<!-- Height -->
+<a name="RunHeight"></a>
+<div class="XML Short">
+   <u>new <b>8.1</b></u> <b>9</b> <i>int</i>
+   <h4>Height</h4> <s></s>
+</div>
+Inner height of the box, in pixels. It can be set also dynamically by <a href="#OnGetGanttRunRect">OnGetGanttRunRect</a> API event. Default box height is set by <a href="#CGanttRunHeight">GanttRunHeight</a>.<br /> 
+
+<!-- Manual -->
+<a name="RunManual"></a>
+<div class="XML Short">
+   <u>new <b>10.0</b></u> <b>10</b> <i>date</i>
+   <h4>Manual</h4> <s></s>
+</div>
+Manual start date of the box. Used as minimal start date when correcting dependencies, the box is never moved before this date when correcting dependencies.<br />
+<b>Used only if the <a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains 'Box'.</b> <i>To define manual date for the whole Run use <a href="#CGanttRunManual">GanttRunManual</a> instead.</i><br />
+<b>Used only if set <tt><a href="#CGanttRunManualChange">GanttRunManualChange</a> > 0</tt>.</b><br />
+It is changed to box start or end date whenever the box is manually moved or resized by a user or by API, but <i>only when the box has set its <a href="#RunId">Id</a> and set <tt><a href="GanttMain.htm#CGanttManualChange">GanttManualChange</a> > 1</tt>.</i><br />
+The side of the manual constraint is set by <a href="#CGanttManualSide">GanttManualSide</a>, default is left side.<br />
+
+<!-- Complete -->
+<a name="RunComplete"></a>
+<div class="XML Short">
+   <u>new <b>10.0</b></u> <b>11</b> <i>float</i>
+   <h4>Complete</h4> <s></s>
+</div>
+Percent completion of the box. Number 0 - 100.<br />
+<b>Used only if the <a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains 'Box'.</b> <i>To define completed state for the whole run use <a href="#CGanttRunComplete">GanttRunComplete</a> instead.</i><br />
+See also <a href="#CGanttRoundComplete">GanttRoundComplete</a> to round the completed state to some units.<br /> 
+
+<!-- Resources -->
+<a name="RunResources"></a>
+<div class="XML Short">
+   <u>new <b>10.0</b></u> <b>12</b> <i>string</i>
+   <h4>Resources</h4> <s></s>
+</div>
+Resources assigned to the box. The format is the same as <a href="GanttResources.htm#CGanttResources">GanttResources</a>, except the resource separator (;) is replaced by <strong>#</strong> to not collide with the default box separator.<br />
+<b>Used only if the <a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains 'Box'.</b> <i>To define resources for the whole run use <a href="GanttResources.htm#CGanttRunResources">GanttRunResources</a> instead.</i><br />
+
+<!-- TextLeft -->
+<a name="RunTextLeft"></a>
+<div class="XML Short">
+   <u>new <b>10.0</b></u> <b>13</b> <i>string</i>
+   <h4>TextLeft</h4> <s></s>
+</div>
+Html text displayed on left side of the bar. Right aligned.<br />
+The text can be set also dynamically by <a href="#OnGetGanttRunSideText">OnGetGanttRunSideText</a> API event.<br />
+
+<!-- TextRight -->
+<a name="RunTextRight"></a>
+<div class="XML Short">
+   <u>new <b>10.0</b></u> <b>14</b> <i>string</i>
+   <h4>TextRight</h4> <s></s>
+</div>
+Html text displayed on right side of the bar. Left aligned.<br /> 
+The text can be set also dynamically by <a href="#OnGetGanttRunSideText">OnGetGanttRunSideText</a> API event.<br />
+
+<!-- Containers -->
+<a name="RunContainers"></a>
+<div class="XML Short">
+   <u>new <b>13.0</b></u> <b>15</b> <i>string</i>
+   <h4>Containers</h4> <s></s>
+</div>
+The containers the box belongs to. They are dot (<b>.</b>) separated. For API it is JavaScript array of the containers.<br />
+The container contains all boxes in the row they have listed the container id in their Containers attribute.<br />
+The container is not defined anywhere else, its level and CSS class is specified by the first box Containers where it is defined.<br />
+The container is displayed under its boxes. The container can be moved, copied or deleted - the action affects all its boxes, similarly to actions with joined or selected boxes.<br />
+The container gets CSS class as GxGanttContainerLX, where X is the container level (its position in the Containers in its first box, from 1).<br />
+The container gets also CSS class as GxGanttContainerID, where X is the container id (its id in the Containers).
+If the container id contains '#', the part after the '#' is removed from the CSS class name. To use the same CSS class for more containers.<br />
+
+<!-- Reserved -->
+<a name="RunReserved"></a>
+<div class="XML Short">
+   <u></u> <b>16 - 19</b> <i></i>
+   <h4>[Reserved]</h4> <s></s>
+</div>
+The Run can contain any custom attributes. Place the custom attributes from 20th position to not violate the future TreeGrid attributes.<br />
+
+<!-- GanttRunEscape -->
+<a name="CGanttRunEscape"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttRunEscape</h4> <s>[""]</s>
+</div>
+<b>For Array definition.</b> Set it to one character to escape run separators by it. If set, the GanttRunItems item in array definition can contain the separators escaped by the GanttRunEscape character.<br />
+For example, if GanttRunEscape="\", the run can be e.g. GanttRun="5/12/2008,2,,A\;B\;C;5/16/2008,2,,X\,Y\,Z;5/22/2008,2,,Q\\R\\S".<br />
+<i>Setting it can slightly slow down the run processing!</i><br />
+
+<!-- GanttRunCustom -->
+<a name="CGanttRunCustom"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string[ ]</i>
+   <h4>GanttRunCustom</h4> <s></s>
+</div>
+<b>For JSON definition.</b> List of box custom attribute names, comma separated.<br />
+Used for <a href="">GanttRun</a> JSON format definition.<br /> 
+Used also for <a href="#GetGanttRunBox">GetGanttRunBox</a> / <a href="#SetGanttRunBox">SetGanttRunBox</a> to get / set the custom attributes.<br />
+In <a href="#GetGanttRun">GetGanttRun</a> / <a href="#SetGanttRun">SetGanttRun</a> the custom attributes are placed from <b>20</b>th position in the box.<br />
+
+<!-----------------------------------------------------------------------  Extended definition  ------------------------------------------------->
+<a name="Extended"></a>
+<h2>Extended definition</h2>
+<p class="H2">Optional definition for the whole run bar</p>
+
+<!-- GanttRunStart -->
+<a name="CGanttRunStart"></a>
+<div class="XML">
+   <u>new <b>6.1</b> <i>upd <b>7.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunStart</h4> <s>Gantt source - column name or exact value</s>
+</div>
+Start date of the Run boxes, usually column name, but can be also date string (M/d/yyyy hh:mm:ss) or count of milliseconds.<br />
+Used only if the <a href="#CGanttRun">GanttRun</a> does not contain Start dates, but only boxes durations.<br />
+Its presence also changed default saving format, see <a href="#CGanttRunSave">GanttRunSave</a>.<br />
+<i>(Since 7.0)</i> If the cells in this column are empty, they are filled on start and also updated automatically according to <a href="#CGanttRun">GanttRun</a>.<br />
+<i>(Since 7.0)</i> When its value is changed by user, the <a href="#CGanttRun">GanttRun</a> is modified according to the <a href="#CGanttRunAdjustStart">GanttRunAdjustStart</a> settings.<br />
+
+<!-- GanttRunEnd -->
+<a name="CGanttRunEnd"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunEnd</h4> <s>Gantt source - column name only</s>
+</div>
+Actual computed end date of the <a href="#CGanttRun">GanttRun</a>.<br />
+<i>It is just support column, it should <u>not</u> contain any values in its cells on start.</i><br />
+It is filled on start and also updated automatically according to <a href="#CGanttRun">GanttRun</a>.<br />
+When its value is increased by user, the last <a href="#CGanttRun">GanttRun</a> box is increased accordingly.<br />
+When its value is decreased by user, the last <a href="#CGanttRun">GanttRun</a> box is decreased accordingly. It also deletes the last boxes if needed.<br />
+
+<!-- GanttRunDuration -->
+<a name="CGanttRunDuration"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>float</i>
+   <h4>GanttRunDuration</h4> <s>Gantt source - column name only</s>
+</div>
+Actual computed duration (in <a href="GanttCompute.htm#CGanttDataUnits">GanttDataUnits</a>, in workdays) of the <a href="#CGanttRun">GanttRun</a>.<br />
+<i>It is just support column, it should <u>not</u> contain any values in its cells on start.</i><br />
+It is filled on start and also updated automatically according to <a href="#CGanttRun">GanttRun</a>.<br />
+When its value is increased by user, the last <a href="#CGanttRun">GanttRun</a> box is increased accordingly.<br />
+When its value is decreased by user, the last <a href="#CGanttRun">GanttRun</a> box is decreased accordingly. It also deletes the last boxes if needed.<br />
+
+<!-----------------------------------------------------------------------  Task  ------------------------------------------------->
+<a name="Task"></a>
+<h2>Task</h2>
+<p class="H2">
+Run bar as Gantt task attributes<br />
+<strong>Defined here only if the <a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains 'Run'. For 'Box' defined in <a href="#CGanttRun">Box</a> definition.</strong><br />
+Run bar as task can have also <a href="GanttCompute.htm#Dependencies">dependencies</a> and <a href="GanttResources.htm#Assign">resources</a>.<br />
+</p>
+
+<!-- GanttRunComplete -->
+<a name="CGanttRunComplete"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>float</i>
+   <h4>GanttRunComplete</h4> <s>Gantt source - column name only</s>
+</div>
+Actual percentage complete of the task, of all <a href="#CGanttRun">GanttRun</a> boxes together.<br />
+<b>Used only if the <a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains 'Run'.</b> <i>To define completion state for individual boxes use box <a href="#RunComplete">Complete</a>.</i><br />
+
+<!-- GanttRoundComplete -->
+<a name="CGanttRoundComplete"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRoundComplete</h4> <s>[0]</s>
+</div>
+If the percentage complete will be rounded to specified units (<b>1</b> - GanttUnits, <b>2</b> - GanttDataUnits) when entering it by SetGanttRunPercent.<br />
+Affects Main bar and Run. See also <a href="GanttCalendars.htm#CGanttExcludeComplete">GanttExcludeComplete</a> to round the percentage complete to workdays.<br /> 
+Setting it also restricts to have boxes incomplete by very small amount (due not precise setting of the percentage complete).<br />
+<i>Note, there is no Run keyword in the name.</i><br />
+
+<!-- GanttRunManual -->
+<a name="CGanttRunManual"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunManual</h4> <s>Gantt source - column name or exact value</s>
+</div>
+Manual start date of the run bar, can be column name or direct value.<br />
+<b>Used only if the <a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains 'Run'.</b> <i>For individual boxes the manual is set by <a href="#RunManual">Manual</a> instead.</i><br />
+Used as minimal start date when correcting dependencies, the task is never moved before this date when correcting dependencies.<br />
+It is changed to run bar start date whenever the run bar is manually moved or resized by a user or by API.<br />
+It is controlled by <a href="#CGanttRunManualChange">GanttRunManualChange</a>, by default it is switched off.<br />
+
+<!-- GanttRunManualChange -->
+<a name="CGanttRunManualChange"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunManualChange</h4> <s>[0]</s>
+</div>
+How the <a href="#CGanttRunManual">GanttRunManual</a> or <a href="#RunManual">Manual</a> will be used and changed when moved or resized the task.<br />
+<i>Note the default value 0 differs from <a href="GanttMain.htm#CGanttManualChange">GanttManualChange</a>, where is 2.</i><br />
+<b>0</b> - Never displayed, changed, used.<br /> 
+<b>1</b> - Displayed and used, but never automatically changed.<br />
+<b>2</b> - Changes box <a href="#RunManual">Manual</a> if the <a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains <b>Box</b>. If the GanttTask does not contains <b>Box</b>, it changes <a href="#CGanttRunManual">GanttRunManual</a> if defined as column.<br />
+<b>3</b> - Changes box <a href="#RunManual">Manual</a> if the <a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains <b>Box</b>. If the GanttTask does not contains <b>Box</b>, it changes <a href="#CGanttRunManual">GanttRunManual</a> also when defined as attribute.<br />
+<b>4</b> - Like <b>3</b> and if empty it is set to the task start or end date.<br />
+
+<!-- GanttManualSide -->
+<a name="CGanttManualSide"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttManualSide</h4> <s>[2]</s>
+</div>
+Where the GanttManual lock will be placed and used. <b>0</b> - bar left side (start), <b>1</b> - bar right side (end), <b>2</b> - like <a href="GanttCompute.htm#CGanttDirection">GanttDirection</a>, <b>3</b> - opposite to <a href="GanttCompute.htm#CGanttDirection">GanttDirection</a>.<br />
+<i>Note, there is no Run keyword in the name, it is used also for all main bar plans.</i><br />
+
+<!-- GanttRunDisabled -->
+<a name="CGanttRunDisabled"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttRunDisabled</h4> <s>Gantt source - column name or exact value</s>
+</div>
+If the run bar is disabled or locked. <i>For individual boxes the disabled state is set by <a href="#RunState">State</a> instead.</i><br />
+<b>Used only if the <a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains 'Run'.</b><br />
+<table>
+  <tr><td style="width:50px;">0</td><td>None.</td></tr>
+  <tr><td>1</td><td>Disabled. Disabled bar is colored gray and its dependencies are inactive. If set <tt><a href="#CGanttEditDisabled">GanttEditDisabled</a>='0'</tt>, it cannot be changed by a user.</td></tr>
+  <tr><td>2</td><td>Locked. Locked bar cannot be moved when correcting dependencies. If set <tt><a href="#CGanttEditDisabled">GanttEditDisabled</a>='0'</tt>, it cannot be changed by a user. Ignored when calculating critical path.</td></tr>
+</table>
+
+<!-- GanttEditDisabled -->
+<a name="CGanttEditDisabled"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttEditDisabled</h4> <s>[0]</s>
+</div>
+If the disabled or locked bar can be moved, resized, changed and dependencies can be attached to it by a user.<br />
+<i>Note, there is no Run keyword in the name.</i><br />
+
+<!-- DisableGanttRun -->
+<a name="DisableGanttRun"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>object</i>
+   <h4>DisableGanttRun</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>disable</b>, <i>int</i> <b>index</b>)</s>
+</div>
+Disables, locks or enables the run bar or run box. Run bar is set when <a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains "Run", run box is set when <a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains "Box".<br />
+For run bar sets the GanttRunDisable value, for run box sets the State values disabled and locked.<br />
+<b>index</b> is box index in the run. It is ignored when set run bar.<br />
+<b>disable</b> = <b>0</b> - enable / unlock, <b>1</b> - disable, <b>2</b> - lock<br />
+
+<!-----------------------------------------------------------------------  Edit  ------------------------------------------------->
+<a name="Edit"></a>
+<h2>Edit</h2>
+<p class="H2">Special attributes for editing run bar</p>
+
+<!-- GanttEdit -->
+<a name="CGanttEdit"></a>
+<div class="XML">
+   <u style="width:130px;">renamed <b>6.0</b> <i>upd <b>13.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>GanttEdit</h4> <s>["all"]</s>
+</div>
+Which Gantt objects can be edited / moved / changed / deleted / added by user. Comma separated list of flag names, case insensitive.<br />
+<strong>It does <u>not</u> affect editing values in the source cells</strong> - <i>use standard attributes like <a href="CellEdit.htm#CCanEdit">CanEdit</a> to restrict source cell editing.</i><br />
+<table>
+  <tr><td style="width:70px;"><b>Run</b></td><td>Run bars can be created, deleted and modified directly in Gantt chart. <i>Since 10.0</i> individual actions for whole run can be set by <b>RunMove</b>, <b>RunResize</b> (resize+split), <b>RunNew</b> (add+delete), <b>RunComplete</b>, <b>RunText</b> (run text, type, tip, class), <b>RunState</b> (disable, lock, select).</td></tr>
+  <tr><td></td><td><i>(new 13.0)</i> Action for run container can be set by <b>RunContainer</b></td></tr>
+  <tr><td></td><td>The Run can be more controlled by its attributes for <a href="GanttRun.htm#Moving">moving and resizing</a>.</td></tr>  
+</table>
+For editing other Gantt objects see <a href="GanttObjects.htm#CGanttEdit">GanttEdit</a> full description.<br />
+
+<!-- GanttRunMilestones -->
+<a name="CGanttRunMilestones"></a>
+<div class="XML">
+   <u>new <b>7.0</b> <i>upd <b>10.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunMilestones</h4> <s>[1]</s>
+</div>
+If creating Run milestones and zero width boxes by users is permitted. <i>Note, it differs from main bar GanttMilestones attribute.</i><br />
+<b>0</b> - neither milestones nor zero width boxes can be created. All not empty zero width boxes are removed.<br />
+<b>1</b> - only milestones can be created. All not empty zero width boxes are shown as milestones, even if they don't have type Milestone or Stop.<br />
+<b>2</b> - <i>(since 10.0)</i> only zero width boxes can be created. All not empty zero width boxes are shown as boxes, even if they have type Milestone or Stop.<br />
+<b>3</b> - <i>(since 10.0)</i> both milestones and zero width boxes can be created. If the not empty box has zero width, but not type Milestone or Stop, it is shown as box.<br />
+
+<!-- GanttRunGroupHover -->
+<a name="CGanttRunGroupHover"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunGroupHover</h4> <s>[1]</s>
+</div>
+If mouse hovers a box with Group attribute set, it can highlight all other boxes with the same Group value.<br />
+<b>0</b> - never<br />
+<b>1</b> - only in the same row<br />
+<b>2</b> - in the whole grid (can be slow)<br />
+<b>3</b> - in the whole grid, only editable Gantt cells (<tt>GanttEdit='run'</tt>)<br />
+
+<!-- GanttRunJoinedHover -->
+<a name="CGanttRunJoinedHover"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunJoinedHover</h4> <s>[0]</s>
+</div>
+How many boxes will be hovered when they are joined.<br />
+<b>0</b> - only the one box under mouse<br />
+<b>1</b> - all joined boxes, except joined by nbsp<br />
+<b>2</b> - all joined boxes, including joined by nbsp, see also <a href="#CGanttRunNbspHover">GanttRunNbspHover</a><br />
+
+<!-- GanttRunNbspHover -->
+<a name="CGanttRunNbspHover"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunNbspHover</h4> <s>[0]</s>
+</div>
+If and how the Nbsp type box can be hovered and interactive.<br />
+<b>0</b> - no, the Nbsp is <u>not</u> interactive.<br />
+<b>1</b> - only the Nbsp box<br />
+<b>2</b> - adjacent boxes (see <a href="#CGanttRunJoinedHover">GanttRunJoinedHover</a>), but <u>not</u> the Nbsp boxes. The Nbsp box is still interactive and can control the other boxes.<br />
+<b>3</b> - adjacent boxes (see <a href="#CGanttRunJoinedHover">GanttRunJoinedHover</a>), including all Nbsp boxes<br />
+
+<!-- GanttRunJoined -->
+<a name="CGanttRunJoined"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunJoined</h4> <s>[0]</s>
+</div>
+How the joined boxes are handled, bit array. For <b>0</b> the joined boxes are not handled together.<br /> 
+<i>Note, <u>dragging</u> joined boxes is controlled by <b>Single</b>/<b>Next</b>/<b>Prev</b>/<b>Nbsp</b> flags in <a href="#CGanttRunMove">GanttRunMove</a>.</i><br />
+<table>
+  <tr><td style="width:50px;"><b>1</b>. bit</td><td style="width:50px;">&amp;<b>1</b></td><td>the joined boxes are deleted together.</td></tr>
+  <tr><td><b>2</b>. bit</td><td>&amp;<b>2</b></td><td>the joined boxes are disabled or locked together.</td></tr>
+  <tr><td><b>3</b>. bit</td><td>&amp;<b>4</b></td><td>the joined boxes are selected together.</td></tr>
+  <tr><td><b>4</b>. bit</td><td>&amp;<b>8</b></td><td>the joined boxes are changed together (type, class).</td></tr>
+  <tr><td><b>5</b>. bit</td><td>&amp;<b>16</b></td><td>the joined boxes are edited together (text, tip).</td></tr>        
+</table>
+
+<!-- GanttRunJoinedNbsp -->
+<a name="CGanttRunJoinedNbsp"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunJoinedNbsp</h4> <s>[255]</s>
+</div>
+Which actions in <a href="#CGanttRunJoined">GanttRunJoined</a> are used also for boxes joined by Nbsp box type. Bit array, the same as in <a href="#CGanttRunJoined">GanttRunJoined</a>.<br />
+<i>Note, the bits in GanttRunJoined set to 0 are ignored in GanttRunJoinedNbsp.</i><br />
+<i>For example <tt>GanttRunJoined=5</tt> and <tt>GanttRunJoinedNbsp=1</tt> means that joined boxes including joined by Nbsp are deleted together, but selected are only boxes <u>not</u> joined by Nbsp; other actions are done only for one box.</i><br />
+
+<!-- GanttResizeDelete -->
+<a name="CGanttResizeDelete"></a>
+<div class="XML">
+   <u>new <b>6.1</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttResizeDelete</h4> <s>[1]</s>
+</div>
+If the Main and Run bars can be deleted by resizing them to zero width.<br />
+If set <tt><a href="#CGanttRunMilestones">GanttRunMilestones</a>=2</tt>, the box can be deleted by resizing it to negative width.<br />
+<b>0</b> - the box cannot be deleted by resizing. Both the run box and the main bar can be resized to one unit width.<br />
+<b>1</b> - if the box is resized to zero width, it is deleted.<br />
+<b>2</b> - if the box is resized to zero width, it shows confirm message and is deleted if confirmed, otherwise original state is restored.<br />
+
+<!-- GanttResizeBeforeMove -->
+<a name="CGanttResizeBeforeMove"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttResizeBeforeMove</h4> <s>[2]</s>
+</div>
+If resizing the Main and Run bars is accessible even if another object is above the bar.<br /> 
+For <b>0</b> it moves the object above, for <b>1</b> it resizes the bar under, for <b>2</b> it resizes the bar only under icon (e.g. flag, point, milestone or constraint), otherwise it moves the bar above.<br />
+
+<!-----------------------------------------------------------------------  Save  ------------------------------------------------->
+<a name="Save"></a>
+<h2>Save</h2>
+<p class="H2">Saving run changes back to string sent to server</p>
+
+<!-- GanttRunSave -->
+<a name="CGanttRunSave"></a>
+<div class="XML">
+   <u>new <b>6.2</b> chg <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunSave</h4> <s>[0]</s>
+</div>
+Type of <a href="#CGanttRun">GanttRun</a> box attribute structure for save. It affects both Array and JSON definition. Bit array.<br /><br />
+
+1. and, 2. bit, <b>&amp;3</b><br />
+<div class="L1">
+<table>
+  <tr><td style="width:50px;"><b>0</b></td><td>"<b>Duration</b>,Type,Text,Class,Tip" if defined <a href="#CGanttRunStart">GanttRunStart</a> column or "<b>Start</b>,<b>End</b>,Type,Text,Class,Tip" if not</td></tr>
+  <tr><td><b>1</b></td><td>"<b>Duration</b>,Type,Text,Class,Tip" (<i>since 10.0</i> if <u>not</u> defined GanttRunStart it saves the first box with Start and the others without Start)</td></tr>
+  <tr><td><b>2</b></td><td>"<b>Start</b>,<b>Duration</b>,Type,Text,Class,Tip"</td></tr>
+  <tr><td><b>3</b></td><td>"<b>Start</b>,<b>End</b>,Type,Text,Class,Tip"</td></tr>    
+</table>
+</div>
+3. bit, <b>&4</b> <i>(new 7.0)</i><br />
+<div class="L1">
+Use short format. Values <b>4</b> - <b>7</b> are similar to values <b>0</b> - <b>3</b>, but use the short format.<br /> 
+Omits box type as default, <b>empty</b> type without <b>duration</b> as completely empty, <b>empty</b> type with <b>duration</b> as duration with comma<br />
+For example <tt>"1,Box;2,Empty;3,Box;0,Empty;5,Box"</tt> is written as <tt>"1;2<b style="color:red;">,</b>;3;;5"</tt><br />
+</div>
+4. bit <b>&8</b> <i>(new 10.0)	&nbsp; For JSON format only.</i>
+<div class="L1">
+If set, uses strict JSON format, all names and values double quoted.<br /> 
+If <u>not</u> set, name is not quoted, and values are quoted in apostrophes, to not require replacing the double quotes by \" when including to cell values.<br />
+</div>
+
+Saved run always uses the same separators and definition (Array/JSON) as the originally defined run.<br /> 
+To specify the separators or JSON definition for empty run you can set only the separators as the empty Run value, e.g. <tt>run = "[{"</tt> for the JSON definition,<br />
+<div class="L1">or set the separators in <a href="#CGanttRunNewStart">GanttRunNewStart</a>, e.g. set <tt>GanttRunNewStart="[{Duration:1,Type:'Box'}]"</tt> to use JSON definition for new runs.</div>
+
+<!-- GanttRunStates -->
+<a name="CGanttRunStates"></a>
+<div class="XML">
+   <u>new <b>7.0</b> chg <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunStates</h4> <s>[2]</s>
+</div>
+If and how will be the <a href="#RunState">State</a> of the run set. Fills changes only for boxes with <b>Id</b> set.<br />
+The <b>deleted boxes</b> are saved to the end as box with type '-' and empty duration and without start/end date items.<br />
+<table>
+  <tr><td style="width:50px;"><b>0</b></td><td>Sets only <b>disabled</b>, <b>locked</b> and <b>selected</b> states as lowercase flags, separated by +.</td></tr>
+  <tr><td><b>1</b></td><td>Like <b>0</b> and sets also <b>added</b>, <b>deleted</b>, <b>moved</b>, <b>resized</b> and <b>changed</b> states as lowercase flags, separated by +.</td></tr>
+  <tr><td><b>2</b></td><td>Like <b>1</b> and clears also the <b>added</b>, <b>deleted</b>, <b>moved</b>, <b>resized</b> and <b>changed</b> states after successful update to server.</td></tr>
+  <tr><td>3</td><td><i>Reserved</i></td></tr>    
+  <tr><td><b>4</b></td><td>Sets only <b>disabled</b>, <b>locked</b> and <b>selected</b> states as a bit array number (e.g. 7 for all the three states).</td></tr>
+  <tr><td><b>5</b></td><td>Like <b>4</b> and sets also <b>added</b>, <b>deleted</b>, <b>moved</b>, <b>resized</b> and <b>changed</b> states as a bit array number (e.g. 224 for moved+resized+changed).</td></tr>
+  <tr><td><b>6</b></td><td>Like <b>5</b> and clears also the <b>added</b>, <b>deleted</b>, <b>moved</b>, <b>resized</b> and <b>changed</b> states after successful update to server.</td></tr>
+  <tr><td>7</td><td><i>Reserved</i></td></tr>       
+</table>
+<i>(Since 10.0)</i> The default value changed from <b>1</b> to <b>2</b>.<br />
+
+<!-----------------------------------------------------------------------  Select  ------------------------------------------------->
+<a name="Select"></a>
+<h2>Select</h2>
+<p class="H2">Selecting individual boxes and do actions with more boxes</p>
+
+The selected run box is marked <b>selected</b> keyword in its <a href="#RunState">State</a> item of the GanttRun.<br />
+
+<!-- GanttRunSelect -->
+<a name="CGanttRunSelect"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunSelect</h4> <s>[0]</s>
+</div>
+<b>0</b> - no selection possible<br />
+<b>1</b> - always one box at a time<br />
+<b>2</b> - one box at a time, can be unselected<br />
+<b>3</b> - more boxes in one row<br />
+<b>4</b> - more boxes in more rows, but they are handled per row only<br />
+<b>5</b> - more boxes in more rows, they are handled all together<br />
+
+<!-- GanttRunClearSelected -->
+<a name="CGanttRunClearSelected"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttRunClearSelected</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, clears the whole selection after every action that manipulates selected boxes.<br />
+It does not affect dragging boxes, here use <a href="#CGanttRunMove">GanttRunMove</a> <b>Clear</b> flag instead.<br />
+
+<!-- GanttRunContainersSelect -->
+<a name="CGanttRunContainersSelect"></a>
+<div class="XML">
+   <u>new <b>13.1</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttRunContainersSelect</h4> <s></s>
+</div>
+If and which containers will be selected instead of inner run boxes. Selected container has always all its run boxes selected. 
+It can be:<br />
+- nothing / empty string (default) as no container. No container will be marked as selected, only its boxes.<br />
+- <b>*</b> as all containers and boxes. Every container that has all its boxes selected is marked selected. Also all its inner boxes and containers.<br />
+- <b>^</b> as top containers or boxes. Only containers with all boxes selected are marked selected. If the container is marked as selected, no its inner container or box is marked selected.<br />
+- a number from 1 as container level. Only containers on given level can be selected. Not any boxes or other containers. <br />
+- a string as container class. Only containers of given class can be selected. Not any boxes or other containers.<br />
+
+
+<!-- OnGanttRunSelect -->
+<a name="OnGanttRunSelect"></a>
+<div class="API">
+   <u>new <b>11.0</b> <i>upd <b>13.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnGanttRunSelect</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>object</i> <b>run</b>, <i>int</i> <b>index</b>, <i>bool</i> <b>select</b>, <i>object</i> <b>source</b>)</s>
+</div>
+Called before the box is selected or unselected. Called for every box being selected or unselected.<br />
+<b>row</b>, <b>col</b> is the Gantt cell, the <b>run</b> is the whole run object used in <a href="#GetGanttRun">GetGanttRun</a> / <a href="#SetGanttRun">SetGanttRun</a> methods.<br />
+<b>index</b> is the box index inside <b>run</b>, can be used also to get the box object by  <a href="#GetGanttRunBox">GetGanttRunBox</a> method.<br />
+<b>select</b> is true to be selected, false to be unselected.<br />
+<table>
+  <tr><td style="width:120px;"><b>source</b> can be:</td><td><b>null</b> - if all boxes in grid are selected or unselected.</td></tr>
+  <tr><td></td><td>box - (as returned from <a href="#GetGanttRunBox">GetGanttRunBox</a>), as the source (e.g. clicked) box to select or unselect.</td></tr>
+  <tr><td></td><td><div class="L2">There can be more boxes selected if joined with the other boxes, all these boxes will get the same <b>source</b> box.</div></td></tr>
+  <tr><td></td><td>array - [r1,x1,y1,r2,x2,y2,col] as the selected rectangle, <b>r</b> is the row object, <b>x</b>, <b>y</b> are coordinates in pixels inside the cell [<b>r</b>,<b>col</b>]</td></tr>    
+  <tr><td></td><td>array - [rows,d1,d2,col] <i>(new 13.0)</i> as the selected range, <b>rows</b> is array of the rows, <b>d1</b> and <b>d2</b> are dates to select runs between</td></tr>    
+</table>
+Return <b>true</b> to <u>not</u> change the selection state.<br />
+
+<!-- OnSelectGanttRunRect -->
+<a name="OnSelectGanttRunRect"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnSelectGanttRunRect</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>r1</b>, <i>int</i> <b>x1</b>, <i>int</i> <b>y1</b>, <i>TRow</i> <b>r2</b>, <i>int</i> <b>x2</b>, <i>int</i> <b>y2</b>)</s>
+</div>
+Called after rectangle to select run boxes is created by a user, before the run boxes are selected.<br />
+<b>r1</b>, <b>x1</b>, <b>y1</b> is top left corner, <b>r2</b>, <b>x2</b>, <b>y2</b> is bottom right corner.<br />
+Return true to suppress the boxes selection.<br />
+
+<!-- OnCanSelectGanttRun -->
+<a name="OnCanSelectGanttRun"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnCanSelectGanttRun</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>object</i> <b>run</b>, <i>int</i> <b>index</b>, <i>bool</i> <b>select</b>, <i>string</i> <b>container</b>)</s>
+</div>
+Called to internally check if the run box or container can be selected or unselected.
+Used especially to more control selecting containers than by <a href="#CGanttRunContainerSelect">GanttRunContainerSelect</a>.<br />
+For correct behavior the <a href="#CGanttRunContainerSelect">GanttRunContainerSelect</a> should be set to something. Note setting it to "*" or "^" still affects some selecting.<br />
+<b>row</b>, <b>col</b> is the Gantt cell, the <b>run</b> is the whole run object used in <a href="#GetGanttRun">GetGanttRun</a> / <a href="#SetGanttRun">SetGanttRun</a> methods.<br />
+<b>index</b> is the box index inside <b>run</b>, can be used also to get the box object by  <a href="#GetGanttRunBox">GetGanttRunBox</a> method.<br />
+<b>select</b> can be <b>true</b> to permit selecting the run box, <b>false</b> to permit unselecting the run box or <b>null</b> to display selection of the box or container.<br />
+<b>container</b> is full container name, including the postfix. It is filled only when checking if to display this container selected if all its boxes are selected.<br />
+Return <b>true</b> to permit selection, <b>false</b> to restrict selection, <b>null</b> to apply default criteria by <a href="#CGanttRunContainerSelect">GanttRunContainerSelect</a>.<br />
+<br />
+For example to select single boxes and also containers named "P":<br />
+<tt>Grids.OnCanSelectGanttRun = function(G,row,col,run,i,sel,cont){<br />
+if(cont) return cont.indexOf("P")>=0;   // Displays selection only of containers "P", for other containers not<br />
+if(!run[i][15]) return true;            // Permits selection of single boxes in all ways<br />
+if(("#"+run[i][15].join("#")+"#").indexOf("#P#")>=0) return sel!=null; // Permits selection of containers "P", but does not display selected boxes inside them<br />
+return false;                           // Restricts selection of all other containers than "P"<br />
+}
+</tt>
+
+<!-- SelectGanttRunBox -->
+<a name="SelectGanttRunBox"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>SelectGanttRunBox</h4>
+   <s>(<i>object</i> <b>box</b>, <i>bool</i> <b>select</b>)</s>
+</div>
+Selects or unselects given box. Shows changes in the cell. If the box does not exist or cannot be selected, returns false, otherwise true, see <a href="#CGanttRunSelect">GanttRunSelect</a>.<br />
+If the <b>box</b> has set neither <b>Index</b> nor <b>Id</b>, it selects or unselects all boxes in the box <b>Row</b>.<br />
+If the <b>box</b> is null, it selects or unselects all boxes in grid.<br />
+<b>select</b> = <b>1</b> selects the box, <b>0</b> unselects the box, <b>null</b> inverts the box selection.<br />
+Changes the box <a href="#RunState">State</a> attribute, adds or removes <b>selected</b> flag.<br />
+
+<!-- SelectGanttRunRect -->
+<a name="SelectGanttRunRect"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>SelectGanttRunRect</h4>
+   <s>(<i>TRow</i> <b>r1</b>, <i>int</i> <b>x1</b>, <i>int</i> <b>y1</b>, <i>TRow</i> <b>r2</b>, <i>int</i> <b>x2</b>, <i>int</i> <b>y2</b>, <i>bool</i> <b>select</b> = 1)</s>
+</div>
+Selects or unselects all boxes in given rectangle.<br />
+<b>r1</b>, <b>x1</b>, <b>y1</b> is top left corner, <b>r2</b>, <b>x2</b>, <b>y2</b> is bottom right corner. The box is affected if it is at least partially in the area.<br />
+<b>select</b> = <b>1</b> selects the box, <b>0</b> unselects the box.<br />
+Returns true if some box was changed.<br />
+
+<!-- SelectGanttRunRange -->
+<a name="SelectGanttRunRange"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>SelectGanttRunRange</h4>
+   <s>(<i>TRow[]</i> <b>rows</b>, <i>int</i> <b>d1</b>, <i>int</i> <b>d2</b>, <i>bool</i> <b>select</b> = 1)</s>
+</div>
+Selects or unselects all boxes in given <b>rows</b> in date range <b>d1</b>, <b>d2</b>.<br />
+The box is affected if it is at least partially in the range.<br />
+<b>select</b> = <b>1</b> selects the box, <b>0</b> unselects the box.<br />
+Returns true if some box was changed.<br />
+
+<!-- GetGanttRunSelectedBoxes -->
+<a name="GetGanttRunSelectedBoxes"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>object[ ]</i>
+   <h4>GetGanttRunSelectedBoxes</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Returns array of all selected boxes in the <b>row</b>.<br /> 
+If the <b>row</b> is null, returns all selected boxes in the whole grid.<br />
+
+<!-- GetGanttRunSelectedCount -->
+<a name="GetGanttRunSelectedCount"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>object[ ]</i>
+   <h4>GetGanttRunSelectedCount</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Returns count of selected boxes in the <b>row</b>.<br /> 
+If the <b>row</b> is null, returns count of all selected boxes in the whole grid.<br />
+<i>It is much faster than <a href="#GetGanttRunSelectedBoxes">GetGanttRunSelectedBoxes</a>.</i><br />
+
+<!-- SelectGanttRunContainer -->
+<a name="SelectGanttRunContainer"></a>
+<div class="API">
+   <u>new <b>13.1</b></u> <b>API method</b> <i>bool</i>
+   <h4>SelectGanttRunContainer</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>container</b>, <i>bool</i> <b>select</b>)</s>
+</div>
+Selects or unselects all boxes in given <b>container</b> in given cell.<br />
+The box is affected if it is at least partially in the range.<br />
+<b>select</b> = <b>1</b> selects all the boxes in the container, <b>0</b> unselects all the boxes in the container, <b>null</b> selects the boxes if at least one box in the container is unselected, otherwise unselects all the boxes.<br />
+Returns true if some box was changed.<br />
+
+<!-- IsGanttRunContainerSelected -->
+<a name="IsGanttRunContainerSelected"></a>
+<div class="API">
+   <u>new <b>13.1</b></u> <b>API method</b> <i>bool</i>
+   <h4>IsGanttRunContainerSelected</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>container</b>)</s>
+</div>
+Returns true if all the boxes in the container are selected.
+
+<!-----------------------------------------------------------------------  Text  ------------------------------------------------->
+<a name="Text"></a>
+<h2>Text</h2>
+<p class="H2">Run box HTML content and side HTML</p>
+
+<!-- GanttRunHtml -->
+<a name="CGanttRunHtml"></a>
+<div class="XML">
+   <u>new <b>10.0</b> <i>upd <b>14.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunHtml</h4> <s>["*Text*"]</s>
+</div>
+Html shown inside every run box. By default it shows the Run box <a href="#RunText">Text</a> value.<br />
+It can also show values from other cells in row, set by <b>*col*</b> where col is the column name.<br />
+It can show also the specials:<br />
+<div class="L1">
+<b>*Text*</b> - the box <a href="#RunText">Text</a>, <b>*RunText*</b> - <i>(new 7.0)</i> the run text <a href="#CGanttRunText">GanttRunText</a><br />
+<b>*TextInside*</b> - <i>(new 14.0)</i> always the box <a href="#RunText">Text</a>, <b>*TextLeft*</b> - <i>(new 14.0)</i> always the box <a href="#RunTextLeft">TextLeft</a>, <b>*TextRight*</b> - <i>(new 14.0)</i> always the box <a href="#RunTextRight">TextRight</a>, <b>*Tip*</b> - <i>(new 14.0)</i> always the box <a href="#RunTip">Tip</a><br />
+<b>*Index*</b> - the box index (from 1, excluding empty boxes)<br />
+<b>*Start*</b> - start date of the box, <b>*End*</b> - end date of the box, <b>*Duration*</b> - length of the run in <a href="#CGanttRunFormat">GanttRunFormat</a> or in <a href="GanttCompute.htm#CGanttDataUnits">GanttDataUnits</a>.<br />
+<b>*StartAll*</b> - start date of the whole bar, <b>*EndAll*</b> - end date of the whole bar, <b>*DurationAll*</b> - length of the whole bar in <a href="#CGanttRunFormat">GanttRunFormat</a> or in <a href="GanttCompute.htm#CGanttDataUnits">GanttDataUnits</a>,<br />
+<b>*Resources*</b> - actual resources assigned to the bar,
+<b>*1*</b> - <b>*14*</b> - exact value of the box in <a href="#CGanttRun">GanttRun</a>, e.g. *7* shows the <a href="#RunState">State</a> or *10* shows the <a href="#RunManual">Manual</a>.
+</div>
+Example: <tt>"*Index*. &lt;b>*Text*&lt;/b> (*Duration* days)"</tt><br />
+
+<!-- OnGetGanttRunText -->
+<a name="OnGetGanttRunText"></a>
+<div class="API">
+   <u>new <b>8.1</b> <i>upd <b>11.0</b></i></u> <b>API event</b> <i>string</i>
+   <h4>OnGetGanttRunText</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>object</i> <b>run</b>, <i>int</i> <b>index</b>, <i>string</i> <b>text</b>, <i>int</i> <b>width</b>, <i>int</i> <b>left</b>, <i>int</i> <b>maxwidth</b>, <i>string[ ]</i> <b>cls</b>)</s>
+</div>
+Called to get the Run box text (<a href="#RunText">Text</a>) to render it. It can return any HTML code or text or the <b>text</b> parameter.<br />
+<b>run</b> is the parsed Run object (like got from <a href="#GetGanttRun">GetGanttRun</a>), the <b>index</b> is the box index inside the <b>run</b> array.<br />
+<b>text</b> is original text to be rendered, return it to avoid changes.<br />
+<b>width</b> <i>(new 9.0)</i> is actual width of the box outer tag in pixels.<br />
+<b>left</b> <i>(new 10.0)</i> is left position of the run box inside the Gantt cell (or in horizontal Gantt page), in pixels. Can be later changed by <a href="#OnGetGanttRunRect">OnGetGanttRunRect</a>.<br />
+<b>maxwidth</b> <i>(new 10.0)</i> is actual width of the Gantt cell (or horizontal Gantt page), in pixels.<br />
+<b>cls</b> <i>(new 11.0)</i> contains CSS classes to be set to the bar. Items of the array are intended to change in this handler to specify the CSS classes for the bar.<br />
+<div class="L1">
+[<b>RunClass</b>, <b>OutClass</b>, <b>InClass</b>, <b>TextClass</b>] - <b>RunClass</b> is the actual run <a href="#RunClass">Class</a> value. It is the only item preset in this array and the only partial class.<br />
+<div class="L1"><b>OutClass</b> - full css class(es) added to the outer box. <b>InClass</b> - full css class(es) added to the inner box, <b>TextClass</b> - full css class(es) added inside incomplete bar.</div>
+Can be used instead of <a href="#OnGetGanttRunClass">OnGetGanttRunClass</a> for boxes, but not for milestones.<br />
+</div>
+
+<!-- GanttRunHtmlLeft -->
+<a name="CGanttRunHtmlLeft"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunHtmlLeft</h4> <s>["*Text*"]</s>
+</div>
+Html text displayed on left side of the box. Right aligned. By default it shows the Run box <a href="#RunTextLeft">TextLeft</a> value.<br />
+<b>It can contain the same special settings like <a href="#CGanttRunHtml">GanttRunHtml</a></b>, except the *Text* shows the <a href="#RunTextLeft">TextLeft</a>.<br />
+
+<!-- GanttRunHtmlLeftEdge -->
+<a name="CGanttRunHtmlLeftEdge"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttRunHtmlLeftEdge</h4> <s>[0]</s>
+</div>
+Where the GanttLeftSide text will be displayed<br />
+<b>0</b> - before the first box, <b>1</b> - before every box, <b>2</b> - inside every box next to right edge, <b>3</b> - centered inside every box, <b>4</b> - centered in every box, but left side to milestone.<br />
+
+<!-- GanttRunHtmlLeftClass -->
+<a name="CGanttRunHtmlLeftClass"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunHtmlLeftClass</h4> <s></s>
+</div>
+CSS class used to display the side text.<br />
+There are predefined 17 classes for all basic background colors: <u><b>Aqua</b></u>, <u><b>Black</b></u>, <u><b>Blue</b></u>, <u><b>Fuchsia</b></u>, <b>Gray</b>, <u><b>Green</b></u>, <u><b>Lime</b></u>, <u><b>Maroon</b></u>, <b>Navy</b>, <b>Olive</b>, <u><b>Orange</b></u>, <b>Purple</b>, <u><b>Red</b></u>, <u><b>Silver</b></u>, <b>Teal</b>, <b>White</b>, <u><b>Yellow</b></u>. <i>The 10 underlined colors are defined also for milestones and dependency lines.</i><br />
+There is also predefined class <b>None</b> for HTML without any formatting, especially without padding.<br />
+For custom classes you need to define CSS class GxGanttHtmlXXX, where XXX is the value set to this attribute and Gx is the style prefix.<br />
+
+<!-- GanttRunHtmlRight -->
+<a name="CGanttRunHtmlRight"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunHtmlRight</h4> <s>["*Text*" / "*Text* *Resources*"]</s>
+</div>
+Html text displayed on right side of the box. Left aligned. By default it shows the Run box <a href="#RunTextRight">TextRight</a> value.<br />
+<b>It can contain the same special settings like <a href="#CGanttRunHtml">GanttRunHtml</a></b>, except the *Text* shows the <a href="#RunTextRight">TextRight</a>.<br />
+Due backward compatibility the default value for <tt>GattTask='Run'</tt> is the *Text* plus value <a href="GanttResources.htm#CGanttRunResources">GanttRunResources</a> if set, otherwise it is only *Text*.<br />
+
+<!-- GanttRunHtmlRightEdge -->
+<a name="CGanttRunHtmlRightEdge"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttRunHtmlRightEdge</h4> <s>[0]</s>
+</div>
+Where the GanttRightSide text will be displayed<br />
+<b>0</b> - after the last box, <b>1</b> - after every box, <b>2</b> - inside every box next to left edge, <b>3</b> - centered inside every box, <b>4</b> - centered in every box, but right side to milestone.<br />
+
+<!-- GanttRunHtmlRightClass -->
+<a name="CGanttRunHtmlRightClass"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunHtmlRightClass</h4> <s></s>
+</div>
+CSS class used to display the side text.<br />
+There are predefined 17 classes for all basic background colors: <u><b>Aqua</b></u>, <u><b>Black</b></u>, <u><b>Blue</b></u>, <u><b>Fuchsia</b></u>, <b>Gray</b>, <u><b>Green</b></u>, <u><b>Lime</b></u>, <u><b>Maroon</b></u>, <b>Navy</b>, <b>Olive</b>, <u><b>Orange</b></u>, <b>Purple</b>, <u><b>Red</b></u>, <u><b>Silver</b></u>, <b>Teal</b>, <b>White</b>, <u><b>Yellow</b></u>. <i>The 10 underlined colors are defined also for milestones and dependency lines.</i><br />
+There is also predefined class <b>None</b> for HTML without any formatting, especially without padding.<br />
+For custom classes you need to define CSS class GxGanttHtmlXXX, where XXX is the value set to this attribute and Gx is the style prefix.<br />
+
+<!-- GanttRunHtmlShift -->
+<a name="CGanttRunHtmlShift"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttRunHtmlShift</h4> <s>[0]</s>
+</div>
+Vertical shift in pixels of the Left and Right side Html inside cell. Negative top, positive bottom.<br />
+It is possible to use it to display some text also above the box.<br />
+
+<!-- GanttRunShowHtml -->
+<a name="CGanttRunShowHtml"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunShowHtml</h4> <s>[1]</s>
+</div>
+If the side html (<a href="#CGanttRunHtmlLeft">GanttRunHtmlLeft</a> and <a href="#CGanttRunHtmlRight">GanttRunHtmlRight</a>) will be displayed in chart.<br />
+For <b>0</b> the side html will be hidden.<br />
+For <b>1</b> the side html by <a href="#CGanttRunHtmlLeft">GanttRunHtmlLeft</a> and <a href="#CGanttRunHtmlRight">GanttRunHtmlRight</a> is ignored and is shown only the box <a href="#RunTextLeft">TextLeft</a> / <a href="#RunTextRight">TextRight</a>.<br />
+For <b>2</b> the side html will be shown, but the chart will not resize to show them.<br />
+For <b>3</b> the side html will be shown and the chart will resize to show them if required, like for the other Gantt objects. <i>Can remarkably slow down large charts!</i><br />
+
+<!-- OnGetGanttRunSideText -->
+<a name="OnGetGanttRunSideText"></a>
+<div class="API">
+   <u>new <b>10.0</b> <i>upd <b>13.0</b></i></u> <b>API event</b> <i>string</i>
+   <h4>OnGetGanttRunSideText</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>object</i> <b>run</b>, <i>int</i> <b>index</b>, <i>string</i> <b>text</b>, <i>int</i> <b>width</b>, <i>int</i> <b>side</b>, <i>int[]</i> <b>rect</b>)</s>
+</div>
+Called to get the Run box side text (<a href="#RunTextLeft">TextLeft</a> and <a href="#RunTextRight">TextRight</a>) to render it. It can return any HTML code or text or the <b>text</b> parameter.<br />
+<b>run</b> the parsed Run object (like got from <a href="#GetGanttRun">GetGanttRun</a>), the <b>index</b> is the box index inside the <b>run</b> array.<br />
+<b>text</b> is original text to be rendered, return it to avoid changes.<br />
+<b>width</b> actual width of the box outer tag in pixels.<br />
+<b>side</b> which text to be returned, <b>1</b> - <a href="#RunTextLeft">TextLeft</a> (left side), <b>2</b> - <a href="#RunTextRight">TextRight</a> (right side). <i>For left and right side is called only if some side text is defined for the box.</i><br />
+<b>rect</b> <i>(new 13.0)</i> is array of 4 integer [left,top,width,height] as position of the box or milestone. The handler <u>cannot</u> modify them. The width is empty string for milestone.<br />
+<i>For left side is the text placed to right aligned div with width 2000px, so if the returned text is HTML div, it should have set appropriate margin-left to be positioned right side.</i><br />
+
+<!-- GanttRunHtmlDateFormat -->
+<a name="CGanttRunHtmlDateFormat"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunHtmlDateFormat</h4> <s></s>
+</div>
+Date format for <a href="#CGanttRunHtml">GanttRunHtml</a> specials *Start*, *End*, *StartAll*, *EndAll*, *10* (Manual)<br />
+
+<!-- GanttRunFormat -->
+<a name="CGanttRunFormat"></a>
+<div class="XML">
+   <u>new <b>6.1</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunFormat</h4> <s></s>
+</div>
+<a href="TypeDate.htm#CFormat">Date</a> or <a href="TypeNumber.htm#CFormat">number</a> format string (like for Type Date or Int) to display box duration in the box text (<a href="#RunText">Text</a>).<br />
+
+<!-- GanttRunText -->
+<a name="CGanttRunText"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunText</h4> <s>Gantt source - column name or exact value</s>
+</div>
+Information for the whole run, can be displayed inside or outside box or as box tooltip.<br />
+
+<!-----------------------------------------------------------------------  Tip  ------------------------------------------------->
+<a name="Tip"></a>
+<h2>Tip</h2>
+<p class="H2">HTML shown on mouse hover the bar</p>
+
+<!-- GanttRunTip -->
+<a name="CGanttRunTip"></a>
+<div class="XML">
+   <u>new <b>6.4</b> <i>upd <b>10.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunTip</h4> <s>["*Text*"]</s>
+</div>
+Tip shown on mouse hover the box. It can contain HTML code. By default it shows the Run box <a href="#RunTip">Tip</a> value.<br />
+<b>It can contain the same special settings like <a href="#CGanttRunHtml">GanttRunHtml</a></b>, except the *Text* shows the <a href="#RunTip">Tip</a>.<br />
+To dynamically generate the tip text use <a href="GanttAPI.htm#OnGanttTip">OnGanttTip</a> API event.<br />
+
+<!-- GanttRunTipDateFormat -->
+<a name="CGanttRunTipDateFormat"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunTipDateFormat</h4> <s></s>
+</div>
+Date format to display Start and End of the run in <a href="#CGanttRunTip">GanttRunTip</a> *Start* and *End*.<br />
+It is the same format as for <a href="TypeDate.htm#CFormat">Date</a> type.<br />
+
+<!-----------------------------------------------------------------------  Box id  ------------------------------------------------->
+<a name="id"></a>
+<h2>Box id</h2>
+<p class="H2">
+Unique identification of run boxes<br />
+<strong>The run box id is defined by the <a href="#RunId">Id</a> and optionally by <a href="#RunGroup">Group</a></strong>
+</p>
+
+<!-- GanttRunIds -->
+<a name="CGanttRunIds"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunIds</h4> <s>[1]</s>
+</div>
+How will be assigned id to the Run boxes<br />
+<b>0</b> - never<br />
+<b>1</b> - to new boxes, only when the row has set <a href="GanttSummary.htm#CGanttRunSummary">GanttRunSummary</a> or defined <a href="#OnGanttRunBoxChanged">OnGanttRunBoxChanged</a> API event <i>(the only option before 10.0)</i>.<br />
+<b>2</b> - to all new and copied boxes, does <u>not</u> check the existing ids. <i>The newly generated ids should have different format than existing ids.</i><br />
+<b>3</b> - to all new, copied and not assigned boxes, ensures the ids are unique among all existing ids.<br />
+You can also dynamically generate the ids in <a href="#OnGanttRunBoxNew">OnGanttRunBoxNew</a> or <a href="#OnGanttRunBoxChanged">OnGanttRunBoxChanged</a> API event.<br />
+
+<!-- GanttRunIdPrefix -->
+<a name="CGanttRunIdPrefix"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttRunIdPrefix</h4> <s>["new"]</s>
+</div>
+A string added in front of generated id for run boxes<br />
+
+<!-- GanttRunIdPostfix -->
+<a name="CGanttRunIdPostfix"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttRunIdPostfix</h4> <s>[""]</s>
+</div>
+A string added after generated id for run boxes<br />
+
+<!-- GanttRunIdChars -->
+<a name="CGanttRunIdChars"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttRunIdChars</h4> <s>[""]</s>
+</div>
+Specify characters the run box id is generated from.<br />
+Set it to e.g. <tt>"abcdefghijklmnopqrstuvwxyz0123456789"</tt> to have alphanumeric ids.<br />
+If not defined (default), the id is created as number from 1<br />
+
+<!-- GanttRunNumberId -->
+<a name="CGanttRunNumberId"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunNumberId</h4> <s>[0]</s>
+</div>
+Do not add this amount of characters from GanttRunIdChars to start of the id.<br />
+For example set <tt>GanttRunNumberId='1' GanttRunIdChars='0123456789'</tt> to have number ids, to not start the id with zero.<br />
+
+<!-- GanttRunLastId -->
+<a name="CGanttRunLastId"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttRunLastId</h4> <s>[""]</s>
+</div>
+Specify to start generating the ids after this id. For example set it to 999 and the first generated id will be 1000.<br />
+
+<!-----------------------------------------------------------------------  Position  ------------------------------------------------->
+<a name="Position"></a>
+<h2>Position</h2>
+<p class="H2">
+Vertical position and height of the whole run bar<br />
+<strong>Individual boxes can be also positioned by <a href="#RunTop">Top</a> and <a href="#RunHeight">Height</a></strong>
+</p>
+
+<!-- GanttRunHeight -->
+<a name="CGanttRunHeight"></a>
+<div class="XML">
+   <u>new <b>9.0</b> <i>upd <b>10.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttRunHeight</h4> <s></s>
+</div>
+Sets default inner height in pixels of all run boxes in the cell. Height of individual boxes can be set by box <a href="#RunHeight">Height</a>.<br />
+Default value is calculated according to the box content, except <tt><a href="#CfgFastGantt">FastGantt</a>='<b>1</b>'</tt>. Minimal default value is read from actual TreeGrid CSS style, usually 9 pixels.<br />
+<i>Since 10.0</i> it can be set for individual cells too.<br />
+
+<!-- GanttRunTop -->
+<a name="CGanttRunTop"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttRunTop</h4> <s></s>
+</div>
+Sets default top in pixels of all run boxes in the cell. The Top attribute of the <a href="#CGanttRun">GanttRun</a>.<br />
+Top position of milestone is calculated as (GanttRunHeight - milestoneheight) + GanttRunTop, where milestoneheight is defined in style Grid.css.<br />
+
+<!-- GanttRunLevels -->
+<a name="CGanttRunLevels"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttRunLevels</h4> <s></s>
+</div>
+If set, specifies vertical level height in pixels where the new or dragged boxes can be placed.<br />
+For example, if set <tt>GanttRunLevels='20'</tt> and <tt>GanttRunTop='5'</tt>, the boxes can be created at position 5, 25, 45, 65, ...<br /> 
+
+<!-- GanttRunMinWidth -->
+<a name="CGanttRunMinWidth"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunMinWidth</h4> <s>[1]</s>
+</div>
+Minimal width of the run box in pixels to render it. Useful to speed up rendering for many small boxes in high zoom levels.<br />
+Boxes smaller than this value in actual zoom level will not be rendered, if distance to the previous box is smaller than this value.<br />
+If set to <b>0</b>, it renders all boxes. If set to <b>1</b>, it renders all boxes at least partially visible.<br />
+
+<!-- GanttRunBoxMinWidth -->
+<a name="CGanttRunBoxMinWidth"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunBoxMinWidth</h4> <s>[5]</s>
+</div>
+Minimal width of the rendered run box in pixels.<br />
+If the box is rendered, because it fulfils <a href="#CGanttRunMinWidth">GanttRunMinWidth</a> condition, it is rendered at least <b>GanttRunBoxMinWidth</b> pixels wide.<br />
+
+<!-- GanttRunBoxMinType -->
+<a name="CGanttRunBoxMinType"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunBoxMinType</h4> <s>[1]</s>
+</div>
+Where will be the GanttRunBoxMinWidth applied. Bit array.<br />
+<table>
+  <tr><td style="width:50px;"><b>1</b>. bit</td><td style="width:50px;">&<b>1</b></td><td>For rendering boxes</td></tr>
+  <tr><td><b>2</b>. bit</td><td>&<b>2</b></td><td>For <a href="#CGanttRunErrorsShift">GanttRunErrorsShift</a> - for moving overlaid boxes</td></tr>
+  <tr><td><b>3</b>. bit</td><td>&<b>4</b></td><td>For dependency lines (only for Run Box as GanttTask)</td></tr>    
+</table>
+
+<!-- GanttRunBoxMinAlign -->
+<a name="CGanttRunBoxMinAlign"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttRunBoxMinAlign</h4> <s>["center"]</s>
+</div>
+Alignment of the box that is rendered wider or narrower than its duration. Case insensitive.<br />
+Can be <b>left</b> to start on correct start date, <b>right</b> to end on correct end date and <b>center</b> to be centered on between correct start and end dates.<br />
+For API it is a number, <b>0</b> - center, <b>1</b> - left, <b>2</b> - right.<br />
+
+<!-- GanttMilestoneTopMin -->
+<a name="CGanttMilestoneTopMin"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttMilestoneTopMin</h4> <s>[0]</s>
+</div>
+Minimal top position of milestones in Gantt. <i>No keyword Run in the name!</i><br />
+Useful to set to permit or restrict negative milestone position if the milestone is higher than bars.<br />
+
+<!-- OnGetGanttRunRect -->
+<a name="OnGetGanttRunRect"></a>
+<div class="API">
+   <u style="padding-right:30px;">new <b>9.3</b> chg <b>10.0</b> <i>upd <b>14.1</b></i></u> <b>API event</b> <i style="margin-left:-10px;">void</i>
+   <h4 style="margin-left:-20px;">OnGetGanttRunRect</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>object</i> <b>run</b>, <i>int</i> <b>index</b>, <i>int[ ]</i> <b>Rect</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Called to modify the Run box position and size. <i>Since 10.0</i> it is called also for Milestone and Stop types.<br />
+<b>run</b> is the parsed Run object (like got from <a href="#GetGanttRun">GetGanttRun</a>), the <b>index</b> is the box index inside the <b>run</b> array.<br />
+<b>Rect</b> is array of 4 integers [left,top,width,height]. The handler can modify them to change the box rectangle.<br />
+<div class="L1">
+The <b>top</b> and <b>height</b> are 0 when called during box dragging (Slide). <i>Since 10.0</i> they are 0 also when called when calculating vertical position for <a href="#CGanttRunErrorsShift">GanttRunErrorsShift</a>.<br />
+<i>(Since 10.0)</i> The <b>width</b> is empty string for milestone. <i>Don't modify the width for milestone.</i><br />
+The values are in pixels and are affected by FastGantt and by CSS class used.<br />
+</div>
+<i>(since 13.0)</i> <b>type</b> is <b>0</b> for render, <b>1</b> for errors shift, <b>2</b> for render dependency, <b>3</b> for box dragging (slide), <b>4</b> <i>(since.14.1)</i> for box rectangle selecting.<br />
+
+<!-- OnGetGanttRunSideRect -->
+<a name="OnGetGanttRunSideRect"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnGetGanttRunSideRect</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>object</i> <b>run</b>, <i>int</i> <b>index</b>, <i>int[ ]</i> <b>Pos</b>, <i>int[ ]</i> <b>Rect</b>, <i>int</i> <b>side</b>)</s>
+</div>
+Called to modify the Run side text position.<br /> 
+<b>run</b> is the parsed Run object (like got from <a href="#GetGanttRun">GetGanttRun</a>), the <b>index</b> is the box index inside the <b>run</b> array.<br />
+<b>Pos</b> is array of 2 integers [left,top] as position of the side text in pixels. Handler can modify them to move the side text. <i>For left side text is the left value about Rect[0] - 2000.</i><br />
+<b>Rect</b> is array of 4 integer [left,top,width,height] as position of the box or milestone. The handler <u>cannot</u> modify them. The width is empty string for milestone.<br />
+<b>side</b> is <b>1</b> for left side text, <b>2</b> for right side text.<br />
+
+<!-----------------------------------------------------------------------  Style  ------------------------------------------------->
+<a name="Style"></a>
+<h2>Style</h2>
+<p class="H2">
+Specific attributes for run styling<br />
+<strong>Every box can have set its individual CSS class by <a href="#RunClass">Class</a></strong>
+</p>
+
+<!-- FastGantt -->
+<a name="CfgFastGantt"></a>
+<div class="XML">
+   <u>chg <b>10.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>FastGantt</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, it renders Run boxes simplified, only by one &lt;div> tag per box.<br /> 
+The Run style looks slightly worse, but the chart is three times smaller and therefore much faster to display and change, especially for rows with many run boxes.<br />
+<i>Since 10.0</i> it can be enabled for all browsers. After change of browser zoom, the Gantt chart is automatically re-rendered.<br />
+
+<!-- GanttAdjacentBars -->
+<a name="CGanttAdjacentBars"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttAdjacentBars</h4> <s>[0]</s>
+</div>
+By default the adjacent Main and Run boxes have few pixels between for just visual effect. If set <tt>GanttAdjacentBars='1'</tt>, the adjacent boxes have no visible space between them.<br />
+<i>Note, there is no Run keyword in the name.</i><br />
+
+<!-- GanttRunEmpty -->
+<a name="CGanttRunEmpty"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttRunEmpty</h4> <s>[0]</s>
+</div>
+<table>
+  <tr><td style="width:50px;"><b>0</b></td><td>Empty boxes are never rendered.</td></tr>
+  <tr><td><b>1</b></td><td>Empty boxes are rendered if they have set <a href="#RunClass">Class</a> or <a href="#RunText">Text</a> or they are dynamically generated. <i>It was default value prior 10.0.</i></td></tr>
+</table>
+
+<!-- GanttRunClass -->
+<a name="CGanttRunClass"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunClass</h4> <s></s>
+</div>
+Predefined CSS custom class for all boxes, if they don't have set their <a href="#RunClass">Class</a> property.<br />
+There are predefined 17 classes for all basic background colors: <u><b>Aqua</b></u>, <u><b>Black</b></u>, <u><b>Blue</b></u>, <u><b>Fuchsia</b></u>, <b>Gray</b>, <u><b>Green</b></u>, <u><b>Lime</b></u>, <u><b>Maroon</b></u>, <b>Navy</b>, <b>Olive</b>, <u><b>Orange</b></u>, <b>Purple</b>, <u><b>Red</b></u>, <u><b>Silver</b></u>, <b>Teal</b>, <b>White</b>, <u><b>Yellow</b></u>. <i>The 10 underlined colors are defined also for milestones and dependency lines.</i><br />
+<div class="L1">
+<i>(Since 10.0)</i> There is one predefined black and white class <b>Group</b> for various purposes, e.g. grouped rows.<br />
+There are special classes: <b>None</b> <i>(since 9.3)</i> - no border, no padding, no margin, no background <i>(in FastGantt replaced by Void)</i>, <b>Void</b> <i>(since 10.0)</i> - transparent border, no background, <b>Html</b> <i>(since 10.0)</i> - no background<br />
+For custom classes you need to define CSS classes GxGanttXXXIn and GxGanttXXXOut, where XXX is the Class used here and the Gx is style prefix. The <b>Out</b> class defines border, the <b>In</b> class background and font.<br />
+For custom class in <tt><b>FastGantt</b>='1'</tt> are both the custom ...In and ...Out classes set to the same tag, for <tt>FastGantt='1'</tt> these classes must <u>not</u> change padding, margin and border-width.<br />
+</div>
+For <b>Milestone</b> and <b>Stop</b> it is <i>(since 10.0)</i> custom CSS class for milestone, but only if <u>not</u> defined or empty <a href="#RunText">Text</a> property. It can be the same 17 color names as for the box, but only 10 colors are different (the underlined ones).<br />
+<div class="L1">For custom classes you need to define CSS class GxGanttXXXMilestone, where XXX is the Class used here and the Gx is style prefix.</div>
+The Class can be set also dynamically by <a href="#OnGetGanttRunClass">OnGetGanttRunClass</a> API event.<br />
+<i>Note, the custom classes are shared between Run and Main bar.</i><br />
+
+<!-- OnGetGanttRunClass -->
+<a name="OnGetGanttRunClass"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetGanttRunClass</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>object</i> <b>run</b>, <i>int</i> <b>index</b>, <i>string</i> <b>cls</b>)</s>
+</div>
+Called to get the Run box class (the suffix). The original class will be GxFGanttRunXXX for FastGantt and GxGanttRunXXXOut plus GxGanttRunXXXIn.<br />
+<b>run</b> is the parsed Run object (like got from <a href="#GetGanttRun">GetGanttRun</a>), the <b>index</b> is the box index inside the <b>run</b> array.<br />
+Return predefined cls or new CSS class suffix. For possible values see <a href="#CGanttRunClass">GanttRunClass</a> or <a href="#RunClass">Class</a> property.<br />
+See also <a href="#OnGetGanttRunText">OnGetGanttRunText</a> that can also modify the box css class.<br />
+
+<!-----------------------------------------------------------------------  Overlaid (Error) boxes  ------------------------------------------------->
+<a name="Error"></a>
+<h2>Overlaid (Error) boxes</h2>
+<p class="H2">Handling and coloring overlaid boxes</p>
+
+If two boxes overlaid each other, the second box is marked as <b>Error</b> box, with default red color.<br />
+To let the boxes overlay as Error boxes when moving, copying, adding or resizing box set <tt><a href="#CGanttRunAdjust">GanttRunAdjust</a>="<b>Error</b>,...."</tt> or similar Adjust attribute.<br />
+
+<!-- GanttRunErrors -->
+<a name="CGanttRunErrors"></a>
+<div class="XML">
+   <u>new <b>8.1</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>GanttRunErrors</h4> <s>[1]</s>
+</div>
+If the overlaid boxes will be marked as error boxes in red.<br />
+
+<!-- GanttRunErrorsShift -->
+<a name="CGanttRunErrorsShift"></a>
+<div class="XML">
+   <u>new <b>10.0</b> chg <b>13.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttRunErrorsShift</h4> <s>[0]</s>
+</div>
+If the overlaid boxes and containers will be shifted down by given amount of pixels, to be all the boxes visible.<br />
+If set to <b>positive</b> value, it sets the top of the box or container as top of the previous overlaid box or container plus the shift.<br />
+If set to <b>negative</b> value, it sets the top of the box or container as bottom of the previous overlaid box or container minus the shift (= plus as positive).<br />
+Row height is automatically updated to show all the bars except is set <b><a href="GanttObjects.htm#CGanttBottom">GanttBottom</a> = ""</b><br />
+
+<!-- GanttRunErrorsShiftVisible -->
+<a name="CGanttRunErrorsShiftVisible"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttRunErrorsShiftVisible</h4> <s>[0]</s>
+</div>
+If set, shifts only actually visible boxes and containers.<br />
+
+<!-- GanttRunError -->
+<a name="CGanttRunError"></a>
+<div class="XML">
+   <u>new <b>6.2</b> chg <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>GanttRunError</h4> <s>["Sort"]</s>
+</div>
+How will be the error boxes handled. Comma separated list of flag keywords, case insensitive.<br />
+<table>
+  <tr><td style="width:70px;"><b>Sort</b></td><td>The boxes will be sorted by their start positions, after any change. Sorts errors also on start. <i>It is default value since 7.0.</i></td></tr>
+  <tr><td><b>Merge</b></td><td><i>(new 7.0)</i> The overlaid boxes will be merged to one (the first box will be resized to the duration of all the boxes and the rest boxes will be deleted).</td></tr>
+  <tr><td><b></b></td><td>It merges only boxes of type <b>Box</b> and <b>Solid.</b> All other boxes are still marked as error. The <b>Merge</b> always does <b>Sort</b> too.</td></tr>  
+</table>
+
+<!-----------------------------------------------------------------------  Container  ------------------------------------------------->
+<a name="Container"></a>
+<h2>Container</h2>
+<p class="H2">Containers for more boxes</p>
+<i>New 13.0.</i> The containers are defined in boxes by <a href="CGanttRun">GanttRun</a> <b>15</b>th item <a href="#RunContainers">Containers</a>.<br />
+Container permission is controlled by <a href="GanttObjects.htm#CGanttEdit">GanttEdit</a>, values <b>Run</b> or <b>RunContainer</b>. <br />
+Dragging containers can be more controlled by <a href="#CGanttRunAdjust">GanttRunAdjust</a> values <b>Containers</b>...<br />
+
+<!-- OnGetGanttRunContainer -->
+<a name="OnGetGanttRunContainer"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>object</i>
+   <h4>OnGetGanttRunContainer</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>object</i> <b>run</b>, <i>string</i> <b>id</b>, <i>int[]</i> <b>Rect</b>, <i>string</i> <b>class</b>, <i>int</i> <b>first</b>, <i>int</i> <b>last</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Called to modify rendered or calculated container in given cell and <b>run</b>. <b>id</b> is the id of the container. <br />
+<b>Rect</b> is container size and position in the Gantt cell in pixels, an array [left,top,width,height]. It is possible to modify it.<br />
+<b>class</b> is container CSS class, it is the container without #suffix. The container gets CSS class as GxGanttContainerCLASS. <br />
+<b>first</b> is index of the first box in the container, <b>last</b> is index of the last box in the container.<br />
+<b>type</b> is time of call, <b>0</b> - called for render, <b>1</b> - called to get size for errors shift.<br />
+It can return array as [class,html] - class is new <b>class</b> value, html is html content to render inside the container.<br />
+
+<!-- GetGanttRunContainers -->
+<a name="GetGanttRunContainers"></a>
+<div class="API">
+   <u>new <b>13.0</b> <i>upd <b>13.1</b></i></u> <b>API method</b> <i>object</i>
+   <h4>GetGanttRunContainers</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>display</b> = 0)</s>
+</div>
+Returns all run containers in the Gantt cell. It fills all their extents, sizes and relations. <i>It iterates the run, so it is slower.</i><br />
+Also every box gets filled its own extents and sizes like container. The method can be used also to get these information for boxes only, even if no container is used.<br />
+Returns nested arrays of the containers according to their relations.<br />
+The main array contains the root containers and single box containers. It contains also attribute <b>All</b> as references to all the containers by their ids.<br />
+<i>Every container has these attributes:</i><br />
+<b>id</b> - id of the container. The standard containers have at least one child, their id is the container name. The box containers have no child and their id is "#"+box index in run.<br />
+<b>Parent</b> - reference to parent container, [0],[1],[2],... - child containers,<br />
+<b>Ids</b> - child containers by their ids, length - count of child containers.<br />
+<b>Start</b>, <b>End</b>, <b>Duration</b> - Horizontal size and position of the container in ms in data. It is in work time from the run start.<br />
+<b>Left</b>, <b>Right</b>, <b>Width</b> - Horizontal size and position of the container in pixels as displayed in cell relative to the Gantt cell left side. Filled only if set <b>display</b> = 1.<br />
+<b>Top</b>, <b>Bottom</b>, <b>Height</b> - Vertical size and position of the container in pixels in cell relative to the Gantt cell top side. Calls OnGetGanttRunRect only if set <b>display</b> = 1.<br />
+<b>Selected</b> <i>(new 13.1)</i> - If all the boxes in the container are selected.<br />
+
+<!-- GetGanttRunContainerBoxes -->
+<a name="GetGanttRunContainerBoxes"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>int[]</i>
+   <h4>GetGanttRunContainerBoxes</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>container</b>)</s>
+</div>
+Returns all box indexes in the row that are in given container. If no box is in the container, returns empty array.<br />
+
+<!-- GetUniqueGanttRunContainer -->
+<a name="GetUniqueGanttRunContainer"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>string</i>
+   <h4>GetUniqueGanttRunContainer</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>container</b>)</s>
+</div>
+Changes and returns the container id to be unique within the Gantt cell. It adds the #X, where X is a number from 1.<br />
+
+<!-- OnGetUniqueGanttRunContainer -->
+<a name="OnGetUniqueGanttRunContainer"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetUniqueGanttRunContainer</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>container</b>)</s>
+</div>
+Called when the <b>container</b> already exists in the Gantt cell. 
+Return new unique container name. Or return null to add the #X to the container name.<br />
+
+<!-- AddGanttRunContainer -->
+<a name="AddGanttRunContainer"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>int</i>
+   <h4>AddGanttRunContainer</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>index</b>, <i>string</i> <b>container</b>, <i>int</i> <b>level</b> = null, <i>bool</i> <b>unique</b> = 0)</s>
+</div>
+Adds new <b>container</b> to box <b>index</b>.
+Adds it as the last container to the box Containers or to position given by <b>level</b>. If there is a container defined on given <b>level</b>, it and the rest are shifted next.<br />
+Returns count of changed boxes.
+If set <b>unique</b>, makes the <b>container</b> unique by <a href="#GetUniqueGanttRunContainer">GetUniqueGanttRunContainer</a>.<br />
+
+<!-- ChangeGanttRunContainer -->
+<a name="ChangeGanttRunContainer"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>int</i>
+   <h4>ChangeGanttRunContainer</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>container</b>, <i>string</i> <b>newcontainer</b>, <i>bool</i> <b>unique</b> = 0)</s>
+</div>
+Changes the <b>container</b> to the <b>newcontainer</b> in all boxes.<br />
+Returns count of changed boxes.
+If set <b>unique</b>, makes the <b>newcontainer</b> unique by <a href="#GetUniqueGanttRunContainer">GetUniqueGanttRunContainer</a>.<br />
+
+<!-- DelGanttRunContainer -->
+<a name="DelGanttRunContainer"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>int</i>
+   <h4>DelGanttRunContainer</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>container</b>, <i>int</i> <b>delete</b>, <i>string</i> <b>adjust</b>, <i>bool</i> <b>nodisabled</b>)</s>
+</div>
+Deletes the <b>container</b> from boxes or deletes all boxes in the <b>container</b>.<br />
+<b>delete</b> 
+= <b>0</b> - deletes the <b>container</b> from boxes, preserves the container levels.<br />
+= <b>1</b> - deletes the <b>container</b> from boxes, shifts the next containers in the box Containers.<br />
+= <b>2</b> - deletes all the boxes that have the <b>container</b> in their <b>Containers</b>.<br />
+= <b>3</b> - deletes all the boxes and moves other boxes according to the <b>adjust</b> (like <a href="#CGanttRunAdjust">GanttRunAdjust</a>).<br />
+If set <b>nodisabled</b>, does not delete disabled and locked boxes.<br />
+Returns count of changed boxes.<br />
+
+<!-- DisableGanttRunContainer -->
+<a name="DisableGanttRunContainer"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>int</i>
+   <h4>DisableGanttRunContainer</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>container</b>, <i>int</i> <b>disable</b>)</s>
+</div>
+Disable, locks or enables all boxes in the <b>container</b>.
+<b>disable</b> = <b>0</b> - enable, <b>1</b> - disable, <b>2</b> - lock.<br />
+Returns count of changed boxes.
+
+<!-- OnGanttRunContainerChange -->
+<a name="OnGanttRunContainerChange"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnGanttRunContainerChange</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>object</i> <b>run</b>, <i>int</i> <b>index</b>, <i>string[]</i> <b>newcontainer</b>, <i>string[]</i> <b>oldcontainer</b>, <i>TRow</i> <b>source</b>)</s>
+</div>
+Called before the run box <b>index</b> changes its container.<br />
+<b>oldcontainer</b> is the original containers value, as JavaScript array. <b>newcontainer</b> is the new containers value, as JavaScript array.<br />
+<b>source</b> row is set when the containers are changed due dragging box, it is original row where the box was placed, can be the same as <b>row</b>.<br />
+Return true to discard the change. Or modify the <b>newcontainer</b> array and return false.<br />
+
+
+<!-- Action DeleteGanttRunContainerOnly -->
+<a name="ActionsDeleteGanttRunContainerOnly"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttRunContainerOnly</h4>
+   <s>Attached to <b>OnCtrlClickGantt</b> event</s>
+</div>
+Deletes the container under mouse cursor from all its boxes. The boxes are not deleted.<br />
+It fails if there is no run container under mouse cursor.<br />
+
+<!-- Action DeleteGanttRunContainer -->
+<a name="ActionsDeleteGanttRunContainer"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttRunContainer</h4>
+   <s>Not attached to any event</s>
+</div>
+Deletes all run boxes in the container under mouse cursor.<br />
+It fails if there is no run container under mouse cursor.<br />
+
+<!-- Action AddGanttRunContainer -->
+<a name="ActionsAddGanttRunContainer"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>AddGanttRunContainer</h4>
+   <s>Not attached to any event</s>
+</div>
+Shows popup menu defined by <a href="#CGanttRunContainer">GanttRunContainers</a>. Adds the chosen container as the last container to the box under mouse cursor.
+It fails if there is no run box under mouse cursor.<br />
+
+<!-- Action ChooseGanttRunContainer -->
+<a name="ActionsChooseGanttRunContainer"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseGanttRunContainer</h4>
+   <s>Not attached to any event</s>
+</div>
+Shows popup menu defined by <a href="#CGanttRunContainer">GanttRunContainers</a>. 
+Changes the container under mouse cursor to the chosen container.
+It fails if there is no run container under mouse cursor.<br />
+
+<!-- Action SelectGanttRunContainer -->
+<a name="ActionsSelectGanttRunContainer"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectGanttRunContainer</h4>
+   <s>Attached to <b>OnDblClickGantt</b> event</s>
+</div>
+Selects the GanttRun container or its boxes depending on <a href="CGanttRunContainersSelect">GanttRunContainersSelect</a>.
+
+<!-- GanttRunContainers -->
+<a name="CGanttRunContainers"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>GanttRunContainers</h4> <s></s>
+</div>
+List of available containers for actions <b>AddGanttRunContainer</b> and <b>ChooseGanttRunContainer</b>.<br />
+It can be first character separated list or JSON menu.<br />
+The container name can contain level as suffix, separated by dot, e.g. "|C1.0|C2.1|C3.2", if level defined, the container is added only on given level and can be changed only on the same level.<br />
+If the JSON menu has attribute <b>Include</b>:1, the Items are included directly to the GanttMenu on the place instead of the <b>ChooseGanttRunContainer</b> / <b>AddGanttRunContainer</b> item.<br /> 
+
+<!-- GanttRunContainersResize -->
+<a name="CGanttRunContainersResize"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunContainersResize</h4> <s>[1]</s>
+</div>
+If the containers can be resized by users. <br />
+<b>0</b> - no.<br />
+<b>1</b> - yes, if the containers has Edge type boxes.<br />
+<b>2</b> - all, adds the Edge type boxes if the container does have them.<br />
+
+<!-- GanttRunContainersDelete -->
+<a name="CGanttRunContainersDelete"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunContainersDelete</h4> <s>[1]</s>
+</div>
+If the empty containers will be deleted.<br />
+<b>0</b> - <i>not implemented yet</i>, never, empty container will get Edge type boxes on its edges.<br />
+<b>1</b> - only containers without any Edge type box. If container has only one Edge type box, the second one is added next to the first one and the container will have zero width.<br />
+<b>2</b> - only containers with none or one Empty type box will be deleted.<br />
+<b>3</b> - always, either if it has Edge type boxes.<br />
+
+<!-- GanttRunContainerTop -->
+<a name="CGanttRunContainerTop"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttRunContainerTop</h4> <s></s>
+</div>
+Sets default top in pixels of all the most outer run containers in the cell.<br />
+It affects only containers with no box having set its <a href="#RunHeight">Height</a> and if no <a href="#CGanttRunTop">GanttRunTop</a> is set and the container is not <a href="#CGanttRunErrorsShift">shifted</a> due overlay.<br />
+If not set (default), the run boxes are shown on the same position, regardless on how many containers they are placed in.<br />
+
+<!-----------------------------------------------------------------------  Moving and resizing  ------------------------------------------------->
+<a name="Moving"></a>
+<h2>Moving and resizing</h2>
+
+The run boxes are independent on each other, they can be resizes or moved individually or together and also it is possible to change their position.<br />
+
+<!-- GanttRunResize -->
+<a name="CGanttRunResize"></a>
+<div class="XML">
+   <u>new <b>6.1</b> <i>upd <b>13.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>GanttRunResize</h4> <s>["Resize"]</s>
+</div>
+Which boxes can be resized. Comma separated list of flag keywords, case insensitive.<br />
+<table>
+  <tr><td style="width:70px;"><i>empty</i></td><td>When set nothing, resizing is restricted.</td></tr>
+  <tr><td><b>Resize</b></td><td>Only resizable boxes can be resized.</td></tr>
+  <tr><td><b>Nbsp</b></td><td><i>(new 11.0)</i> The nbsp boxes can be resized. Only if set <a href="#CGanttRunNbspHover">GanttRunNbspHover</a>.</td></tr>
+  <tr><td><b>Container</b></td><td><i>(new 13.0)</i> Run containers can be resized. If resized, places <a href="#RunTypeEdge">Edge</a> type boxes on its side(s). 
+   Only if set <a href="#CGanttRunContainersResize">GanttRunContainersResize</a></td></tr>    
+  <tr><td><b>All</b></td><td>All boxes, including solid boxes and containers can be resized.</td></tr>    
+</table><br />
+There are also attributes read when dragging with appropriate shift key: <b>GanttRunResizeCtrl</b>, <b>GanttRunResizeAlt</b>, <b>GanttRunResizeShift</b><br />
+<i>Since 7.0</i> there are move actions for other mouse buttons (<b>Right</b> and <b>Middle</b>) as the last suffix: <b>GanttRunResizeRight</b>, <b>GanttRunResizeCtrlRight</b>, <b>GanttRunResizeAltRight</b>,<b> GanttRunResizeShiftRigh</b>t, <b>GanttRunResizeMiddle</b>, <b>GanttRunResizeCtrlMiddle</b>, <b>GanttRunResizeAltMiddle</b>, <b>GanttRunResizeShiftMiddle</b>.<br /><br />
+
+<i>Since 7.0</i> for touch screens (iPad) are available events for count of fingers on pad, <b>GanttRunResize1</b>, <b>GanttRunResize2</b>, <b>GanttRunResize3,</b> ..., but because by default in Defaults.xml is the ResizeGanttRun action attached only to OnDrag2Gantt event, these prefixes are ignored. To use them, you need to attach the ResizeGanttRun to appropriate OnDragXGantt event, but it should <u>not</u> be attached to the same events as MoveGanttRun or change the value of &lt;Actions GanttSizeTouch>.<br />
+
+<!-- GanttRunMove -->
+<a name="CGanttRunMove"></a>
+<div class="XML">
+   <u>new <b>6.1</b> <i>upd <b>11.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>GanttRunMove</h4> <s>["Slide"]</s>
+</div>
+How the boxes can be moved. Comma separated list of flag keywords, case insensitive. <i>Affects <u>source</u> cell when moving between cells.</i><br />
+<table>
+  <tr><td style="width:70px;"><i>empty</i></td><td>When set nothing, moving is restricted.</td></tr>
+  <tr><td><b>Slide</b></td><td>The box can be shifted left or right, but cannot change the box order except <a href="#CGanttRunAdjust">GanttRunAdjust</a> contains Error flag. The box cannot be moved outside the row.</td></tr>
+  <tr><td><b></b></td><td><i>(since 10.0)</i> If set also <b>Move</b>, <b>Copy</b> or <b>Remove</b>, it stops sliding and starts the action, if mouse cursor moves outside the actual row. It is preferred to dragging dependency.</td></tr>
+  <tr><td><b>Move</b></td><td>The moved box will be replaced by empty space.</td></tr>    
+  <tr><td><b>Copy</b></td><td>The moved box will stay on the same position and is duplicated to the new position.</td></tr>
+  <tr><td><b>Remove</b></td><td>The moved box will be removed and next boxes will be shifted according to <b>GanttRunAdjustRemove</b>.</td></tr>  
+</table><br />
+
+<i>By default the fixed boxes and boxes joined with fixed boxes cannot be moved.</i><br />
+<table>
+  <tr><td style="width:70px;"><b>All</b></td><td>Permits moving also fixed boxes (Fixed, Left, Right, Stop). <i>Bound boxes and locked and disabled boxes are never moved.</i></td></tr>
+</table><br />
+
+<i>By default all joined boxes (boxes without Empty box between them) are moved together.</i><br />
+<table>
+  <tr><td style="width:70px;"><b>Single</b></td><td>Only one box will be moved from joined boxes. If set with <b>Nbsp</b>, the joined boxes can be split only on Nbsp box. <i>Since 11.0 it can be used also with <b>Slide</b>.</i></td></tr>
+  <tr><td><b>Next</b></td><td><i>(new 11.0)</i> Only the box and next (right) boxes will be moved from joined boxes. If set with <b>Nbsp</b>, the joined boxes can be split only on Nbsp box.</td></tr>
+  <tr><td><b>Prev</b></td><td><i>(new 11.0)</i> Only the box and previous (left) boxes will be moved from joined boxes. If set with <b>Nbsp</b>, the joined boxes can be split only on Nbsp box.</td></tr>
+  <tr><td><b>Nbsp</b></td><td><i>(new 11.0)</i> Boxes joined directly will be moved together, but boxes joined by Nbsp will be split.</td></tr>    
+</table><br />
+
+<i>The next flags can be used only with <b>Move</b>, <b>Copy</b> or <b>Remove</b>, but <u>not</u> with <b><s>Slide</s></b>.</i><br />
+<table>
+<tr><td style="width:110px;"><b>Selected</b></td><td><i>(new 10.0)</i> All selected boxes in row will be moved, if the one dragged box is selected.</td></tr>
+<tr><td></td><td>The selected boxes are placed to destination as adjacent, with zero space between them. But if set also <b>Entire</b>, they are placed with the original spaces between them.</td></tr>
+<tr><td></td><td>If set <tt><a href="#CGanttRunSelect">GanttRunSelect</a> = <b>5</b></tt>, it moves all selected boxes in grid to the one destination row. It places them as adjacent in order by rows, the dragged box row always as first. If set also <b>Entire</b>, it preserves the boxes start dates.</td></tr>
+<tr><td></td><td>If the selected box is joined with another not selected box, this box is moved too. It is affected by <b>Single</b>, <b>Next</b>, <b>Prev</b> and <b>Nbsp</b> settings.</td></tr>
+<tr><td><b>SelectedSingle</b></td><td><i>(new 11.0)</i> Like <b>Selected</b>, but it always moves only the selected boxes (for joined boxes). It is <u>not</u> affected by <s><b>Single</b></s>, <s><b>Next</b></s>, <s><b>Prev</b></s> and <s><b>Nbsp</b></s> settings.</td></tr>
+<tr><td><b>Clear</b></td><td><i>(new 10.0)</i> Clears the box selected state after drop. For <b>Copy</b> it clears only destination selection. See also <a href="#CGanttRunClearSelected">GanttRunClearSelected</a> for other actions. <i>Note the exception, it affects the destination cell.</i></td></tr>
+<tr><td><b>Group</b></td><td>All boxes in row in the same group as the dragged box will be moved.</td></tr>
+<tr><td><b></b></td><td>The boxes are placed to destination as adjacent, with zero space between them. But if set also <b>Entire</b>, they are placed with the original spaces between them.</td></tr>
+<tr><td><b></b></td><td>If the box in group is joined with another box from different group, this box is moved too. It is affected by <b>Single</b>, <b>Next</b>, <b>Prev</b> and <b>Nbsp</b> settings.</td></tr>
+<tr><td><b>GroupSingle</b></td><td><i>(new 11.0)</i> Like <b>Group</b>, but it always moves only the boxes in the same group (for joined boxes). It is not affected by <s><b>Single</b></s>, <s><b>Next</b></s>, <s><b>Prev</b></s> and <s><b>Nbsp</b></s> settings.</td></tr>
+<tr><td><b>Entire</b></td><td><i>(new 10.0)</i> All boxes in row will be moved. <i>(Since 11.0)</i> It is affected by <b>Single</b>, <b>Next</b>, <b>Prev</b> and <b>Nbsp</b> settings.</td></tr>
+<tr><td><b></b></td><td>If set <b>Selected</b>, <b>SelectedSingle</b>, <b>Group</b> or <b>GroupSingle</b>, it is applied <u>only</u> if dragged selected or group boxes, for other boxes is ignored.</td></tr>
+</table><br />
+
+<table>
+  <tr><td style="width:70px;"><b>Mouse</b></td><td><i>(new 11.0)</i> If set, preserves the position where the box was caught by mouse. If set, start drop position will be on the box start. If <u>not</u> set, start drop position will be on mouse position.</td></tr>
+  <tr><td><b>Vert</b></td><td><i>(new 11.0)</i> If set, permits moving the box only in vertical direction. The box drop position will <u>not</u> be rounded to GanttUnits.</td></tr>
+</table><br />
+
+There are also attributes used when dragging with appropriate shift key: <b>GanttRunMoveCtrl</b>, <b>GanttRunMoveAlt</b>, <b>GanttRunMoveShift</b>.<br /><br />
+
+<i>Since 7.0</i> there are move actions for other mouse buttons (<b>Right</b> and <b>Middle</b>) as the last suffix: <b>GanttRunMoveRight</b>, <b>GanttRunMoveCtrlRight</b>, <b>GanttRunMoveAltRight</b>, <b>GanttRunMoveShiftRight</b>, <b>GanttRunMoveMiddle</b>, <b>GanttRunMoveCtrlMiddle</b>, <b>GanttRunMoveAltMiddle</b>, <b>GanttRunMoveShiftMiddle</b>.<br /><br />
+
+<i>Since 7.0</i> for touch screens (iPad) are available events for count of fingers on pad, <b>GanttRunMove1</b>, <b>GanttRunMove2</b>, <b>GanttRunMove3</b>, ..., but because by default in Defaults.xml is the MoveGanttRun action attached only to OnDrag1Gantt and OnDrag3Gantt events, only the 1 and 3 prefixes are used. To use the other prefixes, you need to attach the MoveGanttRun to appropriate OnDragXGantt event, but it should <u>not</u> be attached to the same events as ResizeGanttRun or change the value of &lt;Actions GanttSizeTouch>.<br />
+
+<!-- GanttRunAdjust -->
+<a name="CGanttRunAdjust"></a>
+<div class="XML">
+   <u>new <b>6.1</b> <i>upd <b>13.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>GanttRunAdjust</h4> <s>["Shift"]</s>
+</div>
+How will be moved next or previous boxes when moving some box. Comma separated list of flag keywords, case insensitive. <i>Affects <u>destination</u> cell when moving between cells.</i><br />
+<i>The order of applying <b>Shift</b> / <b>Shrink</b> / <b>Slip</b> / <b>Resize</b> / <b>Move</b> / <b>Error</b> is set by order of the flag keywords in the GanttRunAdjust. Only one flag from <b>Shift</b> / <b>Shrink</b> / <b>Slip</b> should be used.</i><br /><br />
+
+<table>
+  <tr><td style="width:70px;"><i>empty</i></td><td>When set nothing, the box will be moved within surrounding empty space only.</td></tr>
+  <tr><td><b>Shift</b></td><td>The box will be moved or resized within surrounding empty space and if required, the next or previous boxes will be shifted and their empty spaces preserved.</td></tr>
+  <tr><td><b>Shrink</b></td><td>The box will be moved or resized within surrounding empty space and if required, the next or previous boxes will be shifted and their empty spaces shrunk.</td></tr>
+  <tr><td><b>Slip</b></td><td>The next or previous boxes will be shifted, all empty spaces will be preserved, including the adjacent. If there is fixed box, all the boxes will be moved next to the fixed box.</td></tr>    
+  <tr><td>&nbsp;</td><td></td></tr>
+  
+  <tr><td><b>Error</b></td><td>The moved box can be moved or resized even if there is no room for it. It permits more boxes on the same place. In this case the boxes can be marked as error boxes or vertically shifted. See also <a href="#CGanttRunError">GanttRunError</a>.</td></tr>
+  <tr><td></td><td>Note, for <tt><a href="#CGanttRunMove">GanttRunMove</a> = <b>Slide</b></tt> it is the only option that can change box order in the cell.</td></tr>
+  <tr><td></td><td>If it is the only option in the GanttRunAdjust, it permits moving and dropping the boxes freely, without affecting other boxes.</td></tr>
+  <tr><td>&nbsp;</td><td></td></tr>
+  
+  <tr><td><b>All</b></td><td>Also fixed boxes (except Bound) will be shifted if required, for <b>Shift</b> / <b>Shrink</b> / <b>Slip</b></td></tr>      
+  <tr><td><b>Nbsp</b></td><td><i>(new 10.0)</i> The Nbsp boxes can be automatically resized like Empty boxes, but they are <u>not</u> automatically deleted.</td></tr>
+  <tr><td><b>Single</b></td><td>For joined box the <b>Shift</b> works as <b>Slip</b> and for <i><b>empty</b></i> restricts moving.</td></tr>
+  <tr><td></td><td><s><i>(since 10.0)</i> If set with <b>Error</b>, it permits moving also joined box, by adding Empty or (if set <b>Nbsp</b>) Nbsp between them.</s> <i>(deleted 11.0) use <a href="#CGanttRunMove">GanttRunMove</a> <b>Single</b> instead.</i></td></tr>
+</table><br />
+
+<i>The next flags can be used only with <tt><a href="#CGanttRunMove">GanttRunMove</a> = <b>Move</b></tt>, <tt><b>Copy</b></tt> or <tt><b>Remove</b></tt>, but <u>not</u> with <tt><s><b>Slide</b></s></tt>.</i><br />
+
+<table>
+  <tr><td style="width:110px;"><b>Append</b></td><td>When dragged to box edge, attaches it to the box without space as adjacent - the boxes will be joined.</td></tr>
+  <tr><td></td><td>Permits dropping between joined boxes. Cannot drop into Nbsp type box.</td></tr>
+  <tr><td><b>AppendNbsp</b></td><td><i>(new 11.0)</i> When dragged to box edge, attaches it to the box with zero length Nbsp type box as adjacent - the boxes will be joined by Nbsp.</td></tr>
+  <tr><td></td><td>When dragged to Nbsp box, splits or replaces the Nbsp box by the dragged box. Does <u>not</u> permit dropping between boxes joined without Nbsp, except if set also <b>Append</b>.</td></tr>
+  <tr><td></td><td>If set both <b>Append</b> and <b>AppendNbsp</b>, it adds always the Nbsp box when joining the boxes.</td></tr>
+  <tr><td><b>Between</b></td><td><i>(new 10.0)</i> When dragged to box, it places the source box left or right (nearer edge) next to the destination box or joined boxes, according to other adjust settings. <i>Cannot be used with <s>Error</s>.</i></td></tr>  
+  <tr><td><b>Inside</b></td><td><i>(new 9.0)</i> Restrict moving boxes outside the existing boxes (before the first and after the last box).</td></tr>
+  <tr><td>&nbsp;</td><td></td></tr>
+    
+  <tr><td><b>Resize</b></td><td>The moved box will be resized if there is no room for it.</td></tr>
+  <tr><td><b>ResizeNbsp</b></td><td><i>(new 11.0)</i> The Nbsp boxes and Empty boxes (for <tt><a href="#CGanttRunMove">GanttRunMove</a> = <b>Entire</b></tt>) between the moved boxes will be resized if there is no room for the moved boxes.</td></tr>
+  <tr><td><b>Move</b></td><td>The moved box will be moved left if there is no room for it (also shifting boxes on left side by <b>Shift</b>/<b>Shrink</b>/<b>Slip</b> will be permitted).</td></tr> 
+  <tr><td><b>Zoom</b></td><td><i>(new 7.0)</i> When copying/moving between grids, the box will preserve its width on screen and its duration will be changed by zoom ratio of the grids.</td></tr>
+  <tr><td><b>NoRound</b></td><td><i>(new 11.0)</i> If set, the position of boxes dropped to empty space will <u>not</u> be rounded to GanttDragUnits.</td></tr>                
+  <tr><td>&nbsp;</td><td></td></tr>
+
+  <tr><td><b>Containers</b></td><td><i>(new 13.0)</i> The box gets Containers value according to the drop position. It is possible to use <a href="OnGanttRunDrop">OnGanttRunDrop</a> to set the containers manually (see also methods <a href="GetGanttRunContainers">GetGanttRunContainers</a>() and <a href="GanttAPI.htm#GetGanttXY">GetGanttXY</a>()), in this case the flag Containers must <u>not</u> be present.</td></tr>
+  <tr><td><b>ContainersDelete</b></td><td><i>(new 13.0)</i> Only with <b>Containers</b>. Removes the parent containers from dropped boxes or containers.</td></tr>
+  <tr><td><b>ContainersUnique</b></td><td><i>(new 13.0)</i> Only with <b>Containers</b>. If dropped boxes contain containers already present in the row, the containers will be made unique by adding #X, where X is the number from 1.</td></tr>
+  <tr><td><b>ContainersLevels</b></td><td><i>(new 13.0)</i> Only with <b>Containers</b>. Preserves the container level of nesting.</td></tr>
+  <tr><td><b>ContainersMerge</b></td><td><i>(new 13.0)</i> Only with <b>Containers</b> + <b>ContainersLevels</b> The dropped containers are removed if dropped to container with the same or higher level.</td></tr>
+</table><br />
+
+There are also attributes read when dragging with appropriate shift key and for specific GanttRunMove / GanttRunResize actions:<br /> 
+<b>GanttRunAdjustCtrl</b>, <b>GanttRunAdjustAlt</b>, <b>GanttRunAdjustShift</b><br />
+<b>GanttRunAdjust<span style="color:red;">Resize</span></b>, <b>GanttRunAdjust<span style="color:red;">Resize</span>Ctrl</b>, <b>GanttRunAdjust<span style="color:red;">Resize</span>Alt</b>, <b>GanttRunAdjust<span style="color:red;">Resize</span>Shift</b><br />
+<b>GanttRunAdjust<span style="color:red;">Slide</span></b>, <b>GanttRunAdjust<span style="color:red;">Slide</span>Ctrl</b>, <b>GanttRunAdjust<span style="color:red;">Slide</span>Alt</b>, <b>GanttRunAdjust<span style="color:red;">Slide</span>Shift</b><br />
+<b>GanttRunAdjust<span style="color:red;">Move</span></b>, <b>GanttRunAdjust<span style="color:red;">Move</span>Ctrl</b>, <b>GanttRunAdjust<span style="color:red;">Move</span>Alt</b>, <b>GanttRunAdjust<span style="color:red;">Move</span>Shift</b><br />
+<b>GanttRunAdjust<span style="color:red;">Copy</span></b>, <b>GanttRunAdjust<span style="color:red;">Copy</span>Ctrl</b>, <b>GanttRunAdjust<span style="color:red;">Copy</span>Alt</b>, <b>GanttRunAdjust<span style="color:red;">Copy</span>Shift</b><br />
+<b>GanttRunAdjust<span style="color:red;">Remove</span></b>, <b>GanttRunAdjust<span style="color:red;">Remove</span>Ctrl</b>, <b>GanttRunAdjust<span style="color:red;">Remove</span>Alt</b>, <b>GanttRunAdjust<span style="color:red;">Remove</span>Shift</b><br />
+If the exact attribute is not set, the universal one is used, e.g. the attributes are read in this order: GanttRunAdjustMoveCtrlRight, GanttRunAdjustMove, GanttRunAdjustCtrlRight, GanttRunAdjust.<br /><br />
+
+<i>Since 7.0</i> there are adjust actions for other mouse buttons (<b>Right</b> and <b>Middle</b>) as the last suffix like <b>GanttRunAdjustRight</b>, <b>GanttRunAdjustCtrlRight</b>, <b>GanttRunAdjust<span style="color:red;">Resize</span>Right</b>, <b>GanttRunAdjust<span style="color:red;">Resize</span>CtrlRight</b>, ...<br /><br />
+
+<i>Since 7.0</i> for touch screens (iPad) are available events for count of fingers on pad, <b>GanttRunAdjust1</b>, <b>GanttRunAdjust2</b>, <b>GanttRunAdjust3</b>, <b>GanttRunAdjust<span style="color:red;">Resize1</span></b>, <b>GanttRunAdjust<span style="color:red;">Resize2</span></b>, ..., but not all the prefixes are used by default, for more information see the touch postfixes for <a href="#CGanttRunResize">GanttRunResize</a> and <a href="#CGanttRunMove">GanttRunMove</a>.
+
+<!-- GanttRunAdjustStart -->
+<a name="CGanttRunAdjustStart"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>GanttRunAdjustStart</h4> <s>["Slip"]</s>
+</div>
+Adjust settings used when changed <a href="#CGanttRunStart">GanttRunStart</a> value.<br /> 
+The supported keywords are <i>empty</i>, <b>Shift</b>, <b>Shrink</b>, <b>Slip</b>, <b>All</b>, <b>Single</b>.<br />
+For their meaning see <a href="#CGanttRunAdjust">GanttRunAdjust</a>.<br />
+
+<!-- GanttRunAdjustCorrect -->
+<a name="CGanttRunAdjustCorrect"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>GanttRunAdjustCorrect</h4> <s>["Slip"]</s>
+</div>
+Adjust settings used when moving run during correcting dependencies. Used also when moving <a href="GanttSummary.htm#CellGanttSummary">GanttSummary</a> children.<br />
+The run never resizes during correcting, it means that its duration and also difference between end and start will not change.<br /> 
+The moving is done by trying to move the first box and the last box independently according to the Adjust setting and if the changes differ, the smaller change is applied.<br />
+The supported keywords are <i>empty</i>, <b>Shift</b>, <b>Shrink</b>, <b>Slip</b>, <b>All</b>, <b>Single</b>. For their meaning see <a href="#CGanttRunAdjust">GanttRunAdjust</a>.<br />
+<b>Used only when <a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains "Run"</b>. For "Box" use <a href="#CGanttRunCorrectBox">GanttRunCorrectBox</a>.<br />
+
+<!-- GanttRunCorrectBox -->
+<a name="CGanttRunCorrectBox"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunCorrectBox</h4> <s>[0]</s>
+</div>
+How will be moved individual Run boxes when correcting dependencies and <b><a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains "Box"</b>,
+<b>0</b> - the boxes will be moved independently on the others, the boxes can overlay as Error boxes.<br />
+<b>1</b> - the boxes will be moved independently on the others, but the boxes cannot overlay - if the boxes overlay, the other boxes are moved.<br />
+<b>2</b> - the boxes cannot change their order, if the box is moved, all other boxes in its way are moved too. Empty spaces are <u>not</u> preserved. Like Adjust <b>Shrink</b>. Note, here the wrong box order can cause the dependencies cannot be corrected.<br />
+
+<!-- GanttRunCorrectFixed -->
+<a name="CGanttRunCorrectFixed"></a>
+<div class="XML">
+   <u>new <b>7.0</b> chg <b>10.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttRunCorrectFixed</h4> <s>[1]</s>
+</div>
+Used when correcting dependencies. For <b>1</b> it will check the run box moving possibility (fixed boxes) like any other constraints.<br />
+<i>Since 10.0</i> the default value is <b>1</b>.<br /> 
+Set it to <b>0</b> if you use long runs without fixed boxes and the whole run is Gantt task, just to speed up the correcting.<br />
+
+<!-- GanttRunDragObject -->
+<a name="CGanttRunDragObject"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunDragObject</h4> <s>[1]</s>
+</div>
+If and how will be shown the dragged box(es) under mouse cursor. It is ignored if set <tt>&lt;Cfg <a href="RowMove.htm#CfgShowDrag">ShowDrag</a>='0'/></tt><br />
+<b>0</b> - show nothing.<br />
+<b>1</b> - show all the boxes in one line, without spaces, overlay and side texts.<br />
+<b>2</b> - behaves like <b>3</b> if set Entire in <a href="#CGanttRunMove">GanttRunMove</a>, otherwise behaves like <b>1</b>.<br />
+<b>3</b> - show all the boxes in one line including side texts, preserving spaces and overlay.<br />
+<b>4</b> - show all the boxes in more lines according to their vertical positions, including side texts. Preserves spaces and overlay.<br />
+<div class="L1">If the boxes are placed in more rows, they are also vertically shifted, according to the row heights.</div>
+
+<!-- GanttRunNew -->
+<a name="CGanttRunNew"></a>
+<div class="XML">
+   <u>new <b>6.1</b> <i>upd <b>7.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[ ][ ]</i>
+   <h4>GanttRunNew</h4> <s>[1,Box]</s>
+</div>
+One or more boxes that will be created when adding new box to the run, by dragging empty space.<br />
+It has the same format as <a href="#CGanttRun">GanttRun</a>.<br />
+If it contains more boxes, the last one will be resized by a user while adding the boxes by dragging.<br />
+Set it to empty string to forbid adding new boxes.<br />
+There are also attributes read when dragging with appropriate shift key: <b>GanttRunNewCtrl</b>, <b>GanttRunNewAlt</b>, <b>GanttRunNewShift</b>.<br />
+<i>Since 7.0</i> there are also attributes for other mouse buttons (<b>Right</b> and <b>Middle</b>) as the last suffix: <b>GanttRunNewRight</b>, <b>GanttRunNewCtrlRight</b>, <b>GanttRunNewAltRight</b>, <b>GanttRunNewShiftRight</b>, <b>GanttRunNewMiddle</b>, <b>GanttRunNewCtrlMiddle</b>, <b>GanttRunNewAltMiddle</b>, <b>GanttRunNewShiftMiddle</b>.<br />
+<i>Since 7.0</i> for touch screens (iPad) are available events for count of fingers on pad, <b>GanttRunNew1</b>, <b>GanttRunNew2</b>, <b>GanttRunNew3</b>, ..., but because by default in Defaults.xml is the NewGanttRun action attached only to OnDrag3Gantt event, these prefixes are ignored. To use them, you need to attach the NewGanttRun to appropriate OnDragXGantt event.<br />
+
+<!-- GanttRunNewStart -->
+<a name="CGanttRunNewStart"></a>
+<div class="XML">
+   <u>new <b>6.1</b> <i>upd <b>7.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[ ][ ]</i>
+   <h4>GanttRunNewStart</h4> <s>[1,Box]</s>
+</div>
+Setting <a href="#CGanttRunNew">GanttRunNew</a> when adding new box to the empty run, by dragging empty space.<br />
+It can also specify the separators and / or JSON definition for the new Run, e.g. set <tt>GanttRunNewStart="[{Duration:1,Type:'Box'}]"</tt> to use JSON definition for new runs.<br />
+It can contain also some start or end box.<br />
+For more information see <a href="#CGanttRunNew">GanttRunNew</a>.<br />
+
+<!-- GanttRunTypes -->
+<a name="CGanttRunTypes"></a>
+<div class="XML">
+   <u>new <b>6.1</b> <i>upd <b>11.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[ ][ ]</i>
+   <h4>GanttRunTypes</h4> <s>[ ]</s>
+</div>
+List of predefined box types and other attributes to be set to actual box, selected from popup menu.<br />
+Used to let a user to change the type, class and other attributes of clicked box from popup menu.<br />
+<i>(Since 11.0)</i> It is possible to change also boxes individual state, e.g. to disable all selected boxes or select all boxes in the same group.<br /> 
+<div class="L1">Set the <b>State</b> attribute of the boxes as <tt>"x+y"</tt>, where the x is the bit value to set and y the bit value to reset. For example <tt>"1+3"</tt> sets the disabled/locked state to 1 and does not affect other states.</div>
+<i>(Since 11.0)</i> It is possible to change all box attributes except <s><b>Width</b></s> and <s><b>Id</b></s>. To change <b>State</b> attribute, set it as number (bit array), <u>not</u> as string, see <a href="#GetGanttRunBox">GetGanttRunBox</a>, <b>State</b> attribute.<br />
+There are two possible formats:<br />
+
+<h5>Array definition</h5> 
+It has the same format as full <a href="#CGanttRun">GanttRun</a> <b>Array</b> definition, except there is the item name (shown in menu) instead of duration as the first item and there are no start/end items.<br />
+The menu will be shown as sub menu of the main Gantt menu <b>ChooseGanttRunType</b> item.<br />
+The empty values are ignored and <u>not</u> set to the changed box. To clear the attribute, set the value to one space string.<br />
+For example: <tt>"type1,,,Red;type2,,,Blue;type3,solid,xxx,White"</tt><br />
+
+<h5>JSON definition <i style="font-size:80%;font-weight:normal;">(since 11.0)</i></h5>  
+It can be also <a href="Menu.htm">JSON menu</a>, where the individual boxes are defined in <b>Box</b> attribute, with the first parameter ignored. The JSON menu format must start with '{' character.<br />
+The menu will be shown as sub menu of the main Gantt menu <b>ChooseGanttRun...Type</b> item.<br />
+The <b>Box</b> attribute can be string in GanttRun Array definition, first character separated (as the item, the width is always empty), or string with GanttRun JSON definition or object with GanttRun JSON definition.<br />
+For example:&#39;<tt>{Menu:1, Items:[{Text:"type1",Box:",,,Red"},{Text:"type2",Box:",,,Blue"},{Text:"type3",Box:",solid,xxx,White"}]}&#39;</tt><br />
+The <u>root</u> menu items can have defined different text per source action: <b>TextBox</b> (one), <b>TextRow</b> (in row), <b>TextSelected</b> (selected), <b>TextGroup</b> (row group), <b>TextGroupAll</b> (group) and <b>TextContainer</b> (container).<br />  
+<div class="L1">Or define one <b>Text</b> attribute for all the sources the same. If no Text or specific source <b>Text...</b> attribute is defined, the item is not shown! These texts can contain string "<b>%d</b>" to be replaced by the box count in the source.</div>
+If the menu has attribute <b>Include</b>:1, the Items are included directly to the GanttMenu on the place instead of the <b>ChooseGanttRun...Type</b> item.<br /> 
+The menu items can contain also submenus or levels to display this menu in more menus or levels. In unlimited nesting.<br />
+For example:<tt>&#39;{Include:1,Items:[{Text:"Set box type",Items:[{Name:"box",Box:{Type:"Box"}},{Name:"solid",Box:{Type:"Solid"}}]},{Text:"Set box class",Items:[{Name:"red",Box:{Class:"Red"}},{Name:"blue",Box:{Class:"Blue"}}]}]}</tt>&#39;
+
+<!-- OnDragGanttRun -->
+<a name="OnDragGanttRun"></a>
+<div class="API">
+   <u>new <b>9.1</b></u> <b>API event</b> <i>int</i>
+   <h4>OnDragGanttRun</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>index</b>, <i>bool</i> <b>start</b>, <i>int</i> <b>new</b>, <i>int</i> <b>old</b>, <i>int</i> <b>change</b>, <i>int</i> <b>dir</b>, <i>object</i> <b>XY</b>, <i>string</i> <b>keyprefix</b>, <i>int</i> <b>clientX</b>, <i>int</i> <b>clientY</b>)</s>
+</div>
+Called during dragging Run box inside row (for moving box as Slide and for any resizing).<br />
+It is called <u>only</u> for <tt><a href="#CGanttRunMove">GanttRunMove</a>='<b>Slide</b>'</tt> and for resizing.<br /> 
+<b>row</b>, <b>col</b> is the Gantt cell.<br /> 
+<b>index</b> is RunIndex of the dragged box inside its source cell.<br />
+<b>start</b> is 1 for first loop, 0 for all next loops.<br />
+<b>new</b> is new date (as count of milliseconds since 1/1/1970). It is start date of the box for <tt><b>dir</b>==1</tt> or <tt>3</tt> or it is end date for the box for <tt><b>dir</b>==2</tt>.<br />
+<b>old</b> is original date (as count of milliseconds since 1/1/1970). It is start date of the box for <tt><b>dir</b>==1</tt> or <tt>3</tt> or it is end date for the box for <tt><b>dir</b>==2</tt>.<br />
+<b>change</b> is actual change of the box edge (<b>old</b> minus <b>new</b>, but in workdays).<br />
+<b>dir</b> is dragging direction, 1 left edge (resize), 2 right edge (resize), 3 both edges (move). It controls also the edge specified by <b>new</b> and <b>old</b>.<br />
+<b>XY</b> is the dragged Gantt object returned by <a href="GanttAPI.htm#GetGanttXY">GetGanttXY</a>.<br />
+<b>keyprefix</b> is prefix of shift keys: "Ctrl", "Alt", "Shift" and also mouse button "Right" or "Middle". The key is before the mouse, e.g. <tt>keyprefix='CtrlRight'</tt>.<br />
+<b>clientX</b>, <b>clientY</b> is mouse position on page.<br />
+Return <b>null</b> for normal behavior<br />
+Return <b>0</b> to suppress the last change<br />
+Return <b>false</b> to cancel dragging and restore original state<br />
+Return <b>true</b> to finish dragging and save this last change<br />
+Return <b>integer</b> as new change (in workdays).<br />
+
+<!-- OnEndDragGanttRun -->
+<a name="OnEndDragGanttRun"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnEndDragGanttRun</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>index</b>, 
+   <i>object</i> <b>run</b>, <i>int</i> <b>type</b>, <i>int</i> <b>dir</b>, <i>object</i> <b>XY</b>, <i>string</i> <b>keyprefix</b>, <i>int</i> <b>clientX</b>, <i>int</i> <b>clientY</b>)</s>
+</div>
+Called after dragging Run box inside row finished (for moving box as Slide and for any resizing).<br />
+It is called <u>only</u> for <tt><a href="#CGanttRunMove">GanttRunMove</a>='<b>Slide</b>'</tt> and for resizing.<br /> 
+<b>row</b>, <b>col</b> is the Gantt cell.<br /> 
+<b>index</b> is RunIndex of the dragged box inside its source cell.<br />
+<b>run</b> is the modified run object (like returned by <a href="#GetGanttRun">GetGanttRun</a>) to be set to the cell.<br />
+<b>type</b> is <b>0</b> for normal change of existing box, <b>1</b> the box will be deleted, <b>2</b> the box was created new.<br />
+<b>dir</b> is dragging direction, 1 left edge (resize), 2 right edge (resize), 3 both edges (move).<br />
+<b>XY</b> is the dragged Gantt object returned by <a href="GanttAPI.htm#GetGanttXY">GetGanttXY</a>.<br />
+<b>keyprefix</b> is prefix of shift keys: "Ctrl", "Alt", "Shift" and also mouse button "Right" or "Middle". The key is before the mouse, e.g. <tt>keyprefix='CtrlRight'</tt>.<br />
+<b>clientX</b>, <b>clientY</b> is mouse position on page.<br />
+Return true to cancel the change.<br />
+
+<!-- OnGanttRunDrop -->
+<a name="OnGanttRunDrop"></a>
+<div class="API">
+   <u style="width:160px;">new <b>6.1</b> chg <b>10.0</b> <i>upd <b>13.0</b></i></u> <b style="width:74px;">API event</b> <i style="width:20px;">int</i>
+   <h4>OnGanttRunDrop</h4>
+   <s>(<i>TGrid</i> <b>grid</b>,<i>TRow</i> <b>row</b>,<i>string</i> <b>col</b>,<i>bool</i> <b>drop</b>,<i>object</i> <b>src</b>,<i>int</i> <b>index</b>,<i>string</i> <b>keyprefix</b>,<i>int</i> <b>x</b>,<i>int</i> <b>y</b>,<i>TGrid</i> <b>togrid</b>,<i>TRow</i> <b>torow</b>,<i>string</i> <b>tocol</b>,<i>int</i> <b>cellx</b>,<i>bool</i> <b>accept</b>, <i>int</i> <b>celly</b>, <i>string[]</i> <b>containers</b>)</s>
+</div>
+Called during dragging and also when the dragged run box(es) is dropped (distinguished by <b>drop</b> value). It is called also when it is dropped outside any grid.<br />
+It is called <u>only</u> for <tt><a href="#CGanttRunMove">GanttRunMove</a>='<b>Move</b>/<b>Copy</b>/<b>Remove</b>'</tt><br />
+<b>grid</b>, <b>row</b>, <b>col</b> is source cell from that is dragged.<br />
+<b>drop</b> is false when called during dragging to check if the box can be dropped and true when the box is being dropped. <i>Since 9.1</i> it is <b>false</b> for start and <b>0</b> for next loops.<br />
+<b>src</b> is parsed run that is dragged - two dimensional array of the dragged boxes. It is possible to modify this array in the event handler, e.g. change containers ([15]) of the dropped boxes.<br />
+<b>index</b> is RunIndex of the dragged box inside its source cell (<u>not</u> in <b>src</b>), if more boxes are dragged together, this is index of the one that was caught by mouse.<br />
+<b>keyprefix</b> is prefix of shift keys: "Ctrl", "Alt", "Shift" and <i>(since 7.0)</i> also mouse button "Right" or "Middle". The key is before the mouse, e.g. <tt>keyprefix='CtrlRight'</tt>
+<b>x</b>, <b>y</b> is mouse position in page in time of drop, in pixels.<br />
+<b>togrid</b>, <b>torow</b>, <b>tocol</b> is destination cell to that is dropped. It can be null if dropped outside any grid.<br />
+<b>cellx</b> is drop position inside the destination cell, in pixels.<br />
+<b>accept</b> <i>(since 8.0)</i> is actual state, if the box can be dropped here.<br />
+<b>celly</b> <i>(new 12.1)</i> is vertical drop position inside the destination cell, in pixels.<br />
+<b>containers</b> <i>(new 13.0)</i> is array of source containers, the first one the dragged one and the next are its parent containers. It is null if only boxes are dragged.<br />
+Return <b>false</b> to suppress drop, <b>true</b> to permit drop or <b>null</b> to use actual <b>accept</b> state.<br />
+<i>(Since 10.0)</i> Or return <b>integer</b> as new position of the drop (<b>cellx</b>). It also sets <b>accept</b> to true.<br />
+<i>(Since 11.0)</i> Or return <b>empty string</b> "" to immediately finish the dragging. Only for <tt><b>drop</b> != true</tt>. After that, the OnGanttRunDrop is called again with <tt><b>drop</b> = true</tt> to get the final result for the drop action.<br />
+
+<!-----------------------------------------------------------------------  API  ------------------------------------------------->
+<a name="API"></a>
+<h2>API</h2>
+<p class="h2">
+Controlling run boxes by JavaScript<br />
+<strong>Some other API methods and events are also listed in individual features above in this document</strong><br />
+</p>
+
+<!-- GetGanttRun -->
+<a name="GetGanttRun"></a>
+<div class="API">
+   <u style="width:150px;">new <b>6.1</b> chg <b>7.0</b> <i>upd <b>10.0</b></i></u> <b>API method</b> <i>object</i>
+   <h4>GetGanttRun</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>run</b> = null, <i>string</i> <b>start</b> = null)</s>
+</div>
+Returns parsed GanttRun value for given <b>Gantt</b> cell.<br />
+Returned object is two dimensional array with the parsed boxes in format: [[duration,type,text,class,tip,id,group,...], [duration,type,text,class,tip,id,group,...], ... ]<br />
+If the boxes are not joined, every even item is <b>Empty</b> type box.<br />
+The duration (first item) is in <s><i><b style="color:#09C;">pixels</b></i></s> <b style="color:red;">milliseconds</b> and without excluded parts. The type (second item) is always set. <i>In 7.0 the duration units were changed from pixels to milliseconds.</i><br />
+It contains also property <u><b>Start</b></u> as left position (in <b>milliseconds</b> from the first date in Gantt and without excluded parts) from the cell left edge. Regardless on the first box is start End/Bound type or not.<br />
+It contains also property <u><b>Deleted</b></u> as array of actually deleted boxes in random order.<br />
+<i>(Since 10.0)</i> It contains also properties <u><b>StartDate</b></u> and <u><b>EndDate</b></u> as the first and last date of the run in milliseconds. These properties are <u>not</u> used by <a href="#SetGanttRun">SetGanttRun</a>.<br />
+<i>(Since 10.0)</i> If set <b>run</b> parameter, it parses given run string instead of string from GanttRun, <b>start</b> is used as run start date if the <b>run</b> contains only durations.<br />
+
+<!-- SetGanttRun -->
+<a name="SetGanttRun"></a>
+<div class="API">
+   <u>new <b>6.1</b> chg <b>7.0</b></u> <b>API method</b> <i>void</i>
+   <h4>SetGanttRun</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>object</i> <b>run</b>)</s>
+</div>
+Writes parsed GanttRun into the Run source cell value for given <b>Gantt</b> cell.<br />
+<i><strong>The run must be the object returned from <a href="#GetGanttRun">GetGanttRun</a>!</strong>  Never create new <b>run</b> object!</i><br />
+You can get the run object by <a href="#GetGanttRun">GetGanttRun</a>, modify its individual boxes and / or <b>Start</b> property and set it back by SetGanttRun. Never create new run object!<br />
+<i>The run object is destroyed by the call, it cannot be used later. Use GetGanttRun to get it again.</i><br />
+<i>In 7.0 the duration units were changed from pixels to milliseconds.</i><br />
+
+<!-- GetGanttRunBox -->
+<a name="GetGanttRunBox"></a>
+<div class="API">
+   <u>new <b>7.0</b> chg <b>10.0</b> <i>upd 13.0</i></u> <b style="margin-left:30px;margin-right:-10px;">API method</b> <i style="margin-right:-20px;">object</i>
+   <h4>GetGanttRunBox</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>index</b>) or (<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>id</b>, <i>string</i> <b>group</b>=null)</s>
+</div>
+Returns given box from the Gantt Run cell. Returns null if there is no such box. The col is the Gantt cell.<br />
+The box can be identified by number <b>index</b> or by string <b>id</b>, optionally with string <b>group</b>. The <b>id</b> can be number, but must be in string type variable.<br />
+Returns object with these properties:<br />
+<div class="L1">
+<i>int</i> <b>Index</b> - index of the box inside its Run<br />
+<i>int</i> <b>Start</b> - start date in milliseconds<br />
+<i>int</i> <b>End</b> - end date in milliseconds, it is affected also by <a href="GanttCompute.htm#CGanttLastUnit">GanttLastUnit</a> value<br />
+<i>int</i> <b>Duration</b> - box duration in milliseconds, without excluded dates.<br />
+<i>int</i> <b>Left</b> - left side position in chart in pixels, including excluded dates and is affected by zoom<br />
+<i>int</i> <b>Width</b> - width of the box in chart in pixels, including excluded dates and is affected by zoom<br />
+<i>int</i> <b>Top</b> - <i>(new 8.1)</i> vertical position in row, in pixels, it returns the Top attribute of GanttRun, it does not measure anything<br />
+<i>int</i> <b>Height</b> - <i>(new 8.1)</i> height of the box, in pixels, it returns the Height attribute of GanttRun, it does not measure anything<br />
+<i>string</i> <b>Type</b>, <i>string</i> <b>Text</b>, <i>string</i> <b>Class</b>, <i>string</i> <b>Tip</b>, <i>string</i> <b>Id</b>, <i>string</i> <b>Group</b> - attributes set for the box<br />
+<i>int</i> <b>State</b> - a bit array number of box states <i>(since 10.0)</i> changed from string to number.<br />
+<div class="L1">1 - disabled, 2 locked, 4 selected, 8 added, 16 deleted, 32 moved, 64 resized, 128 changed.</div>
+<i>string</i> <b>Manual</b>, <i>int</i> <b>Complete</b>, <i>string</i> <b>Resources</b>, <i>string</i> <b>TextLeft</b>, <i>string</i> <b>TextRight</b> - <i>(all new 10.0)</i> attributes set for the box<br />
+<i>string[]</i> <b>Containers</b> - <i>(new 13.0)</i> array of containers the box is included in.<br />
+<i>int</i> <b>Disabled</b> - <i>(new 10.0)</i> disabled state of the box, <b>0</b> - no, <b>1</b> disabled, <b>2</b> locked. <i>Cannot be set by SetGanttRunBox, use <i>State</i> instead.</i><br />
+<i>bool</i> <b>Selected</b> - <i>(new 10.0)</i> if the box is selected. <i>Cannot be set by SetGanttRunBox, use <b>State</b> instead.</i><br />
+<i>TRow</i> <b>Row</b>, <i>string</i> <b>Col</b> - parameters given to the function<br />
+<i>object[]</i> <b>Data</b> - <i>(new 7.1)</i> raw box data array (always starting by Width) for access also custom box attributes. <i>Cannot be set by SetGanttRunBox, use <a href="#SetGanttRun">SetGanttRun</a> instead.</i><br />
+</div>
+<i>Since 10.0</i> the returned object contains also <b>custom attributes</b> defined in <a href="#CGanttRunCustom">GanttRunCustom</a>, they can be also changed by <a href="#SetGanttRun">SetGanttRun</a>.<br />
+To get a box on given position in pixels, use <a href="GanttAPI.htm#GetGanttXY">GetGanttXY</a> and call GetGanttRunBox with the RunIndex returned in object by GetGanttXY.<br />
+
+<!-- SetGanttRunBox -->
+<a name="SetGanttRunBox"></a>
+<div class="API">
+   <u>new <b>7.0</b> chg <b>9.3</b></u> <b>API method</b> <i>int</i>
+   <h4>SetGanttRunBox</h4>
+   <s>(<i>object</i> <b>box</b>, <i>string</i> <b>adjust</b> = "", <i>bool</i> <b>test</b> = 0, <i>int</i> <b>minduration</b> = null)</s>
+</div>
+Changes given box. Shows changes in the cell.<br /> 
+Returns <b>0</b> if the box does not exist, <b>1</b> if the box cannot be changed due adjust, <b>2</b> if the box is changed or can be changed.<br />
+The box must have set the <b>Row</b> + <b>Index</b> or <b>Id</b> (+<b>Row</b>+<b>Group</b>) attribute to identify it.<br />
+<b>adjust</b> is the way how other boxes will be moved when the box position or size is changed, comma separated list of keywords, see <a href="#CGanttRunAdjust">GanttRunAdjust</a>.<br />
+<i>Since 9.3</i> the <b>adjust</b> is tested more preciously. If it change cannot be done exactly, it applies the change only when set <tt>adjust = Resize</tt> or <tt>Move</tt>, according to these flags.<br /> 
+<i>(Since 9.3)</i> <b>minduration</b> is minimal duration of the box in milliseconds, if applied <tt><b>adjust</b> = Resize</tt>. If not set, it is used duration of one GanttUnits.<br />
+To change box size you should set only some position attributes: Start+End or Start+Length or End+Length or Left+Width.<br />
+<i>If you have box got by GetGanttRunBox and you want to change the <b>Left</b> or <b>Width</b>, you must null its Start, End and Duration attributes. Use null assignment, not delete.</i><br />
+<i>If you have box got by GetGanttRunBox and you want to change the <b>Duration</b>, you must null its Start or End attributes (but not both).</i><br />
+<i>(Since 8.0)</i> For <tt><b>test</b> = 1</tt> does not modify the run, just tests possibility of the change due adjust.<br />
+
+<!-- AddGanttRunBox -->
+<a name="AddGanttRunBox"></a>
+<div class="API">
+   <u>new <b>7.0</b> chg <b>8.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>AddGanttRunBox</h4>
+   <s>(<i>object</i> <b>box</b>, <i>string</i> <b>adjust</b> = "", <i>string</i> <b>id</b> = null, <i>string</i> <b>group</b> = null, <i>bool</i> <b>test</b> = 0)</s>
+</div>
+Adds the box to the run. If set <b>id</b> and <b>group</b>, adds it before the box with the given <b>id</b>+<b>group</b> or <b>id</b> as number index. If no such box, adds it to the end.<br />
+The box must have set at least <b>Row</b> attribute.<br />
+Returns <b>0</b> if the box does not exist, <b>1</b> if the box cannot be added due adjust, <b>2</b> if the box is added or can be added.<br />
+<i>(Since 8.0)</i> If the box has set <b>Left</b> or <b>Start</b> attribute and no <b>id</b> is passed, the box is placed and sorted to given position, like the box is dragged.<br />
+<i>(Since 8.0)</i> For <tt><b>test</b> = 1</tt> does not modify the run, just tests possibility of the adding due adjust.<br />
+
+<!-- DelGanttRunBox -->
+<a name="DelGanttRunBox"></a>
+<div class="API">
+   <u>new <b>7.0</b> <i>upd <b>9.0</b></i></u> <b>API method</b> <i>bool</i>
+   <h4>DelGanttRunBox</h4>
+   <s>(<i>object</i> <b>box</b>, <i>bool</i> <b>remove</b>, <i>string</i> <b>adjust</b>)</s>
+</div>
+Deletes given box. Shows changes in the cell. If the box does not exist, returns false, otherwise true.<br />
+The box must have set the <b>Index</b> or <b>Id</b> (<b>Group</b>) attribute to identify it.<br />
+If set <b>remove</b> <i>(since 9.0)</i> it shifts all the next boxes to the left. The <b>adjust</b> controls how the rest of boxes will be moved, default is "slip".<br />
+<i>Remember, if you are deleting more boxes found by FindGanttRunBoxes, you must iterate the array from end, to not break down the box indexes!</i><br />
+
+<!-- ScrollToGanttRunBox -->
+<a name="ScrollToGanttRunBox"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>object</i>
+   <h4>ScrollToGanttRunBox</h4>
+   <s>(<i>object</i> <b>box</b>, <i>int</i> <b>type</b> = 0)</s>
+</div>
+Scrolls the box into view.<br />
+The box must have set the <b>Index</b> or <b>Id</b> (<b>Group</b>) attribute to identify it.<br />
+<b>type</b> is <b>0</b> for the smallest scroll, <b>1</b> to show the box centered, <b>2</b> to show the box on the left.<br />
+
+<!-- GetGanttRunBoxTag -->
+<a name="GetGanttRunBoxTag"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>object</i>
+   <h4>GetGanttRunBoxTag</h4>
+   <s>(<i>object</i> <b>box</b>)</s>
+</div>
+Returns outer HTML tag of the given box.<br />
+The box must have set the <b>Index</b> or <b>Id</b> (<b>Group</b>) attribute to identify it.<br />
+It can be used to mark the box by changing its className or inline style or its firstChild className or inline style.<br />
+It should <u>not</u> be used to change box position or size.<br />
+
+<!-- FindGanttRunBoxes -->
+<a name="FindGanttRunBoxes"></a>
+<div class="API">
+   <u>new <b>7.0</b> <i>upd <b>10.0</b></i></u> <b>API method</b> <i>object[ ]</i>
+   <h4>FindGanttRunBoxes</h4>
+   <s>(<i>object</i> <b>box</b>, <i>int</i> <b>type</b> = 0, <i>string</i> <b>attrs</b> = "...")</s>
+</div>
+Searches grid for boxes with the same attributes as the given <b>box</b>.<br />
+Returns array of the objects, the objects are the same as from <a href="#GetGanttRunBox">GetGanttRunBox</a> method.<br />
+<b>attrs</b> <i>(since 10.0)</i> is a list of run box attribute names that are searched for, comma separated. Default value is "<b>Id</b>,<b>Group</b>,<b>Type</b>,<b>Text</b>,<b>Class</b>,<b>Tip</b>".<br />
+If the box contains <b>Row</b> property, searches only within this row.<br />
+<b>type</b>&1 = <b>1</b> - without not expanded children, <b>type</b>&2 = <b>2</b> - include hidden rows,<br /> 
+<b>type</b>&4 = <b>4</b> - case insensitive search, <b>type</b>&8 = <b>8</b> - returns also boxes that contain given string(s)<br />
+<b>type</b>&16=<b>16</b> - searches only editable runs (<tt>GanttEdit='run'</tt>)<br />
+<b>type</b>&32=<b>32</b> - <i>(new 10.0)</i> if set box.<b>Row</b>, searches in all children of the row, otherwise ignored.<br />
+
+<!-- OnGanttRunBoxChanged -->
+<a name="OnGanttRunBoxChanged"></a>
+<div class="API">
+   <u>new <b>7.0</b> chg <b>10.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnGanttRunBoxChanged</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object</i> <b>box</b>, <i>object</i> <b>old</b>, <i>int</i> <b>change</b>)</s>
+</div>
+Called after change in any Run box, before the changes are displayed. <s>It is called only when set <tt><a href="#CGanttRunStates">GanttRunStates</a>="1"</tt></s> <i>(deleted 10.0)</i><br />
+It is called only for box with <b>Id</b> set. <i>In other cases use <a href="GanttAPI.htm#OnGanttChange">OnGanttChange</a> / <a href="GanttAPI.htm#OnGanttChanged">OnGanttChanged</a> events.</i><br />
+The <b>box</b> is actual box settings like returned by <a href="#GetGanttRunBox">GetGanttRunBox</a>. The <b>box</b> is null for deleted box. It has already set its new <b>State</b>.<br />
+The <b>old</b> is original box settings before change. The <b>old</b> is null for added box. For deleted box it has set <tt>State="<b>deleted</b>"</tt>, otherwise the original state.<br />
+The <b>change</b> <i>(since 10.0)</i> is bit array of the changes done in the box - &<b>1</b> - changed, &<b>2</b> - moved, &<b>4</b> - resized, &<b>8</b> - created, &<b>16</b> - deleted.<br />
+When box is moved from one row to another, the event is called twice, first for adding the box to new row and next for deleting the box from old row.<br />
+If defined this event, all newly created boxes (except bounds and empty) get generated new id "new"+temp index.<br />
+Return true if you changed some parameter in <b>box</b> to save the change.<br />
+
+<!-- OnGanttRunBoxNew -->
+<a name="OnGanttRunBoxNew"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnGanttRunBoxNew</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object</i> <b>box</b>, <i>bool</i> <b>copy</b>)</s>
+</div>
+Called after new box was created by dragging or the box was copied by dragging with <tt>GanttRunMove='Copy'</tt>.<br />
+<b>copy</b> is <b>1</b> if the box was copied, <b>0</b> if it was created new. The copied box has still its original <b>Id</b> (duplicate), so you should change it here.<br />
+If defined OnGanttRunBoxChanged, this event is called before OnGanttRunBoxChanged and the new box has already set its id "newXXX".<br />
+The <b>box</b> is actual box settings like returned by <a href="#GetGanttRunBox">GetGanttRunBox</a>.<br />
+Return true if you changed some parameter in <b>box</b> to save the change.<br />
+
+<!-----------------------------------------------------------------------  Actions  ------------------------------------------------->
+<a name="Actions"></a>
+<h2>Actions</h2>
+<p class="h2">Interactive run bar</p>
+
+<!-- Action MoveGanttRun -->
+<a name="ActionsMoveGanttRun"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>MoveGanttRun</h4>
+   <s>Attached to <b>OnDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+Moves one run box by mouse dragging according to GanttRunMove and GanttRunAdjust settings.<br />
+Fails, if mouse is not above run box or the run box is fixed.<br />
+
+<!-- Action ResizeGanttRun -->
+<a name="ActionsResizeGanttRun"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ResizeGanttRun</h4>
+   <s>Attached to <b>OnDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+Moves one run box by mouse dragging according to GanttRunResize and GanttRunAdjust settings.<br />
+Fails, if mouse is not above run box edge or the run box is solid or its edge is fixed.<br />
+
+<!-- Action CreateGanttRun -->
+<a name="ActionsCreateGanttRun"></a>
+<div class="ACT">
+   <u>new <b>7.0</b> <i>upd <b>10.0</b></i></u> <b>&lt;Actions></b> <i></i>
+   <h4>CreateGanttRun</h4>
+   <s>Not attached to any event, can be attached to <b>OnDragGantt</b></s>
+</div>
+Creates new run box by mouse dragging according to GanttRunNew, GanttRunResize and GanttRunAdjust settings.<br />
+Fails, if run box cannot be created here.<br />
+<i>Since 10.0</i> it is <u>not</u> attached to OnDragGantt, it was replaced by CreateGanttBar.<br />
+
+<!-- Action CreateGanttBar -->
+<a name="ActionsCreateGanttBar"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CreateGanttBar</h4>
+   <s>Attached to <b>OnDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+Creates new main or run bar. It creates the one that can be created. It chooses the bar to create according to the y axis.<br />
+If more new bars can be created on actual position, it chooses them in this order: main, main1, main2, ..., mainX, run<br />
+
+<!-- Action DeleteGanttRun -->
+<a name="ActionsDeleteGanttRun"></a>
+<div class="ACT">
+   <u>new <b>6.1</b> <i>upd <b>10.0</b></i></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttRun</h4>
+   <s>Attached to <b>OnCtrlClickGantt</b> event</s>
+</div>
+Deletes one run box under mouse cursor.<br />
+It fails if there is no run box under mouse cursor.<br />
+<i>Since 10.0</i> it is attached to OnCtrlClickGantt event.<br />
+
+<!-- Action DeleteGanttRunGroup -->
+<a name="ActionsDeleteGanttRunGroup"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttRunGroup</h4>
+   <s>Not attached to any event</s>
+</div>
+Deletes all boxes in actual row that have the same Group value as the box under mouse cursor .<br />
+
+<!-- Action DeleteGanttRunGroupAll -->
+<a name="ActionsDeleteGanttRunGroupAll"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttRunGroupAll</h4>
+   <s>Not attached to any event</s>
+</div>
+Deletes all boxes in the whole grid that have the same Group value as the box under mouse cursor.<br />
+
+<!-- Action DeleteGanttRunSelected -->
+<a name="ActionsDeleteGanttRunSelected"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttRunSelected</h4>
+   <s>Not attached to any event</s>
+</div>
+Deletes all selected boxes in actual or focused row. Or in the whole grid if set <tt><a href="#CGanttRunSelect">GanttRunSelect</a> = 5</tt>.<br />
+
+<!-- Action DeleteGanttRunAll -->
+<a name="ActionsDeleteGanttRunAll"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttRunAll <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Deletes all boxes in actual or focused row.<br />
+
+<!-- Action DisableGanttRun -->
+<a name="ActionsDisableGanttRun"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DisableGanttRun</h4>
+   <s>Not attached to any event</s>
+</div>
+Disables or enables Run bar or box if it is under mouse cursor. Chooses according to the <a href="GanttObjects.htm#CGanttTask">GanttTask</a>.<br />
+It fails if there is no Run box under mouse cursor or Run is not a Gantt task.<br />
+
+<!-- Action LockGanttRun -->
+<a name="ActionsLockGanttRun"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>LockGanttRun</h4>
+   <s>Not attached to any event</s>
+</div>
+Locks or unlocks Run bar or box if it is under mouse cursor. Chooses according to the <a href="GanttObjects.htm#CGanttTask">GanttTask</a>.<br />
+It fails if there is no Run box under mouse cursor or Run is not a Gantt task.<br />
+
+<!-- Action SelectGanttRun -->
+<a name="ActionsSelectGanttRun"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectGanttRun</h4>
+   <s>Attached to <b>OnDblClickGantt</b> event</s>
+</div>
+Inverts selection state of box under mouse cursor.<br />
+It fails if there is no run box under mouse cursor or its selection state cannot be changed, see <a href="#CGanttRunSelect">GanttRunSelect</a>.<br />
+
+<!-- Action SelectGanttRunRect -->
+<a name="ActionsSelectGanttRunRect"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectGanttRunRect</h4>
+   <s>Attached to <b>OnCtrlDragGantt</b> event, can be attached only to On...Drag... events</s>
+</div>
+Selects all boxes in the rectangle created by dragging.<br />
+
+<!-- Action SelectGanttRunRange -->
+<a name="ActionsSelectGanttRunRange"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectGanttRunRange</h4>
+   <s>Attached to <b>OnCtrlDragGanttHeader</b> event, can be attached only to On...Drag... events</s>
+</div>
+Selects all boxes in all selected or focused rows in the date range created by dragging.<br />
+
+<!-- Action DeselectGanttRunAll -->
+<a name="ActionsDeselectGanttRunAll"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectGanttRunAll</h4>
+   <s>Not attached to any event</s>
+</div>
+Deselects all run boxes in grid.<br />
+
+<!-- Action EditGanttRun -->
+<a name="ActionsEditGanttRun"></a>
+<div class="ACT">
+   <u>new <b>6.1</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>EditGanttRun</h4>
+   <s>Attached to <b>OnDblClickGantt</b> event</s>
+</div>
+Lets a user to edit text shown on the run box under mouse cursor.<br />
+
+<!-- Action EditGanttRunTip -->
+<a name="ActionsEditGanttRunTip"></a>
+<div class="ACT">
+   <u>new <b>6.1</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>EditGanttRunTip</h4>
+   <s>Not attached to any event</s>
+</div>
+Lets a user to edit text shown as tooltip for the run box under mouse cursor.<br />
+
+<!-- Action ChooseGanttRunType -->
+<a name="ActionsChooseGanttRunType"></a>
+<div class="ACT">
+   <u>new <b>6.1</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseGanttRunType</h4>
+   <s>Not attached to any event</s>
+</div>
+Lets a user to choose type of the run box under mouse cursor. The possible run types are defined by <a href="GanttRun.htm#CGanttRunTypes">GanttRunTypes</a>.<br />
+
+<!-- Action ChooseGanttRunGroupType -->
+<a name="ActionsChooseGanttRunGroupType"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseGanttRunGroupType</h4>
+   <s>Not attached to any event</s>
+</div>
+Lets a user to choose type of all boxes in the actual row with the same Group value as the box under mouse cursor. The possible run types are defined by <a href="GanttRun.htm#CGanttRunTypes">GanttRunTypes</a>.<br />
+
+<!-- Action ChooseGanttRunGroupAllType -->
+<a name="ActionsChooseGanttRunGroupAllType"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseGanttRunGroupAllType</h4>
+   <s>Not attached to any event</s>
+</div>
+Lets a user to choose type of all boxes in the whole grid with the same Group value as the box under mouse cursor. The possible run types are defined by <a href="GanttRun.htm#CGanttRunTypes">GanttRunTypes</a>.<br />
+
+<!-- Action ChooseGanttRunSelectedType -->
+<a name="ActionsChooseGanttRunSelectedType"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseGanttRunSelectedType</h4>
+   <s>Not attached to any event</s>
+</div>
+Lets a user to choose type of all selected boxes as the box under mouse cursor. The possible run types are defined by <a href="GanttRun.htm#CGanttRunTypes">GanttRunTypes</a>.<br />
+
+<!-- Action ChooseGanttRunRowType -->
+<a name="ActionsChooseGanttRunRowType"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseGanttRunRowType</h4>
+   <s>Not attached to any event</s>
+</div>
+Lets a user to choose type of all boxes in the actual row. The possible run types are defined by <a href="GanttRun.htm#CGanttRunTypes">GanttRunTypes</a>.<br />
+
+<!-- Action JoinSelectedGanttRun -->
+<a name="ActionsJoinSelectedGanttRun"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>JoinSelectedGanttRun</h4>
+   <s>Not attached to any event</s>
+</div>
+Joins all adjacent selected boxes or selected boxes separated only by Empty boxes.<br /> 
+It replaces all Empty boxes between selected boxes by Nbsp boxes.<br />
+
+<!-- Action SplitJoinedGanttRun -->
+<a name="ActionsSplitJoinedGanttRun"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SplitJoinedGanttRun</h4>
+   <s>Not attached to any event</s>
+</div>
+Splits all boxes joined by nbsp to the actual box or its joined boxes.<br /> 
+It replaces all Nbsp boxes between the joined boxes by Empty boxes.<br />
+
+<!-- Action JoinAdjacentGanttRun -->
+<a name="ActionsJoinAdjacentGanttRun"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>JoinAdjacentGanttRun</h4>
+   <s>Not attached to any event</s>
+</div>
+Joins all adjacent boxes to the actual box. It deletes all the zero length Empty boxes.<br />
+
+<!-- Action SplitAdjacentGanttRun -->
+<a name="ActionsSplitAdjacentGanttRun"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SplitAdjacentGanttRun</h4>
+   <s>Not attached to any event</s>
+</div>
+Splits all boxes directly joined to the actual box or its joined boxes.<br /> 
+It adds Empty boxes between the joined boxes.<br />
+
+<!-- Action SetGanttRunPercent -->
+<a name="ActionsSetGanttRunPercent"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetGanttRunPercent</h4>
+   <s>Attached to <b>OnCtrlRightClickGantt</b> event</s>
+</div>
+Changes % of completed to position under mouse cursor.<br /> 
+It fails if mouse is not above Run bar.<br />
+
+<!-- Action EditGanttRunPercent -->
+<a name="ActionsEditGanttRunPercent"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>EditGanttRunPercent</h4>
+   <s>Attached to <b>OnShiftRightClickGantt</b> event</s>
+</div>
+Lets a user to edit percentage completion of the run set by <a href="#CGanttRunComplete">GanttRunComplete</a>.<br />
+
+<!-- Action EditGanttRunText -->
+<a name="ActionsEditGanttRunText"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>EditGanttRunText</h4>
+   <s>Not attached to any even</s>
+</div>
+Lets a user to edit the text for whole task in <a href="#CGanttRunText">GanttRunText</a>.<br />
+
+<!-- Action NewGanttMilestone -->
+<a name="ActionsNewGanttMilestone"></a>
+<div class="ACT">
+   <u>chg <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NewGanttMilestone</h4>
+   <s>Attached to <b>OnDblClickGantt</b> event</s>
+</div>
+Adds new start milestone or run milestone. It creates the one that can be created. It chooses the bar to create according to the y axis.<br />
+If more new bars can be created on actual position, it chooses them in this order: main, main1, main2, ..., mainX, run<br />
+<i>Before 10.0 its functionality was the same as NewGanttStartMilestone.</i><br />
+
+<!-- Action NewGanttRunMilestone -->
+<a name="ActionsNewGanttRunMilestone"></a>
+<div class="ACT">
+   <u>new <b>7.0</b> <i>upd <b>10.0</b></i></u> <b>&lt;Actions></b> <i></i>
+   <h4>NewGanttRunMilestone</h4>
+   <s>Not attached to any event</s>
+</div>
+Adds new Run box with zero duration and type Milestone. There can be more milestones defined by Run in one cell.<br />
+<i>Since 10.0</i> it is not attached to OnDblClickGantt event, it is replaced by NewGanttMilestone.<br />
+
+<!-- Action NewGanttRunStop -->
+<a name="ActionsNewGanttRunStop"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NewGanttRunStop</h4>
+   <s>Not attached to any event</s>
+</div>
+Adds new Run box with zero duration and type Stop (not movable milestone). There can be more milestones defined by Run in one cell.<br />
+
+<!-- Action SplitGanttRun -->
+<a name="ActionsSplitGanttRun"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SplitGanttRun</h4>
+   <s>Attached to <b>OnShiftClickGantt</b> event</s>
+</div>
+Splits run box under mouse cursor on actual position to two boxes.<br />
+
+<!-----------------------------------------------------------------------  Formulas  ------------------------------------------------->
+<a name="Formulas"></a>
+<h2>Formulas</h2>
+
+<!-- ganttrunstart -->
+<a name="ganttrunstart"></a>
+<div class="ACT">
+   <u>new <b>6.2</b></u> <b>formula</b> <i>int</i>
+   <h4>ganttrunstart</h4> <s>(<i>string</i> <b>ganttcol</b>)</s>
+</div>
+Calculates start date (in milliseconds) of one Run.<br />
+<b>ganttcol</b> - column showing the Gantt chart, it should contain the <a href="#CGanttRun">Run</a> bars.<br />
+
+<!-- ganttrunend -->
+<a name="ganttrunend"></a>
+<div class="ACT">
+   <u>new <b>6.2</b></u> <b>formula</b> <i>int</i>
+   <h4>ganttrunend</h4> <s>(<i>string</i> <b>ganttcol</b>)</s>
+</div>
+Calculates end date (in milliseconds) of one Run.<br />
+<b>ganttcol</b> - column showing the Gantt chart, it should contain the <a href="#CGanttRun">Run</a> bars.<br />
+
+<!-- ganttrunduration -->
+<a name="ganttrunduration"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>formula</b> <i>int</i>
+   <h4>ganttrunduration</h4> <s>(<i>string</i> <b>ganttcol</b>)</s>
+</div>
+Calculates duration of the run, without empty spaces and start/end boxes.<br />
+Returns value in GanttDataUnits.<br />
+<b>ganttcol</b> - column showing the Gantt chart, it should contain the <a href="#CGanttRun">Run</a> bars.<br />
+
+</div>
+</body>
+</html>

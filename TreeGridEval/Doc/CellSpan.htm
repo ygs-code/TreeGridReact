@@ -1,0 +1,362 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Cell span</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Cell spanning</h1>
+<p class="H1">TreeGrid documentation</p>
+
+Cells in TreeGrid can be spanned horizontally among columns, vertically among rows or in both directions together.<br />
+<i>Since version 7.0</i> it is <u>not</u> possible to cross vertical and horizontal span, it is possible only to span rectangular areas.
+
+<!-----------------------------------------------------------------------  Horizontal spanning among columns ------------------------------------------------->
+<a name="ColSpan"></a>
+<h2>Horizontal spanning among columns</h2>
+
+Cells cannot be spanned between column sections (Left, Mid, Right).<br />
+It is possible to <b><u>drag</u></b> column into spanned range, the dropped column will get the span setting from the range.<br />
+It is possible to <b><u>drag</u></b> column outside spanned range, the dropped column will loose its col span and the cells become displayed.<br />
+It is possible to <b><u>drag</u></b> column inside the spanned range.<br />
+<strong>If you permit column moving between spanned columns, you should forbid saving the changes to cookies by <tt>&lt;Cfg ColsPosLap='1'/></tt>.</strong><br />
+<i>If grid contains any spanned cells between columns (<tt>&lt;I Spanned='1'/></tt>), the column moving is done by re-rendering whole grid.</i>
+
+<!-- Spanned -->
+<a name="ISpanned"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>bool</i>
+   <h4>Spanned</h4> <s>[0]</s>
+</div>
+If the <b>row</b> contains any horizontally spanned cells among columns (marked with <a href="#CellSpan">Span</a> attribute).<br />
+Every row that contains some spanned or merged cells among columns must have set <b>Spanned="1"</b>, otherwise the cell <a href="#CellSpan">Span</a>, <a href="#CellMerge">Merge</a> or <a href="#CellMergeEdit">MergeEdit</a> attributes will be ignored.
+
+<!-- Span -->
+<a name="CellSpan"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;I cell></b> <i>int</i>
+   <h4>Span </h4> <s>[0]</s>
+</div>
+<i>The name is <u>not</u> ColSpan, but Span only!</i><br />
+For horizontally spanned cell among columns, how many cells it covers, at least one. Including hidden columns.<br />
+<strong>The row with spanned cell must have set <tt><u>Spanned</u>='1'</tt>, otherwise the attribute is ignored.</strong><br />
+In the whole spanned cell is shown value of this column. It can be changed by <a href="#CellMerge">Merge</a> attribute.
+
+<!-- Merge -->
+<a name="CellMerge"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;I cell></b> <i>string[]</i>
+   <h4>Merge</h4> <s></s>
+</div>
+To show more or other values in one cell. A comma separated list of column names to show in the cell.<br />
+<strong>The row with merged cell must have set <tt><u>Spanned='1'</u></tt>, otherwise the attribute is ignored.</strong><br />
+The cell will show values from all the row cells from the columns listed. The way of showing is specified by <a href="#CellMergeType">MergeFormat</a> and <a href="#CellMergeType">MergeType</a>.<br />
+<i>The attribute is intended to show more values in spanned cell, but can be used also for display other or more values in any cell.</i><br />
+<i>This attribute is ignored in export to Excel.</i>
+
+<!-- MergeFormat -->
+<a name="CellMergeFormat"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;I cell></b> <i>string</i>
+   <h4>MergeFormat</h4> <s></s>
+</div>
+If set, it specifies full HTML for display the merged values. The column names are replaced by the cell values.<br />
+If <u>not</u> set, the cell values are merged in &lt;table> according to the <b>1.</b> bit of <a href="#CellMergeType">MergeType</a>.<br />
+For example "Path/Name.Ext" can be used for file path, where Path, Name and Ext are column names.
+
+<!-- MergeFormatXXX -->
+<a name="CellMergeFormatXXX"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;I cell></b> <i>string</i>
+   <h4>MergeFormatXXX</h4> <s></s>
+</div>
+Special MergeFormats used for particular Merge columns combination when some of the cells are empty.<br />
+Can be used to better specify what will be excluded from format instead of <a href="#CellMergeType">MergeType</a>='4'.<br />
+The XXX are column names that are not empty for this row in the same order as in <a href="#CellMerge">Merge</a>.<br />
+For example for Merge='Path/Name.Ext' can be MergeFormatNameExt used when Path is empty.
+
+<!-- MergeFormatEmpty -->
+<a name="CellMergeFormatEmpty "></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;I cell></b> <i>string</i>
+   <h4>MergeFormatEmpty</h4> <s></s>
+</div>
+MergeFormat use when all merged cells are empty.
+
+<!-- MergeEditFormat -->
+<a name="CellMergeEditFormat"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;I cell></b> <i>string</i>
+   <h4>MergeEditFormat</h4> <s></s>
+</div>
+MergeFormat used for editing. Set it especially when <a href="#CellMergeFormat">MergeFormat</a> contains HTML code. If not set, the <a href="#CellMergeFormat">MergeFormat</a> is used instead.
+
+<!-- MergeEditFormatXXX -->
+<a name="CellMergeEditFormatXXX"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;I cell></b> <i>string</i>
+   <h4>MergeEditFormatXXX</h4> <s></s>
+</div>
+Special MergeEditFormats used for particular Merge columns combination when some of the cells are empty.<br />
+Can be used to better specify what will be excluded from format instead of <a href="#CellMergeType">MergeType</a>='4'.<br />
+The XXX are column names that are not empty for this row in the same order as in <a href="#CellMerge">Merge</a>.<br />
+For example for Merge='Path/Name.Ext' can be MergeEditFormatNameExt used when Path is empty.
+
+<!-- MergeEditFormatEmpty -->
+<a name="CellMergeEditFormatEmpty"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;I cell></b> <i>string</i>
+   <h4>MergeEditFormatEmpty</h4> <s></s>
+</div>
+MergeEditFormat use when all merged cells are empty.
+
+<!-- OnMergeChanged -->
+<a name="OnMergeChanged"></a>
+<div class="API">
+   <u>new <b>6.4</b></u> <b>API event</b> <i>void</i>
+   <h4>OnMergeChanged</h4> <s>(<i>TGrid </i><b>grid</b><i>, TRow </i><b>row</b><i>, string </i><b>col</b><i>, string </i><b>val</b><i>, string[] </i><b>result</b>)</s>
+</div>
+Called after the cell with <a href="#CellMergeFormat">MergeFormat</a> is edited. The val is the edited string, the result is default parsed val into array of cell values.<br />
+The order in result is the same as in <a href="#CellMergeEditFormat">MergeEditFormat</a>.<br />
+Fill the result with new values if the value needs special parsing. <i>Remember, the result has already filled its items.</i><br />
+<br />
+
+For example, to parse file path in order Path, Name, Ext use such handler:<br />
+<tt>
+Grids.OnMergeChanged = function(G,row,col,val,res){<br />
+var idx = val.lastIndexOf("/");<br />
+if(idx>=0){ res[0] = val.slice(0,idx); val = val.slice(idx+1); } else res[0] = "";<br />
+var idx = val.lastIndexOf(".");<br />
+if(idx>=0) { res[1] = val.slice(0,idx); res[2] = val.slice(idx+1); } else { res[1] = val; res[2] = ""; }<br />
+}
+</tt>
+
+<!-- MergeEdit -->
+<a name="CellMergeEdit"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;I cell></b> <i>string</i>
+   <h4>MergeEdit</h4> <s></s>
+</div>
+Used only without <a href="#CellMergeFormat">MergeFormat</a> set. Specifies the one cell value that can be edited in merged cell. Only one value in merged cell can be edited without MergeFormat.<br />
+It is a column name. This column should be listed in <a href="#CellMerge">Merge</a> array.<br />
+<strong>The row with merged cell must have set <tt><u>Spanned</u>='1'</tt>, otherwise the attribute is ignored.</strong>
+
+<!-- MergeType -->
+<a name="CellMergeType"></a>
+<div class="XML">
+   <u><i>upd <b>6.4</b></i></u> <b>&lt;I cell></b> <i>int</i>
+   <h4>MergeType</h4> <s>[0]</s>
+</div>
+Various flags for merging cells, bit array.<br />
+<b>1.</b> bit (<b>&1</b>) <b>0</b> - (only without <a href="#CellMergeFormat">MergeFormat</a>) merged cells are displayed in one line (horizontally), <b>1</b> - merged cells are displayed in more lines (vertically)<br />
+<b>2.</b> bit (<b>&2</b>) <b>0</b> - if column is hidden, its cell value is removed too, <b>1</b> - all merged cell values are always visible regardless of column visibility.  See <a href="#CfgFastMerge">FastMerge</a>.<br />
+<b>3.</b> bit (<b>&4</b>) <b>1</b> - (only for <a href="#CellMergeFormat">MergeFormat</a>) remove separated part after empty value (for the last column before empty value).
+
+<!-- FastMerge -->
+<a name="CfgFastMerge"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>FastMerge</h4> <s>[1]</s>
+</div>
+If set to <b>1</b>, ignores <a href="#CellMergeType">MergeType</a><b>&2</b> (takes it as <b>1</b>) for all cells when showing / hiding column.<br /> 
+It is faster, because the merged cells do not need to be refreshed.
+
+<!-- SortSpan -->
+<a name="ISortSpan"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>bool</i>
+   <h4>SortSpan</h4> <s>[0]</s>
+</div>
+Controls sorting in <a href="#ISpanned">Spanned</a> row.<br />
+By default, the grid sorts spanned rows always according to value in sorted column, even if this is invisible due spanning.<br /> 
+You can set values in these columns for spanned rows to support sorting in the way you want.<br />
+Or you can set <b>SortSpan</b> = '1' and row will be sorted always according to spanned column's value.
+
+<!-- LeftHtml -->
+<a name="ILeftHtml"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>LeftHtml</h4> <s></s>
+</div>
+You can span the whole left column section and show here any HTML code.<br />
+All cell values in the section will be ignored.
+
+<!-- MidHtml -->
+<a name="IMidHtml"></a>
+<div class="XML">
+   <u>new <b>6.0</b> chg <b>7.0</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>MidHtml</h4> <s></s>
+</div>
+You can span the whole variable column section and show here any HTML code.<br />
+All cell values in the section will be ignored.<br />
+<i>(Version 7.0)</i> For cell paging it is shown only on the first column page, on the next ones is shown MidHtml2.
+
+<!-- MidHtml2 -->
+<a name="IMidHtml2"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>MidHtml2</h4> <s></s>
+</div>
+For ColPaging the user section is spanned only through the one page, this value is shown on the second and next column pages in the middle section.
+
+<!-- RightHtml -->
+<a name="IRightHtml"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>RightHtml</h4> <s></s>
+</div>
+You can span the whole right column section and show here any HTML code.<br />
+All cell values in the section will be ignored.
+
+<!-- SpannedTree -->
+<a name="CfgSpannedTree"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SpannedTree</h4> <s>[0]</s>
+</div>
+Set to <b>1</b> if some <b>MainCol</b> cell is spanned between columns (has set <b>Span</b> attribute).<br />
+If set to <b>1</b>, it shows tree icons in included &lt;table> tag and slows down rendering.<br />
+Cannot be used when the main column cells have set <a href="#CellRowSpan">RowSpan</a>.
+
+<!-- Block -->
+<a name="CBlock"></a>
+<div class="XML">
+   <u>renamed <b>9.2</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>Block</h4> <s>[0]</s>
+</div>
+Controls moving column, it is useful especially if there are some cells spanned to or from other columns.<br />
+If set to > 0, it is the block the column belongs to. Create blocks that contain the spanned cells. The blocks must be continuous.<br />
+The columns can be moved only inside its block and any other column cannot be moved into the block from outside.<br />
+The first (left) column in the block cannot be moved within the block and also must stay the first.<br />
+The whole block can be moved by dragging the first left column to another location.<br />
+It also preserves splitting block of columns to more pages when printing and for column paging.<br />
+<i>Since 9.2 it was renamed from <b>Group</b>.</i>
+
+<!---------------------------------------------------------  Vertical spanning among rows ------------------------------------------------->
+<a name="RowSpan"></a>
+<h2>Vertical spanning among rows</h2>
+
+<strong><u>IE8 strict</u> mode has problems with rowSpan HTML attribute, so when using RowSpan switch IE8 to quirks mode (no !DOCTYPE) or to IE7 compatibility mode.</strong><br />
+<i>The functions problematic in IE8 strict mode and RowSpan: column with both RowSpan and Span - hide, show and move. Row with RowSpan - add, delete, move. Sort, filter and group are <u>without</u> problems.</i><br />
+<br />
+
+In <u><b>tree</b></u> are all rows' children spanned according to its parent row. The last row's children are or are not included in range, according to the RowSpan is integer or not.<br />
+Cells are never spanned vertically among <u><b>pages</b></u>, the created page is always as high as to accommodate all spanned rows. <i>In <b>server paging</b> you must ensure it by yourself.</i><br />
+Spanned rows are <u><b>sorted</b></u> and <u><b>grouped</b></u> together, their position within spanned range is always preserved.<br />
+It is possible to <u><b>drag</b></u> or <u><b>add</b></u> row into spanned range, the dropped row will get the span setting from the range.<br />
+It is possible to <u><b>drag</b></u> row outside spanned range, the dropped row will loose its row span and the cells become displayed.<br />
+It is possible to <u><b>delete</b></u> row from range, when deleted the first row (with RowSpan set), the range is split and the cells become visible, the row deleting will happen after uploading to server.<br />
+It is possible to <u><b>drag</b></u> whole spanned range by dragging the first row in range, when moved to another spanned range, the original spanned range is split.<br />
+It is possible to <u><b>drag</b></u> row inside the spanned range, only the first row (with RowSpan set) will stay always the first row in the range.<br />
+<i>The row spanning was updated in version 7.0, in 6.x version it had various limitations and could broke layout in various cases.</i>
+
+<!-- Spanned -->
+<a name="CSpanned"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>Spanned</h4> <s>[0]</s>
+</div>
+If the <b>column</b> contains any vertically spanned cells among rows (marked with <a href="#CellRowSpan">RowSpan</a> attribute).<br />
+Every column that contains some spanned cells among rows must have set <b>Spanned</b>="1", otherwise the cell <a href="#CellRowSpan">RowSpan</a> attribute will be ignored.
+
+<!-- RowSpan -->
+<a name="CellRowSpan"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>7.0</b></i></u> <b>&lt;I cell></b> <i>int</i>
+   <h4>RowSpan</h4> <s>[0]</s>
+</div>
+For vertically spanned cell among rows, how many cells it covers, at least one. Including hidden rows.<br />
+In tree it is a count of rows on the same level as this row. All their children are spanned automatically.<br />
+<i>(New in 7.0)</i> The last row's children are spanned within range when added 0.5 to the RowSpan, e.g. RowSpan='3.5' means span for three row and also the last row's children. The 0.5 cannot be used in <a href="Tree.htm#CfgReversedTree">ReversedTree</a>.<br />
+<strong>The column with spanned cell must have set <tt><u>Spanned</u>='1'</tt>, otherwise the attribute is ignored.</strong>
+
+<!---------------------------------------------------------  Dynamic spanning ------------------------------------------------->
+<a name="Dynamic"></a>
+<h2>Dynamic spanning</h2>
+
+The cells in grid can be spanned dynamically by a user. He can select the cells by mouse dragging or shift/ctrl + click and click to <b>Join</b> button on toolbar. The spanned cells can be similarly split by selecting them and clicking to <b>Split</b> button on toolbar. The actions for spanning / splitting can be attached also to any other event like right/middle button click or popup menu item action.<br />
+The changes can be also uploaded to server, see <tt>Upload_Type="Span"</tt> and <tt>Upload_Flags="Spanned"</tt><br />
+<i>Only variable rows can be dynamically spanned.</i>
+
+<!-- DynamicSpan -->
+<a name="CfgDynamicSpan"></a>
+<div class="XML">
+   <u>new <b>7.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>DynamicSpan</h4> <s>[0]</s>
+</div>
+Set it to <b>1</b> to show icons for spanning on Toolbar and also prepare grid for spanning when no cell in grid is spanned on start.<br />
+When set to <b>1</b>, it also saves changes in span and column moving to Undo.<br />
+<i>Since 12.0</i> if set to <b>2</b>, it also sets <a href="#ISpanned">Spanned</a> = 1 to all default rows and columns.<br />
+To permit selecting cells or cell ranges set <tt>&lt;Cfg <a href="RowSelect.htm#CfgSelectingCells">SelectingCells</a>='1'/></tt>.<br />
+By default cells can be selected by Ctrl + mouse drag. To swap the action with dragging rows, set <tt>&lt;Actions <b>OnDragCell</b>="SelectCells" <b>OnCtrlDragCell</b>="DragRow"/></tt>.<br />
+To clear selection on click set <tt>&lt;Actions <b>OnClickCell</b>="ClearSelection,FocusEdit" <b>OnClickOutside</b>="ClearSelection,Blur"/></tt>.
+
+<!-- SpanSelected -->
+<a name="ActionSpanSelected"></a>
+<div class="ACT">
+   <u>new <b>7.0</b> chg <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SpanSelected <i>...F</i></h4> <s>Attached to <b>OnClickButtonJoin</b> event</s>
+</div>
+Spans selected cells into one cell spanned horizontally and / or vertically.<br />
+If the selected cells are not in one rectangle, it creates more rectangles from the selection and spans one by one.<br />
+If there were already some cells spanned and interfered with the ranges, they are cut and split.<br />
+Fails if there is no selected cell. <i>Since 12.0</i> version without ...F fails if the actual cell is not selected.<br />
+
+<!-- SplitSelected -->
+<a name="ActionSplitSelected"></a>
+<div class="ACT">
+   <u>new <b>7.0</b> chg <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SplitSelected <i>...F</i></h4> <s>Attached to <b>OnClickButtonSplit</b> event</s>
+</div>
+Splits all spanned cells within selected range(s).<br />
+Fails if there is no selected cell. <i>Since 12.0</i> version without ...F fails if the actual cell is not selected.<br />
+
+<!-- SpanCells -->
+<a name="ActionSpanCells"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SpanCells <i>...F</i></h4> <s>Not attached to any event</s>
+</div>
+Spans focused cell range into one cell spanned horizontally and / or vertically.<br />
+Fails if there is no focused range. Version without ...F fails if the actual cell is not focused.<br />
+
+<!-- SplitCells -->
+<a name="ActionSplitCells"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SplitCells <i>...F</i></h4> <s>Not attached to any event</s>
+</div>
+Splits all spanned cells within focused range.<br />
+Fails if there is no focused range. Version without ...F fails if the actual cell is not focused.<br />
+
+<!-- SplitCell ...F -->
+<a name="ActionSplitCell"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SplitCell ...F</h4> <s>Attached to <b>OnClickButtonSplit</b> event</s>
+</div>
+Splits spanned actual or focused cell.<br />
+Fails if the cell is not spanned.
+
+<!-- SpanRange -->
+<a name="SpanRange"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>void</i>
+   <h4>SpanRange</h4> <s>(<i>TRow </i><b>row1</b><i>, string </i><b>col1</b><i>, TRow </i><b>row2</b><i>, string </i><b>col2</b>)</s>
+</div>
+Spans the range into one cell with value from cell [<b>row1</b>,<b>col1</b>].<br />
+<i>The [<b>row1</b>,<b>col1</b>] must be the upper left corner.</i>
+
+<!-- SplitSpanned -->
+<a name="SplitSpanned"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>void</i>
+   <h4>SplitSpanned</h4> <s>(<i>TRow </i><b>row</b><i>, string </i><b>col</b>)</s>
+</div>
+Splits the spanned cell. The <b>row</b>, <b>col</b> can be any cell within the rectangle to split.
+
+</div>
+</body>
+</html>

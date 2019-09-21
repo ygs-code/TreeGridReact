@@ -1,0 +1,191 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Column visibility</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Column visibility</h1>
+<p>TreeGrid documentation</p>
+
+<!-- Visible -->
+<a name="CVisible"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>bool</i>
+   <h4>Visible</h4> <s>[1] <i>Saved to cookies, avoid it by <tt>&lt;C VisibleLap='1'/></tt></i></s>
+</div>
+If the column is displayed in grid.<br />
+Hidden column can be shown by a user from columns menu or by action - depending on <a href="#CCanHide">CanHide</a> settings.<br />
+
+<!-- CanHide -->
+<a name="CCanHide"></a>
+<div class="XML">
+   <u><i>upd <b>8.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>CanHide</h4> <s>[1]</s>
+</div>
+If the column can be hidden or shown by a user action.<br />
+It controls also if the column is displayed in <a href="#MenuColumns">Columns visibility menu</a>.<br /> 
+If set to <b>0</b>, the column can be shown or hidden by API <a href="#ShowCol">ShowCol</a> / <a href="#HideCol">HideCol</a> only. 
+   If the column has <tt>Visible='0'</tt> and is in Sort, it cannot be removed from the Sort.<br />
+If set to <b>1</b>, the column can be shown or hidden also by actions like <a href="#ActionsShowCol">ShowCol</a> / <a href="#ActionsHideCol">HideCol</a> and from <a href="#MenuColumns">Columns visibility menu</a>.<br />
+If set to <b>2</b>, <i>(since 8.0)</i> the column can be shown or hidden by API <a href="#ShowCol">ShowCol</a> / <a href="#HideCol">HideCol</a> only, but its sort behavior is normal. Use for child columns in tree.<br />
+You can also use <tt><b>CanHide</b>=<b>0</b></tt> and <tt><a href="#CVisible">Visible</a>=<b>0</b></tt> to define always hidden column to store any custom data or to predefine sorting behavior - see <a href="Sort.htm#CfgSort">Sort</a> attribute.<br />
+
+<!-- FastColumns -->
+<a name="CfgFastColumns"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>FastColumns</h4> <s>[1]</s>
+</div>
+If column hiding is done by setting its width to 0px. This action is faster than removing the cells and speeds up also showing the column.<br />
+The column is hidden correctly, but it is still present in HTML and is <u>not</u> removed either on re-render.<br />
+If the column is shown for first time (it was not displayed on first render, had set <tt>&lt;C Visible='0'/></tt>), it is still slow.<br />
+
+<!-- Hidden -->
+<a name="CHidden"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>Hidden</h4> <s>[0]</s>
+</div>
+<tt>Hidden='<b>1</b>'</tt> has sense only for <tt><a href="#CVisible">Visible</a>='<b>0</b>'</tt> and <tt>&lt;Cfg <a href="#CfgFastColumns">FastColumns</a> ='<b>1</b>'/></tt>. On start or re-render this column will be rendered as hidden (width 0px).<br /> 
+It slows down rendering grid (the column is rendered) but speeds up showing column (it is just resized).<br /> 
+Set it to 1 if you expect the column will be shown later to speed it up.<br />
+
+<!-- Visible -->
+<a name="SpaceCellVisible"></a>
+<div class="XML">
+   <u></u> <b>&lt;Space cell></b> <i>bool</i>
+   <h4>Visible</h4> <s>[1]</s>
+</div>
+Space cells are independent on columns and can be shown or hidden by its cell attribute Visible.<br />
+If the space cell is not visible, it is not displayed at all (it is displayed with zero width).<br />
+<i>Remember, this attribute can be also calculated (colVisibleFormula), so you can show or hide the space cells dynamically by the formula.</i><br />
+
+<!-- Visible -->
+<a name="CellVisible"></a>
+<div class="XML">
+   <u></u> <b>&lt;I cell></b> <i>int</i>
+   <h4>Visible</h4> <s>[1]</s>
+</div>
+The normal (not Space) cells <u>cannot</u> be hidden completely, they will have always the width of its column.<br />
+If set <b>Visible</b> attribute to <b>0</b>, the cell content is not displayed - the cell is shown empty, but its left / right button <u>is</u> visible.<br />
+If set <b>Visible</b> attribute to <b>-1</b>, the cell content is shown empty and also its left / right side button is not displayed.<br />
+
+<!-- ShowCol -->
+<a name="ShowCol"></a>
+<div class="API">
+   <u><i>upd <b>7.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>ShowCol</h4>
+   <s>(<i>string</i> <b>col</b>)</s>
+</div>
+Displays hidden column col in grid. If the column is already shown or does not exist, does nothing.<br />
+<i>If the column is displayed for first time (it was hidden by XML <tt>&lt;C Visible='0'/></tt> or is set <tt>&lt;Cfg FastColumns='0'/></tt> the displaying of the column can be slow.</i><br />
+<i>Since 7.0 it never does Render.</i><br />
+
+<!-- HideCol -->
+<a name="HideCol"></a>
+<div class="API">
+   <u><i>upd <b>7.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>HideCol</h4>
+   <s>(<i>string</i> <b>col</b>)</s>
+</div>
+Hides visible column col. If the column is already hidden or does not exist, does nothing.<br />
+<i>Since 7.0 it never does Render.</i><br />
+
+<!-- ChangeColsVisibility -->
+<a name="ChangeColsVisibility"></a>
+<div class="API">
+   <u>chg <b>7.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ChangeColsVisibility</h4>
+   <s>(<i>string[ ]</i> <b>Show</b>, <i>string[ ]</i> <b>Hide</b>, <i>bool</i> <b>prefer</b> = 0)</s>
+</div>
+Changes visibility of given columns.<br />
+<b>Show</b> - an array of column names to show<br />
+<b>Hide</b> - array of column names to hide<br />
+If column is present in both arrays, it will be shown for <tt><b>prefer</b> = 0</tt> or hidden for <tt><b>prefer</b> = 1</tt>.<br />
+<i>Since 7.0 it never require Render and always returns null.</i><br />
+
+<!-- OnColShow -->
+<a name="OnColShow"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnColShow</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>hide</b>)</s>
+</div>
+Called when the column will be shown (<b>hide</b> = 0) or hidden (<b>hide</b> = 1).<br />
+Return true to suppress the action.
+
+<!-- Action HideCol -->
+<a name="ActionsHideCol"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>HideCol <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Hides actual or focused column.<br />
+
+<!-- Action HideCols -->
+<a name="ActionsHideCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>HideCols <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Hides focused columns. Version without ...F fails if the actual cell is not focused.<br />
+
+<!-- Action HideSelectedCols -->
+<a name="ActionsHideSelectedCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>HideSelectedCols <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Hides selected columns. Version without ...F fails if the actual column is not selected.<br />
+
+<!-- Action ShowColLeft -->
+<a name="ActionsShowColLeft"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowColLeft <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Shows hidden column on left side from actual or focused cell.<br />
+
+<!-- Action ShowColRight -->
+<a name="ActionsShowColRight"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowColRight <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Shows hidden column on right side from actual or focused cell.<br />
+
+<!-- Action ShowCols -->
+<a name="ActionsShowCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowCols <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Shows all hidden columns in focused range. Version without ...F fails if the actual cell is not focused.<br />
+
+<!-- Action ShowAllCols -->
+<a name="ActionsShowAllCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowAllCols</h4>
+   <s>Not assigned to any event</s>
+</div>
+Shows all hidden columns in grid.<br />
+
+<!----------------------------------------------------------------------  Columns visibility menu -------------------------------------------------->
+<a name="MenuColumns"></a>
+<h3>Columns visibility menu</h3>
+Visible columns can be chosen in configuration menu, in <b>Columns visibility</b> menu or in <b>TreeGrid options</b> menu.<br />
+For more information see <a href="GlobalSettings.htm#CfgMenu">Configuration menu</a>.<br />
+
+</div>
+</body>	
+</html>

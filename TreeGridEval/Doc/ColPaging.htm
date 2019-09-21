@@ -1,0 +1,271 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Column paging</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Paging columns</h1>
+<p>TreeGrid documentation</p>
+
+TreeGrid can automatically split <u>middle</u> columns to pages and displays them only on demand - when the page becomes visible due scroll.<br /><br />
+
+<!-- ColPaging -->
+<a name="CfgColPaging"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ColPaging</h4> <s>[0]</s>
+</div>
+Method of column paging used.<br /><br />
+<table><tr><td style="width:50px;"><b style="color:blue;">0</b></td><td><i><b>No paging</b></i></td></tr></table>
+All columns are in one page. All columns are rendered on start. This means slow start and fast use.<br />
+It is good for small grids, up to about 30 columns.<br /><br />
+
+<table><tr><td style="width:50px;"><b style="color:blue;">1</b></td><td><i><b>Show all</b></i></td></tr></table>
+Column pages are automatically created, but all are rendered on start.<br /> 
+It is good for medium grids, 30 - 100 columns, to let users to easy navigate between parts in grid.<br />
+<i>It can be used also to avoid browser "Slow script" message when rendering too many rows without paging.</i><br /><br />
+
+<table><tr><td style="width:50px;"><b style="color:blue;">2</b></td><td><i><b>Client paging</b></i> &nbsp; &nbsp; (auto - fully done by TreeGrid)</td></tr></table>
+Column pages are automatically created.<br />
+The column page is rendered only when it is visible in window by scrolling.<br />
+It is good for large grids with more than 100 columns. All functions still work offline, include sorting, filtering, grouping, searching and calculations.<br />
+<i>The client paging does <u>not</u> require any server side support.</i><br />
+
+<!-- ColPagingFixed -->
+<a name="CfgColPagingFixed"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ColPagingFixed</h4> <s>[1]</s>
+</div>
+If set to <b>0</b> (and set <tt><a href="#CfgColPaging">ColPaging</a>>0</tt>), it will page only variable body rows, not fixed rows.<br />
+Usable especially for spanned header or other fixed rows among column pages.<br />
+<i>If the columns are not paged in IE8 there is a limit for number of columns <b>500</b> when WidthPad is set and up to <b>1000</b> without WidthPad set.</i><br />
+
+<!-- ColPageMin -->
+<a name="CfgColPageMin"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ColPageMin</h4> <s>[10]</s>
+</div>
+Count of column in the first (left) page.<br />
+This page is rendered always on start, so it is displayed immediately with grid.<br />
+It can be set to 0 to not render any column on start.<br />
+
+<!-- ColPageLength -->
+<a name="CfgColPageLength"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ColPageLength</h4> <s>[10]</s>
+</div>
+Count of columns per page, except the first one and the last one.<br />
+Exact count of columns in page can differ due to adding or deleting columns.<br />
+Every page must contain at least one column otherwise it is deleted.<br />
+
+<!-- PageTime -->
+<a name="CfgPageTime"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PageTime</h4> <s>[200]</s>
+</div>
+How long (in ms) must be page visible (by scroll) before it renders.<br />
+
+<!-- MaxColPages -->
+<a name="CfgMaxColPages"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MaxColPages</h4> <s>[20]</s>
+</div>
+Maximum rendered column pages in grid, only for <tt><a href="#CfgColPaging">ColPaging</a> = '2'</tt>.<br />
+When grid contains more rendered pages, the pages longer not accessed are cleared (only in HTML, pages data are <u>not</u> affected).<br />
+Used to <u>not</u> slow down the browser when too many HTML tags are displayed.<br />
+For large pages you can lower this value.<br />
+The actually displayed pages are never cleared.<br />
+Set it to <b>0</b> to disable clearing pages.<br />
+
+<!-- RemoveUnusedPages -->
+<a name="CfgRemoveUnusedPages"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RemoveUnusedPages</h4> <s>[2]</s>
+</div>
+If set to <b>0</b>, it never removes unused root pages, child pages/parts and column pages.<br />
+If set to <b>2</b>, it removes unused pages due <a href="Paging.htm#CfgMaxPages">MaxPages</a>, <a href="TreePaging.htm#CfgMaxChildParts">MaxChildParts</a> and <a href="ColPaging.htm#CfgMaxColPages">MaxColPages</a>.<br />
+If set to <b>3</b>, it removes also data of unused root pages or child pages.<br />
+It removes only page or child page that does not contain changed rows.<br />
+
+<!-- Width -->
+<a name="CWidth"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>int</i>
+   <h4>Width</h4> <s><i>Saved to cookies, avoid it by <tt>&lt;C WidthLap='1'/></tt></i></s>
+</div>
+Column width in pixels. It is outer width including all side buttons, cell border and padding.<br />
+<i>Set it when there are many columns in grid to speed up grid loading.</i><br />
+
+<!-- Prepared -->
+<a name="CPrepared"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>Prepared</h4> <s></s>
+</div>
+If all row values in this column are prepared and do not need to be updated on start.<br />
+<i>Use it when the grid has many rows to speed up grid loading.</i><br />
+The preparing values does these things:<br />
+<div class="L1">
+- <b>Date</b> type cell values set as strings are converted to numbers as count of milliseconds since 1/1/1970.<br />
+- <b>Int</b> and <b>Float</b> types empty values are converted to zero if set CanEmpty.<br />
+- <b>Select</b> type is converted to <tt>Button='Defaults'</tt><br />
+- For <b>Calculated rows</b> without <b>CalcOrder</b> is the CalcOrder created from all (not Prepared) columns with Formula attribute.<br />
+</div>
+You can set <tt>Prepared='1'</tt> for columns that does not contain Date, Int, Float and Select types or the Date are set as numbers or the Float and Int are not source of calculations.<br />
+
+<!------------------------------------------------  Auto column paging  ------------------------------------------------------------>
+<a name="Auto"></a>
+<h2>Auto adding column pages</h2>
+<p>Automatic adding new column pages on scroll</p>
+
+<!-- AutoColPages -->
+<a name="CfgAutoColPages"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>AutoColPages</h4> <s>[0]</s>
+</div>
+If set, adds new column pages to the end of grid when it is scrolled right to the end of grid.<br />
+The columns gets their <a href="ColBasics.htm#CDef">Def</a> = "Auto".<br />
+To use it, must be set also <a href="#CfgColPaging">ColPaging</a> to 1 or 2.<br />
+Printed, exported and uploaded are columns to last not empty column, see <a href="CellEdit.htm#GetLastDataCol">GetLastDataCol</a> API method.<br />
+
+<!-- RemoveAutoColPages -->
+<a name="CfgRemoveAutoColPages"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RemoveAutoColPages</h4> <s>[0]</s>
+</div>
+If the empty added column pages will be automatically removed when the grid is scrolled up.<br />
+<b>0</b> - never<br />
+<b>1</b> - yes, the removed pages will be placed to <a href="#RemovedColPages">RemovedColPages</a> and will be recreated from this stack. Useful to preserve the names of the new columns and for <b>Undo</b>.<br />
+<b>2</b> - yes, the removed pages will be thrown out.<br>
+The page is removed only if cells in all columns on the page and on all next pages are empty (values and <a href="CellEdit.htm#CfgEditAttrs">EditAttrs</a>).<br />
+
+<!-- OnColPageAdded -->
+<a name="OnColPageAdded"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnColPageAdded</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>pos</b>)</s>
+</div>
+Called after new column page is added due <a href="#CfgAutoColPages">AutoPages</a>.<br />
+<b>pos</b> is column page index in <a href="ColAPI.htm#ColNames">ColNames</a>.<br />
+
+<!-- OnRemoveAutoColPage -->
+<a name="OnRemoveAutoColPage"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnRemoveAutoColPage</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>string[]</i> <b>cols</b>)</s>
+</div>
+Called before removing given column page due <a href="#CfgRemoveAutoColPages">RemoveAutoColPages</a>.<br />
+The cols is an array contains column names on the page.<br />
+Return true to not remove this page and any of the previous pages.<br />
+
+<!-- RemovedColPages -->
+<a name="RemovedColPages"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API variable</b> <i>string[][]</i>
+   <h4>RemovedColPages</h4> <s></s>
+</div>
+The removed pages due <a href="#CfgRemoveAutoColPages">RemoveAutoColPages</a>.<br />
+Can be set to null, to permanently remove these pages.<br />
+It is two dimensional array, the first dimension are the pages and they contain the column names. <i>The order of the pages is backward!</i><br />
+The columns can be iterated in such loop: <tt>for(var P=grid.RemovedColPages,i=P?P.length-1:-1;i>=0;i--) for(var j=0;j&lt;P[i].length;j++){ var col = P[i][j]; ... }</tt>
+
+<!-- AddAutoColPages -->
+<a name="AddAutoColPages"></a>
+<div class="API">
+   <u>new <b>13.2</b></u> <b>API method</b> <i>void</i>
+   <h4>AddAutoColPages</h4> <s>()</s>
+</div>
+Adds one new column page. The page should be immediately shown otherwise it is later deleted.
+
+<!---------------------------------------------------  API  ------------------------------------------------------------>
+<a name="API"></a>
+<h2>API</h2>
+
+
+<!-- OnRenderColPageStart -->
+<a name="OnRenderColPageStart"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderColPageStart</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>sec</b>)</s>
+</div>
+Called before rendering of the column page.<br />
+The sec is the section index to <b>ColNames</b></b>.<br />
+
+<!-- OnRenderColPageFinish -->
+<a name="OnRenderColPageFinish"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderColPageFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>sec</b>)</s>
+</div>
+Called the column page is fully rendered and ready.<br />
+The sec is the section index to <b>ColNames</b>.<br />
+
+<!-- AddColPage -->
+<a name="AddColPage"></a>
+<div class="API">
+   <u>new <b>7.0</b> <i>upd <b>11.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>AddColPage</h4>
+   <s>(<i>string[]</i> <b>names</b>, <i>string</i> <b>def</b> = "C", <i>bool</i> <b>updatefixed</b> = 1)</s>
+</div>
+Adds new column page to the end of variable columns.<br /> 
+<b>names</b> is list of the column names to add. It can be also number as count of the columns to add.<br />
+<div class="L1">
+<i>(since 11.0.)</i> the individual <b>names</b> item can be object instead of string, with defined column attributes, it must have set at least <b>Name</b> attribute.<br />
+e.g. <tt>AddColPage(["Col1",{Name:"Col2",CanEdit:0},"Col3",{Name:"Col4",Def:"Special"}]);</tt><br />
+</div>
+<b>def</b> is name of default column to use for all the columns to fill their attributes.<br />
+<b>updatefixed</b> <i>(since 11.0)</i> if fixed rows will be refreshed (for <tt><a href="#CfgColPagingFixed">ColPagingFixed</a>=0</tt>). Set it to <b>0</b> in all calls except the last one to speed up the function when adding more column pages at once.<br />
+After the method finishes, the columns are not displayed yet, so they can be changed or the row values in the columns can be filled directly.<br />
+
+<!-- RemoveColPage -->
+<a name="RemoveColPage"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API method</b> <i>void</i>
+   <h4>RemoveColPage</h4>
+   <s>(<i>int</i> <b>section</b>, <i>int</i> <b>count</b> = 1)</s>
+</div>
+Removes given column page and deletes all its column from data.<br />
+<b>section</b> is column section number as in <a href="ColAPI.htm#ColNames">ColNames</a>.<br />
+The fixes column page (<tt>section = 0</tt> and <tt>section = ColNames.length-1</tt>) cannot be removed.<br />
+The <b>count</b> can be set to remove more adjacent pages at once.<br />
+
+<!-- ShowColPages -->
+<a name="ShowColPages"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ShowColPages</h4>
+   <s>( )</s>
+</div>
+Starts loading and rendering displayed column pages. Asynchronous.<br />
+Call this method if pages are not rendered automatically when you do some unusual changes in grid.<br />
+
+<!-- CreateColPages -->
+<a name="CreateColPages"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>void</i>
+   <h4>CreateColPages</h4>
+   <s>( )</s>
+</div>
+Re-creates the column pages, re-places the columns to the column pages.<br />
+You can call it after adding many new not displayed columns.<br />
+You must call <a href="Create.htm#Render">Render</a> / <a href="Create.htm#Rerender">Rerender</a> method after calling the CreateColPages.<br />
+For example how to add many columns to already rendered grid fast:<br />
+<tt>for(var i=0;i&lt;500;i++) G.AddCol('c'+i,1,null,{Width:50,Type:'Html'}).Visible = 1;</tt><br />
+<tt>G.CreateColPages(); G.Rerender();</tt><br />
+
+</div>
+</body>	
+</html>

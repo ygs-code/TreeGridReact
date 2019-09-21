@@ -1,0 +1,410 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Gantt summary</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Gantt summary tasks</h1>
+<p>TreeGrid documentation</p>
+
+<!-----------------------------------------------------------------------  Main bar as summary of child Main bars ------------------------------------------------->
+<a name="MainMain"></a>
+<h2>Main bar as summary of child Main bars</h2>
+
+Summary tasks are group of tasks and their start, end and duration is summary of its children. Summary bar can be continuous or discrete, see <a href="#ganttparts">ganttparts </a> and <a href="#sumparts">sumparts</a>.<br />
+Define the summary task as default row <a href="RowDefaults.htm">&lt;D></a> tag with attributes set for the summary task and assign this default by Def attribute, base summary definition can be:<br />
+<br />
+
+<tt>&lt;D <b>Name</b>="Summary" <b>Calculated</b>="1" <b>StartFormula</b>="ganttstart()" <b>EndFormula</b>="ganttend()" <b>DurationFormula</b>="ganttduration()" <b>PartsFormula</b>="ganttparts()" <b>CompleteFormula</b>="ganttpercent()" /></tt><br />
+<br />
+
+where <i>Start</i>, <i>End</i>, <i>Duration</i>, <i>Parts</i> and <i>Complete</i> are names of the five Gantt source columns. If some of the columns is not defined, the Formula should be omitted. <i>Summary</i> is custom name of this default row.<br />
+<br />
+
+For example:<br />
+<tt>
+&lt;Grid><br />
+&nbsp;&lt;Cfg MainCol="S"/><br />
+&nbsp;&lt;Cols>  &lt;C Name="S" Type="Date"/> &lt;C Name="E" Type="Date"/>  &lt;C Name="D" Type="Int"/>  &lt;C Name="P" Type="Date" Range="1"/>  &lt;C Name="C" Type="Float"/>  &lt;/Cols><br />
+&nbsp;&lt;RightCols>  &lt;C Name="G" Type="Gantt" GanttStart="S" GanttEnd="E" GanttDuration="D" GanttParts="P" GanttComplete="C"/> &lt;/RightCols><br />
+&nbsp;&lt;Def>  &lt;D Name="Sum" Calculated="1" SFormula="ganttstart()" EFormula="ganttend()" DFormula="ganttduration()" PFormula="ganttparts()" CFormula="ganttpercent()" /> &lt;/Def><br />
+&nbsp;&lt;Body>  &lt;B>  &lt;I Def="Sum"> &lt;I S="1/1/2000" E="1/10/2000" C="100"/>  &lt;I S="1/11/2000" D="5" C="30"/>  &lt;I P="1/16/2000~1/18/2000;1/20/2000~1/25/2000" C="0"/>  &lt;/I>  &lt;/B>  &lt;/Body><br />
+&lt;/Grid><br />
+</tt>
+<br />
+
+You can set different class for the summary bars by <b>GanttClass</b> attribute, for example <tt>&lt;D ... <b>xxxGanttClass</b>="Group" <b>xxxGanttIcons</b>="1"/></tt>, the <b>Group</b> is CSS class designed for the summary tasks, <b>xxx</b> is actual Gantt column name in the grid. The <b>GanttIcons</b> show the side icons designed for summary tasks.<br />
+<br />
+
+The summary tasks are usually expected to be not editable and not movable, for this behavior set <tt>&lt;D ... <b>xxxGanttEdit</b>="" <b>CanEdit</b>="0"/></tt><br />
+
+<!-- Formula ganttpercent -->
+<a name="ganttpercent"></a>
+<div class="ACT">
+   <u>chg <b>6.3</b> <i>upd <b>10.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>ganttpercent</h4>
+   <s>(<i>string</i> <b>ganttcol</b>, <i>string</i> <b>weightcol</b>, <i>int</i> <b>round</b>, <i>int</i> <b>plan</b> = null, <i>int</i> <b>type</b> = 0)</s>
+</div>
+Calculates summary percent of all child rows for its date ranges<br />
+<b>ganttcol</b> - gantt column, if it is null, uses the first Gantt column in grid<br />
+<b>weightcol</b> - column with exact weight factors for the tasks, if not set, the weight is computed from the task duration.<br />
+<b>round</b> - <i>(new 6.3)</i> to how many decimal places will be the result rounded, by default it is <u>not</u> rounded at all<br />
+<b>plan</b> - <i>(new 10.0)</i> main bar plan, 0 is the first plan (GanttStart), 1 the second <b>plan</b> (GanttStart1) and so on. If plan is null, it is calculated from the cell where the formula is used, if it is not possible it is used as 0.<br />
+<b>type</b> - <i>(new 10.0)</i> specifies rows to calculate, see <a href="CellFormula.htm#sum">sum</a> type parameter.<br />
+Example: <tt>&lt;I Calculated='1' CalcOrder="Complete" CompleteFormula="ganttpercent()"/></tt><br />
+<i>Since 7.0</i> it can be used also to calculate percentage of summary of <b>Run</b> tasks with GanttRunComplete set. <i>It calculates <b>Run</b> only if child row does <u>not</u> define GanttComplete.</i><br />
+
+<!-- Formula ganttstart -->
+<a name="ganttstart"></a>
+<div class="ACT">
+   <u>new <b>7.0</b> chg <b>13.1</b></u> <b>formula</b> <i>int</i>
+   <h4>ganttstart</h4>
+   <s>(<i>string</i> <b>ganttcol</b>, <i>int</i> <b>plan</b> = null, <i>int</i> <b>type</b> = 0, <i>bool</i> <b>milestones</b> = 0)</s>
+</div>
+Calculates summary (minimal) start of main bars in all child rows.<br /> 
+<b>ganttcol</b> - gantt column, if it is null, uses the first Gantt column in grid.<br />
+<b>plan</b> - <i>(new 10.0)</i> main bar plan, 0 is the first plan (GanttStart), 1 the second plan (GanttStart1) and so on. If <b>plan</b> is null, it is calculated from the cell where the formula is used, if it is not possible it is used as 0.<br />
+<b>type</b> - <i>(new 10.0)</i> specifies rows to calculate, see <a href="CellFormula.htm#sum">sum</a> type parameter.<br />
+<b>milestones</b> - <i>new 13.1</i> if the end milestones will be ignored. <i>The default behavior before 13.1 was <b>1</b></i><br />
+
+<!-- Formula ganttend -->
+<a name="ganttend"></a>
+<div class="ACT">
+   <u>new <b>7.0</b> chg <b>13.1</b></u> <b>formula</b> <i>int</i>
+   <h4>ganttend</h4>
+   <s>(<i>string</i> <b>ganttcol</b>, <i>int</i> <b>plan</b> = null, <i>int</i> <b>type</b> = 0, <i>bool</i> <b>milestones</b> = 0)</s>
+</div>
+Calculates summary (maximal) start of main bars in all child rows.<br /> 
+<b>ganttcol</b> - gantt column, if it is null, uses the first Gantt column in grid.<br />
+<b>plan</b> - <i>(new 10.0)</i> main bar plan, 0 is the first plan (GanttStart), 1 the second plan (GanttStart1) and so on. If <b>plan</b> is null, it is calculated from the cell where the formula is used, if it is not possible it is used as 0.<br />
+<b>type</b> - <i>(new 10.0)</i> specifies rows to calculate, see <a href="CellFormula.htm#sum">sum</a> type parameter.<br />
+<b>milestones</b> - <i>new 13.1</i> if the start milestones will be ignored. <i>The default behavior before 13.1 was <b>1</b></i><br />
+
+<!-- Formula ganttduration -->
+<a name="ganttduration"></a>
+<div class="ACT">
+   <u>chg <b>13.1</b></u> <b>formula</b> <i>float</i>
+   <h4>ganttduration</h4>
+   <s>(<i>string</i> <b>ganttcol</b>, <i>int</i> <b>plan</b> = null, <i>int</i> <b>type</b> = 0, <i>bool</i> <b>milestones</b> = 0)</s>
+</div>
+Calculates summary duration of main bars in all child rows. It simply returns ganttend() - ganttstart() in <a href="GanttCompute.htm#CGanttDataUnits">GanttDataUnits</a>.<br />
+<b>ganttcol</b> - gantt column, if it is null, uses the first Gantt column in grid<br />
+<b>plan</b> - <i>(new 10.0)</i> main bar plan, 0 is the first plan (GanttStart), 1 the second plan (GanttStart1) and so on. If <b>plan</b> is null, it is calculated from the cell where the formula is used, if it is not possible it is used as 0.<br />
+<b>type</b> - <i>(new 10.0)</i> specifies rows to calculate, see <a href="CellFormula.htm#sum">sum</a> type parameter.<br />
+<b>milestones</b> - <i>new 13.1</i> if the start / end milestones will be ignored when calculating the bounds. <i>The default behavior before 13.1 was <b>1</b></i><br />
+
+
+<!-- Formula ganttparts -->
+<a name="ganttparts"></a>
+<div class="ACT">
+   <u>new <b>10.0</b> chg <b>13.1</b></u> <b>formula</b> <i>float</i>
+   <h4>ganttparts</h4>
+   <s>(<i>string</i> <b>ganttcol</b>, <i>int</i> <b>plan</b> = null, <i>int</i> <b>type</b> = 0, <i>bool</i> <b>milestones</b> = 0)</s>
+</div>
+Calculated summary GanttParts of main bars in all child rows. It simply returns ganttstart() +"~"+ ganttendt().<br />
+<b>ganttcol</b> - gantt column, if it is null, uses the first Gantt column in grid<br />
+<b>plan</b> - main bar plan, 0 is the first plan (GanttStart), 1 the second plan (GanttStart1) and so on. If <b>plan</b> is null, it is calculated from the cell where the formula is used, if it is not possible it is used as 0.<br />
+<b>type</b> - <i>(new 10.0)</i> specifies rows to calculate, see <a href="CellFormula.htm#sum">sum</a> type parameter.<br />
+<b>milestones</b> - <i>new 13.1</i> if the start / end milestones will be ignored when calculating the bounds. <i>The default behavior before 13.1 was <b>1</b></i><br />
+Use it to calculate value of GanttParts for <b><i>continuous</i></b> summary tasks. For discrete summary tasks use <a href="#sumparts">sumparts</a>.<br />
+
+<!-- Formula sumparts -->
+<a name="sumparts"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>formula</b> <i>string</i>
+   <h4>sumparts</h4>
+   <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>condition</b> = null, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+Sums all dates in column with <tt>Range=1 Type="Date"</tt>. It just creates new range from all intervals and updates it to not contain duplicate value cross intervals.<br />
+The only difference to <a href="CellFormula.htm#sumrange">sumrange</a> is that sumparts is affected by <a href="GanttCompute.htm#CGanttLastUnit">GanttLastUnit</a>.<br />
+For its parameters see <a href="CellFormula.htm#sum">sum</a> function.<br />
+There is no plan parameter, the function just sums values in the <b>col</b>.<br />
+Use it to calculate value of GanttParts for <b><i>discrete</i></b> summary tasks. For continuous summary tasks use <a href="#ganttparts">ganttparts</a>.<br />
+
+<!-- Formula sumavailability -->
+<a name="sumavailability"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>formula</b> <i>string</i>
+   <h4>sumavailability</h4>
+   <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>condition</b> = null, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+Sums all availability dates in column. It just creates new range from all intervals and updates it to not contain duplicate value cross intervals.<br />
+It is similar to sumparts and <a href="CellFormula.htm#sumrange">sumrange</a>, but it never shrinks the resulted range.<br />
+
+<!-- Formula ganttpercentduration -->
+<a name="ganttpercentduration"></a>
+<div class="DEL">
+   <u>deleted <b>6.3</b></u> <b>formula</b> <i>int</i>
+   <h4>ganttpercentduration</h4> <s>(<i>string</i> <b>durationcol</b>, <i>string</i> <b>percentcol</b>='', <i>int</i> <b>round</b>=0)</s>
+</div>
+Replaced by ganttpercent.<br />
+
+<!-----------------------------------------------------------------------  Main bar as summary of child Run bars  ------------------------------------------------->
+<a name="MainRun"></a>
+<h2>Main bar as summary of child Run bars</h2>
+
+Main bar can be used also to show summary for its child Run bars. It can show only <b><i>continuous</i></b> summary.<br />
+Use such formulas to show the summary:<br />
+<tt>&lt;I Calculated="1" GGanttStartFormula="ganttrunminstart('G')" GGanttEndFormula="ganttrunmaxend('G')" GGanttDurationFormula="ganttrunsumduration('G')" GGanttCompleteFormula="ganttpercent('G')"/></tt><br />
+
+<!-- Action ganttrunminstart -->
+<a name="ganttrunminstart"></a>
+<div class="ACT">
+   <u>new <b>6.2</b> <i>upd <b>10.0</b></i></u> <b>formula</b> <i>int</i>
+   <h4>ganttrunminstart</h4>
+   <s>(<i>string</i> <b>ganttcol</b>, <i>int</i> <b>type</b> = 0)</s>
+</div>
+Calculates minimal start date (in milliseconds) of all child Runs.<br />
+Used to get Run range of child Runs and show it as Main Bar.<br />
+<b>ganttcol</b> - column showing the Gantt chart, it should contain the <a href="GanttRun.htm#Run">Run</a> bars.<br />
+<b>type</b> - <i>(new 10.0)</i> specifies rows to calculate, see <a href="CellFormula.htm#sum">sum</a> type parameter.<br />
+
+<!-- Action ganttrunmaxend -->
+<a name="ganttrunmaxend"></a>
+<div class="ACT">
+   <u>new <b>6.1</b> <i>upd <b>10.0</b></i></u> <b>formula</b> <i>int</i>
+   <h4>ganttrunmaxend</h4>
+   <s>(<i>string</i> <b>ganttcol</b>, <i>int</i> <b>type</b> = 0)</s>
+</div>
+Calculates maximal end date (in milliseconds) of all child Runs.<br />
+Used to get Run range of child Runs and show it as Main Bar.<br />
+<b>ganttcol</b> - column showing the Gantt chart, it should contain the <a href="GanttRun.htm#Run">Run</a> bars.<br />
+<b>type</b> - <i>(new 10.0)</i> specifies rows to calculate, see <a href="CellFormula.htm#sum">sum</a> type parameter.<br />
+
+<!-- Action ganttrunsumduration -->
+<a name="ganttrunsumduration"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>formula</b> <i>int</i>
+   <h4>ganttrunsumduration</h4>
+   <s>(<i>string</i> <b>ganttcol</b>, <i>int</i> <b>type</b> = 0)</s>
+</div>
+Calculates summary duration (in GanttDataUnits) of all child Runs. Simply returns ganttrunmaxend()-ganttrunminstart in workdays and GanttDataUnits.<br />
+Used to get Run range of child Runs and show it as Main Bar.<br />
+<b>ganttcol</b> - column showing the Gantt chart, it should contain the <a href="GanttRun.htm#Run">Run</a> bars.<br />
+<b>type</b> - <i>(new 10.0)</i> specifies rows to calculate, see <a href="CellFormula.htm#sum">sum</a> type parameter.<br />
+
+<!-- Action ganttpercent -->
+<a name=""></a>
+<div class="ACT">
+   <u>chg <b>6.3</b> <i>upd <b>10.0</b></i></u> <b>formula</b> <i>float</i>
+   <h4>ganttpercent</h4>
+   <s>(<i>string</i> <b>ganttcol</b>, <i>string</i> <b>weightcol</b>, <i>int</i> <b>round</b>, <i>int</i> <b>plan</b> = null)</s>
+</div>
+Calculates summary percent of all child rows for its date ranges.<br />
+<b>ganttcol</b> - gantt column, if it is null, uses the first Gantt column in grid.<br />
+<b>weightcol</b> - column with exact weight factors for the tasks, if not set, the weight is computed from the task duration.<br />
+<b>round</b> - <i>(new 6.3)</i> to how many decimal places will be the result rounded, by default it is <u>not</u> rounded at all<br />
+<b>plan</b> - <i>(new 10.0)</i> main bar plan, 0 is the first plan (GanttStart), 1 the second plan (GanttStart1) and so on. If <b>plan</b> is null, it is calculated from the cell where the formula is used, if it is not possible it is used as 0.<br />
+<b>type</b> - <i>(new 10.0)</i> specifies rows to calculate, see <a href="CellFormula.htm#sum">sum</a> type parameter.<br />
+Example: <tt>&lt;I Calculated='1' CalcOrder="Complete" CompleteFormula="ganttpercent()"/></tt><br />
+<i>Since 7.0</i> it can be used also to calculate percentage of summary of <b>Run</b> tasks with GanttRunComplete set. <i>It calculates <b>Run</b> only if child row does <u>not</u> define GanttComplete.</i><br />
+
+<!----------------------------------------------  Editable Main bar as summary of child Main or Run bars  ------------------------------------------------->
+<a name="EditMain"></a>
+<h2>Editable Main bar as summary of child Main or Run bars</h2>
+
+It is possible to have also editable summary tasks, including date constraints and dependencies.<br />
+All the dependencies and constraints attached to summary tasks are automatically assigned to all child tasks.<br />
+<br />
+
+How to set the editable summary task:<br />
+1) Define main bar as summary of main bars or run bars by Formulas described above.<br />
+2) Set the summary task editable, define <tt>&lt;D <b>xxxGanttEdit</b>='all' <b><i>start</i>CanEdit</b>='1' /></tt> where the <i>start</i> is name of the Gantt source column, the <i>xxx</i> is name of the Gantt column itself.<br />
+3) To correctly calculate dependencies and date constraints set <tt>&lt;D <a href="#CellGanttSummary">xxxGanttSummary</a><b><i>X</i></b>='Y'/></tt>, see its description below.<br />
+
+<!-- GanttSummaryX -->
+<a name="CellGanttSummary"></a>
+<div class="XML">
+   <u>new <b>6.7</b> chg <b>10.0</b></u> <b>&lt;cell></b> <i>int</i>
+   <h4>GanttSummary<span style="color:#00B0F0">X</span></h4> <s>[""]</s>
+</div>
+Set it to main bar plan number in children for <b>editable summary task</b>. Set it to <b>0</b> for the first plan. Set it to '-' (minus) for Run bars. Set it to <b><i>empty</i></b> string to no summary.<br />
+The <b><i>X</i></b> is main bar plan in this parent, for the first main plan is empty (GanttSummary, GanttSummary1, GanttSummary2, ...). See <a href="GanttMain.htm#CGanttCount">GanttCount</a>.<br />
+<table>
+  <tr><td style="width:120px;">For example:</td><td style="width:170px;"><tt>GanttSummary = '0'</tt></td><td>means the main bar plan 0 in this parent row is marked as editable summary for the same plan 0 in child rows.</td></tr>
+  <tr><td></td><td><tt>GanttSummary1 = '-'</tt></td><td>means the main bar plan 1 in this parent row is marked as editable summary for the run bars in child rows.</td></tr>
+  <tr><td></td><td><tt>GanttSummary3 = '2'</tt></td><td>means the main bar plan 3 in this parent row is marked as editable summary for main bar plan 2 in child rows.</td></tr>
+</table>
+<br />
+
+It will cause:<br />
+- all dependencies attached to the summary task will be assigned also to all its children (as hidden dependencies).<br />
+- dependencies between the summary and its children will be marked or restricted as circular.<br />
+- the MinStart and MaxEnd date constraints assigned to summary tasks will be used also for all its children if they are more restrictive than the child task constraints, if any.<br />
+- if the tasks is moved by mouse dragging or editing its start date, it moves also all its children. The task cannot be moved, if it would lead to violate any child's constraints.<br />
+- the task cannot be created, resized or deleted and its GanttComplete value cannot be changed by a user. <i>Except the GanttSummaryType is set to <b>1</b>.</i><br />
+<br />
+
+<strong>
+Since 10.0 the value is 0 for the first main plan!<br />
+<br />
+
+The method implemented causes <u>not</u> good behavior for dependencies incoming to the finish of the summary task and dependencies outgoing from start of the summary task.<br />
+Also zero float/span or GanttIncorrectDependencies='2' is <u>not</u> supported for dependencies in summary tasks.<br />
+</strong>
+
+<!-- GanttSummaryTypeX -->
+<a name="CGanttSummaryType"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttSummaryType<span style="color:#00B0F0">X</span></h4> <s>[0]</s>
+</div>
+For <b>0</b> it restricts creating, resizing and deleting the summary task. The task is expected to be calculated from its children by formulas.<br />
+For <b>1</b> it permits these actions. The task should not be calculated from its children by formulas.<br />
+<i>Before 10.0 it was set as <tt>GanttSummary='2'</tt>.</i><br />
+
+<!----------------------------------------------  Editable Run bar as summary of child Main bars  ------------------------------------------------->
+<a name="RunMain"></a>
+<h2>Editable Run bar as summary of child Main bars</h2>
+
+It is possible to group child main bars to one parent Run bar, containing all the main bars at one row.<br />
+The Run can be editable, so all the changes done in the Run is mirrored to the source main bars.<br />
+It is possible to collapse the Run and let a user to manipulate only by the Run bars instead of the main bars.<br />
+It can be used to group main bars according to various attributes to the Run.<br />
+<br />
+
+Set it up by:<br />
+Define new (hidden) column (name it e.g. "RUN"). Assign this column as GanttRun (e.g. <tt>&lt;C ... GanttRun='RUN'/></tt><br />
+Set to the row <tt>xxx<b>GanttRunSummary</b>=<b>'X'</b></tt>, where X is the main bar plan, e.g. '0'<br />
+Calculate the RUN from the children by <tt>RUNFormula='<b>ganttrunsum()</b>'</tt><br />
+<br />
+
+Optionally:<br />
+Define other Run columns like GanttRunStart, GanttRunEnd, GanttRunDuration, GanttRunComplete<br />
+And calculate them by formulas: ganttrunstart, ganttrunend, ganttrunduration, ganttpercent()<br />
+Define right <b>CalcOrder</b> for the rows to be first calculated the Run by ganttrunsum<br />
+<br />
+
+Behavior:<br />
+The Run will reflect every change - moving, resizing, deleting and creating the main bar. Also deleting row and creating new child.<br />
+<div class="L1">The moving and resizing source main bar ignores other boxes, it behaves always like if the run has set <tt><a href="GanttRun.htm#CGanttRunAdjust">GanttRunAdjust</a>='Error'</tt>.</div>
+The children will reflect the Run changes - moving and resizing the Run box.<br /> 
+<div class="L1">
+   Creating new Run box will create new child with the same main bar. It is called OnRowAdded API event, but not OnRowAdd.<br />
+   Deleting Run box will delete appropriate row. It is called OnRowDelete API event.<br />
+   Moving Run box to another row will move the appropriate child row to this parent. It is called OnRowMove API event.<br />
+</div>
+The Run boxes have the same ids as the child rows.<br />
+
+<!-- ganttrunsum -->
+<a name="ganttrunsum"></a>
+<div class="ACT">
+   <u>new <b>9.1</b> <i>upd <b>10.0</b></i></u> <b>formula</b> <i>string</i>
+   <h4>ganttrunsum</h4>
+   <s>(<i>string</i> <b>ganttcol</b> = "", <i>string</i> <b>condition</b> = "", <i>int</i> <b>type</b> = "", <i>int</i> <b>plan</b> = 0)</s>
+</div>
+Sums all child main bars and returns result Run with all the bars. The Run bars have set their ids as the main bar row ids.<br />
+If set <a href="#CellGanttRunSummary">GanttRunSumarry</a> it permits changing the summary boxes and do the changes in children.<br />
+<b>ganttcol</b> = gantt column, can be empty for the first Gantt column in grid<br />
+<i>(Since 9.3)</i> The <b>type</b> and <b>condition</b> specify which rows to iterate, for more information see the <a href="CellFormula.htm#sum">sum</a> function.<br />
+<i>(Since 10.0)</i> The <b>plan</b> is main bar plan to calculate summary for (if <u>not</u> set Start,End,Duration by <a href="#CellGanttSummaryCols">GanttSummaryCols</a>). <b>0</b> means the first main bar plan.<br />
+<i>The <a href="GanttMain.htm#CGanttParts">GanttParts</a> must <u>not</u> be defined for used main bar plan!</i><br />
+
+<!-- ganttrundescendants -->
+<a name="ganttrundescendants"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>formula</b> <i>string</i>
+   <h4>ganttrundescendants</h4>
+   <s>(<i>string</i> <b>ganttcol</b> = "", <i>string</i> <b>condition</b> = "", <i>int</i> <b>type</b> = "", <i>int</i> <b>plan</b> = 0)</s>
+</div>
+Sums all dependencies from child main bars, use for GanttDescendants.<br /> 
+If set <a href="#CellGanttRunSummaryDependencies">GanttRunSumarryDependencies</a> it permits changing the summary dependencies and do the changes in children.<br />
+<b>ganttcol</b> = gantt column, can be empty for the first Gantt column in grid<br />
+The <b>type</b> and <b>condition</b> specify which rows to iterate, for more information see the <a href="CellFormula.htm#sum">sum</a> function.<br />
+The function sums always all the child dependencies, but if set the <b>plan</b>, only dependencies for this plan are converted to the run boxes. <b>0</b> means the first main bar plan.<br />
+<i>There must be set "box" in <a href="GanttObjects.htm#CGanttTask">GanttTask</a>.</i><br />
+<i>To use box scheduling, remove the source main bar plan from <a href="GanttObjects.htm#CGanttTask">GanttTask</a>.</i><br />
+
+<!-- ganttrunancestors -->
+<a name="ganttrunancestors"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>formula</b> <i>string</i>
+   <h4>ganttrunancestors</h4>
+   <s>(<i>string</i> <b>ganttcol</b> = "", <i>string</i> <b>condition</b> = "", <i>int</i> <b>type</b> = "", <i>int</i> <b>plan</b> = 0)</s>
+</div>
+Sums all dependencies from child main bars, use for GanttAncestors.<br /> 
+If set <a href="#CellGanttRunSummaryDependencies">GanttRunSumarryDependencies</a> it permits changing the summary dependencies and do the changes in children.<br />
+<b>ganttcol</b> = gantt column, can be empty for the first Gantt column in grid<br />
+The <b>type</b> and <b>condition</b> specify which rows to iterate, for more information see the <a href="CellFormula.htm#sum">sum</a> function.<br />
+The function sums always all the child dependencies, but if set the <b>plan</b>, only dependencies for this plan are converted to the run boxes. <b>0</b> means the first main bar plan.<br />
+<i>There must be set "box" in <a href="GanttObjects.htm#CGanttTask">GanttTask</a>.</i><br />
+<i>To use box scheduling, remove the source main bar plan from <a href="GanttObjects.htm#CGanttTask">GanttTask</a>.</i><br />
+
+<!-- GanttRunSummary -->
+<a name="CellGanttRunSummary"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;cell></b> <i>int</i>
+   <h4>GanttRunSummary</h4> <s>[""]</s>
+</div>
+Links the main bars with the summary Run bars calculated by <a href="#ganttrunsum">ganttrunsum</a>. Mirrors the changes between them.<br />
+Set it to main bar plan number in children. Set to the same plan number the <a href="#ganttrunsum">ganttrunsum</a> was called.<br />
+<b>Set it to <span style="color:red;">0</span> for the first main bar plan.</b> Set it to <b><i>empty</i></b> string to no link.<br />
+
+<!-- GanttRunSummaryDependencies -->
+<a name="CellGanttRunSummaryDependencies"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;cell></b> <i>int</i>
+   <h4>GanttRunSummaryDependencies</h4> <s>[""]</s>
+</div>
+Links the main bar dependencies with the summary Run bar dependencies calculated by <a href="#ganttrundescendants">ganttrundescendants</a> and / or <a href="#ganttrunancestors">ganttrunancestors</a>. Mirrors the changes between them.<br />
+Set it to main bar plan number in children. Set to the same plan number the <a href="#ganttrundescendants">ganttrundescendants</a> and / or <a href="#ganttrunancestors">ganttrunancestors</a> were called.<br />
+<b>Set it to <span style="color:red;">0</span> for the first main bar plan.</b> Set it to <b><i>empty</i></b> string to no link.<br />
+
+<!-- GanttSummary -->
+<a name="CGanttRunSummaryIdPrefix"></a>
+<div class="DEL">
+   <u>new <b>9.1</b> deleted <b>10.0</b></u> <b>&lt;cell></b> <i>int</i>
+   <h4>GanttSummary <i>= "2"</i></h4> <s></s>
+</div>
+For Editable Run summary it is renamed to <a href="#CellGanttRunSummary">GanttRunSummary</a>. The value changed from 2 to main bar plan.<br />
+
+<!-- GanttSummaryCols -->
+<a name="CellGanttSummaryCols"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;cell></b> <i>string[ ]</i>
+   <h4>GanttSummaryCols</h4> <s></s>
+</div>
+<i>Note, there is <u>no</u> <b>Run</b> keyword in the attribute name, due backward compatibility</i><br />
+Comma separated list of linked columns in child rows to Run attributes, when created the run summary by <a href="#ganttrunsum">ganttrunsum</a> formula.<br /> 
+In this order: "Start,End,Duration,Type,Text,Class,Tip,Id,Group,State,Top,Height,Manual,Complete,Resources,HtmlLeft,HtmlRight". The order the same as in <a href="GanttRun.htm#CGanttRun">GanttRun</a> attribute.<br />
+If <u>not</u> set, the <b>Start</b> is set to GanttStart column, <b>End</b> to GanttEnd column and <b>Duration</b> to GanttDuration column, of given plan in <a href="#ganttrunsum">ganttrunsum</a>.<br />
+If <u>not</u> set <b>State</b>, the Disabled state is read from GanttDisabled and Selected state from row.Selected. Note, next selecting the child row does <u>not</u> update the run selected state automatically.<br />
+<i>The <a href="GanttMain.htm#CGanttParts">GanttParts</a> must <u>not</u> be defined for used main bar plan!</i><br />
+The <b>Id</b> is now always set to row id attribute and cannot be changed.<br />
+For example GanttSummaryCols=",,,B,,C" means that the Run Type attribute will be read from child rows from 'B' column and Class attribute from 'C' column.<br />
+
+<!-- GanttSummarySeparators -->
+<a name="CellGanttSummarySeparators"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;cell></b> <i>string[ ]</i>
+   <h4>GanttSummarySeparators</h4> <s></s>
+</div>
+<i>Note, there is <u>no</u> <b>Run</b> keyword in the attribute name, due backward compatibility.</i><br />
+Custom Run separators to be used instead of ";," by <a href="#ganttrunsum">ganttrunsum</a> formula. Use when some Text or Tip can contain the default separators (comma and semicolon).<br />
+
+<!-- GanttSummaryCDef -->
+<a name="CellGanttSummaryCDef"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;cell></b> <i>string</i>
+   <h4>GanttSummaryCDef</h4> <s>['']</s>
+</div>
+Note, there is <u>no</u> <b>Run</b> keyword in the attribute name, due backward compatibility.<br />
+Name of default row assigned to new child rows created for new Run bars. If not set, standard CDef attribute value is used.<br />
+If set, <a href="#ganttrunsum">ganttrunsum</a> iterates only rows with this default row name.<br />
+
+<!-- GanttRunSummaryIdPrefix -->
+<a name="CGanttRunSummaryIdPrefix"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttRunSummaryIdPrefix</h4> <s>["" / "R"]</s>
+</div>
+A string added to run box id before the child row id when creating run boxes from child main bars.<br />
+By default is "R" if GanttTask contains "Box" and also some main flag. Otherwise it is empty.<br />
+Use it especially if you have number id rows and you want to use also dependencies in the summary run boxes by <a href="#ganttrundescendants">ganttrundescendants</a> / <a href="#ganttrunancestors">ganttrunancestors</a>.<br />
+
+</div>
+</body>
+</html>

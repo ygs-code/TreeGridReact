@@ -1,0 +1,58 @@
+<Grid>
+   <Cfg id="MainSync" IdChars="0123456789" NumberId="1" Undo="1"/>
+   <Cfg DefaultDate="1/1/2010"/>
+   <LeftCols>
+      <C Name="id" Type="Int" CanEdit="0" CanSort="0"/>
+      <C Name="START" Type="Date" Format="dddddd"/>
+      <C Name="END" Type="Date" Format="dddddd"/>
+      <C Name="EMPTYLEFT" ConstWidth="1" RelWidthType="1"/>
+   </LeftCols>
+   <Cols>
+      <C Name="DUR" Type="Float" CanEmpty="1"/>
+      <C Name="COMP" Type="Float" CanEmpty="1"/>
+      <C Name="TIP" Type="Text"/>
+      <C Name="EMPTYMID" ConstWidth="1" RelWidthType="1"/>
+   </Cols>
+   <RightCols>
+      <C Name="GANTT" Type="Gantt"
+         GanttDataUnits="d" GanttLastUnit="d"
+         GanttStart="START" GanttEnd="END" GanttDuration="DUR" GanttComplete="COMP" GanttText="TIP"
+         GanttMainTip="*id*. *TIP*&lt;br>*START* - *END*" GanttMilestoneTip="*id*. *TIP* at *START*"
+         GanttTask="Main"
+         GanttShowHtml="3"
+         GanttHtmlDateFormat="MM/dd/yyyy"
+         
+         />
+   </RightCols>
+   <Solid>
+      <Topbar Cells="Zoom,Fit"
+         ZoomType='SelectGanttZoom'
+         ZoomHtmlPrefix='Zoom to &lt;b>' ZoomHtmlPostfix='&lt;/b>'
+         ZoomLeft='2' ZoomWidth='170' ZoomPrintHPage='1'
+         ZoomTip='Zoom level, available from milliseconds to years'
+
+         FitType='Button' FitWidth='60' FitSwitch='1' FitButtonText='Zoom &lt;b>fit&lt;/b>' FitButton='Button'
+         FitOnClick='for(var i=0;i&lt;Grids.length;i++) if(Grids[i]) Grids[i].Cols.GANTT.GanttSizeFit=Value?0:2; Grid.ChangeZoom();'
+         FitTip='If turned on, resizes Gantt chart to fill the whole available space.&lt;br>But does &lt;b>not&lt;/b> shrink it to hide scrollbar' FitCanPrint='0'
+         />
+   </Solid>
+   <Body>
+      <B>
+         <I id="0"/>
+         <I id="1" START="12/28/2009" END="1/8/2010" TIP="Task set by start and end"/>
+         <I id="2" START="1/4/2010" TIP="Milestone, set by start"/>
+         <I id="3" START="1/2/2010" END="1/3/2010" TIP="Not started task with side text" GANTTGanttHtmlRight="*TIP* (at *Start*)"  GANTTGanttHtmlDateFormat="M/d" COMP="0"/> 
+         <I id="4" START="1/4/2010" END="1/17/2010" TIP="Task with text inside" GANTTGanttHtml="*TIP* (*Start* - *End*) abcdefghijklmnopqrstuvwxyz" GANTTGanttHtmlDateFormat="M/d" COMP="0"/>
+         <I id="5" START="1/8/2010" END="1/14/2010" TIP="Task with text outside centered" GANTTGanttHtmlLeft="*TIP*" GANTTGanttHtmlLeftEdge="3" COMP="0"/>
+         <I id="6" START="1/10/2010" END="1/15/2010" TIP="Task with text on both sides and inside" COMP="0" 
+            GANTTGanttHtmlLeft="*START*" GANTTGanttHtmlRight="*END*" GANTTGanttHtml="*Duration* days" GANTTGanttHtmlLeftClass="Red" GANTTGanttHtmlRightClass="Blue"/>
+         <I id="7" END="1/4/2010" COMP="0" TIP="Incomplete milestone, set by end"/>
+         <I id="8" START="1/6/2010" END="1/14/2010" COMP="50" TIP="Incomplete task with icons" GANTTGanttIcons="1"/>
+         <I id="9" START="1/12/2010" DUR="6" COMP="80" TIP="Task set by start and duration"/>
+         <I id="10" START="1/8/2010" DUR="13" COMP="100" TIP="Higher complete task with icons" GANTTGanttIcons="1" GANTTGanttHeight="20" GANTTGanttHtmlLeft="*TIP*" GANTTGanttHtmlLeftEdge="3" GANTTGanttHtmlShift="5"/>
+         <I id="11" START="1/6/2010" DUR="16" COMP="60" TIP="Group task with icons" GANTTGanttClass="Group" GANTTGanttIcons="1"/>
+         <I id="12" START="1/18/2010" COMP="100" TIP="Completed milestone, set by start" GANTTGanttHtmlLeft="*TIP*" GANTTGanttHtmlRight="*Start*"/>
+      </B>
+   </Body>
+   <Header id="id" COMP="%"/>
+</Grid>

@@ -1,0 +1,659 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Calculations and formulas</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Calculations - cell data formulas</h1>
+<p>TreeGrid documentation</p>
+
+<strong>This document describes <b>NOT EDITABLE</b> formulas entered by developers into data.</strong><br /> 
+To read about <b>EDITABLE</b> formulas entered by users directly into cells see <a href="CellEditFormula.htm">Editable cell formulas</a>.<br />
+
+<!-- Calculated -->
+<a name="CfgCalculated"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Calculated</h4> <s>[1]	Saved to cookies</s>
+</div>
+If calculating in grid is enabled by user. If disabled, formula cells are not re-calculated after change.<br />
+<i>Space rows are always (re-)calculated independently on Calculated setting.</i><br />
+
+<!-- Formula -->
+<a name="CFormula"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>Formula</h4> <s></s>
+</div>
+Formula for calculated column. If set, all cells in the column are calculated.<br />
+<i>Remember, set <a href="#ICalcOrder">CalcOrder</a> for every row if you use in some formula result of another formula on the same row.</i><br /><br />
+
+The calculated cell is set as not editable by default.<br /> 
+You can set <tt><a href="CellEdit.htm#CCanEdit">CanEdit</a>='1'</tt> to let a user to edit this cell, but the cell content is recalculated after the value is edited, so the cell value should be set as source in formula to take the editing effect.><br />
+
+<!-- Formula -->
+<a name="CellFormula"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;cell></b> <i>string</i>
+   <h4>Formula</h4> <s></s>
+</div>
+Formula for calculated cell.<br />
+<strong>The <b>cell Formula</b> is used <u>only</u> if the row is <a href="#ICalculated">Calculated</a> <u>or</u> the <b>column</b> also has <a href="#CFormula">Formula</a>.</strong><br />
+You can set cell Formula in calculated column (column with Formula) to empty string to not calculate this cell.<br />
+
+<!-- xxxFormula -->
+<a name="IxxxFormula"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;I> &lt;cell></b> <i>string</i>
+   <h4>xxxFormula</h4> <s></s>
+</div>
+You can calculate also any row or cell attribute.<br /> 
+For example <tt>&lt;I CanEditFormula='...' Col1ColorFormula='...' CalcOrder='CanEdit,Col1Color'/></tt><br />
+<strong>The attribute <b>xxxFormula</b> is used <u>only</u> if the attribute is listed in the <b>row</b> <a href="#ICalcOrder">CalcOrder</a> array.</strong><br />
+<i>Remember, not all row / cell attributes can be correctly calculated, some state attributes like Deleted or Visible should not be changed by formula.</i><br />
+
+<!-- Calculated -->
+<a name="ICalculated"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>bool</i>
+   <h4>Calculated</h4> <s>[0]</s>
+</div>
+If row is calculated.<br /> 
+<i>Set this attribute if the row cells contain <a href="#CellFormula">Formula</a> attribute(s) in not calculated column (column without <a href="#CFormula">Formula</a>).</i><br />
+For Space rows is this attribute set automatically according to their Formula attributes in their cells.<br />
+
+<!-- CalcOrder -->
+<a name="ICalcOrder"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>string[ ]</i>
+   <h4>CalcOrder</h4> <s></s>
+</div>
+Comma separated list of calculated cells to specify order in which the cells are calculated.<br />
+Specify the CalcOrder when some formulas have other formula results as their sources to specify which formula will calculated first.<br />
+<strong>If <b>CalcOrder</b> is <u>not</u> set, the calculation order is always according to <b>alphabet</b> order of column names.</strong><br />
+<i>If you set CalcOrder, you must specify all cells you want to calculate. If some cell is not listed, it is ignored even if it or its column has Formula set.</i><br /><br />
+
+As CalcOrder item you can use asterisk (*) to calculate all row's children on this position.<br />
+Or you can use asterisk with number (*1,*2,...) to calculate row's children according to its <a href="#ICalcOrderX">CalcOrderX</a> attribute.<br />
+<div class="L1">=> you can divide calculation of children to more phases where you can calculate different cells.</div>
+
+<!-- CalcOrderX -->
+<a name="ICalcOrderX"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>string[ ]</i>
+   <h4>CalcOrderX</h4> <s></s>
+</div>
+You can define more CalcOrder attributes, X is number value, for example CalcOrder<b>1</b>.<br />
+This CalcOrder(s) you can reference in parent CalcOrder attribute by *X, where X is the CalcOrder number.<br />
+If you use such complex calculation order, you usually need to set <a href="#IRecalc">Recalc</a> attribute of all rows to 256, to recalculate whole grid after change.<br />
+
+<!-- CalcOrder -->
+<a name="CfgCalcOrder"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>CalcOrder</h4> <s></s>
+</div>
+Global calculation order for fixed rows if you have more fixed rows and want calculate cells in fixed rows at random.<br />
+If set it is used instead of <a href="#ICalcOrder">CalcOrder</a> attribute in fixed rows.<br />
+In this array you can point to individual cells by id$col,<br /> 
+For example <tt>"F1$A,F2$C,*"</tt> calculates cell [F1,A], next [F2,C] and next all variable rows.<br />
+
+<!-- Recalc -->
+<a name="IRecalc"></a>
+<div class="XML">
+   <u><i>upd <b>8.1</b></i></u> <b>&lt;I></b> <i>int</i>
+   <h4>Recalc</h4> <s>[3]</s>
+</div>
+What to recalculate, if any value in row has been changed or row moves / is deleted / added. Binary mask:<br />
+<b>1</b> - Row, <b>2</b> - Calculated parents, <b>4</b> - All parents, <b>8</b> - Immediate children, <b>16</b> - All children, <b>32</b> - <i>(since 8.0)</i> All siblings, <b>256</b> - Whole table<br />
+<i>(Since 8.1)</i> If set to <b>-1</b>, it does not recalculate anything (neither fixed rows)<br />
+<i>It must contain at least all bits as in cell's <a href="#CellRecalc">Recalc</a> parameters to ensure appropriate recalculations.</i><br />
+
+<!-- Recalc -->
+<a name="CellRecalc"></a>
+<div class="XML">
+   <u><i>upd <b>8.1</b></i></u> <b>&lt;cell></b> <i>int</i>
+   <h4>Recalc</h4> <s>[3]</s>
+</div>
+What to recalculate, if cell value has been changed. Binary mask:<br />
+<b>1</b> - Row, <b>2</b> - Calculated parents, <b>4</b> - All parents, <b>8</b> - Immediate children, <b>16</b> - All children, <b>32</b> - <i>(since 8.0)</i> All siblings, <b>256</b> - Whole table<br />
+<i>(Since 8.1)</i> If set to <b>-1</b>, it does not recalculate anything (neither fixed rows)<br />
+<i>It must not contain more bits than row's <a href="#CellRecalc">Recalc</a> parameters to ensure appropriate recalculations.</i><br />
+
+<!-- AggChildren -->
+<a name="IAggChildren"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>bool</i>
+   <h4>AggChildren</h4> <s>[0]</s>
+</div>
+<b>1</b> - when row's parent calculates some aggregate functions on its children, this row calculates its children instead of itself - behaves like its children was directly in its parent.<br />
+It is usually set in <a href="Group.htm#DGroup1">Group</a> default.<br />
+
+<!-- CalculateSelected -->
+<a name="CfgCalculateSelected"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>CalculateSelected</h4> <s>[0]</s>
+</div>
+If there are formulas in grid that use selected rows.<br />
+If set, all calculated rows are recalculated after selection changes.<br />
+
+<!-- CalculateHidden -->
+<a name="CfgCalculateHidden"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>CalculateHidden</h4> <s>[0]</s>
+</div>
+If calculates hidden space rows. <i>Since 12.1 the hidden space rows are not calculated by default.</i><br />
+
+<!-- CalculatedChanges -->
+<a name="CfgCalculatedChanges"></a>
+<div class="XML">
+   <u>new <b>9.0</b> <i>upd <b></b>14.0</i></u> <b>&lt;Cfg></b> <i>type</i>
+   <h4>CalculatedChanges</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, it marks as changed all changed calculated cells and rows.<br />
+<i>(Since 9.2)</i> If set to <b>2</b>, it marks as changed also the cell calculated for first time if resulted to different value.<br />
+<i>(Since 14.0)</i> If set to <b>3</b>, it marks as changed also the cell calculated for first time if it was null.<br />
+<i>(Since 9.1)</i> It can be set to comma separated list of columns to affect only these columns. Cannot be set by API to this list.<br />
+In the first cell calculation it stores the calculated value. If some next calculation returns different result the stored one, it marks the cell changed.<br />
+If the next calculation returns the same result as the first stored result, the changed flag is cleared.<br />
+It will also upload these changes to server.<br />
+
+<!-- CalculatedChangesFirst -->
+<a name="CfgCalculatedChangesFirst"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>CalculatedChangesFirst</h4> <s>[]</s>
+</div>
+Comma separated list of columns to mark their calculated cells as changed if their formula resulted to different value, even first time.<br />
+It sets the <a href="#CfgCalculatedChanges">CalculatedChanges</a> = <b>2</b> to particular columns.
+
+<!-- sum,count -->
+<a name="BCellsum"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-15px;width:110px;">&lt;B cell>&lt;cell></b> <i>type</i>
+   <h4>sum, count, ...</h4> <s>Server paging</s>
+</div>
+Set in &lt;<b>B</b>> tag for <tt>Cfg.<a href="PagingServer.htm">Paging</a> = <b>3</b></tt> or in &lt;<b>I</b>> tag for <tt>Cfg.<a href="PagingServer.htm#ChildPaging">ChildPaging</a> = <b>3</b></tt><br />
+Contain results of aggregate function on children rows in the column.<br />
+For example <tt>&lt;I Asum='123.5'/></tt><br />
+
+<!-- ReCalc -->
+<a name="CfgReCalc"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ReCalc</h4> <s>[0] Server paging. Output attribute only.</s>
+</div>
+It is filled in Request XML as request for re-calculating grid after calculations have been permitted by user.<br />
+<i>Take care, because of backward compatibility it is Re<b style="color:red;">C</b>alc, not Recalc.</i><br />
+
+<!-- OnCalculate -->
+<a name="OnCalculate"></a>
+<div class="API">
+   <u><i>upd <b>11.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnCalculate</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>bool</i> <b>show</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>fixedonly</b>)</s>
+</div>
+Called before grid is calculated or recalculated.<br /> 
+Can be used for custom calculations. Return true to suppress default calculations.<br />
+Define this event if you want to calculate cells in special order that cannot be covered by <a href="#ICalcOrder">CalcOrder</a>.<br />
+Called for initial calculation or for recalculation of whole grid after reload or filter is applied. From <a href="#Calculate">Calculate</a> and <a href="#Recalculate">Recalculate</a> methods.<br />
+If <b>row</b> is set, it is called to calculate only row’s children after loading of page. If <b>col</b> is set, it is a called after some cell changed to recalculate appropriate formulas.<br />
+<i>(Since 11.0)</i> If <b>fixedonly</b> is set, it is called to calculate only fixed rows after recalculating some cell.<br />
+In custom calculations you cannot use predefined formulas, you just have to provide your owns to calculate cells.<br />
+See <a href="RowAPI.htm">row API</a> how to iterate rows by API. You can also test row's attributes <a href="RowVisibility.htm#IVisible">Visible</a> and <a href="RowDelete.htm#IDeleted">Deleted</a>. Or any other row's attribute.<br />
+
+<!-- OnCalculateFinish -->
+<a name="OnCalculateFinish"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API event</b> <i>void</i>
+   <h4>OnCalculateFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>bool</i> <b>show</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Called after grid is calculated or recalculated. Called from <a href="#Calculate">Calculate</a> and <a href="#Recalculate">Recalculate</a> methods.<br />
+
+<!-- OnCalculateCell -->
+<a name="OnCalculateCell"></a>
+<div class="API">
+   <u><i>upd <b>9.0</b></i></u> <b>API event</b> <i>type</i>
+   <h4>OnCalculateCell</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>val</b>, <i>bool</i> <b>show</b>, <i>TCalc</i> <b>Calc</b>)</s>
+</div>
+Called before cell value or attribute is calculated.<br />
+<b>col</b> is column name or attribute name to calculate.<br />
+<b>val</b> is new calculated value that will be set to the cell.<br /> 
+<i>(since 9.0)</i> <b>Calc</b> is calculation object for given cell, it is possible to call calculation functions like sum() as methods of this object.<br />
+Returns new value to set to the cell or null to use <b>val</b>.<br />
+
+<!-- Calculate -->
+<a name="Calculate"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>Calculate</h4>
+   <s>(<i>bool</i> <b>show</b> = 0, <i>bool</i> <b>calconly</b> = 0)</s>
+</div>
+Calculates grid.<br />
+If <b>show</b> = 1 displays all changes.<br /> 
+If <b>calconly</b> = 1 calculates only <a href="#ICalculated">Calculated</a> rows.<br />
+
+<!-- Recalculate -->
+<a name="Recalculate"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>Recalculate</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>show</b> = 0)</s>
+</div>
+Re-calculates grid after given cell changes, according to cell's or row's parameter <a href="#IRecalc">Recalc</a>.<br /> 
+Always recalculates fixed calculated rows.<br />
+It recalculates also Gantt chart in that row, if any.<br />
+
+<!-- RecalculateRows -->
+<a name="RecalculateRows"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API method</b> <i>void</i>
+   <h4>RecalculateRows</h4>
+   <s>(<i>TRow[ ]</i> <b>row</b>, <i>bool</i> <b>show</b> = 0)</s>
+</div>
+Recalculates given rows in given order.<br /> 
+Recalculates also Gantt chart in these rows. If the recalculation changes Gantt size, it refreshes whole Gantt chart.<br />
+It does <u>not</u> recalculate any other row (except the Gantt, see above), so if the calculation affects some other rows, they should be recalculated manually too.<br />
+<i>Remember, this function breaks CalcOrder in tree, as stated above!</i><br />
+To display the changes in grid call the function with the second parameter (<b>show</b>) as <b>1</b>.<br />
+The <b>rows</b> can be: a) array of TRow object, b) one TRow object, c) array of row ids (strings), d) one row id (string)<br />
+
+<!-- Action CalcOn -->
+<a name="ActionsCalcOn"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>CalcOn</h4>
+   <s>Attached to event <b>OnClickButtonCalc</b></s>
+</div>
+Enables calculations in grid and recalculates it. It fails if calculations are already enabled.<br />
+
+<!-- Action CalcOff -->
+<a name="ActionsCalcOff"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>CalcOff</h4>
+   <s>Attached to event <b>OnClickButtonCalc</b></s>
+</div>
+Disables calculations in grid. It fails if calculations are already disabled.<br />
+
+<!----------------------------------------------------------------------  Formulas  -------------------------------------------------->
+<a name="Formulas"></a>
+<h2>Formulas</h2>
+
+Formulas in TreeGrid have JavaScript syntax. The formula code is run as JavaScript function in <b>TCalc</b> object context so all <b>TCalc</b> methods are directly accessible like global functions.<br />
+TCalc object contains all the <a href="#AggFunc">aggregate functions</a> like sum and properties Grid, Row, Col as the actual cell see <a href="#CustomFunc">custom functions</a>.<br />
+If you have any problems with calculations, you can set <tt>&lt;bdo <a href="Debug.htm">Debug</a>='Problem'></tt> to see all errors in formulas in debug window.<br />
+
+<!-- Input values -->
+<a name="Values"></a>
+<h5>Input values</h5>
+In formula you can use cell values from the same row. These values are identified by column name. If you use calculations, choose column names and fixed rows ids carefully to not conflict with other keywords.<br />
+For example <tt>Formula='Col1+Col2*Col3'</tt> where Col1,Col2,Col3 are column names.<br /><br />
+
+Special keywords usable in the formula: <b>Grid</b>, <b>Parent</b>, <b>Row</b>, <b>Col</b>, <b>Attr</b>, <b>Value</b> and function <b>Get</b>.<br /><br />
+
+You can use cell values from all fixed and Space rows. These values can be accessed by function <b style="color:red;">Get</b> (<b><i>id</i></b>, "column"). <b><i>id</i></b> is keyword (row's id), but column is quoted string with column name.<br /><br />
+
+You can use cell values from immediate parent row. These values can be accessed by function <b style="color:red;">Get</b> (<b style="color:red;">Parent</b>, "column"). <b style="color:red;">Parent</b> is keyword (exact word Parent), but column is quoted string with column name.<br /><br />
+
+You can also access any other row's attributes given in input data, even any user defined attributes by <b style="color:red;">Get</b> (<b style="color:red;">Row</b>, "attribute"). <b style="color:red;">Row</b> is keyword (exact word Row), but attribute is string with attribute name. Instead of Row you can use also Parent or id as mentioned above.<br /><br />
+
+There is also keyword <b style="color:red;">Col</b> as actual column name where the formula is called.<br /><br />
+
+<i>(new 7.0)</i> For calculated cell attributes, there is keyword <b style="color:red;">Attr</b> to get the attribute name (like "Col1Class") and keyword <b style="color:red;">Value</b> to get actual cell value).<br /><br />
+
+There is also keyword <b style="color:red;">Grid</b> as the actual grid.<br />
+
+<!-- Calculation order -->
+<a name="CalcOrder"></a>
+<h6>Calculation order</h6>
+Cells in row are calculated in order given by <a href="#ICalcOrder">CalcOrder</a> attribute - it is comma separated array string of column names or row attributes. If <a href="#ICalcOrder">CalcOrder</a> is not set for the row, cells are calculated in alphabetical order.<br /> 
+If <a href="#ICalcOrder">CalcOrder</a> is set, only these cells are calculated, even if other cells have <a href="#CFormula">Formula</a> attribute.<br />
+In vertical direction, first are calculated body rows and after them fixed rows and finally Space rows. In tree, first are calculated children and after them parent row.<br />
+You can change the direction by advanced calculation order, see below.<br /> 
+<strong>If you use another calculated cell value as input in formula, you can reference only cells, which are prior (in calculation order) to the actual cell!</strong><br />
+
+<!-- Advanced calculation order -->
+<a name="CalcOrderX"></a>
+<h6>Advanced calculation order</h6>
+You can control calculation order by more advanced way:<br />
+a) Fixed rows' cells you can calculate by random by setting &lt;Cfg> <a href="#CfgCalcOrder">CalcOrder</a> attribute, and there you can set individual cells by id$col, for example <tt>"F1$A,F2$C"</tt><br />
+b) In any row's CalcOrder or global CalcOrder you can set position of calculating row's children by placing '*' to CalcOrder<br />
+c) You can define more calculating phases in tree by dividing CalcOrder to more attributes: CalcOrder, CalcOrder1, CalcOrder2 ,...<br />
+<div class="L1">and you can reference these CalcOrders in parent CalcOrder by *X, where X is number in CalcOrder (1,2,...).</div>
+For example you can have parent's (or global) <tt>CalcOrder = "*,A,B,*1"</tt> and all children's <tt>CalcOrder = "*,A,B"</tt> and <tt>CalcOrder1 = "C,D,*1"</tt><br />
+<div class="L1">=> The grid will calculate columns A,B upstairs (children first) and after it will calculate columns C,D downstairs (parent first)</div>
+If you use advanced calc order, you usually need to set <a href="#IRecalc">Recalc</a> attribute of all rows to 256 - to recalculated whole grid after change.<br />
+
+<!-- Aggregate functions -->
+<a name="Tree"></a>
+<h6>Aggregate functions</h6>
+In the tree, all aggregate functions in row iterate row's immediate children only, without their children.<br /> 
+If the row is fixed, aggregate functions iterate all variable root rows without their children.<br /> 
+By default, row's children are computed before the row or you can use advanced calculation order by asterisks, see above.<br />
+Deleted and filtered rows are not iterated in aggregate functions.<br />
+
+<!-- Operators -->
+<a name="Operators"></a>
+<h6>Operators</h6> 
+Operators use standard C++/JavaScript syntax: <b>+</b>, <b>-</b>, <b>*</b>, <b>/</b>, <b>!</b> (not), <b>%</b> (modulo), <b>&</b> (bit AND), <b>|</b> (bit OR), <b>^</b> (bit XOR), <b>&&</b> (logical and), <b>||</b> (logical OR), <b><<</b>, <b>>></b> (bit shift), <b>==</b> (equals), <b>!=</b> (not equals), <b><=</b>, <b>>=</b>, <b><</b>, <b>></b>.<br />
+Priority of operators is the same as in JavaScript. Always you can use ( ).<br />
+It can also be used operator (<i>condition ? true_result : false_result</i>). This operator has the least priority so you must use () for other calculation.<br />
+<i>Remember, the '&amp;' and '&lt;' characters are XML entities and must be replaced by &amp; and &lt;</i><br />
+
+<!-- Keywords -->
+<a name="Keywords"></a>
+<h6>Keywords</h6>
+Predefined keywords for TreeGrid are column names, row ids, aggregate function names, any custom function names, <b>Get</b>, <b>Row</b>, <b>Col</b>, <b>Grid</b>, <b>GetChildren</b>. These keywords must not conflict with each other and with all JavaScript reserved keywords. Keywords are not quoted in formulas. Keywords are case sensitive.<br /> 
+JavaScript reserved keywords are: break, case, catch, continue, default, delete, do, else, false, finally, for, function, if, in, instanceof, new, null, return, switch, this, throw, true, try, typeof, var, void, while, with.<br />
+
+<!-- Strings & numbers -->
+<a name="Types"></a>
+<h5>Strings & numbers</h5>
+Data type can be <b>number</b> or <b>string</b> like in JavaScript.<br />
+<strong>All numbers in grid are always numbers and not strings independently on cell type!</strong><br />
+Take care about summing strings and numbers. string + number = string. But string - number = number.<br /> 
+You can always explicitly convert value to string by (<b>val</b>+<b>""</b>) and to number by (<b>val</b>-<b>0</b>).<br />
+Empty cells are strings except for <b><a href="TypeNumber.htm">Int</a></b> and <b><a href="TypeNumber.htm">Float</a></b> types without <a href="TypeNumber.htm#CCanEmpty">CanEmpty</a> set to 1.<br />
+<b><a href="TypeDate.htm">Date</a></b> type is number (count of milliseconds since 1/1/1970). Empty Date is string except <a href="TypeDate.htm#CCanEmpty">CanEmpty</a> is set to 0.<br />
+
+<!-- Constants -->
+<a name="Constants"></a>
+<h6>Constants</h6>
+Number constants are written normally in English (C++/JavaScript) notation. String constants are in quotes or double quotes. If string contains quote, double quote or backslash it must be preceded by backslash.<br />
+Date constants are in seconds from 1/1/1970 00:00:00 GMT, so you can add constant to datetime or test two dates if less/greater. For example to add one day you need to add constant <tt>24*60*60*1000</tt>.<br />
+Constants also can be calculated.<br />
+
+<!-- White space -->
+<a name="WhiteSpace"></a>
+<h6>White space</h6> 
+White space characters &lt;=32 are ignored except in string constants.<br />
+
+<!-- Function calls -->
+<a name="FunctionCalls"></a>
+<h6>Function calls</h6> 
+Function calls use standard C++/JavaScript syntax: funcname (argument1, argument2, ...).<br /> 
+Function names are case sensitive. All TreeGrid calculation function names are written in lower case except Get macro.<br />
+<br />
+
+<!--------------------  Mathematical functions  ------------------------->
+<a name="MathFunc"></a>
+<h3>Mathematical functions</h3>
+
+<i><b>Constants</b></i>
+<table>
+<tr><td style="width:150px;"><i>Math.</i><b>E</b></td><td>e = 2.718281828459045</td></tr>
+<tr><td><i>Math.</i><b>LN10</b></td><td>ln (10) = 2.302585092994046</td></tr>
+<tr><td><i>Math.</i><b>LN2</b></td><td>ln (2) = 0.6931471805599453</td></tr>
+<tr><td><i>Math.</i><b>LOG10E</b></td><td>log 10 (e) = 0.4342944819032518</td></tr>
+<tr><td><i>Math.</i><b>LOG2E</b></td><td>log 2 (e) = 1.4426950408889633</td></tr>
+<tr><td><i>Math.</i><b>PI</b></td><td>&prod; = 3.141592653589793</td></tr>
+<tr><td><i>Math.</i><b>SQRT1_2</b></td><td>1 / &radic;2 = 0.7071067811865476</td></tr>
+<tr><td><i>Math.</i><b>SQRT2</b></td><td>&radic;2 = 1.4142135623730951</td></tr>
+</table><br />
+
+<i><b>Functions</b></i>
+<table>
+<tr><td style="width:150px;"><i>Math.</i><u><b>random</b></u> ( )</td><td>random number in range 0.0 - 1.0</td></tr>
+<tr><td><i>Math.</i><u><b>abs</b></u> (x)</td><td>absolute value</td></tr>
+<tr><td><i>Math.</i><u><b>round</b></u> (x)</td><td>rounds to integer, for example 2.5 => 3,  -1.4 => -1, -2.5 => -2</td></tr>
+<tr><td><i>Math.</i><u><b>ceil</b></u> (x)</td><td>nearest bigger number, for example 1.3 => 2, -1.3 = > -1</td></tr>
+<tr><td><i>Math.</i><u><b>floor</b></u> (x)</td><td>nearest smaller number, for example 1.3 => 1, -1.3 = > -2</td></tr>
+<tr><td><i>Math.</i><u><b>exp</b></u> (x)</td><td>e power x</td></tr>
+<tr><td><i>Math.</i><u><b>log</b></u> (x)</td><td>ln x, decimal logarithm is LOG10E * log(x), binary is LOG2E*log(x)</td></tr>
+<tr><td><i>Math.</i><u><b>pow</b></u> (x,y)</td><td>x power y</td></tr>
+<tr><td><i>Math.</i><u><b>sqrt</b></u> (x)</td><td>&radic;x</td></tr>
+<tr><td><i>Math.</i><u><b>sim</b></u> (x)</td><td>sin x, in radians</td></tr>
+<tr><td><i>Math.</i><u><b>cos</b></u> (x)</td><td>cos x, in radians</td></tr>
+<tr><td><i>Math.</i><u><b>tan</b></u> (x)</td><td>an x, in radians</td></tr>
+<tr><td><i>Math.</i><u><b>acos</b></u> (x)</td><td>arccos x, x must be in range -1.0 to 1.0</td></tr>
+<tr><td><i>Math.</i><u><b>asin</b></u> (x)</td><td>arcsin x, x must be in range -1.0 to 1.0</td></tr>
+<tr><td><i>Math.</i><u><b>atan</b></u> (x)</td><td>arctan x</td></tr>
+<tr><td><i>Math.</i><u><b>atan2</b></u> (y,x)</td><td>arctan x/y</td></tr>
+</table><br />
+
+<i><b>Other functions</b></i>
+<table>
+<tr><td style="width:150px;"><u><b>maximum</b></u> (a,b,c,...)</td><td>returns maximum of given values</td></tr>
+<tr><td><u><b>minimum</b></u> (a,b,c,...)</td><td>returns minimum of given values</td></tr>
+</table>
+<br />
+
+<!--------------------  Aggregate functions  ------------------------->
+<a name="AggFunc"></a>
+<h3>Aggregate functions</h3>
+
+All aggregate functions iterate by default all children of the row, where is function used. If row has not children return 0.<br />
+Deleted and filtered rows are by default <u>not</u> iterated.<br />
+In fixed rows aggregate functions iterate all variable root rows (in pure grid all variable rows).<br /><br />
+
+When used server paging (<tt><a href="PagingServer.htm#ChildPaging">ChildPaging</a>=3</tt> or <tt><a href="PagingServer.htm">Paging</a>=3</tt>), the not yet loaded body or parent row must contain result of the function. The attribute name is "col + function_name", for example Col1sum for column named Col1. Or use server parameter to name the attribute if the function supports it.<br />
+Only function <a href="#count">count</a> called without parameters reads Count attribute, so it does not be precalculated.<br /><br />
+
+<p style="text-align:center;font-size:130%;"><i><b style="text-align:center;">Basic aggregate functions</b></i></p>
+
+<!-- sum -->
+<a name="sum"></a>
+<div class="ACT">
+   <u>chg <b>6.0</b></u> <b>formula</b> <i>float</i>
+   <h4>sum</h4> <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>condition</b> = null, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+<i>For sum in editable formula see <a href="CellEditFormula.htm#sum">sum</a>.</i><br />
+Sums all values in column col, in rows where the conditions are satisfied. If col is missing or null, sums actual column.<br />
+All parameters are optional and can be missing.<br />
+<b>condition</b> is formula to evaluate, must return boolean value. <b>condition</b> is running in context of TCalc like standard formula. The <b>Row</b> variable contains actually iterated row.<br />
+<b>type</b> specifies which rows will be iterated, bit array:<br />
+<div class="L1">
+type<b>&1</b> include filtered rows,<br /> 
+type<b>&2</b> include deleted rows,<br /> 
+type<b>&4</b> include all children, not only immediate,<br /> 
+type<b>&8</b> selected rows only (the count is not updated after selection changes except <a href="#CfgCalculateSelected">CalculateSelected</a> is set),<br /> 
+type<b>&16</b> ignore <a href="Group.htm#DAggChildren">AggChildren</a> attribute.<br />
+</div>
+<b>server</b> is set only in server paging to use precalculated values from attribute "sum"+<b>server</b>. If not set, the col + "sum" is used.<br /><br />
+
+<i>Examples:</i>
+<table>
+<tr><td style="width:220px;"><tt>sum()</tt></td><td>Sums all values in column where is called. Iterates only visible, <u>not</u> deleted, <u>immediate</u> children (for fixed row all root rows).</td></tr>
+<tr><td><tt>sum('A')</tt></td><td>Sums all values in column 'A'. Iterates only visible, <u>not</u> deleted, <u>immediate</u> children (for fixed row all root rows).</td></tr>
+<tr><td><tt>sum(7)</tt></td><td>Sums all values in column where is called. Iterates <u>all</u> children (for fixed row all root rows and their children). Including deleted and hidden rows.</td></tr>
+<tr><td><tt>sum('Row.Def.Name=="N1"')</tt></td><td>Sums all values in column where is called. Iterates only children with <tt>Def='N1'</tt>.</td></tr>
+<tr><td><tt>sum('A',4</tt>)</td><td>Sums all values in column 'A'. Iterates <u>selected</u> children (for fixed row all root rows and their children).</td></tr>
+<tr><td><tt>sum("A","A&lt;5")</tt></td><td>Sums values in column A, only values less than 5.</td></tr>
+<tr><td><tt>sum("A","B>=5 && B&lt;10",4)</tt></td><td>Sums values in column A, only values from rows where B is in range &lt;5,10), iterates whole tree</td></tr>
+</table>
+<table>
+<tr><td style="width:390px;"><tt>sum("A&lt;5 &amp;&amp; B&lt;10 || A>=5 &amp;&amp; Get(F1,'B')&lt;10",3)</tt></td><td>Sums values in actual column in rows that satisfied the condition, including deleted and hidden rows.</td></tr>
+</table>
+<i>Remember, the '<b>&amp;</b>' and '<b>&lt;</b>' characters are XML entities and should be replaced by <b>&amp;amp;</b> and <b>&amp;lt;</b> to produce valid XML (TreeGrid accepts also invalid XML, but its processing can be slower).</i><br />
+
+<!-- count -->
+<a name="count"></a>
+<div class="ACT">
+   <u>chg <b>6.0</b></u> <b>formula</b> <i>float</i>
+   <h4>count</h4> <s>(<i>string</i> <b>condition</b> = null, <i>string</i> <b>condition</b> = null, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+Returns count of rows. See <a href="#sum">sum</a> function. <i>For count in editable formula see <a href="CellEditFormula.htm#count">count</a>.</i><br />
+
+<!-- calc -->
+<a name="calc"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>formula</b> <i>type</i>
+   <h4>calc</h4> <s>(<i>string</i> <b>formula</b>, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+Runs the formula for every row.<br /> 
+The <b>formula</b> is running in context of TCalc like standard formula.<br /> 
+The actual temporary result is stored in variable <b style="color:red;">Result</b>, formula should read and use it. Return value of formula is stored back to Result and is available for the next row formula.<br />
+<b>Result</b> is <b>0</b> on beginning.<br />
+The <b>Row</b> variable contains actually iterated row.<br />
+The <b>formula</b> can contain any JavaScript expression.<br />
+See <a href="#sum">sum</a> function.<br /><br />
+
+Examples:<br />
+<table>
+<tr><td style="width:220px;"><tt>calc("Result+A")</tt></td><td>Sums all values in column 'A'. Iterates only visible, <u>not</u> deleted, <u>immediate</u> children (for fixed row all root rows).</td></tr>
+<tr><td><tt>calc("Result+A-B")</tt></td><td>Computes value in 'A' minus value in 'B' and sums the results. Iterates only visible, <u>not</u> deleted, <u>immediate</u> children (for fixed row all root rows).</td></tr>
+<tr><td><tt>calc("Result>A?Result:A")</tt></td><td>Returns maximal value from column 'A'.</td></tr>
+</table>
+<table>
+<tr><td style="width:420px;"><tt>calc("if(Result>A) return Result; else return A;")</tt></td><td>Returns maximal value from column 'A'. The same as previous, different notation.</td></tr>
+</table>
+<table>
+<tr><td style="width:220px;"><tt>calc("maximum(Result,A)")</tt></td><td>Returns maximal value from column 'A'. The same as previous, different notation.</td></tr>
+</table>
+
+<p style="text-align:center;font-size:130%;"><i><b style="text-align:center;">Special aggregate functions</b></i></p>
+
+<!-- max -->
+<a name="max"></a>
+<div class="ACT">
+   <u>chg <b>6.0</b></u> <b>formula</b> <i>float</i>
+   <h4>max</h4> <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>condition</b> = null, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+Returns maximum value from the column. If there is no row to iterate, returns "". See <a href="#sum">sum</a> function. <i>For max in editable formula see <a href="CellEditFormula.htm#max">max</a>.</i><br />
+
+<!-- min -->
+<a name="min"></a>
+<div class="ACT">
+   <u>chg <b>6.0</b></u> <b>formula</b> <i>float</i>
+   <h4>min</h4> <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>condition</b> = null, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+Returns minimum value from the column. If there is no row to iterate, returns "". See <a href="#sum">sum</a> function. <i>For min in editable formula see <a href="CellEditFormula.htm#min">min</a>.</i><br />
+
+<!-- sumrange -->
+<a name="sumrange"></a>
+<div class="ACT">
+   <u>chg <b>6.0</b></u> <b>formula</b> <i>string</i>
+   <h4>sumrange</h4> <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>condition</b> = null, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+Sums all dates in column with <tt>Range=1 Type="Date"</tt>. It just creates new range from all intervals and updates it to not contain duplicate value cross intervals.
+See <a href="#sum">sum</a> function.<br />
+
+<!-- sumsq -->
+<a name="sumsq"></a>
+<div class="ACT">
+   <u>chg <b>6.0</b></u> <b>formula</b> <i>float</i>
+   <h4>sumsq</h4> <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>condition</b> = null, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+Sums all squares of values. See <a href="#sum">sum</a> function. <i>For sumsq in editable formula see <a href="CellEditFormula.htm#sumsq">sumsq</a>.</i><br />
+
+<!-- counta -->
+<a name="counta"></a>
+<div class="ACT">
+   <u>chg <b>6.0</b></u> <b>formula</b> <i>float</i>
+   <h4>counta</h4> <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>condition</b> = null, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+Counts all non blank values in the column. See <a href="#sum">sum</a> function. <i>For counta in editable formula see <a href="CellEditFormula.htm#counta">counta</a>.</i><br />
+
+<!-- countblank -->
+<a name="countblank"></a>
+<div class="ACT">
+   <u>chg <b>6.0</b></u> <b>formula</b> <i>float</i>
+   <h4>countblank</h4> <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>condition</b> = null, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+Counts all blank values in the column. See <a href="#sum">sum</a> function. <i>For countblank in editable formula see <a href="CellEditFormula.htm#countblank">countblank</a>.</i><br />
+
+<!-- product -->
+<a name="product"></a>
+<div class="ACT">
+   <u>chg <b>6.0</b></u> <b>formula</b> <i>float</i>
+   <h4>product</h4> <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>condition</b> = null, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+Multiplies all values in column. See <a href="#sum">sum</a> function. <i>For product in editable formula see <a href="CellEditFormula.htm#product">product</a>.</i><br />
+
+<p style="text-align:center;font-size:130%;"><i><b style="text-align:center;">String aggregate functions</b></i></p>
+
+<!-- join -->
+<a name="join"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>string</i>
+   <h4>join</h4> <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>condition</b> = null, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+Joins values in column. The values are separated by ValueSeparator (semicolon by default).<br />
+
+<!-- joinsum -->
+<a name="joinsum"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>string</i>
+   <h4>joinsum</h4> <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>condition</b> = null, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+Joins values in column. The values are separated by ValueSeparator (semicolon by default).<br />
+The same values will be counted and placed once as "count x value". If the input values are already joined values, it splits them and recalculates the counts.<br />
+
+<!-- sumjoin -->
+<a name="sumjoin"></a>
+<div class="ACT">
+   <u>new <b>9.2</b></u> <b>formula</b> <i>type</i>
+   <h4>sumjoin</h4> <s>(<i>string</i> <b>col</b> = null, <i>string</i> <b>condition</b> = null, <i>int</i> <b>type</b> = 0, <i>string</i> <b>server</b> = null)</s>
+</div>
+Sums values in column as standard <a href="#sum">sum</a> function.<br />
+If any value is a not empty string, it joins the values as <a href="#joinsum">joinsum</a>.<br />
+If all the values are empty strings or no values are in the column, returns empty string instead of zero.<br />
+
+<p style="text-align:center;font-size:130%;"><i><b style="text-align:center;">Other aggregate functions that cannot be used for server paging (cannot be pre-calculated)</b></i></p>
+
+<table>
+<tr><td style="width:200px;"><a name="average"></a><u><b>average</b></u> (<i>string</i> col)</td><td>Calculates average of column values (sum/count).</td></tr>
+<tr><td><a name="median"></a><u><b>median</b></u> (<i>string</i> col)</td><td>Returns median of column (middle value of range).</td></tr>
+<tr><td><a name="mode"></a><u><b>mode</b></u> (<i>string</i> col)</td><td>Returns modus of column (the most frequent value in range).</td></tr>
+<tr><td><a name="avedev"></a><u><b>avedev</b></u> (<i>string</i> col)</td><td>Calculates average deviation of column.</td></tr>
+<tr><td><a name="stdev"></a><u><b>stdev</b></u> (<i>string</i> col)</td><td>Calculates standard deviation of column.</td></tr>
+<tr><td><a name="stdevp"></a><u><b>stdevp</b></u> (<i>string</i> col)</td><td>Calculates standard deviation of column. column is the selection of data.</td></tr>
+<tr><td><a name="vara"></a><u><b>vara</b></u> (<i>string</i> col)</td><td>Calculates the sample variance of column.</td></tr>
+<tr><td><a name="varp"></a><u><b>varp</b></u> (<i>string</i> col)</td><td>Calculates the sample variance of column. column is the selection of data.</td></tr>
+<tr><td><a name="rank"></a><u><b>rank</b></u> (<i>string</i> col, <i>object</i> val)</td><td>Returns position of val in sorted column (column is sorted ascending). Starting from 0.</td></tr>
+</table>
+<br />
+
+<!--------------------  Special functions for actions  ------------------------->
+<a name="SpecialFunc"></a>
+<h3>Special functions for actions</h3>
+<a name="choose"></a>
+<table>
+<tr><td style="width:285px;"><u><b>choose</b></u> (<i>value</i>, <i>values</i>[ ], <i>items</i>[ ],<i>custom</i>)</td><td>Returns one item from items on position where values[pos] == value. If no value equals, returns custom.</td></tr>
+</table>
+<table>
+<tr><td style="width:50px;"></td><td>If <i>value</i> is null, uses cell value instead. If <i>values</i> is null, tests cell <a href="CellEdit.htm#CDefaults">Defaults</a>, if Defaults is also null, uses array [0,1,2,3,...].</td></tr>
+<tr><td></td><td>Call with null <i>value</i> and null <i>values</i> if you want to convert cell value from Defaults to another value or index.</td></tr>
+<tr><td></td><td>If <i>items</i> is null, returns one item from cell <a href="CellEdit.htm#CDefaults">Defaults</a>, if Defaults is also null, returns the index to values. If <i>custom</i> is null, returns cell <b>Custom</b> attribute.</td></tr>
+<tr><td></td><td>Call with null <i>items</i> and <i>custom</i> if you want to get item from Defaults according to index or another condition.</td></tr>
+<tr><td></td><td>Example: <tt>choose ("B",["A","B","C"],["X","Y","Z"],"None")</tt> - returns "Y", because value "B" is on second position in values and "Y" is second in items.</td></tr>
+<tr><td></td><td>This function can be used also for <a href="TypeEnum.htm">Select</a> type cells.</td></tr>
+</table>
+<a name="split"></a>
+<table>
+<tr><td style="width:165px;"><u><b>split</b></u> (<i>value</i>, <i>separator</i>)</td><td>Splits value string to array. Items are separated by separator. If <i>value </i> is null, uses cell value instead.</td></tr>
+<tr><td style="width:50px;"></td><td>If separator is null, splits by the first character in value. The first empty item is discarded.</td></tr>
+</table>
+<br />
+
+<!--------------------  Custom functions  ------------------------->
+<a name="CustomFunc"></a>
+<h3>Custom functions</h3>
+
+In formula you can use any JavaScript global function.<br /> 
+You can define any your custom global JavaScript function and call it from any formula.<br /> 
+You can also call from formula any grid method by Grid object.<br /><br />
+
+<i>Global parameters and methods to use in formula</i><br /><br />
+
+<table>
+<tr><td style="width:50px;"><i>TGrid</i></td><td style="width:110px;"><u><b>Grid</b></u></td><td>Pointer to actual grid where calculation is running. You can call any its method.</td></tr>
+<tr><td><i>TRow</i></td><td><u><b>Row</b></u></td><td>Actual row, where the being computed cell lies.</td></tr>
+<tr><td><i>string</i></td><td><u><b>Col</b></u></td><td>Actual column, where the being computed cell lies.</td></tr>
+<tr><td><i>TRow[ ]</i></td><td><u><b>GetChildren( )</b></u></td><td>Returns all immediate child rows of actual rows. For fixed row it returns all root variable rows. It does not contain deleted and filtered rows.</td></tr>
+</table><br />
+
+For example <tt>Formula = "escape(Col1)" or Formula=''Grid.GetText('Picture') + Col3"</tt><br />
+
+
+</div>
+</body>	
+</html>

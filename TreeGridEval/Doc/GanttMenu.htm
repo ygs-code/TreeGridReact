@@ -1,0 +1,222 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Gantt popup menu</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Gantt popup menu</h1>
+<p>TreeGrid documentation</p>
+
+<!-- GanttMenu -->
+<a name="CGanttMenu"></a>
+<div class="XML">
+   <u>new <b>7.1</b> <i>upd <b>11.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>GanttMenu</h4> <s>[...]</s>
+</div>
+Defines all items in right click popup menu in the Gantt column for given cell or whole column<br />
+It can be first character separated array of menu item names. The items can contain any HTML code. Separator can be shown as item named '-'<br />
+Or it can be in standard <a href="Menu.htm">TreeGrid menu</a> format as complex menu with <b>sub levels</b>, <b>sub menus</b>, <b>columns</b> and so on.<br />
+See also API <a href="Menu.htm#ShowMenu">ShowMenu</a> function to show custom menu from JavaScript.<br />
+<br />
+
+It is possible to change the order or remove some items.<br />
+You can also <b><i>add new custom items</i></b> and define <a href="#OnGanttMenuClick">OnGanttMenuClick</a> API event to be called on click to the custom item.<br />
+<br />
+
+The predefined menu item texts are defined in Text.xml, in &lt;Lang>&lt;Gantt>&lt;/Lang>.<br />
+Default Gantt menu is defined in Defaults.xml, in <tt>&lt;D Name="Gantt" ... /></tt> and contains all these items in this order:<br />
+<br />
+
+<table>
+<tr><td style="width:260px;"><b><i>Item name used in GanttMenu</i></b></td> <td style="width:280px;"><b><i>Text defined in Text.xml</i></b></td><td><b><i>When shown and notes</i></b></td></tr>
+<tr><td>DelGanttConstraint</td>               <td>Delete %d constraint                </td><td>Shown on constraint and constraints are editable</td></tr>
+<tr><td>SplitGanttConstraint</td>             <td>Split the %d constraint		          </td><td>Shown on mandatory constraint and constraints are editable</td></tr>
+<tr><td>ChangeGanttConstraint</td>            <td>Set the constraint as %d            </td><td>Shows up to four items to change to all possible constraints. Shown on constraint and constraints are editable</td></tr>
+<tr><td>&nbsp;</td>                           <td></td><td></td></tr>
+<tr><td>DelGanttFlag</td>                     <td>Delete the flag			                </td><td>Shown on flag and flags are editable</td></tr>
+<tr><td>EditGanttFlag</td>                    <td>Enter the flag text	                </td><td>Shown on flag and flags are editable and the GanttFlagTexts column is defined</td></tr>
+<tr><td>ChooseGanttFlagIcon</td>              <td>Select the flag icon		            </td><td>Shown on flag and flags are editable and the GanttFlagIcons column is defined</td></tr>
+<tr><td>&nbsp;</td>                           <td></td><td></td></tr>
+<tr><td>DelGanttPoint</td>                    <td>Delete the point			              </td><td>Shown on point and points are editable</td></tr>
+<tr><td>&nbsp;</td>                           <td></td><td></td></tr>
+<tr><td><s>DelGanttFlowPart</s></td>          <td><s>Delete the real flow bar		  </s></td><td><s>Shown on flow bar and the flow is editable</s> <i>(deleted 10.0)</i></td></tr>
+<tr><td></td>                                 <td><s>Delete milestone             </s></td><td><s>Shown on flow milestone and the flow is editable</s> <i>(deleted 10.0)</i></td></tr>
+<tr><td><s>SplitGanttFlow</s></td>            <td><s>Split the real flow bar		  </s></td><td><s>Shown on flow and the flow is editable</s> <i>(deleted 10.0)</i></td></tr>
+<tr><td><s>SetGanttFlowPercent</s></td>       <td><s>Update completed status here	</s></td><td><s>Shown on flow and the flow is editable and the GanttFlowComplete is defined</s> <i>(deleted 10.0)</i></td></tr>
+<tr><td><s>EditGanttFlowPercent</s></td>      <td><s>Enter completed status		    </s></td><td><s>Shown on flow and the flow is editable and the GanttFlowComplete is defined</s> <i>(deleted 10.0)</i></td></tr>
+<tr><td><s>EditGanttFlowText</s></td>         <td><s>Enter the real flow information	</s></td><td><s>Shown on flow and the flow is editable and the GanttFlowText column is defined</s> <i>(deleted 10.0)</i></td></tr>
+<tr><td>&nbsp;</td>                           <td></td><td></td></tr>
+<tr><td>DelGanttMilestone</td>                <td>Delete milestone			              </td><td>Shown on milestone, the main bar is editable and GanttSummary is not set</td></tr>
+<tr><td>SetGanttMilestone</td>                <td>Set the milestone complete	        </td><td>Shown on incomplete milestone, the main bar is editable, GanttSummary is not 1 and GanttComplete column is defined</td></tr>
+<tr><td></td>                                 <td>Set the milestone incomplete        </td><td>Shown on complete milestone, the main bar is editable, GanttSummary is not 1 and GanttComplete column is defined</td></tr>
+<tr><td>DelGanttMainPart</td>                 <td>Delete the bar			                </td><td><i>(new 10.0)</i> Shown on main bar, the main bar is editable and GanttSummary is not set and there are more main bar parts</td></tr>
+<tr><td>DelGanttMain</td>                     <td>Delete the task			                </td><td>Shown on main bar, the main bar is editable and GanttSummary is not set</td></tr>
+<tr><td>DisableGanttMain</td>                 <td>Disable the task			              </td><td><i>(new 10.0)</i> Shown on main bar, the main bar is editable</td></tr>
+<tr><td></td>                                 <td>Enable the task                     </td><td>                                           </td></tr>
+<tr><td>LockGanttMain</td>                    <td>Lock the task			                  </td><td><i>(new 10.0)</i> Shown on main bar, the main bar is editable</td></tr>
+<tr><td></td>                                 <td>Unlock the task                     </td><td>
+<tr><td>SplitGanttMain</td>                   <td>Split the bar			                  </td><td><i>(new 10.0)</i> Shown on main bar, the main bar is editable, GanttSummary is not set and the GanttParts is defined</td></tr>
+<tr><td>SetGanttPercent</td>                  <td>Update completed status here	      </td><td>Shown on main bar, the main bar is editable, GanttSummary is not set and GanttComplete column is defined</td></tr>
+<tr><td>EditGanttPercent</td>                 <td>Enter completed status		          </td><td>Shown on main bar, the main bar is editable, GanttSummary is not set and GanttComplete column is defined</td></tr>
+<tr><td>EditGanttText</td>                    <td>Enter the main bar information	    </td><td>Shown on main bar or milestone, the main bar is editable and GanttText column is defined</td></tr>
+<tr><td>&nbsp;</td>                           <td></td><td></td></tr>
+<tr><td>SelectGanttRunPart</td>               <td>Select the box			                </td><td><i>(new 10.0)</i> Shown on run bar that is not selected</td></tr>
+<tr><td></td>                                 <td>Unselect the box                    </td><td><i>(new 10.0)</i> Shown on selected run bar</td></tr>
+<tr><td>DisableGanttRun</td>                  <td>Disable the task / Disable the box	</td><td><i>(new 10.0)</i> Shown on run bar, the run bar is editable</td></tr>
+<tr><td></td>                                 <td>Enable the task / Enable the box    </td><td>                         </td></tr>
+<tr><td>LockGanttRun</td>                     <td>Lock the task / Lock the box	      </td><td><i>(new 10.0)</i> Shown on run bar, the run bar is editable</td></tr>
+<tr><td></td>                                 <td>Unlock the task / Unlock the box    </td><td>                              </td></tr>
+<tr><td>LockGanttRunContainer</td>            <td>Lock all %d boxes in  container     </td><td><i>(new 13.0)</i> Shown on run container, the run container is editable</td></tr>
+<tr><td>DisableGanttRunContainer</td>         <td>Disable all %d boxes in  container  </td><td><i>(new 13.0)</i> Shown on run container, the run container is editable</td></tr>
+<tr><td>EnableGanttRunContainer</td>          <td>Enable all %d boxes in  container   </td><td><i>(new 13.0)</i> Shown on run container, the run container is editable</td></tr>
+<tr><td>SplitGanttRun</td>                    <td>Split the bar / Split the box	      </td><td><i>(new 10.0)</i> Shown on run bar except End/Bound and the run is editable and GanttRunError contains 'Merge'</td></tr>
+<tr><td>EditGanttRun</td>                     <td>Change the box text		              </td><td>Shown on run bar except End/Bound and the run is editable</td></tr>
+<tr><td>EditGanttRunTip</td>                  <td>Change the box information	        </td><td>Shown on run bar except End/Bound and the run is editable</td></tr>
+<tr><td>ChooseGanttRunType</td>               <td>Change the box			                </td><td>Shown on run bar except End/Bound and the run is editable</td></tr>
+<tr><td>ChooseGanttRunContainer</td>          <td>Change the container                </td><td><i>(new 13.0)</i> Shown on run container, the run container is editable</td></tr>
+<tr><td>AddGanttRunContainer</td>             <td>Add new container for the box       </td><td><i>(new 13.0)</i> Shown on run bar except End/Bound and the run is editable</td></tr>
+
+<tr><td>-</td>                                <td></td><td></td></tr>	
+<tr><td>DelGanttRunPart</td>                  <td>Delete the box			                </td><td>Shown on run bar except End/Bound and the run is editable</td></tr>
+<tr><td>DelGanttRunContainerOnly</td>         <td>Delete the container                 </td><td><i>(new 13.0)</i> Shown on run container, the run container is editable</td></tr>
+<tr><td>-</td>                                <td></td><td></td></tr>
+<tr><td>SelectGanttRun</td>                   <td>Select all boxes			              </td><td><i>(new 10.0)</i> Shown if there is no selected box in the row / grid</td></tr>
+<tr><td>UnselectGanttRun</td>                 <td>Unselect all boxes		              </td><td><i>(new 10.0)</i> Shown if there are some selected boxes in row / grid</td></tr>
+<tr><td>JoinGanttRunSelected</td>             <td>Join selected boxes		              </td><td><i>(new 11.0)</i> Shown when there are available selected bars that can be joined by Nbsp</td></tr>
+<tr><td>SplitGanttRunJoined</td>              <td>Split joined boxes		              </td><td><i>(new 11.0)</i> Shown on joined run bar</td></tr>
+<tr><td>JoinGanttRunAdjacent</td>             <td>Join adjacent boxes		              </td><td><i>(new 11.0)</i> Shown on adjacent run bar that can be directly joined</td></tr>
+<tr><td>SplitGanttRunAdjacent</td>            <td>Split joined adjacent boxes	        </td><td><i>(new 11.0)</i> Shown on directly joined run bar</td></tr>
+<tr><td>ChooseGanttRunSelectedType</td>       <td>Change selected %d boxes	          </td><td><i>(new 10.0)</i> Shown if there are some selected boxes in the row / grid</td></tr>
+<tr><td>ChooseGanttRunGroupType</td>          <td>Change %d boxes in row group	      </td><td>Shown on run bar except End/Bound and the run is editable. Only if there are more boxes with the same Group attribute as this box in the same row</td></tr>
+<tr><td>ChooseGanttRunGroupAllType</td>       <td>Change %d boxes in group	          </td><td>Shown on run bar except End/Bound and the run is editable. Only if there is a box with the same Group attribute as this box in another row</td></tr>
+<tr><td>ChooseGanttRunRowType</td>            <td>Change all %d boxes in row	        </td><td><i>(new 11.0)</i> Shown on run bar except End/Bound and the run is editable. Only if there is a box with the same Group attribute as this box in another row</td></tr>
+<tr><td>ChooseGanttRunContainerType</td>      <td>Change all %d boxes in container    </td><td><i>(new 13.0)</i> Shown on run container, the run container is editable</td></tr>
+<tr><td>-</td>                                <td></td><td></td></tr>
+<tr><td>DelGanttRunSelected</td>              <td>Delete selected boxes (%d boxes)	  </td><td><i>(new 11.0)</i> Shown if there are some selected boxes in the row / grid</td></tr>
+<tr><td>DelGanttRunGroup</td>                 <td>Delete row group (%d boxes)	        </td><td>Shown on run bar except End/Bound and the run is editable. Only if there are more boxes with the same Group attribute as this box in the same row</td></tr>
+<tr><td>DelGanttRunGroupAll</td>              <td>Delete group (%d boxes)		          </td><td>Shown on run bar except End/Bound and the run is editable. Only if there is a box with the same Group attribute as this box in another row</td></tr>
+<tr><td>-</td>                                <td></td><td></td></tr>
+<tr><td>SetGanttRunMilestone</td>             <td>Set the milestone complete	        </td><td>Shown on incomplete run Milestone or Stop, the run is editable, GanttRunComplete column is defined. Only if the run contains only the box.</td></tr>
+<tr><td></td>                                 <td>Set the milestone incomplete 	      </td><td>Shown on complete run Milestone or Stop, the run bar is editable, GanttRunComplete column is defined. Only if the run contains only the box.</td></tr>
+<tr><td>SetGanttRunPercent</td>               <td>Update completed status here	      </td><td>Shown on run bar, the run is editable, GanttRunComplete column is defined. Except the run contains the only milestone.</td></tr>
+<tr><td>EditGanttRunPercent</td>              <td>Enter completed status		          </td><td>Shown on run bar, the run is editable, GanttRunComplete column is defined. Except the run contains the only milestone.</td></tr>
+<tr><td>EditGanttRunText</td>                 <td>Enter the task information	        </td><td>Shown on run bar, the run is editable, GanttRunText column is defined.</td></tr>
+<tr><td>-</td>                                <td></td><td></td></tr>
+<tr><td>EditGanttResource</td>                <td>Change resources		                </td><td>Shown if resources are editable and GanttResources column is defined</td></tr>
+<tr><td>GanttDepLagChange</td>                <td>Change the dependency lag	          </td><td><i>(chg 10.0)</i> Show on dependency line and the dependencies and lags are editable</td></tr>
+<tr><td>-</td>                                <td></td><td></td></tr>
+<tr><td>DelGanttDep</td>                      <td>Delete the dependency		            </td><td><i>(chg 10.0)</i> Show on dependency line and the dependencies are editable</td></tr>
+<tr><td>DelAllGanttDep</td>                   <td>Disconnect all dependencies	        </td><td>Shown if there is some incoming/outgoing dependency in any <a href="GanttObjects.htm#CGanttTask">GanttTask</a> in the cell</td></tr>
+<tr><td><s>DelGanttMainDep</s></td>           <td><s>Delete main bar and dependencies	</s></td><td><s>Shown if there is some incoming/outgoing dependency and the <a href="GanttObjects.htm#CGanttTask">GanttTask</a> bar (main or flow or run) that is editable</s> <i>(deleted 10.0)</i></td></tr>
+<tr><td></td>                                 <td><s>Delete milestone and dependencies</s></td><td><s>Shown if there is some incoming/outgoing dependency and milestone and the main bar is in the <a href="GanttObjects.htm#CGanttTask">GanttTask</a> and the main bar is editable</s> <i>(deleted 10.0)</i></td></tr>
+<tr><td>DelGanttMainBar</td>                  <td>Delete the task			                </td><td>Shown on main bar and the main bar is editable</td></tr>
+<tr><td>DelGanttMainAll</td>                  <td>Delete all tasks			              </td><td><i>(new 10.0)</i> Shown if there is main bar and the main bar is editable</td></tr>
+<tr><td><s>DelGanttFlow</s></td>              <td><s>Delete real flow			        </s></td><td><s>Shown if there is flow bar and the flow is editable and GanttFlowComplete column is not defined</s> <i>(deleted 10.0)</i></td></tr>
+<tr><td></td>                                 <td><s>Delete main bar			        </s></td><td><s>Shown if there is flow bar and the flow is editable and GanttFlowComplete column is defined</s> <i>(deleted 10.0)</i></td></tr>
+<tr><td>DelGanttRun</td>                      <td>Delete all boxes			              </td><td>Shown if there is run bar and the run is editable</td></tr>
+<tr><td>DelGanttRunContainer</td>             <td>Delete all %d boxes in container       </td><td><i>(new 13.0)</i> Shown on run container, the run container is editable</td></tr>
+<tr><td>DelGanttFlags</td>                    <td>Delete all flags			              </td><td>Shown if there is some flag and the flags are editable</td></tr>
+<tr><td>DelGanttPoints</td>                   <td>DelGanttPoints			                </td><td>Shown if there is some editable point</td></tr>
+<tr><td>DelGanttConstraints</td>              <td>Delete all constraints		          </td><td>Shown if there is some constraint and the constraints are editable</td></tr>
+<tr><td>DelGanttAll</td>                      <td>Clear the gantt cell		            </td><td>Shown if there is any object in the cell that can be deleted</td></tr>
+<tr><td>-</td>                                <td></td><td></td></tr>
+<tr><td>NewGanttFlag</td>                     <td>Add new flag to selected point	    </td><td>Shown if there is no flag under mouse, the flags are editable, GanttFlags column is defined and the adding does not violate constraints</td></tr>
+<tr><td>NewGanttPoint</td>                    <td>Add new point to selected point	    </td><td>Shown if it is possible to add new point here</td></tr>
+<tr><td>NewGanttConstraint</td>               <td>Add %d constraint here		          </td><td>Shows up to six items for every constraint that can be added to this place</td></tr>
+<tr><td>NewGanttMilestone</td>                <td>Add new milestone here		          </td><td>Shown if there is neither main bar nor milestone, the main bar is editable, GanttStart column is defined and the adding does not violate constraints</td></tr>
+<tr><td>NewGanttEndMilestone</td>             <td>Add new ending milestone here 	    </td><td>Shown if there is neither main bar nor milestone, the main bar is editable, GanttEnd column is defined and the adding does not violate constraints</td></tr>
+<tr><td><s>NewGanttFlowMilestone</s></td>     <td><s>Add new milestone here		    </s></td><td><s>Shown if there is no flow bar under mouse, the flow is editable, GanttFlowComplete is defined and the adding does not violate constraints</s> <i>(deleted 10.0)</i></td></tr>
+<tr><td><s>NewGanttFlowEndMilestone</s></td>  <td><s>Add new ending milestone here 	</s></td><td><s>Shown if there is no flow bar under mouse, the flow is editable, GanttFlowComplete is defined and the adding does not violate constraints</s> <i>(deleted 10.0)</i></td></tr>
+<tr><td>NewGanttRunMilestone</td>             <td>Add new milestone here		          </td><td>Shown if there is no run bar under mouse, the run is editable, GanttRun column is defined, GanttRunMilestones=1 and the adding does not violate constraints</td></tr>
+<tr><td>NewGanttRunStop</td>                  <td>Add new stop here		                </td><td>Shown if there is no run bar under mouse, the run is editable, GanttRun column is defined, GanttRunMilestones=1 and the adding does not violate constraints</td></tr>
+<tr><td>-</td>                                <td></td><td></td></tr>
+<tr><td>SetGanttBase</td>                     <td>Set project start here		          </td><td>Shown on computed start line (if GanttBase is empty) and GanttBaseCanEdit is set</td></tr>
+<tr><td>DelGanttBase</td>                     <td>Delete project start		            </td><td>Shown on start line (if GanttBase is not empty) and GanttBaseCanEdit is set</td></tr>
+<tr><td>SetGanttFinish</td>                   <td>Set project finish here		          </td><td>Shown on computed finish line (if GanttFinish is empty) and GanttFinishCanEdit is set</td></tr>
+<tr><td>DelGanttFinish</td>                   <td>Delete project finish		            </td><td>Shown on finish line (if GanttFinish is not empty) and GanttFinishCanEdit is set</td></tr>
+<tr><td>CorrectRelatedDependencies</td>       <td>Correct related dependencies	      </td><td>Shown on Gantt task if there is some dependency error in the group related to this task</td></tr>
+<tr><td>CorrectAllDependencies</td>           <td>Correct all dependencies in chart	  </td><td>Shown if there is some dependency error in chart</td></tr>
+<tr><td>-</td>                                <td></td><td></td></tr>
+<tr><td>ZoomBar</td>                          <td>Zoom to bar			                    </td><td><i>(new 10.0)</i> Shown on bar (main or run) and <tt>GanttSmoothZoom>=1</tt></td></tr>
+<tr><td>ZoomAll</td>                          <td>Zoom to all objects		              </td><td><i>(new 10.0)</i> Shown if the cell contains some object (Main, Run, Flags, Points) and <tt>GanttSmoothZoom>=1</tt></td></tr>
+<tr><td>ZoomHeader</td>                       <td>Zoom to %d %d - %d		              </td><td><i>(new 10.0)</i> Shows more menu items, one per Gantt header row with different units</td></tr>
+<tr><td>ZoomUndo</td>                         <td>Zoom back to %d		                  </td><td><i>(new 10.0)</i> Shown to undo last zoom change</td></tr>
+<tr><td>ZoomIn</td>                           <td>Zoom in to %d			                  </td><td><i>(new 10.0)</i> Shown if it is possible to increase zoom level</td></tr>
+<tr><td>ZoomOut</td>                          <td>Zoom out to %d			                </td><td><i>(new 10.0)</i> Shown if it is possible to decrease zoom level</td></tr>
+<tr><td>ZoomFit</td>                          <td>Zoom fit to actual space		        </td><td><i>(new 10.0)</i> Shown always</td></tr>
+</table>
+<br />
+
+Any other item name is custom name and its click must be handled by <a href="#OnGanttMenuClick">OnGanttMenuClick</a> API event.<br />
+
+<!-- OnGetGanttMenu -->
+<a name="OnGetGanttMenu"></a>
+<div class="API">
+   <u>new <b>7.1</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetGanttMenu</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>menu</b>, <i>object</i> <b>GanttXY</b>)</s>
+</div>
+Called to get the popup <a href="#CGanttMenu">GanttMenu</a> attribute dynamically by JavaScript.<br />
+<b>menu</b> is the original menu for the cell with all default and custom values. It should return new menu string.<br />
+<b>GanttXY</b> is object returned by <a href="GanttAPI.htm#GetGanttXY">GetGanttXY</a> method and contains information about the Gantt bar(s) under mouse cursor.<br />
+
+<!-- OnGanttMenu -->
+<a name="OnGanttMenu"></a>
+<div class="API">
+   <u>new <b>6.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnGanttMenu</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>TMenu</i> <b>Menu</b>, <i>object</i> <b>GanttXY</b>)</s>
+</div>
+Called before the Gantt popup menu is displayed for the appropriate cell.<br />
+<b>Menu</b> is TreeGrid JavaScript <a href="Menu.htm">TMenu</a> object, here can be changed, items modified, added or deleted and so on.<br />
+<b>GanttXY</b> is object returned by <a href="GanttAPI.htm#GetGanttXY">GetGanttXY</a> method and contains information about the Gantt bar(s) under mouse cursor.<br />
+Return true to cancel showing menu.<br />
+
+<!-- OnGanttMenuClick -->
+<a name="OnGanttMenuClick"></a>
+<div class="API">
+   <u>new <b>7.1</b> chg <b>10.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnGanttMenuClick</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>name</b>, <i>TMenuItem</i> <b>Item</b>, <i>object</i> <b>GanttXY</b>)</s>
+</div>
+Called when a user clicks to an item in <a href="#CGanttMenu">GanttMenu</a>. <i>Since 10.0 it is called for all GanttMenu items, not only for custom ones.</i><br />
+<b>name</b> is clicked custom item Name or standard item Text, <b>Item</b> is the whole clicked item object.<br />
+<b>GanttXY</b> is object returned by <a href="GanttAPI.htm#GetGanttXY">GetGanttXY</a> method and contains information about the Gantt bar(s) under mouse cursor in time of the menu display.<br />
+Return true to suppress default behavior.<br />
+
+<!-- Action GanttMenu -->
+<a name="ActionsGanttMenu"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GanttMenu</h4>
+   <s>Attached to <b>OnRightClickGantt</b> event</s>
+</div>
+Shows popup menu with available actions for given clicked point in the Gantt cell.<br />
+
+<!-- Menu -->
+<a name="CMenu"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>Menu</h4> <s>[...]</s>
+</div>
+<i>For compatibility with 6.x and 7.0 version only. In <b>7.1+</b> version use GanttMenu attribute instead.</i><br />
+Context (popup) menu for the Gantt cell to add custom items to the default Gantt menu.<br />
+
+<!-- OnContextMenu -->
+<a name="OnContextMenu"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnContextMenu</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>result</b>)</s>
+</div>
+Called when user clicks to context menu set by <a href="#CMenu">Menu</a> attribute.<br />
+result is Value or Name of the clicked item or all value.<br />
+Return true to <u>not</u> close the menu.<br />
+
+
+</div>
+</body>
+</html>

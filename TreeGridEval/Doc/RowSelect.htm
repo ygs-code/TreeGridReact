@@ -1,0 +1,969 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Selecting rows</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Row, cell and column selecting</h1>
+<p>TreeGrid documentation</p>
+
+<i>There can be more selected rows and cells in grid. Don't confuse <strong>selected</strong> and <b>focused</b> row. The focused row is the only row with cursor (<b>FRow</b>). See <a href="Focus.htm">Focus cursor</a>.</i><br />
+By default can be selected only whole rows, to permit selecting of individual cells or cell ranges set <tt>&lt;Cfg <a href="#CfgSelectingCells">SelectingCells</a>='1'/></tt>.<br />
+By default can be rows (and cells) selected by <b>Ctrl+click</b>, <b>Shift+click</b>, <b>Space</b>, <b>Ctrl + drag</b>, <b>Panel Select click</b> or <b>drag</b>.<br />
+To change default selecting behavior assign the selecting actions to different events.<br /><br />
+
+By default is selection persistent. To clear selection after mouse click, add to action <tt>OnClickCell="... ,<a href="#ClearSelection">ClearSelection</a>".</tt><br />
+To permit only selected row at a time, add the <a href="#ClearSelection">ClearSelection</a> before all selecting actions calls.<br /><br />
+
+The selected rows can be deleted, moved or copied. They can be also sent to server.<br />
+The selected rows can be got by <a href="#GetSelRows">GetSelRows</a> method and used for any custom task. To find out what cells are selected read <a href="#CellSelected">Selected</a> attribute of the cell.<br />
+
+<!-- Selecting -->
+<a name="CfgSelecting"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Selecting</h4> <s>[1]</s>
+</div>
+If selecting rows or cells is permitted.<br /> 
+To control how rows and cells can be selected by a user, assign the selecting actions to appropriate events.<br />
+By default is permitted selecting rows but not selecting cells and columns <tt>&lt;Cfg Selecting='1' SelectingCells='0' ColSelecting='0'/></tt>.<br />
+
+<!-- SelectingText -->
+<a name="CfgSelectingText"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SelectingText</h4> <s>[0]</s>
+</div>
+If text selection in grid (standard browser behavior) by mouse is permitted.<br />
+To let a user to select text, there also must not be any drag action possible for the cell, otherwise the drag action is done.<br />
+<i>If it is <b>1</b>, there can be unwanted selection blinking during grid dragging and selection actions!</i><br />
+
+<!-- SelectClass -->
+<a name="CfgSelectClass"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SelectClass</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, selected cells can be highlighted also by CSS class attributes like color or font, defined in <b>GxColorSelected</b> CSS class in Grid.css.<br />
+If set to <b>0</b>, selected cells are highlighted only by background color.<br />
+<i>It is used for <a href="#CfgSelectingCells">SelectingCells</a>, selected rows are always highlighted by CSS class.</i><br />
+<i>The value <b>1</b> can slow down selecting cells.</i><br />
+
+<!-- SelectClassRow -->
+<a name="CfgSelectClassRow"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SelectClassRow</h4> <s>[0]</s>
+</div>
+If set, adds ...ClassSelected CSS class also to row HTML tag. 
+For backward compatibility with TreeGrid before 12.0.<br />
+
+<!-- OnSelect -->
+<a name="OnSelect"></a>
+<div class="API">
+   <u>chg <b>11.0</b> <i>upd <b>12.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnSelect</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>bool</i> <b>deselect</b>, <i>string[]</i> <b>Cols</b>)</s>
+</div>
+Called before the <b>row</b> or its cells are selected or unselected. Called before the selection state of the row or its cells  is changed.<br /> 
+<b>deselect</b> is <b>0</b> if the row or cells will be selected, <b>1</b> if the row or cells will be unselected. <i>Since 11.0 there is <u>not</u> used value <b>2</b>.</i><br />
+<i>(Since 11.0)</i> <b>Cols</b> is a list of cells (column names) that will be changed (selected or unselected). It is set only if only some cells in the row will be changed.<br />
+<i>(Since 12.0)</i> If the whole column is selected, the <b>row</b> is null and <b>Cols</b> contains this only column.<br />
+<i>(Since 9.1)</i> Return true to suppress the action.<br />
+
+<!-- OnSelectAll -->
+<a name="OnSelectAll"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnSelectAll</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>select</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Called before all rows, columns <i>(since 12.0)</i> or cells <i>(since 12.0)</i> in grid are selected or unselected.<br /> 
+<b>type</b> <i>(since 12.0)</i> what is selected, bit array, <b>1</b> - cells, <b>2</b> rows, <b>4</b> columns. Now the values 0, 3, 5, 6, 7 are <u>not</u> used.<br />
+<b>select</b> is <b>0</b> for unselect all, <b>1</b> select all, -<b>1</b> invert all (rows only).<br />
+Return true to suppress the action.<br />
+
+<!-- ClearSelection -->
+<a name="ClearSelection"></a>
+<div class="API">
+   <u>new <b>11.0</b> <i>upd <b>12.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>ClearSelection</h4> 
+   <s>(<i>int</i> <b>type</b> = 7)</s>
+</div>
+Clears whole selection, all rows, columns and cells, including hidden rows and columns. It is always <u>synchronous</u>.<br />
+<i>(Since 12.0)</i> <b>type</b> is what to clear, bit array. 1.bit &amp;<b>1</b> - cells, 2.bit &amp;<b>2</b> - rows,  3.bit &amp;<b>4</b> - columns.<br />
+
+<!-- IsSelected -->
+<a name="IsSelected"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>IsSelected</h4> 
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Returns true if given cell or row (col is null) or column (row is null) is selected.<br />
+
+<!-- ClearSelection -->
+<a name="ActionsClearSelection"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearSelection</h4> 
+   <s>Not assigned to any event</s>
+</div>
+Clears whole selection, including hidden rows. It is always <u>synchronous</u> and never fails.<br />
+Add it to <b>OnClickCell</b> and <b>OnClickOutside</b> to clear selection after any click - to have <u>not</u> persistent selection.<br />
+For example <tt>&lt;Actions OnClickCell='ClearSelection,FocusEdit' OnClickOutside='ClearSelection,Blur'/></tt><br />
+
+<!-- ClearSelected -->
+<a name="CfgClearSelected"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ClearSelected</h4>
+   <s>[4]</s>
+</div>
+When the whole row or column selection is cleared. <i>For cell selecting use <a href="#CfgSelectHidden">SelectHidden</a> instead.</i><br />
+It affects also <a href="Search.htm#CfgSearchAction">SearchAction</a> <b>Select</b>.<br />
+It affects also <a href="#ActionsSelectAll">SelectAll</a> / <a href="#ActionsDeselectAll">DeselectAll</a> / <a href="#ActionsInvertAll">InvertAll</a> actions, e.g. to affect only all visible rows, set ClearSelected='6'.<br />
+<table>
+<tr><td style="width:60px;"><b>1</b>.bit &<b>1</b></td><td>If selection is cleared for deleted rows / columns.</td></tr>
+<tr><td><b>2</b>.bit &<b>2</b></td><td>If selection is cleared for filtered rows / columns.</td></tr>
+<tr><td><b>3</b>.bit &<b>4</b></td><td>If selection is cleared for manually hidden rows / columns.</td></tr>
+<tr><td><b>4</b>.bit &<b>8</b></td><td>If selection is cleared for collapsed child rows.</td></tr>
+</table>
+
+<!-- SelectAllType -->
+<a name="CfgSelectAllType"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SelectAllType</h4>
+   <s>[0]</s>
+</div>
+How selecting all rows and columns works.
+<table>
+<tr><td style="width:60px;"><b>1</b>.bit &<b>1</b></td><td>The SelectAll / SelectAllCols button is switched on when all rows / columns are selected.</td></tr>
+<tr><td><b>2</b>.bit &<b>2</b></td><td>Unselecting single row or column or range of rows / columns will uncheck the SelectAll / SelectAllCols button.</td></tr>
+<tr><td><b>3</b>.bit &<b>4</b></td>
+   <td>Selecting single row or column or range of rows / columns will check the SelectAll / SelectAllCols button when all rows / columns will be selected.
+      <i>Can be slow, iterates all rows for every select.</i>
+   </td></tr>
+<tr><td><b>4</b>.bit &<b>8</b></td><td>If the SelectAll / SelectAllCols is checked, the rows / columns on newly loaded or created pages will be selected.</td></tr>
+<tr><td><b>5</b>.bit &<b>16</b></td><td>If the SelectAll / SelectAllCols is checked, the newly added rows / columns will be selected.</td></tr>
+</table>
+
+
+<!------------------------------------------------------------------ Selecting rows -------------------------------------------------------------->
+<a name="Rows"></a>
+<h2>Selecting rows</h2>
+<p class="H2">Selecting the whole rows</p>
+
+The whole rows selecting is permitted by <a href="#CfgSelecting">Selecting</a> attribute.<br />
+
+<!-- SelectingSingle -->
+<a name="CfgSelectingSingle"></a>
+<div class="XML">
+   <u>new <b>9.1</b> <i>upd <b>9.3</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SelectingSingle</h4> <s>[0]</s>
+</div>
+If set to <b>1</b> (1.bit), only one row can be selected in grid. Selecting other row clears previously selected row.<br />
+<i>(new 9.3)</i> If set to <b>2</b> (2. bit), the selected row cannot be unselected. The grid will have always selected one row.<br />
+<i>(new 9.3)</i> If set to <b>4</b> (3. bit), it clears the row selected in grid data on start.<br />
+Set to <b>7</b> for all the three features.<br />
+
+<!-- SaveSelected -->
+<a name="CfgSaveSelected"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SaveSelected</h4> <s>[0] &nbsp; Saves information to cookies</s>
+</div>
+If set to <b>1</b>, saves all <a href="#ISelected">Selected</a> row ids to cookies. Therefore it remembers all Selected rows on the client.<br />
+Remember, cookies are limited to 4096 bytes for the whole page, so use this setting only for very small tables or use <a href="Cookie.htm#CfgPersistentCfg">PersistentCfg</a>.<br />
+Use also as small row ids as possible (the amount of cookie space is used: id+1 bytes per selected row).<br />
+
+<!-- CalculateSelected -->
+<a name="CfgCalculateSelected"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>CalculateSelected</h4> <s>[0]</s>
+</div>
+If there are formulas in grid that use selected rows.<br />
+If set, all calculated rows are recalculated after selection changes.<br />
+
+<!-- CanSelect -->
+<a name="ICanSelect"></a>
+<div class="XML">
+   <u><i>upd <b>12.0</b></i></u> <b>&lt;I></b> <i>int</i>
+   <h4>CanSelect</h4> <s>[1]</s>
+</div>
+If row and its cells can be selected.<br />
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>The row and its cells cannot be selected by any method.</td></tr>
+<tr><td><b>1</b></td><td>The row and its cells can be selected.</td></tr>
+<tr><td><b>2</b></td><td><i>(new 12.0)</i> Only the whole row can be selected.</td></tr>
+<tr><td><b>3</b></td><td><i>(new 12.0)</i> Only the row individual cells can be selected.</td></tr>
+<tr><td><b>4</b></td><td><i>(new 12.0)</i> The row and its cells cannot be selected by any method, but the row cells are marked selected if the whole column is selected.</td></tr>
+</table>
+Default value is <b>1</b> for all variable rows and <b>0</b> for fixed and space rows.<br />
+
+<!-- CanSelect -->
+<a name="HeaderCanSelect"></a>
+<div class="XML">
+   <u><i>upd <b>12.0</b></i></u> <b>&lt;Header></b> <i>bool</i>
+   <h4>CanSelect</h4> <s>[1]</s>
+</div>
+<b>Deprecated <i>since 12.0.</i> Use Panel <a href="TypePanel.htm#CButtons">Buttons</a> or Panel value instead to define the panel buttons for header row.</b><br />
+If the Panel <b>SelectAll</b> button is enabled. Header row itself can never be selected.<br />
+
+<!-- Selected -->
+<a name="ISelected"></a>
+<div class="XML">
+   <u><i>upd <b>12.0</b></i></u> <b>&lt;I></b> <i>int</i>
+   <h4>Selected</h4> <s>[0]</s>
+</div>
+It is set to <b>1</b> when the row is selected. It is colored yellow (by default setting in Grid.css).<br />
+It is set to <b>2</b> when the row contains some but not all selected cells.<br />
+<i>(Since 12.0)</i> It is set to <b>3</b> if the row is selected and it also contain some selected cells for <tt><a href="#CfgSelectingCells">SelectingCells</a> = 3</tt>.<br />
+<i>There can be more selected rows in the grid. Don't confuse <strong>selected</strong> and <strong>focused</strong> row. The <b>focused</b> row is the row with cursor.</i><br />
+
+<!-- Select -->
+<a name="PanelSelect"></a>
+<div class="XML">
+   <u><i>upd <b>9.2</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>Select</h4> <s>[1]</s>
+</div>
+If the default Panel button <b>Select</b> is visible. This button is hidden also if <tt>&lt;Cfg <a href="#CfgSelecting">Selecting</a>="0"/></tt>. This button is inactive when the row has <tt><a href="#ICanSelect">CanSelect</a>='0'</tt>.<br />
+Click to this button selects the whole row. Dragging this button selects rows range.<br />
+<i>(Since 9.2)</i> If set to <b>2</b>, it is similar to 1, but the button is checked only if the whole row is selected, not only individual cells.<br />
+<i>Used only if the Panel <a href="TypePanel.htm#CButtons">Buttons</a> and the cell value are <u>not</u> set.</i><br />
+
+<!-- GetSelRows -->
+<a name="GetSelRows"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b>API method</b> <i>TRow[ ]</i>
+   <h4>GetSelRows</h4> 
+   <s>(<i>int</i> <b>type</b> = null, <i>string</i> <b>attr</b> = null, <i>bool</i> <b>first</b> = null)</s>
+</div>
+Returns all selected rows in JavaScript array. They are sorted according to their position in grid.<br />
+<b>type</b> <i>(since 12.0)</i> is bit array to choose rows to return, <i>prior 12.0</i> default value of type is 15 as 1+2+4+8.<br />
+<tt><b>type</b>&amp;3 = <b>0</b></tt> return rows with Selected&amp;1 if <tt><a href="#CfgSelectingCells">SelectingCells</a> ==3</tt> otherwise return rows with any Selected set.<br />
+<tt><b>type</b>&amp;3 = <b>1</b></tt> return rows with Selected&amp;1, <tt><b>type</b>&amp;3 = <b>2</b></tt> return rows with Selected&amp;2, <tt><b>type</b>&amp;3 = <b>3</b></tt> return rows with any Selected set.<br />	
+<tt><b>type</b>&amp;4 = <b>4</b></tt> including fixed rows, 
+<tt><b>type</b>&amp;8 = <b>8</b></tt> including selected children of selected parent.<br />
+The iterated rows are affected also by <a href="#CfgClearSelected">ClearSelected</a> setting.<br />
+<i>(new 12.0)</i> If set <b>attr</b>, returns only rows that have this attribute set, e.g. "CanDelete".<br />
+<i>(new 12.0)</i> If set <b>first</b> = <b>1</b>, returns true if some row is selected, otherwise false.
+If set <b>first</b> = <b>0</b>, returns true if some row is unselected, otherwise false.<br />
+If <a href="#CfgSelectingCells">SelectingCells</a> is permitted, to find out what cells are selected read <a href="#CellSelected">Selected</a> attribute of the cell: <tt>if(row[col+"Selected"]) ...</tt><br />
+
+<!-- SelectRow -->
+<a name="SelectRow"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b>API method</b> <i>bool</i>
+   <h4>SelectRow</h4> 
+   <s>(<i>TRow</i> <b>row</b>, <i>bool</i> <b>select</b> = null, <i>bool</i> <b>test</b> = 0)</s>
+</div>
+Selects / unselects whole row. Select the row if <tt><b>select</b> = <b>1</b></tt>, unselects if <tt><b>select</b> = <b>0</b></tt>.<br />
+If <tt><b>select</b> = <b>null</b></tt> and the row has at least one selected cell, it is unselected, otherwise it is selected. For <tt><a href="#CfgSelectingCells">SelectingCells</a> = 3</tt> just negates the whole row selection.<br />
+<i>(Since 12.0)</i> If set <tt><b>test</b> = <b>1</b></tt>, does not change anything, just test if the selecting is possible.<br />
+Returns true if selection changed.<br />
+ 
+<!-- SelectAllRows -->
+<a name="SelectAllRows"></a>
+<div class="API">
+   <u><i>upd <b>6.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>SelectAllRows</h4> 
+   <s>(<i>int</i> <b>select</b> = null)</s>
+</div>
+Selects / unselects all rows.<br />
+If <tt><b>select</b> = <b>1</b></tt> selects all rows, <tt><b>select</b> = <b>0</b></tt> unselects all rows, <tt><b>select</b> = <b>-1</b></tt> invert all rows (every selected row will be unselected and vice versa)<br />
+If <tt><b>select</b> = <b>null</b></tt> and some row is selected, unselects all rows, otherwise it selects all rows.<br />
+
+<!-- AllSelected -->
+<a name="AllSelected"></a>
+<div class="API">
+   <u>new <b>12.0</b></i></u> <b>API variable</b> <i>bool</i>
+   <h4>AllSelected</h4> 
+   <s></s>
+</div>
+If all rows are selected or unselected. Can be <b>1</b> for all rows selected, <b>0</b> for no row selected or <b>null</b> for other states or unknown state.<br />
+Depends on <a href="#CfgSelectAllType">SelectAllType</a> setting.<br />
+
+<!-- Action SelectRows -->
+<a name="ActionsSelectRows"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectRows</h4> 
+   <s>Not assigned to any event, can be assigned to <b>OnDrag...</b> events only</s>
+</div>
+Starts selecting range of rows by mouse dragging. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action DeselectRows -->
+<a name="ActionsDeselectRows"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectRows</h4> 
+   <s>Not assigned to any event, can be assigned to <b>OnDrag...</b> events only</s>
+</div>
+Starts deselecting range rows by mouse dragging. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action InvertRowsFirst -->
+<a name="ActionsInvertRowsFirst"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>InvertRowsFirst</h4> 
+   <s>Assigned to <b>OnCtrlDragRow</b> event, can be assigned to <b>OnDrag...</b> events only</s>
+</div>
+Starts selecting or deselecting range of rows by mouse dragging. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+If the actual row is selected (at least one cell), starts deselecting, otherwise starts selecting.<br />
+
+<!-- Action SelectOddRows -->
+<a name="ActionsSelectOddRows"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectOddRows</h4> 
+   <s>Not assigned to any event, can be assigned to <b>OnDrag...</b> events only</s>
+</div>
+Starts selecting individual rows - every row under mouse cursor is selected. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action DeselectOddRows -->
+<a name="ActionsDeselectOddRows"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectOddRows</h4> 
+   <s>Not assigned to any event, can be assigned to <b>OnDrag...</b> events only</s>
+</div>
+Starts deselecting individual rows - every row under mouse cursor is deselected. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action InvertOddRows -->
+<a name="ActionsInvertOddRows"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>InvertOddRows</h4> 
+   <s>Assigned to <b>OnDragPanelSelect</b> event, can be assigned to <b>OnDrag...</b> events only</s>
+</div>
+Starts inverting selection of individual rows - every row under mouse cursor changes its selection state. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action SelectRow ...F -->
+<a name="ActionsSelectRow"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectRow <i>...F</i></h4>
+   <s>Assigned to <b>OnSpace</b>, <b>OnCtrlClickCell</b> and <b>OnClickPanelSelect</b> events</s>
+</div>
+Selects actual or focused row. Fails if the row is already selected, cannot be selected or <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action DeselectRow ...F -->
+<a name="ActionsDeselectRow"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectRow <i>...F</i></h4>
+   <s>Assigned to <b>OnSpace</b>, <b>OnCtrlClickCell</b> and <b>OnClickPanelSelect</b> events</s>
+</div>
+Deselects actual or focused row. Fails if the row is <u>not</u> selected, cannot be selected or <a href="#CfgSelecting">Selecting</a> is 0.<br />
+To invert selection action use "SelectRow OR DeselectRow".<br />
+
+<!-- Action SelectFocusedRows -->
+<a name="ActionsSelectFocusedRows"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectFocusedRows</h4>
+   <s>Not assigned to any event</s>
+</div>
+Selects all focused rows. Fails if no row is focused or <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action DeselectFocusedRows -->
+<a name="ActionsDeselectFocusedRows"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectFocusedRows</h4>
+   <s>Not assigned to any event</s>
+</div>
+Deselects all focused rows. Fails if no row is focused or <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action InvertFocusedRowsFirst -->
+<a name="ActionsInvertFocusedRowsFirst"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>InvertFocusedRowsFirst</h4>
+   <s>Not assigned to any event</s>
+</div>
+Selects or deselects all focused rows. Fails if no row is focused or <a href="#CfgSelecting">Selecting</a> is 0.<br />
+If the first focused row is selected, deselects all, otherwise selects all.<br />
+
+<!-- Action SelectRowRange -->
+<a name="ActionsSelectRowRange"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectRowRange</h4>
+   <s>Not assigned to any event</s>
+</div>
+Selects all rows between focused row and actual row, including both rows. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action DeselectRowRange -->
+<a name="ActionsDeselectRowRange"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectRowRange</h4>
+   <s>Not assigned to any event</s>
+</div>
+Deselects all rows between focused row and actual row, including both rows. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action InvertRowRangeFirst -->
+<a name="ActionsInvertRowRangeFirst"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>InvertRowRangeFirst</h4>
+   <s>Assigned to <b>OnShiftClickCell</b> event</s>
+</div>
+Selects or deselects all rows between focused row and actual row, including both rows. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+If the focused row is selected, deselects all, otherwise selects all.<br />
+
+<!-- Action SelectAll -->
+<a name="ActionsSelectAll"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectAll</h4>
+   <s>Assigned to <b>OnCtrlSpace</b> and <b>OnClickHeaderSelect</b> events</s>
+</div>
+Selects all visible rows. Fails if all rows are selected or cannot be selected or <a href="#CfgSelecting">Selecting</a> is 0.<br />
+<i>This action can be asynchronous!</i><br />
+
+<!-- Action DeselectAll -->
+<a name="ActionsDeselectAll"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectAll</h4>
+   <s>Assigned to <b>OnCtrlSpace</b> and <b>OnClickHeaderSelect</b> events</s>
+</div>
+Deselects all visible rows. Fails if no rows is selected or cannot be selected or <a href="#CfgSelecting">Selecting</a> is 0.<br /> 
+<i>To always deselect all rows you should use <a href="#ClearSelection">ClearSelection</a> instead!</i><br />
+<i>This action can be asynchronous, so you should not call any other select actions after this in the same event!</i><br />
+
+<!-- Action InvertAll -->
+<a name="ActionsInvertAll"></a>
+<div class="ACT">
+   <u>chg <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>InvertAll</h4>
+   <s>Assigned to <b>OnCtrlClickHeaderSelect</b> events</s>
+</div>
+Inverts whole selection, unselects all visible selected rows and selects all unselected rows. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+<i>Since 12.0</i> it fails if all rows are selected or unselected.<br />
+<i>It is <u>not</u> the same as "SelectAll OR DeselectAll"!</i><br />
+
+<!------------------------------------------------------------------ Selecting cells -------------------------------------------------------------->
+<a name="Cells"></a>
+<h2>Selecting cells</h2>
+<p class="H2">Selecting individual cells or cell ranges</p>
+
+<!-- SelectingCells -->
+<a name="CfgSelectingCells"></a>
+<div class="XML">
+   <u>chg <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SelectingCells</h4> <s>[0]</s>
+</div>
+If selecting individual cells or cells ranges is permitted and how it affects row and column selecting. <i>It is disabled by default!</i><br /><br />
+
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td><b><u>No</u></b> individual cells can be selected. Only whole rows or whole columns can be selected. </td></tr>
+<tr><td></td><td>The rows and columns can have set <tt><a href="#ISelected">Selected</a> = <b>1</b></tt> or <tt><b>0</b></tt>, if they are selected or unselected.</td></tr>
+
+<tr><td>&nbsp;</td><td></td></tr>
+
+<tr><td><b>1</b></td><td><u><b>Shared</b></u> cell and row/column selecting. Individual cells can be selected. Selecting row or columns selects all its cells.</td></tr>
+<tr><td></td><td>The row has set <tt><a href="#ISelected">Selected</a> = <b>0</b></tt>, if it contains no cell selected.</td></tr>
+<tr><td></td><td>The row has set <tt><a href="#ISelected">Selected</a> = <b>1</b></tt>, if it contains all cells selected.</td></tr>
+<tr><td></td><td>The row has set <tt><a href="#ISelected">Selected</a> = <b>2</b></tt>, if it contains some cells selected and some unselected. And the selected individual cells have set its own <tt><a href="#ISelected">Selected</a> = <b>1</b></tt> attribute.</td></tr>
+<tr><td></td><td>The column has <u>never</u> set its <a href="#CSelected">Selected</a> attribute in this case. Selecting or unselecting the whole column changes all rows <a href="#CSelected">Selected</a> attributes and all cells <a href="#CSelected">Selected</a> attributes.</td></tr>
+
+<tr><td>&nbsp;</td><td></td></tr>
+
+<tr><td><b>2</b></td><td><u><b>Only</b></u> cell selecting. <i>(Since 11.0, changed 12.0)</i> Like <b>1</b>, but row has never set <tt><a href="#ISelected">Selected</a> = <b>1</b></tt> for all cells selected. </td></tr>
+<tr><td></td><td>The row has set <tt><a href="#ISelected">Selected</a> = <b>0</b></tt>, if it contains no cell selected.</td></tr>
+<tr><td></td><td>The row has set <tt><a href="#ISelected">Selected</a> = <b>2</b></tt>, if it contains some or all cells selected. And the selected individual cells have set its own <tt><a href="#ISelected">Selected</a> = <b>1</b></tt> attribute.</td></tr>
+<tr><td></td><td>The column has <u>never</u> set its <a href="#CSelected">Selected</a> attribute in this case. Selecting or unselecting the whole column changes all rows <a href="#CSelected">Selected</a> attributes and all cells <a href="#CSelected">Selected</a> attributes.</td></tr>
+
+<tr><td>&nbsp;</td><td></td></tr>
+
+<tr><td><b>3</b></td><td><u><b>Independent</b></u> cell and row/column selecting. <i>(Since 12.0)</i></td></tr>
+<tr><td></td><td>The individual cells can be selected or unselected independently on the whole row and column selection state.</td></tr>
+<tr><td></td><td>The row has set <tt><a href="#ISelected">Selected</a> = <b>0</b></tt>, if it is not selected and has also no selected individual cells.</td></tr>
+<tr><td></td><td>The row has set <tt><a href="#ISelected">Selected</a> = <b>1</b></tt>, if it is selected and has no selected individual cells.</td></tr>
+<tr><td></td><td>The row has set <tt><a href="#ISelected">Selected</a> = <b>2</b></tt>, if it is unselected and contains some or all cells selected. The selected individual cells have set its own <tt><a href="#ISelected">Selected</a> = <b>1</b></tt> attribute.</td></tr>
+<tr><td></td><td>The row has set <tt><a href="#ISelected">Selected</a> = <b>3</b></tt>, if the row is selected and also has some or all its cell are selected.</td></tr>
+<tr><td></td><td>The column has set its <a href="#CSelected">Selected</a> to <b>1</b> or <b>0</b>, if it is selected or unselected, regardless on selection state of its individual cells.</td></tr>
+</table>
+
+<!-- SelectingFocus -->
+<a name="CfgSelectingFocus"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SelectingFocus</h4> <s>[0]</s>
+</div>
+If set, automatically selects focused area. If set to <b>2</b> it also select focused single cell.<br />
+After every focused cell / focused area change clears all selected cells in grid.<br />
+Must be set also <a href="#CfgSelecting">Selecting</a> and <a href="#CfgSelectingCells">SelectingCells</a>.<br />
+
+<!-- SelectHidden -->
+<a name="CfgSelectHidden"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SelectHidden</h4> <s>[0]</s>
+</div>
+If cells in hidden rows and columns will be selected, bit array. <i>For whole rows or columns selection use <a href="#CfgClearSelected">ClearSelected</a></i><br />
+<table>
+<tr><td style="width:60px;"><b>1</b>.bit &<b>1</b></td><td>Cells in hidden rows can be selected.</td></tr>
+<tr><td><b>2</b>.bit &<b>2</b></td><td>Cells in collapsed children can be selected.</td></tr>
+<tr><td><b>3</b>.bit &<b>4</b></td><td>Cells in hidden columns can be selected.</td></tr>
+</table>
+
+
+<!-- Selected -->
+<a name="ISelected"></a>
+<div class="XML">
+   <u><i>upd <b>12.0</b></i></u> <b>&lt;I></b> <i>int</i>
+   <h4>Selected</h4> <s>[0]</s>
+</div>
+It is set to <b>1</b> when the row is selected. It is colored yellow (by default setting in Grid.css).<br />
+It is set to <b>2</b> when the row contains some selected cells.<br />
+<i>(Since 12.0)</i> It is set to <b>3</b> if the row is selected and it also contain some selected cells for <tt><a href="#CfgSelectingCells">SelectingCells</a> = 3</tt>.<br />
+<i>There can be more selected rows in the grid. Don't confuse <strong>selected</strong> and <strong>focused</strong> row. The focused row is the row with cursor.</i><br />
+ 
+<!-- Selected -->
+<a name="CellSelected"></a>
+<div class="XML">
+   <u></u> <b>&lt;I &lt;cell></b> <i>bool</i>
+   <h4>Selected</h4> <s>[0]</s>
+</div>
+It is set to <b>1</b> when the cell is selected. In this case the row has set <tt><a href="#ISelected">Selected</a> = <b>2</b></tt> or <tt><b>3</b></tt>.<br />
+
+<!-- CanSelect -->
+<a name="ICanSelect"></a>
+<div class="XML">
+   <u><i>upd <b>12.0</b></i></u> <b>&lt;I></b> <i>int</i>
+   <h4>CanSelect</h4> <s>[1/0]</s>
+</div>
+If row and its cells can be selected.<br />
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>The row and its cells cannot be selected by any method.</td></tr>
+<tr><td><b>1</b></td><td>The row and its cells can be selected.</td></tr>
+<tr><td><b>2</b></td><td><i>(new 12.0)</i> Only the whole row can be selected.</td></tr>
+<tr><td><b>3</b></td><td><i>(new 12.0)</i> Only the row individual cells can be selected.</td></tr>
+<tr><td><b>4</b></td><td><i>(new 12.0)</i> The row and its cells cannot be selected by any method, but the row cells are selected if the whole column is selected.</td></tr>
+</table>
+Default value is <b>1</b> for all variable rows and <b>0</b> for fixed and space rows.<br />
+
+<!-- CanSelect -->
+<a name="CCanSelect"></a>
+<div class="XML">
+   <u>new <b>7.1</b> <i>upd <b>12.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>CanSelect</h4> <s>[1/0]</s>
+</div>
+If column and its cells can be selected.<br />
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>The column and its cells cannot be selected by any method.</td></tr>
+<tr><td><b>1</b></td><td>The column and its cells can be selected.</td></tr>
+<tr><td><b>2</b></td><td><i>(new 12.0)</i> Only the whole column can be selected.</td></tr>
+<tr><td><b>3</b></td><td><i>(new 12.0)</i> Only the column individual cells can be selected.</td></tr>
+<tr><td><b>4</b></td><td><i>(new 12.0)</i> The column and its cells cannot be selected by any method, but the column cells are selected if the whole row is selected.</td></tr>
+</table>
+Default value is <b>1</b> for all columns except Panel, ConstWidth and Index.<br />
+
+<!-- GetSelRanges -->
+<a name="GetSelRanges"></a>
+<div class="API">
+   <u>new <b>7.0</b> <i>upd <b>11.0</b></i></u> <b>API method</b> <i>[ ][ ]</i>
+   <h4>GetSelRanges</h4> 
+   <s>(<i>int</i> <b>rowtype</b> = 0, <i>int</i> <b>coltype</b> = 0)</s>
+</div>
+Returns all selected rectangles in table.<br />
+Returns it in two dimensional array: [ [<b>toprow1</b>,<b>leftcol1</b>,<b>bottomrow1</b>,<b>rightcol1</b>,<b>rowpos1</b>,<b>colpos1</b>,<b>rowcount1</b>,<b>colcount1</b>],[toprow2,leftcol2,bottomrow2,rightcol2, rowpos2,colpos2,rowcount2,colcount2],[toprow3,leftcol3,bottomrow3,rightcol3, rowpos3,colpos3,rowcount3,colcount3],...]<br />
+<b>toprow</b> / <b>bottomrow</b> are the TRow object, <b>leftcol</b> / <b>rightcol</b> are the column names of the range edges.<br />
+<b>rowpos</b> / <b>colpos</b> <i>(new 11.0)</i> are numbers as row / column position of top left corner of the range from grid top left corner. The <b>rowpos</b> includes only iterated rows due <b>rowtype</b>.<br />
+<b>rowcount</b> / <b>colcount</b> <i>(new 11.0)</i> are numbers as row / column count in the range. The <b>rowcount</b> includes only iterated rows due <b>rowtype</b>.<br />
+<b>rowtype</b>: <b>1</b> - ignores collapsed children (they need not be selected), <b>2</b> - separates ranges per root pages, <b>3</b> = 1+2<br /> 
+<b>coltype</b> <i>(since 11.0)</i>: <b>0</b> - separates ranges per column page and section, <b>1</b> - separates ranges per column section (left/mid/right), <b>2</b> - does not separate ranges horizontally.<br />
+
+<!-- SelectRange -->
+<a name="SelectRange"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b>API method</b> <i>int</i>
+   <h4>SelectRange</h4> 
+   <s>(<i>TRow</i> <b>row1</b>, <i>string</i> <b>col1</b>, <i>TRow</i> <b>row2</b>, <i>string</i> <b>col2</b>, <i>bool</i> <b>select</b>, <i>int</i> <b>type</b>, <i>bool</i> <b>test</b> = 0)</s>
+</div>
+Selects rectangular range of cells, including given cells.<br />
+If <b>col1</b> and <b>col2</b> are null, selects all rows in range <b>row1</b> - <b>row2</b> including, if <b>row1</b> and <b>row2</b> are null <i>(since 12.0)</i>, selects all columns in range <b>col1</b> - <b>col2</b>.<br />
+Otherwise it selects continuous range of cells between [<b>row1</b>,<b>col1</b>] [<b>row2</b>,<b>col2</b>].<br />
+If <b>row1</b> is null, it is the first selectable variable row, if <b>row2</b> is null, it is the last selectable variable row. If <b>col1</b> is null, it is the first selectable column, if <b>col2</b> is null, it is the last selectable column.<br />
+The first point [<b>row1</b>,<b>col1</b>] need <u>not</u> be the top left point.<br />
+<tt><b>select</b> = <b>0</b></tt> - unselects range, <b>1</b> - selects range, <b>null</b> <i>(since 12.0)</i> or <b>2</b> - unselects range if cell [<b>row1</b>,<b>col1</b>] is selected, otherwise selects the range.<br />
+<b>type</b> = bit array, &amp;<b>1</b> - selects only visible rows, &amp;<b>2</b> - ignores children of collapsed rows.<br />
+<i>Since 12.0</i> returns count of affected rows or cells.<br />
+<i>(since 12.0)</i> for <tt><b>test</b> = <b>1</b></tt> does not change anything, just return the count of rows or cells that would be affected.<br />
+
+<!-- SelectCell -->
+<a name="SelectCell"></a>
+<div class="API">
+   <u>new <b>11.0</b> <i>upd <b>12.0</b></i></u> <b>API method</b> <i>bool</i>
+   <h4>SelectCell</h4> 
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>select</b>, <i>bool</i> <b>test</b> = 0)</s>
+</div>
+Selects or unselects one cell. Select the cell if <tt><b>select</b> = <b>1</b></tt>, unselects if <tt><b>select</b> = <b>0</b></tt>. If <tt><b>select</b> = <b>null</b></tt> inverts the selection.<br />
+<i>(Since 12.0)</i> If set <tt><b>test</b> = 1</tt>, does not change cell selection, but returns if selection is possible.<br />
+Returns true if selection changed.<br />
+
+<!-- Action SelectCells -->
+<a name="ActionsSelectCells"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectCells</h4> 
+   <s>Not assigned to any event, can be assigned to <b>OnDrag...</b> events only</s>
+</div>
+Starts selecting rectangular range of cells by mouse dragging. Fails if <a href="#CfgSelecting">Selecting</a> or <a href="#CfgSelectingCells">SelectingCells</a> is 0.<br />
+
+<!-- Action DeselectCells -->
+<a name="ActionsDeselectCells"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectCells</h4> 
+   <s>Not assigned to any event, can be assigned to <b>OnDrag...</b> events only</s>
+</div>
+Starts deselecting rectangular range of cells by mouse dragging. Fails if <a href="#CfgSelecting">Selecting</a> or <a href="#CfgSelectingCells">SelectingCells</a> is 0.<br />
+
+<!-- Action InvertCellsFirst -->
+<a name="ActionsInvertCellsFirst"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>InvertCellsFirst</h4> 
+   <s>Assigned to <b>OnCtrlDragRow</b> event, can be assigned to <b>OnDrag...</b> events only</s>
+</div>
+Starts selecting or deselecting rectangular range of cells by mouse dragging. Fails if <a href="#CfgSelecting">Selecting</a> or <a href="#CfgSelectingCells">SelectingCells</a> is 0.<br />
+If the actual cell is selected, starts deselecting, otherwise starts selecting.<br />
+
+<!-- Action SelectCell ...F -->
+<a name="ActionsSelectCell"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectCell <i>...F</i></h4>
+   <s>Assigned to <b>OnCtrlClickCell</b> event</s>
+</div>
+Selects actual or focused cell. Fails if the cell is already selected, row cannot be selected or <a href="#CfgSelecting">Selecting</a> or <a href="#CfgSelectingCells">SelectingCells</a> is 0.<br />
+
+<!-- Action DeselectCell ...F -->
+<a name="ActionsDeselectCell"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectCell <i>...F</i></h4>
+   <s>Assigned to <b>OnCtrlClickCell</b> event</s>
+</div>
+Deselects actual or focused cell. Fails if the cell is already selected, row cannot be selected or <a href="#CfgSelecting">Selecting</a> or <a href="#CfgSelectingCells">SelectingCells</a> is 0.<br />
+To invert selection action use "SelectCell OR DeselectCell".<br />
+
+ <!-- Action SelectCellRange -->
+<a name="ActionsSelectCellRange"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectCellRange</h4> 
+   <s>Not assigned to any event</s>
+</div>
+Selects all cells in rectangular range between focused cell and actual cell. Fails if <a href="#CfgSelecting">Selecting</a> or <a href="#CfgSelectingCells">SelectingCells</a> is 0.<br />
+
+ <!-- Action DeselectCellRange -->
+<a name="ActionsDeselectCellRange"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectCellRange</h4> 
+   <s>Not assigned to any event</s>
+</div>
+Deselects all cells in rectangular range between focused cell and actual cell. Fails if <a href="#CfgSelecting">Selecting</a> or <a href="#CfgSelectingCells">SelectingCells</a> is 0.<br />
+
+ <!-- Action InvertCellRangeFirst -->
+<a name="ActionsInvertCellRangeFirst"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>InvertCellRangeFirst</h4> 
+   <s>Assigned to <b>OnShiftClickCell</b> event</s>
+</div>
+Selects or deselects all cells in rectangular range between focused cell and actual cell. Fails if <a href="#CfgSelecting">Selecting</a> or <a href="#CfgSelectingCells">SelectingCells</a> is 0.<br />
+If the focused cell is selected, deselects all, otherwise selects all.<br />
+
+<!-- Action SelectRowCells ...F -->
+<a name="ActionsSelectRowCells"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectRowCells <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Selects all cells in actual or focused row. Fails if there is no cell to select.<br />
+
+<!-- Action DeselectRowCells ...F -->
+<a name="ActionsDeselectRowCells"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectRowCells <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Unselects all cells in actual or focused row. Fails if there is no cell to unselect.<br />
+
+<!-- Action SelectColCells ...F -->
+<a name="ActionsSelectColCells"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectColCells <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Selects all cells in actual or focused column. Fails if there is no cell to select.<br />
+
+<!-- Action DeselectColCells ...F -->
+<a name="ActionsDeselectColCells"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectColCells <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+Unselects all cells in actual or focused column. Fails if there is no cell to unselect.<br />
+
+ <!-- Action SelectAllCells -->
+<a name="ActionsSelectAllCells"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectAllCells</h4> 
+   <s>Not assigned to any event</s>
+</div>
+Selects all cells in grid.<br />
+
+ <!-- Action DeselectAllCells -->
+<a name="ActionsDeselectAllCells"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectAllCells</h4> 
+   <s>Not assigned to any event</s>
+</div>
+Unselects all cells in grid.
+
+<!------------------------------------------------------------------ Selecting columns -------------------------------------------------------------->
+<a name="Columns"></a>
+<h2>Selecting columns</h2>
+<p class="H2">Selecting the whole columns</p>
+
+<!-- SelectingCols -->
+<a name="CfgSelectingCols"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SelectingCols</h4> <s>[0]</s>
+</div>
+If the whole columns can be selected. It does <u>not</u> affect selecting individual cells in the columns, see <a href="#CfgSelectingCells">SelectingCells</a>.<br />
+<b>0</b> - no, <b>1</b> - yes and colored <i>(can be slow for large grids)</i>, <b>2</b> - yes, but not colored (changes only Panel Select button, if any).<br />
+
+<!-- CanSelect -->
+<a name="CCanSelect"></a>
+<div class="XML">
+   <u>new <b>7.1</b> <i>upd <b>12</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>CanSelect</h4> <s>[1/0]</s>
+</div>
+If column and its cells can be selected.<br />
+<table>
+<tr><td><b>0</b></td><td>The column and its cells cannot be selected by any method.</td></tr>
+<tr><td><b>1</b></td><td>The column and its cells can be selected.</td></tr>
+<tr><td><b>2</b></td><td><i>(new 12.0)</i> Only the whole column can be selected.</td></tr>
+<tr><td><b>3</b></td><td><i>(new 12.0)</i> Only the column individual cells can be selected.</td></tr>
+<tr><td><b>4</b></td><td><i>(new 12.0)</i> The column and its cells cannot be selected by any method, but the column cells are selected if the whole row is selected.</td></tr>
+</table>
+Default value is <b>1</b> for all columns except Panel, ConstWidth and Index.<br />
+
+<!-- Selected -->
+<a name="CSelected"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>Selected</h4> <s>[0]</s>
+</div>
+It is set to <b>1</b> when the whole column is selected. It is <u>not</u> affected by individual selected cells in the column.<br />
+<i>It is <u>not</u> used, when set <tt><a href="#CfgSelectingCells">SelectingCells</a> = <b>1</b></tt> or <tt><b>2</b></tt>.</i><br />
+
+<!-- SelectCol -->
+<a name="SelectCol"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>SelectCol</h4> 
+   <s>(<i>string</i> <b>col</b>, <i>bool</i> <b>select</b> = null, <i>bool</i> <b>test</b> = 0)</s>
+</div>
+Selects / unselects whole column if <tt><a href="#CfgSelectingCols">SelectingCols</a> = <b>1</b></tt> and <tt><a href="#CfgSelectingCells">SelectingCells</a> = <b>0</b></tt> or <tt><b>3</b></tt>. Otherwise it selects or unselects all the column cells, if set <a href="#CfgSelectingCells">SelectingCells</a>.<br />
+Selects the column if <tt><b>select</b> = <b>1</b></tt>, unselects if <tt><b>select</b> = <b>0</b></tt> or changes the column selectiong if <tt><b>select</b> = <b>null</b></tt>.<br /> 
+If set <tt><b>test</b> = <b>1</b></tt>, does not change anything, just test if the selecting is possible.<br />
+Returns true if selection changed.<br />
+
+<!-- GetSelCols -->
+<a name="GetSelCols"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>string[ ]</i>
+   <h4>GetSelCols</h4> 
+   <s>(<i>string</i> <b>attr</b> = null, <i>bool</i> <b>first</b> = null)</s>
+</div>
+Returns all columns in grid with <tt><a href="#CSelected">Selected</a> = 1</tt>.<br />
+If set <b>attr</b>, returns only columns that have this attribute set, e.g. "CanDelete".<br />
+If set <b>first</b> = <b>1</b>, returns true if some column is selected, otherwise false.
+If set <b>first</b> = <b>0</b>, returns true if some column is unselected, otherwise false.<br />
+The iterated columns are affected also by <a href="#CfgClearSelected">ClearSelected</a> setting.<br />
+
+<!-- AllColsSelected -->
+<a name="AllColsSelected"></a>
+<div class="API">
+   <u>new <b>12.0</b></i></u> <b>API variable</b> <i>bool</i>
+   <h4>AllColsSelected</h4> 
+   <s></s>
+</div>
+If all columns are selected or unselected. Can be <b>1</b> for all columns selected, <b>0</b> for no column selected or <b>null</b> for other states or unknown state.<br />
+Depends on <a href="#CfgSelectAllType">SelectAllType</a> setting.<br />
+
+<!-- Action SelectCols -->
+<a name="ActionsSelectCols"></a>
+<div class="ACT">
+   <u>new <b>12</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectCols</h4>
+   <s>Not assigned to any event, can be assigned to <b>OnDrag...</b> events only</s>
+</div>
+Starts selecting range of rows by mouse dragging. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action DeselectCols -->
+<a name="ActionsDeselectCols"></a>
+<div class="ACT">
+   <u>new <b>12</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectCols</h4>
+   <s>Not assigned to any event, can be assigned to <b>OnDrag...</b> events only</s>
+</div>
+Starts deselecting range rows by mouse dragging. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action InvertColsFirst -->
+<a name="ActionsInvertColsFirst"></a>
+<div class="ACT">
+   <u>new <b>12</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>InvertColsFirst</h4>
+   <s>Assigned to <b>OnCtrlDragRow</b> event, can be assigned to <b>OnDrag... events</b> only</s>
+</div>
+Starts selecting or deselecting range of rows by mouse dragging. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+If the actual row is selected (at least one cell), starts deselecting, otherwise starts selecting.<br />
+
+<!-- Action SelectOddCols -->
+<a name="ActionsSelectOddCols"></a>
+<div class="ACT">
+   <u>new <b>12</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectOddCols</h4>
+   <s>Not assigned to any event, can be assigned to <b>OnDrag...</b> events only</s>
+</div>
+Starts selecting individual columns - every column under mouse cursor is selected. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action DeselectOddCols -->
+<a name="ActionsDeselectOddCols"></a>
+<div class="ACT">
+   <u>new <b>12</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectOddCols</h4>
+   <s>Not assigned to any event, can be assigned to <b>OnDrag...</b> events only</s>
+</div>
+Starts deselecting individual columns - every column under mouse cursor is deselected. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action InvertOddCols -->
+<a name="ActionsInvertOddCols"></a>
+<div class="ACT">
+   <u>new <b>12</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>InvertOddCols</h4>
+   <s>Assigned to <b>OnDragPanelColSelect</b> event, can be assigned to <b>OnDrag...</b> events only</s>
+</div>
+Starts inverting selection of individual columns - every column under mouse cursor changes its selection state. Fails if <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action SelectCol ...F -->
+<a name="ActionsSelectCol"></a>
+<div class="ACT">
+   <u><i>upd <b>12.0</b></i></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectCol <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+<i>Since 12.0</i> Selects the whole column if <tt><a href="#CfgSelectingCols">SelectingCols</a> = <b>1</b></tt> and <tt><a href="#CfgSelectingCells">SelectingCells</a> = <b>0</b></tt> or <tt><b>3</b></tt>.<br /> 
+Otherwise <i>(or prior to 12.0)</i> it selects all the column cells, if set <a href="#CfgSelectingCells">SelectingCells</a> - like <a href="#ActionsSelectColCells">SelectColCells</a>.<br /> 
+
+<!-- Action DeselectCol ...F -->
+<a name="ActionsDeselectCol"></a>
+<div class="ACT">
+   <u><i>upd <b>12.0</b></i></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectCol <i>...F</i></h4>
+   <s>Not assigned to any event</s>
+</div>
+<i>Since 12.0</i> Unselects the whole column if <tt><a href="#CfgSelectingCols">SelectingCols</a> = <b>1</b></tt> and <tt><a href="#CfgSelectingCells">SelectingCells</a> = <b>0</b></tt> or <tt><b>3</b></tt>.<br /> 
+Otherwise <i>(or prior to 12.0)</i> it unselects all the column cells, if set <a href="#CfgSelectingCells">SelectingCells</a> - like <a href="#ActionsSelectColCells">SelectColCells</a>.<br /> 
+
+<!-- Action SelectFocusedCols -->
+<a name="ActionsSelectFocusedCols"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectFocusedCols</h4>
+   <s>Not assigned to any event</s>
+</div>
+Selects all focused columns. Fails if no columns is focused or <a href="#CfgSelectingCols">SelectingCols</a> is 0.<br />
+
+<!-- Action DeselectFocusedCols -->
+<a name="ActionsDeselectFocusedCols"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectFocusedCols</h4>
+   <s>Not assigned to any event</s>
+</div>
+Deselects all focused columns. Fails if no columns is focused or <a href="#CfgSelectingCols">SelectingCols</a> is 0.<br />
+
+<!-- Action InvertFocusedColsFirst -->
+<a name="ActionsInvertFocusedColsFirst"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>InvertFocusedColsFirst</h4>
+   <s>Not assigned to any event</s>
+</div>
+Selects or deselects all focused columns. Fails if no columns is focused or <a href="#CfgSelectingCols">SelectingCols</a> is 0.<br />
+If the first focused columns is selected, deselects all, otherwise selects all.<br />
+
+<!-- Action SelectColRange -->
+<a name="ActionsSelectColRange"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectColRange</h4>
+   <s>Not assigned to any event</s>
+</div>
+Selects all columns between focused column and actual column, including both columns.<br />
+
+<!-- Action DeselectColRange -->
+<a name="ActionsDeselectColRange"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectColRange</h4>
+   <s>Not assigned to any event</s>
+</div>
+Deselects all columns between focused column and actual column, including both columns.<br />
+
+<!-- Action InvertColRangeFirst -->
+<a name="ActionsInvertColRangeFirst"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>InvertColRangeFirst</h4>
+   <s>Not assigned to any event</s>
+</div>
+Selects or deselects all columns between focused column and actual column, including both columns.<br />
+If the focused column is selected, deselects all, otherwise selects all.<br />
+
+<!-- Action SelectAllCols -->
+<a name="ActionsSelectAllCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SelectAllCols</h4>
+   <s>Not assigned to any event</s>
+</div>
+Selects all visible rows. Fails if all rows are selected or cannot be selected or <a href="#CfgSelecting">Selecting</a> is 0.<br />
+
+<!-- Action DeselectAllCols -->
+<a name="ActionsDeselectAllCols"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeselectAllCols</h4>
+   <s>Not assigned to any event</s>
+</div>
+Deselects all visible rows. Fails if no rows is selected or cannot be selected or <a href="#CfgSelecting">Selecting</a> is 0.<br /> 
+
+</div>
+</body>	
+</html>

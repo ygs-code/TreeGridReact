@@ -1,0 +1,213 @@
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+      <title>Complex flexible JavaScript tree grid component | TreeGrid</title>
+      <meta name="description" content="Live sample shows TreeGrid features: tree, sort, group, filter, search, calculate, resize and move columns, drag, manipulate and select rows, cell types" />
+   </head>
+   <body class="Example">
+      <style>
+         /* Example shared styles */
+         .Example h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+         .Example h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+         .Example h3,.Example h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+         .Example h3 { background:#EE9; border:1px solid #DD8; }
+         .Example h4 { background:#BDE; border:1px solid #ACD; }
+         .Example a { text-decoration:underline; }      
+         .Example li { padding-bottom:8px; }
+         .Example ul { margin:6px 0px 0px 20px; font:13px Arial; }
+         .Example .Desc { margin:0px 5px 10px 5px; padding:10px; border:1px solid #dfdfdf; }
+         .Example .Desc > ul { margin-left:0px; padding:0px 0px 0px 15px; clear:both; }
+         .Example .Desc b { color:#0585B9; }
+         .Example .Path { font:normal 12px Arial; color:#0585B9; }
+         .Example .Path b { color:#D73938; }
+         .Example .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+         .Example .Path i { color:black; font-style:normal; font-weight:bold; }
+         .Example .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+         .Example .Border { margin:0px 5px 15px 5px; }
+         .Example .Main { }
+
+         .Example .Highlight { color:#0585B9; padding-bottom:5px; }
+      </style>
+      <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Examples\/|\/ExamplesGantt\/)([^\/]+)\/([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+      <h1>Complex grid</h1>
+      <h2>A demonstration of many TreeGrid features</h2>
+      <div class="Desc">
+         <div class="Highlight">All the demonstrated features, look and behavior can be fully customized in input XML or JSON data.</div>
+         <b>Features:</b> Tree, sorting, grouping, filtering, searching, calculations, resizing and moving columns, row dragging, row manipulations, selecting rows,
+         fixed rows and columns, many cell types, popup default list, calendar, formatting values and many more.
+      </div>
+      <div class="Border">
+         <div class="Main" style="width:100%;height:600px;">
+            <bdo Layout_Url="FirstDef.xml" Data_Url="FirstData.xml"></bdo>
+         </div>
+      </div>
+      <div class="Desc">
+         <ul>
+            <li>
+               <h4>Tree</h4>
+               <b>Tree</b> is displayed in the "Product / Order name" column. The row children can be <b>expanded</b> / <b>collapsed</b> on click to <b>expand</b> / <b>collapse</b> image button. <br />
+               All rows can be expanded / collapsed on click to <b>ExpandAll</b> / <b>CollapseAll</b> image buttons on bottom <b>toolbar</b>.<br />
+               By default the child rows are displayed below their parent, you can display the child rows above their parent by checking the <b>Reversed tree</b> checkbox on right side of <b>group row</b>, the second row below header.<br />
+               This example has two levels in tree, more levels are created on grouping. But TreeGrid supports <b>unlimited levels in tree</b>.
+            </li>
+            <li>
+               <h4>Sorting rows</h4>
+               The rows can be <b>sorted</b> by one or more column by clicking to the column <b>header</b>. This behavior can be changed in <b>configuration menu</b> on bottom toolbar.<br />
+               By default is the last clicked column sorted first, this behavior can be changed in TreeGrid layout XML/JSON.<br />
+               The "Pos" column is not sorted with rows and always shows the row position in sorting.<br />
+            </li>
+            <li>
+               <h4>Grouping rows</h4>
+               The rows can be <b>grouped</b> by dragging one or more column captions to the <b>group row</b> (the second row below header). Or the grouping can be chosen from the predefined grouping list in the <b>group row</b>.
+            </li>
+            <li>
+               <h4>Filter and search</h4>
+               The rows can be <b>filtered</b> (hidden) by entering / selecting value and choosing filter criteria for one or more columns in <b>filter row</b> below header.<br />
+               There are also predefined filter criteria for month and customer in <b>Filter orders from</b> combos in <b>group row</b> right side.
+               The rows can be <b>filtered</b> also entering search text or formula in <b>search row</b> (the third row below header) and clicking to <b>Filter</b> button. <br />
+               Or the rows can be <b>selected</b> or the found cells <b>colored</b> or <b>focused</b> and <b>edited</b> by clicking to <b>Select</b>, <b>Mark</b> or <b>Find</b> button in the <b>search row</b>. 
+               All the searching can be cleared by clicking to <b>Clear</b> button.<br />
+               The search text options are shown on clicking to <b>Help</b> button in the <b>search row</b>.
+            </li>
+            <li>
+               <h4>Calculations</h4>
+               In the example there are two calculated columns, "List price" as "Amount" x "Unit Price" and "Price" as "List Price" * "Discount" - "Shipping".<br />
+               All the parent rows, including grouped parents, are calculated summary rows for their children.<br />
+               The three bottom rows are total summary rows for the root data rows.<br />
+               On the bottom toolbar right side and on the top tabber right side there are calculated counts of rows according to chosen criteria.<br />
+               <i>All formulas in TreeGrid can be fully customized, can contain also any JavaScript code, even custom and API function calls.</i>
+            </li>
+            <li>
+               <h4>Column manipulation</h4>
+               The "Panel", "Pos", "Used" and "Product / Order name" and <b>frozen</b> on left side. The "Price" column is <b>frozen</b> on right side.<br /> 
+               The other columns are horizontally <b>scrollable</b> if there is not enough room to display them all.<br />
+               The column "Product / Order name" is <b>automatically resized</b> to use all the rest of available width.<br />
+               All the columns can be <b>resized</b> by <b>dragging</b> their right caption's edge. Shrinking column width to zero will recalculate the width according to its content.<br />
+               All the columns can be <b>moved</b> by <b>dragging</b> their caption to another place in header, the new expected position is marked by blue arrows. <br />
+               The column can be <b>frozen</b> or <b>unfrozen</b> by moving the column inside or outside the frozen section. The change is marked by red arrows instead of blue.<br />
+               The columns can be <b>hidden</b> and <b>shown</b> in columns visibility menu displayed on click to appropriate bottom toolbar image button.<br />
+               The whole <b>grid</b> can be <b>resized</b> in both directions by dragging in in bottom right corner. Double click to this icon restores the grid original size.<br />
+            </li>
+            <li>
+               <h4>Row manipulation</h4>
+               The header and top control rows are frozen on <b>top</b>. The total summary rows and bottom toolbar are <b>frozen</b> on top.<br />
+               The other "body" rows are vertically <b>scrollable</b> if there is not enough room to display them all.<br />
+               There is added empty space row below the "body" rows to fill the rest available space to preserve constant height of the grid.<br />
+               The "body" rows can be <b>moved</b> by mouse <b>dragging</b> to another position. The expected drop position is marked by icon in tree column.<br />
+               The "body" rows can be <b>deleted</b> by clicking Deleted button on toolbar, pressing Del key or from example popup menu.
+               By default the deleted rows are shown colored red, they can be hidden in Configuration menu, by unchecking option Show deleted rows. <br />
+               The "body" rows can be <b>added</b> or <b>copied</b> by clicking green plus icons on toolbar, pressing Ins key or from example popup menu.<br />
+               The "body" rows can be <b>selected</b> by clicking or dragging panel Select button or pressing Space key or from example popup menu. 
+               The selected rows can be manipulated together, e.g. deleted, moved or copied.<br />
+               The modified rows (e.g. added, deleted, moved, edited, selected) are <b>highlighted</b> width appropriate <b>color</b>.<br />
+            </li>
+            <li>
+               <h4>Cell types</h4>
+               <i>All the cells in the grid have set their <b>Type</b> that controls the cell display and features.<br /> 
+               Every cell (even in the same column) can have <b>different Type</b> and all other settings.</i><br />
+               The top <b>tabber</b> left cells are <b>Button</b> type with <b>Tab</b>, <b>Switch</b> and <b>Radio</b> features. The top <b>tabber</b> right cells are <b>Html</b> type cells.<br />
+               The <b>header</b> cells are not editable <b>Text</b> types with side Sort button.<br />
+               The <b>filter</b> cell have type according to the column, with left side filter operator icon.<br />
+               The controls on <b>top control rows</b> are <b>Select</b> types as not editable combos, <b>Bool</b> types as check boxes, <b>Button</b> types as search buttons and <b>Text</b> type for the Search expression.<br />
+               The left panel column is <b>Panel</b> type with control buttons, the "Pos" is not editable <b>Int</b> type, "Used" is <b>Bool</b> type as checkbox, "Product / Order name" is <b>Text</b> type,
+               "Customer" is <b>Text</b> type with side <b>Defaults</b> button as editable combo. The "Date" is formatted <b>Date</b> type with popup <b>calendar</b>.
+               "Kind" is <b>Enum</b> type as not editable combo. "Amount" and "Discount" are formatted <b>Int</b> type. "Unit price", "List price", "Shipping" and "Price" are formatted <b>Float</b> type.<br />
+            </li>
+            <li>
+               <h4>Toolbar</h4>
+               On the bottom toolbar are standard feature buttons, especially <b>Reload</b> grid, <b>Print</b> grid, <b>Undo</b> last action, <b>Redo</b> last action, Show <b>columns visibility menu</b>, Show <b>configuration menu</b>, Show <b>Help</b>.<br />
+            </li>
+         </ul>
+      </div>
+            <script>
+
+// -----------------------------------------------------------------------------------------
+// Shows months May and June in the year 2019 only
+Grids.OnUpdated = function(G){ G.FilterDateRange('D','1/1/2019~1/1/2020','Year',0); G.SetFilter('Month','{5:1,6:1}[(new Date(D)).getUTCMonth()+1]','D',0); }
+
+// -----------------------------------------------------------------------------------------
+// Used if Formula to count unique customers
+function CountUnique(G,Rows,col){
+for(var i=0,O={},cnt=0;i<Rows.length;i++) if(Get(Rows[i],"X")){
+   var v = Get(Rows[i],col);
+   if(!O[v]) { cnt++; O[v] = 1; }
+   }
+return cnt;
+}
+// -----------------------------------------------------------------------------------------
+// Custom event for searching
+// Searches in orders with specified items
+Grids.OnRowSearch = function(G,row,col,found,F,type){
+if(type || G.SearchDefs!="") return found; // Only for "in orders with items" and default call
+if(row.Def.Name=="Data") return -1;        // Only for orders
+for(var r=row.firstChild;r;r=r.nextSibling) { 
+	var found = F(r,col,1);                 // calls F(r,col,type=1)
+	if(!(found<=0)) return found; 
+	}
+return 0;
+}
+// -----------------------------------------------------------------------------------------
+// Creates popup right click menu to manipulate the row
+Grids.OnGetMenu = function(G,row,col,M){
+if(row.Fixed||M) return null;
+var I = [], M = {Items:I}, ident = row.Def.Name=="Node" ? " order":" product";
+I[I.length] = {Name:"Del",Text:(row.Deleted?"Undelete":"Delete")+ident};
+I[I.length] = {Name:"Sel",Text:(row.Selected?"Deselect":"Select")+ident};
+I[I.length] = {Name:"Cpy",Text:"Copy"+ident};
+if(row.firstChild) I[I.length] = {Name:"CpyTree",Text:row.Def.Name=="Node"?"Copy order with products":"Copy product with items"};
+
+if(row.Def.Name=="Node") {
+   I[I.length] = {Name:"AddOrder",Text:"Add new order"};
+   I[I.length] = {Name:"InsItem",Text:"Add new product"};
+   }
+else I[I.length] = {Name:"AddItem",Text:"Add new product"};
+if(row.firstChild) I[I.length] = {Name:"Exp",Text:(row.Expanded?"Collapse":"Expand") + (row.Def.Name=="Node"?" order":" product")};
+if(row.Def.Name=="Node") I[I.length] = {Name:"Check",Text:Get(row,'X')?"Uncheck Used":"Check Used"};
+return M;
+}
+// -----------------------------------------------------------------------------------------
+// Called after selecting item in the popup right click menu
+Grids.OnContextMenu = function(G,row,col,N){
+switch(N){
+   case "Del" : G.DeleteRow(row); break;
+   case "Sel" : G.SelectRow(row); break;
+   case "Cpy" : G.CopyRow(row,null,row); break;
+   case "CpyTree" : G.CopyRows([row],null,row,1); break;
+   case "AddItem" : G.ActionAddRow(); break;
+   case "InsItem" : G.ActionAddChildEnd(); break;
+   case "AddOrder" : G.ActionAddRow(); break;
+   case "Exp" : if(row.Expanded) G.Collapse(row); else G.Expand(row); break;
+   case "Check" : G.SetValue(row,"X",!Get(row,'X'),1); break;
+   }
+}
+// -----------------------------------------------------------------------------------------
+// Called when NoVScroll / NoHScroll is set automatically due small window size, disables the checkbox for manual change of NoVScroll / NoHScroll
+Grids.OnLimitScroll = function(G,clr,noh,nov){ 
+G.SetAttribute(G.Rows.Group,"Win","CanEdit",clr,1); 
+var tip = clr?"Disable grid scrollbars and use page scrollbars":"Used page scrollbars because browser window is too small to show this example with its own scrollbars";
+G.SetAttribute(G.Rows.Group,"Win","Tip",tip,1); 
+G.SetAttribute(G.Rows.Group,"WinLabelRight","Tip",tip,1); 
+}
+// -----------------------------------------------------------------------------------------
+// Called after changed language to reset currency and recalculate grid
+Grids.OnLanguageFinish = function(G,code){ 
+var row = G.Rows.Fix3;
+G.SetValue(row,"C",Get(row,Get(row,"D")+"Rate"),1);
+}
+// -----------------------------------------------------------------------------------------
+
+      </script>
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGTrialGrid\s*=\s*(\d+)/), TGIndex = 32;
+         if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunTrialHtmlFirst", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGrid="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+   </body>
+</html>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="2 2 64 64">
+<g fill="none" stroke="#DDD" stroke-width="4">
+   <path stroke="#555" d="M26,20 L38,32 L26,44"/>
+   <path d="M10,32c0-12.2,9.8-22,22-22s22,9.8,22,22s-9.8,22-22,22"/>
+</g>
+<rect fill="#DDD" x="8" y="36" width="4" height="4"/>
+<rect fill="#DDD" x="12" y="44" width="4" height="4"/>
+</svg>

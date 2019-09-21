@@ -1,0 +1,957 @@
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*        TreeGrid CSS style for dialogs, menus, messages, inline edit, debug print, line chart and animations                   */
+/*                                                          Standard style                                                       */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+
+/* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/*                                                  1) BASE DEFINITONS FOR CUSTOMIZATION                                         */
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+
+/*
+   For easy customization. Contains particular attributes of CSS classes. All theses CSS classes are fully defined in section 3) ALL GRID DEFINITIONS
+*/
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                      Fonts and text line heights                                              */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* Note, font-size and line-height are set for all tags and are not inherited */
+
+/* Base grid font */
+.TBMain { font-family:Arial,sans-serif; font-style:normal; font-weight:normal; font-variant:normal; }
+.TBMain * { font-family:inherit; font-style:inherit; font-weight:inherit; font-variant:inherit; text-overflow:ellipsis; word-wrap:normal; }
+
+.TBMain,.TBMain * { font-size:12px; line-height:16px; }
+.TBWide,.TBWide * { font-size:15px; line-height:20px; }
+.TBGiant,.TBGiant * { font-size:21px; line-height:24px; }
+
+/* Font used for headers - grid header (TBCellHeader), index (TBCellIndex), menu header (TBMenuHead), calendar header (TBPickMY), pager caption (TBPagerHeader) */
+.TBHeaderFont { font-weight:bold; }
+
+/* All the predefined above fonts inherited children */
+.TBMessage *,.TBMenuItemText *,.TBMenuControl *,.TBPickCell *,.TBPick2CellM *,.TBPick2CellY *,.TBDialogButton * { font-size:inherit; line-height:inherit; }
+
+/* Font used for grid informational or progress message */
+.TBMessage { font-size:inherit; }
+
+/* Font used for all grid menus */
+.TBMenuItemText { font-size:inherit; line-height:19px; }
+.TBHigh .TBMenuItemText { line-height:23px; }
+.TBBig .TBMenuItemText { line-height:31px; }
+.TBSmall .TBMenuItemText { line-height:16px; }
+
+/* Font used for Enum and Edit in menu items */
+.TBMenuControl { font-size:inherit; line-height:18px;  }
+.TBWide .TBMenuControl { line-height:20px; }
+.TBHigh .TBMenuControl { line-height:22px; }
+.TBBig .TBMenuControl { line-height:30px; }
+.TBSmall .TBMenuControl { line-height:16px; }
+
+/* Font used for calendar cell */
+.TBPickCell,.TBPick2CellM,.TBPick2CellY { font-size:inherit; line-height:inherit; }
+
+/* Font for buttons in messages and dialogs */
+.TBDialogButton { font-size:inherit; line-height:inherit; }
+
+/* Predefines highlight tags */
+.TBMain b,.TBMain .GridBold { color:#0CD06E; font-weight:bold; }
+.TBMain i,.TBMain .GridBlue { color:#0CD06E; font-style:normal; }
+.TBMain em,.TBMain .GridRed { color:#EA4647; font-style:normal; }
+.TBMain em>b,.TBMain .GridRed .GridBold { color:#EA4647; }
+.TBMain s,.TBMain .GridGray { color:#666; text-decoration:none; }
+.TBMain s>b,.TBMain .GridGray .GridBold,.TBMain s>i,.TBMain .GridGray .GridBlue { color:#666; }
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                           Major colors, backgrounds and borders                                               */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* Base text color of all texts in grid */
+.TBMain { color:#e1e7f4; }
+.TBMain * { color:inherit; }
+
+/* -------------------------------------------- Menus, dialogs and messages -------------------------------------------- */
+
+/* Grid and dialog buttons */
+.TBDialogButton { background:#D7D9E5; color:#292C33; border-radius:3px; border:0px none; }
+.TBDialogButtonOk,.TBDialogButtonYes { background:#EA4647; color:white; }
+.TBDialogButton:active { }
+.TBDialogButtonHover { color:#EA4647; }
+.TBDialogButtonOkHover,.TBDialogButtonYesHover { color:black; }
+
+/* Popup menu */
+.TBMenuMain { box-shadow:0px 0px 5px 1px #222; border-radius:3px; }                        /* Menu with all sections */
+.TBMenuHead { background:#EA4647; }                                                        /* Header */
+.TBMenuOuter { background:#41444D; }                                                       /* Body with all items */
+.TBMenuFoot { background:#41444D; border-top:1px solid #292C33; }                          /* Footer with buttons */
+.TBMenuEdit,.TBMenuEditEdit,.TBMenuEnum { border-radius:3px; background-color:#292C33; }   /* Edit and Enum editable cells */
+.TBMenuCaption,.TBMenuLevel { font-weight:bold; text-align:center;  }                      /* Caption and Level items in menu */
+.TBMenuSeparator { border-top:1px solid #292C33; }                                         /* Separator between items, shown for menu item with Name:"-" */
+.TBMenuHorz .TBMenuSeparator { background:#292C33; }                                       /* Separator between items, shown for menu item with Name:"-" when shown horizontally */
+.TBMenuVSeparator { border-right:1px solid #292C33; }                                      /* Separator between columns of menu items; in children of menu item width Columns attribute set */
+.TBMenuHover { border:2px solid #D7D9E5; }                                                 /* Menu item under mouse cursor */
+.TBMenuFocus { border:2px solid #EA4647; }                                                 /* Selected menu item */
+.TBMenuFocus.TBMenuHover { border:2px solid #BA1617; }                                     /* Selected menu item under mouse cursor */
+.TBMenuHeader { background:#41444D; border:1px solid #41444D; box-shadow:0px 0px 3px 1px #222; }                     /* Shown outside menu or dialog in place of the source tag, simulating the menu is popped up. For custom JSON menus and dialogs is used when set Header attribute. */
+
+/* Popup calendar */
+.TBPickMY { background:#EA4647; }                                                          /* Header */
+.TBPickTableParent,.TBPick2TableParent { background:#42454E;}                              /* Body */
+.TBPickFooter,.TBPick2Footer,.TBPickTimeCell { border-top:1px solid #30333C; }                       /* Footer with buttons */
+.TBPickCell > div,.TBPick2M,.TBPick2Y { }                                                  /* All calendar cells */
+.TBPickRowW { }                                                                            /* Row with day names */
+.TBPickRowW .TBPickCell { border-bottom:1px solid #30333C; color:#9496AB; }                /* Cells with day names */
+.TBPickCell:first-child { border-right:1px solid #30333C; }                                /* Parent of column with week numbers */
+.TBPickRowW .TBPickCell:first-child { border-right:1px solid #42454E; }                    /* Empty date button cell */
+.TBPickWN,.TBPickWNE { color:#9496AB; }                                                    /* Column with week numbers */
+.TBPickOM,.TBPickOMNE { color:#9496AB; }                                                   /* Dates in other month */
+.TBPickSa { }                                                                              /* Saturdays */
+.TBPickSu { }                                                                              /* Sundays */
+.TBPickSel,.TBPick2MSel,.TBPick2YSel { border:2px solid #EB4748; }                         /* Selected dates */
+.TBPickNow { background-color:#DDD; }                                                      /* Today */
+.TBPickNE { text-decoration:line-through; }                                                /* Not editable date */
+.TBPickHover,.TBPick2MHover,.TBPick2YHover { border:2px solid #D8DAE6; }                   /* Date under mouse cursor */
+.TBPickSelHover,.TBPick2MSelHover,.TBPick2YSelHover { border:2px solid #F66; }             /* Selected date under mouse cursor */
+.TBPickCell { }                                                                            /* All cells in calendar */
+.TBPick2CellM,.TBPick2CellY { }                                                            /* All cells in second dialog with months and years */
+.TBPick2Sep { background:#30333C; }                                                        /* Separator between months and years in second calendar dialog */
+ 
+/* Message */
+.TBMessage,.TBPageMessage { background:#42454E; box-shadow:0px 0px 5px 1px #222; }         /* Border and background of the message */
+.TBMessageButtons,.TBProgressButtons { border-top:1px solid #292C33; }                     /* Footer with buttons */
+.TBPrompt input { background:#292C33; border-radius:3px; border:0px none; }                                              /* Prompt message input */
+
+/* ---------------------------------------------------- Editing cells  ------------------------------------------------- */
+
+.TBEditInput,.TBEditTextarea { color:black; background-color:white; } /* Base editing <input> or <textarea>  */
+.TBEditHeaderInput,.TBEditHeaderTextarea { }                          /* Editing in Header cell */
+.TBEditReadOnly,.TBEditTextarea.TBEditReadOnly { background-color:#CCC; }  /* Editing in preview mode (Editing=2) */
+.TBEditHeaderInput.TBEditReadOnly,.TBEditHeaderTextarea.TBEditReadOnly { background-color:#CCC; }  /* Editing in preview mode (Editing=2) in Header cell */
+
+/* ---------------------------------------------------- Other parts ----------------------------------------------------- */
+
+/* Tip. Shown below mouse cursor on mouse hover the cell; Used only if set <Cfg StandardTip='0'/> */
+.TBTipOuter,.TBDragObject { background:#EEE; opacity:0.9; color:black; }                   /* Tag with the tip text */
+
+
+
+
+
+
+/* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/*                                                      2) ALL DIALOG DEFINITIONS                                                */
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                     Edit control                                                              */
+/*                                                         TGLib                                                                 */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* --- Edit text in <input> / <textarea> --- */
+
+/* @ Set background and text attributes
+   ...EditInput - set to <input> tag placed into inline edit cursor tag (...EditCellInput)
+   ...EditTextarea - set to <textarea> tag placed into inline edit cursor tag (...EditCellInput) for Lines type
+   ...Normal... is added to <input> / <textarea> for cell in table row, ...Header... is added for cell in Header row, ...Filter... is added for cell in Filter row, ...Space is added for cell in Space row
+   ...Int..., ...Float..., ...Date..., ...Pass... is added for this cell type
+   ...Text... is added for cell type Text, Lines, Link, Img
+   ...ReadOnly is added for preview cell with CanEdit='2'
+*/
+.TBEditInput,.TBEditTextarea { border:0px none; padding:5px 8px 5px 8px; outline:none; resize:none; }
+.TBWide .TBEditInput,.TBWide .TBEditTextarea { padding-top:3px; padding-bottom:2px; }
+.TBHigh .TBEditInput,.TBHigh .TBEditTextarea { padding-top:8px; padding-bottom:7px; }
+.TBBig .TBEditInput,.TBBig .TBEditTextarea { padding-top:13px; padding-bottom:12px; }
+.TBGiant .TBEditInput,.TBGiant .TBEditTextarea { padding-top:11px; padding-bottom:10px; }
+.TBLow .TBEditInput,.TBLow .TBEditTextarea { padding:4px 2px 3px 2px; }
+.TBSmall .TBEditInput,.TBSmall .TBEditTextarea { padding-top:1px; padding-bottom:1px; }
+.TBDB.TBEditInput,.TBDB.TBEditTextarea { padding-top:7px; padding-left:10px; }
+.TBWide .TBDB.TBEditInput,.TBWide .TBDB.TBEditTextarea { padding-top:5px; }
+.TBHigh .TBDB.TBEditInput,.TBHigh .TBDB.TBEditTextarea { padding-top:10px; }
+.TBBig .TBDB.TBEditInput,.TBBig .TBDB.TBEditTextarea { padding-top:15px; }
+.TBGiant .TBDB.TBEditInput,.TBGiant .TBDB.TBEditTextarea { padding-top:13px; }
+.TBLow .TBDB.TBEditInput,.TBLow .TBDB.TBEditTextarea { padding-top:6px; padding-left:4px; }
+.TBSmall .TBDB.TBEditInput,.TBSmall .TBDB.TBEditTextarea { padding-top:3px; }
+.TBEditSpaceInput,.TBEditSpaceTextarea { padding:2px 4px 2px 4px; }
+.TBWide .TBEditSpaceInput,.TBWide .TBEditSpaceTextarea { padding-top:0px; padding-bottom:0px; }
+.TBHigh .TBEditSpaceInput,.TBHigh .TBEditSpaceTextarea { padding-top:3px; padding-bottom:1px; }
+.TBBig .TBEditSpaceInput,.TBBig .TBEditSpaceTextarea { padding-top:5px; padding-bottom:3px; }
+.TBLow .TBEditSpaceInput,.TBLow .TBEditSpaceTextarea { padding:0px 2px 0px 2px; }
+.TBEditTextarea { margin:0px; background:white; box-sizing:border-box!important; white-space:pre-wrap; }
+.TBEditWordWrap { word-wrap:break-word; overflow-wrap:break-word; }
+.TBEditInput::-ms-clear { height:13px; }
+.TBEditNormalInput,.TBEditNormalTextarea { }
+.TBEditHeaderInput,.TBEditHeaderTextarea { }
+.TBEditFilterInput,.TBEditFilterTextarea { }
+.TBWK.TBMini .TBEditNormalInput { margin-top:-1px; }
+.TBEditInt,.TBEditFloat,.TBEditDate,.TBEditRight { text-align:right; }
+.TBEditInt::-ms-clear,.TBEditFloat::-ms-clear,.TBEditDate::-ms-clear,.TBEditRight::-ms-clear { display:none; }
+.TBWK .TBEditInt,.TBWK .TBEditFloat,.TBWK .TBEditDate,.TBWK .TBEditRight { margin-left:1px!important; }
+.TBEditText,.TBEditPass { }
+.TBEditTab { border-radius:3px; text-align:center; font-weight:bold; }
+.TBHigh.TBIE .TBEditTab { margin-top:-1px; }
+.TBEditReadOnly { }
+.TBEditHeaderInput.TBEditReadOnly,.TBEditHeaderTextarea.TBEditReadOnly  { }
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                         Message dialogs                                                       */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* Disabled grid, absolute <div> tag shown above grid main tag. The grid is disabled when it shows some message (e.g. "Rendering").
+   ...Hard is used when showing modal message that requires user input
+   Note, for disabled page is used GridDisabled class instead. The whole page is disabled when the grid shows modal dialog (e.g. grid configuration menu).
+   @ Set background and opacity, optionally margin and padding
+*/
+.TBDisabled,.TBDisabledHard { position:absolute; z-index:264; background:black; opacity:0; } 
+.TBDisabledHard { opacity:0.7; } 
+
+/* Grid informational or progress message, absolute <div> tag
+   @ Set border, padding, background and text attributes
+*/
+.TBMessage { white-space:nowrap; text-align:center; visibility:hidden; z-index:266; position:absolute; left:0px; top:0px; padding:25px; min-width:120px; }
+
+/* Shadow <div> tag displayed under grid message tag, on the same position and size 
+   @ Set margin for the shadow shift, background, opacity and border
+*/
+.TBMessageShadow { position:absolute; display:none; }	
+
+/* Page informational message, <div> tag shown inside page being loaded or rendered, instead of the page content
+   @ Set border, padding, background and text attributes
+*/
+.TBPageMessage { padding:20px; }
+
+/* Prompt message input and input parent
+   @ Set border, padding, background and text attributes
+*/
+.TBPrompt { padding-top:30px; padding-bottom:10px; }
+.TBLow .TBPrompt { padding-top:10px; padding-bottom:0px; }
+.TBPrompt input { padding:5px 6px 5px 6px; display:inline-block; box-sizing:border-box; width:200px; }
+.TBWide .TBPrompt input { width:250px; }
+.TBGiant .TBPrompt input { width:300px; }
+.TBLow .TBPrompt input { padding:2px 4px 2px 4px; }
+
+/* Progress message 
+   ...Main is set to inner <div> of the progress message. @ Set text attributes and optionally border, margin, padding and background
+   ...Caption is set to <div> tag showing the progress message caption. @ Set border, margin, padding, background and text attributes
+   ...Text is set to <div> tag showing the progress message text. @ Set border, margin, padding, background and text attributes
+   ...Outer is set to <div> tag showing the gauge container. @ Set border, margin, padding, background and width
+   ...Inner is set to <div> tag showing the gauge indicator. @ Set border, margin, padding, background and height
+*/
+.TBProgressMain { }
+.TBProgressCaption { font-weight:bold; margin-bottom:20px; }
+.TBLow .TBProgressCaption { margin-bottom:5px; }
+.TBProgressText { margin-bottom:20px; }
+.TBLow .TBProgressText { margin-bottom:10px; }
+.TBProgressOuter { text-align:left; width:300px; margin:0px 30px 20px 30px; border:1px dashed #71747D; }
+.TBLow .TBProgressOuter { margin:0px 10px 10px 10px; width:200px; }
+.TBProgressInner { height:20px; background:#0AD16C; margin:-1px; }
+.TBLow .TBProgressInner { height:20px; }
+
+/* Button in informational or progress message, <button> tag below the message inside the ...Message 
+   ...Hover is added when the <button> tag is under mouse cursor
+   @ Set border, padding, margin, background and text attributes
+*/
+.TBMessageButtons,.TBProgressButtons { margin:10px -25px -25px -25px; padding:15px; }
+.TBLow .TBMessageButtons,.TBLow .TBProgressButtons { padding:5px; }
+.TBProgressButton,.TBMessageButton { padding:4px 5px 4px 5px; margin:1px 4px 1px 4px; text-align:center; white-space:nowrap; overflow:hidden; min-width:70px; }
+.TBHigh .TBProgressButton,.TBHigh .TBMessageButton { padding-top:6px; padding-bottom:5px; }
+.TBBig .TBProgressButton,.TBBig .TBMessageButton { padding-top:8px; padding-bottom:8px; }
+.TBLow .TBProgressButton,.TBLow .TBMessageButton { padding-top:2px; padding-bottom:1px; margin-left:3px; margin-right:3px;}
+.TBTiny .TBProgressButton,.TBTiny .TBMessageButton { padding-top:1px; padding-bottom:0px; }
+.TBProgressButton:active,.TBMessageButton:active { }
+.TBProgressButtonHover,.TBMessageButtonHover { }
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                    Popup menus and dialogs                                                    */
+/*                                                             TGLib                                                             */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* Default settings for all TreeGrid popup menus and dialogs like Enum, Defaults, Filter, cfg menu, columns menu, popup Menu, Gantt menu and custom menu shown by ShowMenu and ShowPopup
+   The styles of individual menu types can be overridden by their individual classes added to all default classes (e.g. "GMMenuMain GMEnumMenuMain")
+      Individual classes: ...EnumMenu..., ...DefaultsMenu..., ...FilterMenu..., ...CfgMenu..., ...ColumnsMenu..., ...PopupMenu, ...TBnttMenu...
+      For custom JSON menu can be the individual class prefix set to Class attribute, like {..., Class:"Custom", ... } and the added classes will be ...Custom..., e.g. GxCustomMain
+   Some of the classes are used also for custom JSON dialogs shown by ShowDialog API function.
+*/
+
+/* --- Menu and dialog sections --- */
+
+/* Main menu and dialog classes
+   ...Main - Main absolute <div> tag; @ Do not change 
+   ...Static - Used instead of ...Main when dialog is written directly to page HTML by WriteDialog. Used only in TGLib, not in TreeGrid. @ Do not change
+   ...Shadow - Shadow <div> tag displayed under ...Main tag, on the same position and size. @ Set margin for the shadow shift, background, opacity and border
+   ...Outer - <div> tag inside the main tag, contains the whole menu. @ Set background, border and padding
+   ...Top is added to ...Outer when the menu is shown above the header, ...Bottom is added to ...Outer when the menu is shown below the header
+*/      
+.TBMenuMain { position:absolute; left:0px; top:0px; z-index:258; }
+.TBMenuStatic { }
+.TBMenuShadow { position:absolute; display:none; }
+.TBMenuOuter { overflow:hidden; }
+.TBMenuOuterTop { }
+.TBMenuMainTop { margin-top:-4px; }
+.TBMenuMainBottom { margin-top:3px; }
+
+/* Shown outside menu or dialog in place of the source tag, simulating the menu is popped up. For custom JSON menus and dialogs is used when set Header attribute.
+   ...Top is added to ...Header when the menu is shown above the header, ...Bottom is added to ...Header when the menu is shown below the header
+   @ Set margin to shift the header, border, padding and background
+*/
+.TBMenuHeader { overflow:hidden; position:absolute; z-index:258; cursor:pointer; user-select:none; -ms-user-select:none; -o-user-select:none; -moz-user-select:none; -khtml-user-select:none; -webkit-user-select:none; }
+.TBMenuHeader > div { vertical-align:middle; display:table-cell; }
+.TBMenuHeaderTop { }
+.TBMenuHeaderBottom { }
+
+/* Set to menu and dialog top, not scrollable, section. Used only for TreeGrid cfg / column menus. For custom JSON menus and dialogs is used when set Head attribute.
+   @ Set border, margin, padding, background and text attributes
+*/
+.TBMenuHead { padding:7px 0px 7px 23px; text-align:center; cursor:default; }
+.TBWide .TBMenuHead { padding-left:30px; }
+.TBHigh .TBMenuHead { padding-top:15px; padding-bottom:15px; }
+.TBLow .TBMenuHead { padding-top:3px; padding-bottom:3px; }
+.TBMenuHeadText { white-space:nowrap; margin-right:35px; }
+.TBWide .TBMenuHeadText { margin-right:50px; }
+.TBLow .TBMenuHeadText { margin-right:25px; }
+.TBMenuHorzOuter .TBMenuHead { padding:0px 7px 0px 7px; }
+.TBMenuHorzOuter .TBMenuHeadText { margin:0px; white-space:normal; display:inline-block; writing-mode:tb-rl; -ms-transform:rotate(180deg); -moz-transform:rotate(180deg); -webkit-transform:rotate(180deg); -o-transform:rotate(180deg); transform:rotate(180deg); }
+
+/* Close icon set <div> tag inside the ...MenuHead. Used only for TreeGrid cfg / column menus. For custom JSON menus and dialogs is used when set Head attribute and can be hidden by setting HeadClose:0 
+   @ Set background, width and height
+*/
+.TBMenuClose { float:right; width:26px; line-height:20px; cursor:pointer; display:none; background:url(MenuClose.svg?v120) no-repeat; background-size:16px 16px; }
+.TBWide .TBMenuClose { background-size:20px 20px; width:31px; }
+.TBBig .TBMenuClose { background-size:24px 24px; width:35px; background-position-y:-2px; line-height:30px; }
+.TBGiant .TBMenuClose { background-position-y:0px;  }
+.TBLow .TBMenuClose { line-height:20px; width:24px; background-position:1px 0px; }
+.TBTiny .TBMenuClose { background-position:0px 0px; }
+.TBMenuHorzOuter .TBMenuClose { width:17px; }
+.TBWide .TBMenuHorzOuter .TBMenuClose { width:21px; }
+.TBBig .TBMenuHorzOuter .TBMenuClose { width:25px; }
+.TBLow .TBMenuHorzOuter .TBMenuClose { width:19px; }
+.TBTiny .TBMenuHorzOuter .TBMenuClose { width:17px; }
+
+/* Set to menu and dialog middle, scrollable, section. For custom JSON dialogs the tag is filled by Body attribute value. 
+   @ Set border, margin, padding, background and optionally (for the custom dialogs) text attributes
+*/
+.TBMenuBody { cursor:default; margin:5px 1px 5px 1px; width:calc(100% - 2px); }
+.TBHigh .TBMenuBody { margin-top:10px; margin-bottom:10px; }
+.TBTiny .TBMenuBody { margin-top:2px; margin-bottom:2px; }
+
+/* Set to menu and dialog bottom, not scrollable, section, contains usually control buttons. 
+   Used only for TreeGrid cfg / column menus and Range dialogs to display the buttons. For custom JSON menus and dialogs is used when set Foot or Buttons (JSON menu only) attribute.
+   @ Set border, margin, padding, background and text attributes
+*/
+.TBMenuFoot { padding:7px 8px 7px 6px; text-align:center; white-space:nowrap; }
+.TBHigh .TBMenuFoot { padding-top:10px; padding-bottom:10px; }
+.TBBig .TBMenuFoot { padding-top:15px; padding-bottom:15px; }
+.TBLow .TBMenuFoot { padding:7px 5px 7px 3px; }
+.TBSmall .TBMenuFoot { padding-top:5px; padding-bottom:5px; }
+.TBTiny .TBMenuFoot { padding-top:4px; padding-bottom:4px; }
+    
+
+/* Control button inside the Foot section (e.g. OK, Cancel). <button> tag.
+   ...Hover is added when the <button> tag is under mouse cursor
+   @ Set border, margin, padding, background, width, height and text attributes
+*/
+.TBMenuButton { padding:4px 5px 3px 5px; margin:3px 4px 3px 4px; min-width:70px; text-align:center; white-space:nowrap; overflow:hidden; }
+.TBMenuButton:active {  }
+.TBMenuButtonHover { }
+.TBHigh .TBMenuButton { padding-top:6px; padding-bottom:5px; }
+.TBBig .TBMenuButton { padding-top:8px; padding-bottom:8px; min-width:80px; }
+.TBGiant .TBMenuButton { min-width:90px; }
+.TBLow .TBMenuButton { padding:2px 2px 1px 2px; margin-top:1px; margin-bottom:1px; min-width:60px; }
+.TBTiny .TBMenuButton { padding-top:1px; padding-bottom:0px; }
+
+
+/* --- Menu item --- */
+
+/* <div> tags for individual menu items
+   ...Item is set to all menu items except focused and hovered
+   ...Focus is added to menu item with key cursor
+   ...Hover is added to menu item under mouse cursor
+   @ Set border, margin padding and background; all the eight classes should have the same edge width and height (margin+border+padding)
+*/
+.TBMenuItem { margin-left:1px; margin-right:1px; padding:2px 8px 2px 8px; }
+.TBLow .TBMenuItem { padding-left:5px; padding-right:5px; }
+.TBMenuItem { }
+.TBMenuHover,.TBMenuFocus { padding:0px 6px 0px 6px; }
+.TBMenuFocus.TBMenuHover { }
+.TBLow .TBMenuHover,.TBLow .TBMenuFocus { padding-left:3px; padding-right:3px; }
+
+/* --- Icons inside menu items --- */
+
+/* The classes are set in <div> tag inside the menu item tag
+   ...CheckedIcon...  - Bool item, checkbox, checked state,       ...UncheckedIcon... - Bool item, checkbox, unchecked state
+   ...CheckedRadio... - Bool item with Group, radio button, checked state,   ...UncheckedRadio... - Bool item with Group, radio button, unchecked state
+   ...CheckedColor... - Bool item with ShowIcon=0 or 2, checked state,       ...UncheckedColor... - Bool item with ShowIcon=0 or 2, checked state
+   ...Left - the bool icon is shown on the item text left side,   ...Right - the bool icon is shown on the item text right side
+   ...CursorIcon      - Cursor icon shown on left side, when menu have set ShowCursor:1; the width of the cursor icon is set by menu Indent attribute, by default 12px
+   ...HoverIcon       - The cursor icon in menu item under mouse cursor
+   ...ExpandedIcon    - Icon in expanded section (Expanded:1),  the menu item with Level and Items set; the width of the expanded  icon is set by menu Indent attribute, by default 12px 
+   ...CollapsedIcon   - Icon in collapsed section (Expanded:0), the menu item with Level and Items set; the width of the collapsed icon is set by menu Indent attribute, by default 12px  
+   ...NextIcon        - Icon on right side of item with submenu, the menu item with Menu:1 and Items set 
+   ...Rtl  - used instead in RTL text mode, shows the icon on the other side
+   @ Set background and for some icons padding-left or padding-right
+*/
+.TBMenuCheckedIconLeft,.TBMenuCheckedIconRight { background:url(MenuBool1.svg?v120) no-repeat; }
+.TBMenuUncheckedIconLeft,.TBMenuUncheckedIconRight { background:url(MenuBool0.svg?v120) no-repeat; }
+.TBMenuCheckedRadioLeft,.TBMenuCheckedRadioRight { background:url(MenuRadio1.svg?v120) no-repeat; }
+.TBMenuUncheckedRadioLeft,.TBMenuUncheckedRadioRight { background:url(MenuRadio0.svg?v120) no-repeat; }
+.TBMenuEmptyIconLeft,.TBMenuEmptyIconRight { background:url(MenuBoolEmpty.svg?v120) no-repeat; }
+.TBMenuBoolIconLeft { padding-left:20px; background-position:left center; background-size:16px 16px; }
+.TBWide .TBMenuBoolIconLeft { padding-left:26px; background-size:20px 20px; }
+.TBBig .TBMenuBoolIconLeft { padding-left:32px; background-size:24px 24px; }
+.TBMenuBoolIconRight { padding-right:20px; background-position:right center; background-size:16px 16px; }
+.TBWide .TBMenuBoolIconRight { padding-right:26px; background-size:20px 20px; }
+.TBBig .TBMenuBoolIconRight { padding-right:32px; background-size:24px 24px; }
+.TBMenuBoolIconLeft > .TBMenuLevel,.TBMenuBoolIconRight > .TBMenuLevel { text-align:left; }
+.TBMenuCheckedColor { }
+.TBMenuUncheckedColor { }
+.TBMenuCursorIcon,.TBMenuHoverIcon { padding-left:0px!important; }
+.TBMenuCursorIconRtl,.TBMenuHoverIconRtl { padding-left:0px!important; }
+.TBMenuEnumCursorIcon,.TBMenuEnumHoverIcon { padding-left:12px!important; }
+.TBWide .TBMenuEnumCursorIcon,.TBWide .TBMenuEnumHoverIcon { padding-left:17px!important; }
+.TBBig .TBMenuEnumCursorIcon,.TBBig .TBMenuEnumHoverIcon { padding-left:26px!important; }
+.TBLow .TBMenuEnumCursorIcon,.TBLow .TBMenuEnumHoverIcon { padding-left:15px!important; }
+.TBMenuExpandedIcon { padding-left:0px!important; background:url(MenuExpanded.svg?v120) no-repeat left center; background-size:16px 16px; }
+.TBMenuCollapsedIcon { padding-left:0px!important; background:url(MenuCollapsed.svg?v120) no-repeat left center; background-size:16px 16px; }
+.TBWide .TBMenuExpandedIcon,.TBWide .TBMenuCollapsedIcon { background-size:20px 20px; }
+.TBBig .TBMenuExpandedIcon,.TBBig .TBMenuCollapsedIcon { background-size:24px 24px; }
+.TBMenuExpandedIcon > div, .TBMenuCollapsedIcon > div { border:0px none; margin-left:20px; text-align:left!important; }
+.TBWide .TBMenuExpandedIcon > div, .TBWide .TBMenuCollapsedIcon > div { margin-left:26px; }
+.TBHigh .TBMenuExpandedIcon > div, .TBHigh .TBMenuCollapsedIcon > div { margin-left:32px; }
+.TBMenuNextIcon { background:url(MenuNext.svg?v120) no-repeat right center; background-size:16px 16px; padding-right:20px; }
+.TBWide .TBMenuNextIcon { background-size:20px 20px; padding-right:26px; }
+.TBBig .TBMenuNextIcon { background-size:24px 24px; padding-right:32px; }
+.TBMenuNextIconRtl { background:url(MenuNextRtl.svg?v120) no-repeat left center; background-size:16px 16px; padding-left:20px; }
+.TBWide .TBMenuNextIconRtl { background-size:20px 20px; padding-left:26px; }
+.TBBig .TBMenuNextIconRtl { background-size:24px 24px; padding-left:32px; }
+.TBMenuNextIconDown { background-image:url(MenuNextDown.svg?v120); }
+
+
+/* --- Menu item content --- */
+
+/* The classes are set to <td> tag of inner table that is used to display the item, if it has set Edit, Enum, Icon, LeftHtml or RightHtml attribute.
+   @ Set text attributes and optionally background, border, padding and margin
+   ...ItemText - every menu item text, caption or side Html, it set to <div> tag inside the menu item and inside the menu icon or to <td> tag with item text in inner table
+   ...ItemLeftHtml - <td> tag in inner table displaying the LeftHtml content on the left side
+   ...ItemRightHtml - <td> tag in inner table displaying the RightHtml content on the right side
+   ...ItemIcon - <td> tag in inner table displaying the Icon as background image on the left side, also left to LeftHtml; @ Do not change
+   ...Level - added to the tags with ...ItemText, ...ItemIcon, ...ItemLeft/RightHtml for item with Level set
+   ...ItemDisabled - added to all the menu item parts for item with Disabled:1; @ Set opacity and background
+   ...Align - added to all menu items with Align set or if the menu has set ItemAlign
+*/
+.TBMenuItemText { white-space:nowrap; overflow:hidden; }
+.TBMenuItemText * { font-size:inherit; line-height:inherit; }
+.TBMenuItemLeftHtml,.TBMenuItemRightHtml { }
+.TBMenuItemIcon { background-repeat:no-repeat; background-position:center center; }
+.TBMenuItemDisabled { opacity:0.70; }
+.TBMenuLevel { }
+.TBMenuAlignLeft { text-align:left; }
+.TBMenuAlignRight { text-align:right; }
+.TBMenuAlignCenter { text-align:center; }
+.TBMenuAlignJustify { text-align:justify; }
+
+
+/* The Enum combo in item with Enum:1
+   ...EnumParent - <td> tag in inner table displaying the Enum combo for the Enum:1 item, on left or right side according to Left value
+   ...Enum - <div> tag inside the <td> tag ...EnumParent displaying the Enum combo
+   ...EnumHeader - is set to the <div> tag in Header of the popped up Enum menu
+*/
+.TBMenuEnumParent { padding-left:5px; }
+.TBMenuItemLeft .TBMenuEnumParent { padding-left:0px; padding-right:5px; }
+.TBMenuEnum,.TBMenuEnumHeaderLeft { white-space:nowrap; overflow:hidden; background-repeat:no-repeat; background-size:16px 16px,1px 100%; background-position:1px center,16px center; }
+.TBMenuEnum { padding-left:22px; background-image:url(MenuEnum.svg?v120),url(MenuEnumVLine.svg); }
+.TBMenuItemLeft .TBMenuEnum { padding-right:3px; }
+.TBMenuEnumHeaderLeft { padding:1px 0px 0px 22px; background-image:url(MenuEnumExpanded.svg?v120),url(MenuEnumExpandedVLine.svg); cursor:default; }
+.TBWide .TBMenuEnum,.TBWide .TBMenuEnumHeaderLeft { background-size:20px 20px,1px 100%; background-position:1px center,20px center; padding-left:27px; }
+.TBBig .TBMenuEnum,.TBBig .TBMenuEnumHeaderLeft { background-size:24px 24px,1px 100%; background-position:3px center,28px center; padding-left:36px; }
+.TBMenuEnumParent,.TBMenuEnum,.TBMenuEnumHeaderLeft { width:90px; }
+.TBWide .TBMenuEnumParent,.TBWide .TBMenuEnum,.TBWide .TBMenuEnumHeaderLeft { width:120px; }
+.TBGiant .TBMenuEnumParent,.TBGiant .TBMenuEnum,.TBGiant .TBMenuEnumHeaderLeft { width:150px; }
+.TBMenuEnumHeader { border:0px none; }
+.TBMenuEnumMain.TBMenuMainBottom { margin-top:2px; }
+.TBMenuEnumMain.TBMenuMainTop { margin-top:-3px; }
+
+/* The edit text in item with Edit:1
+   ...EditParent - <td> tag in inner table displaying the editable text for the Edit:1 item, on left or right side according to Left value; @ Set border, padding and background
+   ...Edit - <div> tag inside the <td> tag ...EditParent displaying the editable text; @ Set border, padding, background and text attributes 
+   ...EditMulti - added to the ...Edit tag for item with set Multi:1, multi line edit, to be edited in <textarea>; @ Set border, background and text attributes
+   ...EditEdit - added to the ...Edit when editing the item text
+   ...EditText, ...EditInt, ...EditFloat, ...EditDate - added to the ...Edit tag and also to the <input> or <textarea> tag according to the Type attribute; @ Set text attributes
+   ...EditInput - set to <input> tag placed into ...Edit tag when editing the value; @ Set text attributes
+   ...EditTextarea - set to <textarea> tag placed into ...Edit tag when editing the value in item with Multi:1 set; @ Set text attributes
+*/
+.TBMenuEditParent { padding-left:5px; }
+.TBMenuItemLeft .TBMenuEditParent { padding-left:0px; padding-right:5px; }
+.TBMenuEdit { padding-left:3px; padding-right:3px; overflow:hidden; white-space:nowrap; }
+.TBMenuEditParent,.TBMenuEdit { width:30px; }
+.TBMenuEditParentPDFName,.TBMenuEditParentPDFName > .TBMenuEdit,.TBMenuEditParentExportName,.TBMenuEditParentExportName > .TBMenuEdit { width:106px; }
+.TBWide .TBMenuEditParent,.TBWide .TBMenuEdit { width:50px; }
+.TBWide .TBMenuEditParentPDFName,.TBWide .TBMenuEditParentPDFName > .TBMenuEdit,.TBWide .TBMenuEditParentExportName,.TBWide .TBMenuEditParentExportName > .TBMenuEdit { width:141px; }
+.TBBig .TBMenuEditParentPDFName,.TBBig .TBMenuEditParentPDFName > .TBMenuEdit,.TBBig .TBMenuEditParentExportName,.TBBig .TBMenuEditParentExportName > .TBMenuEdit { width:150px; }
+.TBGiant .TBMenuEditParent,.TBGiant .TBMenuEdit { width:60px; }
+.TBGiant .TBMenuEditParentPDFName,.TBGiant .TBMenuEditParentPDFName > .TBMenuEdit,.TBGiant .TBMenuEditParentExportName,.TBGiant .TBMenuEditParentExportName > .TBMenuEdit { width:180px; }
+.TBLow .TBMenuEditParent,.TBLow .TBMenuEdit { width:52px; }
+.TBLow .TBMenuEditParentPDFName,.TBLow .TBMenuEditParentPDFName > .TBMenuEdit,.TBLow .TBMenuEditParentExportName,.TBLow .TBMenuEditParentExportName > .TBMenuEdit { width:106px; }
+.TBMenuEditMulti { white-space:pre-wrap; }
+.TBMenuEditEdit { }
+input.TBMenuEditInput,textarea.TBMenuEditTextarea { border:0px none; margin:0px 1px 0px 0px; padding:0px; height:18px; outline:none; background:transparent; resize:none; }
+.TBHigh .TBMenuEditInput,.TBHigh .TBMenuEditTextarea { height:22px; }
+.TBGiant .TBMenuEditInput,.TBGiant .TBMenuEditTextarea { height:30px; }
+.TBSmall .TBMenuEditInput,.TBSmall .TBMenuEditTextarea { height:15px; }
+.TBMenuEditInput::-ms-clear { height:13px; }
+.TBMenuEditInt,.TBMenuEditFloat,.TBMenuEditDate { text-align:right; } 
+.TBMenuEditText { }
+
+/* --- Special menu items --- */
+
+/* ...Caption - Inactive item, used instead of ...Item..., along width ...ItemText, shown for menu item with Caption:1; @ Set border, margin padding, background and text attributes
+   ...Separator - Separator between items, shown for menu item with Name:"-", used instead of ...Item...; @ Set border, margin, padding, background and height
+   ...VSeparator - <td> tag shown between columns of menu items; in children of menu item width Columns attribute set; @ Set border, padding, background and width 
+   ...Section - Tag around children of item width Level attribute set; @ Set border, margin, padding and background
+*/
+.TBMenuCaption { padding:10px 2px 3px 2px; }
+.TBHigh .TBMenuCaption { padding-top:8px; padding-bottom:7px; }
+.TBMenuHorz .TBMenuCaption { padding:2px 6px 2px 6px; }
+.TBMenuSeparator { margin:8px 0px 8px 0px; height:0px; overflow:hidden; }
+.TBLow .TBMenuSeparator { margin-top:5px; margin-bottom:5px; }
+.TBSmall .TBMenuSeparator { margin-top:2px; margin-bottom:2px; }
+.TBTiny .TBMenuSeparator { margin-top:1px; margin-bottom:1px; }
+.TBMenuHorz .TBMenuSeparator { margin:0px; border:0px none; border-left:8px solid #41444D; border-right:8px solid #41444D; }
+.TBLow .TBMenuHorz .TBMenuSeparator { border-left-width:5px; border-right-width:5px; }
+.TBSmall .TBMenuHorz .TBMenuSeparator { border-left-width:2px; border-right-width:2px; }
+.TBTiny .TBMenuHorz .TBMenuSeparator { border-left-width:1px; border-right-width:1px; }
+.TBMenuHorz .TBMenuSeparator > div { overflow:hidden; width:1px; }
+.TBMenuVSeparator { width:0px; font-size:0px; }
+.TBMenuSection { }
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                       Calendar dialog                                                         */
+/*                                                          TGLib                                                                */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* --- Main calendar classes --- */
+
+/* Added to main menu / dialog classes ...Menu... as ...Pick...
+   ...Main - Main absolute <div> tag; @ Do not change 
+   ...Shadow - Shadow <div> tag displayed under ...Main tag, on the same position and size. @ Set margin for the shadow shift, background, opacity and border
+   ...Outer - <div> tag inside the main tag, contains the whole calendar. @ Set background, border and padding
+   ...Body - <div> inside ...Outer, contains the whole calendar, including buttons; @ Set background, border, padding and margin
+*/      
+.TBPickMain { position:absolute; left:0px; top:0px; z-index:258; }
+.TBPickShadow { position:absolute; display:none; }
+.TBPickOuter { border:0px none; padding:0px; overflow:hidden; }
+.TBPickBody { cursor:default; padding:0px; margin:0px; width:100%; }
+.TBWide .TBPickBody { margin:0px; }
+
+/* --- Other standard dialog parts' classes, NOT shown by default --- */
+
+/* Added to main menu / dialog classes ...Menu... as ...Pick...
+   ...Header is shown outside the calendar dialog in place of the source tag. Used only if set Header attribute. @ Set margin to shift the header, border, padding and background
+   ...HeaderTop is added to ...Header when the calendar is shown above the header, ...HeaderBottom is added to ...Header when the calendar is shown below the header
+   ...Head is set to calendar top section. Used only if set Head attribute. @ Set border, margin, padding, background and text attributes
+   ...Close is close icon set <div> tag inside the ...PickHead. Used only if set Head attribute. Can be hidden by setting HeadClose:0; @ Set background, width and height
+   ...Foot is set to calendar bottom section. Used only if set Foot attribute. It does NOT show calendar buttons. @ Set border, margin, padding, background and text attributes
+*/
+.TBPickHeader { 
+   position:absolute; z-index:258; border:1px solid #ABD7D3; background:white; 
+   overflow:hidden; cursor:pointer; 
+   }
+.TBPickHeaderBottom { border-bottom:0px none; }
+.TBPickHeaderTop { border-top:0px none; }
+.TBPickHead,.TBPickFoot { background:white; padding:1px 0px 1px 5px; color:white; cursor:default; }
+.TBPickHead { }
+.TBPickFoot { }
+.TBPickClose { display:none; }
+
+/* --- The calendar header showing month and year --- */
+
+/* ...PickMY - the whole header tag showing the month and year; @ Set border, padding, margin, background and text attributes
+   ...PickMYDown - shown inside PickMY to display icon down in the first calendar table; @ Set background and padding-right
+   ...PickMYUp - shown inside PickMY to display icon up in the second calendar table; @ Set background and padding-right
+   ...PickMYRtl - added to ...PickMYUp and ...PickMYDown in RTL mode; @ Set padding-left
+   ...PickBL - previous month icon, ...PickBR - next month icon; @ Set background, width and height
+*/
+.TBPickMY { padding:8px 0px 7px 0px; cursor:default; text-align:center; }
+.TBHigh .TBPickMY { padding-top:11px; padding-bottom:9px; }
+.TBBig .TBPickMY { padding-top:16px; padding-bottom:14px; }
+.TBLow .TBPickMY { padding-top:4px; padding-bottom:3px; }
+.TBPickMYDown { background-image:url(CalendarMonths.svg?v120); }
+.TBPickMYUp { background-image:url(CalendarDays.svg?v120); }
+.TBPickMYDown,.TBPickMYUp { padding-right:18px; background-size:16px 16px; background-position:right calc(50% - 1px); background-repeat:no-repeat; cursor:pointer; }
+.TBWide .TBPickMYDown,.TBWide .TBPickMYUp { padding-right:22px; background-size:20px 20px; }
+.TBBig .TBPickMYDown,.TBBig .TBPickMYUp { padding-right:26px; background-size:24px 24px; }
+.TBPickMYRtl { padding-right:0px; padding-left:13px; }
+.TBPickBL { float:left; background:url(CalendarPrevMonth.svg?v120) no-repeat 5px 7px; }
+.TBPickBR { float:right; background:url(CalendarNextMonth.svg?v120) no-repeat right 5px top 7px; }
+.TBPickBL,.TBPickBR { width:24px; height:24px; background-size:16px 16px; padding:0px; overflow:hidden; cursor:pointer; display:none; }
+.TBWide .TBPickBL,.TBWide .TBPickBR { background-size:20px 20px; background-position-y:7px; height:31px; }
+.TBHigh .TBPickBL,.TBHigh .TBPickBR { background-position-y:10px; height:34px; }
+.TBBig .TBPickBL,.TBBig .TBPickBR { background-size:24px 24px; background-position-y:13px; height:39px; }
+.TBGiant .TBPickBL,.TBGiant .TBPickBR { background-position-y:15px; height:42px; }
+.TBLow .TBPickBL,.TBLow .TBPickBR { background-position-y:3px; height:20px; }
+
+/* --- The first calendar table with days --- */
+
+/* ...PickTableParent - <div> tag containing the whole table; @ Set border, padding, margin and background 
+   ...PickTable - <table> tag inside ...PickTableParent; @ Do not change
+   ...PickRow - <tr> tags with individual day numbers; @ Set background and optionally height
+   ...PickRowW - top <tr> tag with week day names; @ Set background and optionally height
+   ...PickCell - <td> tags with day numbers or week names; @ Set width and optionally background, padding and height
+*/
+.TBPickTableParent { border-top:0px none; clear:both; padding-top:1px; }
+.TBHigh .TBPickTableParent { padding-top:0px; }
+.TBPickTable { table-layout:fixed; width:0px; }
+.TBPickRow { }
+.TBPickRowW { }
+.TBPickRowW > td { }
+.TBPickCell { width:36px; font-size:inherit; line-height:inherit; }
+.TBLow .TBPickCell { width:28px; }
+.TBWide .TBPickCell { width:42px; }
+
+/* Individual day cells in the first calendar table; only one class per tag is set. <div> tags inside <td> tag.
+   @ Set background, border, margin, padding, height and text attributes
+   @ All the classes should have the same height and should not be wider than ...PickCell to avoid blinking the calendar cells on mouse actions
+   ...PickWDN - week day name in top row
+   ...PickWN  - week number in left column 
+   ...PickWNE - not selectable week number in left column
+   ...PickWD  - work day number
+   ...PickSa  - Saturday number
+   ...PickSu  - Sunday number
+   ...PickOM  - Day number from another month
+   ...PickNow - Today number
+   ...PickSel - Selected day number
+   ...NE      - any not selectable day number
+   ...PickHover - Any not selected day number under mouse cursor
+   ...PickSelHover - Selected day number under mouse cursor
+   ...PickEmpty - top left button in <div> tag to select empty date; @ Set background and height
+*/
+.TBPickWDN { margin:2px 3px 2px 3px; padding:1px; font-weight:bold; line-height:22px; text-align:center; cursor:default; }
+.TBHigh .TBPickWDN { line-height:30px; }
+.TBPickHover,.TBPickSelHover,.TBPickWD,.TBPickSa,.TBPickSu,.TBPickSel,.TBPickNow,.TBPickWDNE,.TBPickSaNE,.TBPickSuNE,.TBPickSelNE,.TBPickNowNE,.TBPickOM,.TBPickOMNE {
+   margin:1px; padding:2px 3px 2px 3px; line-height:20px; text-align:center; cursor:pointer; 
+   }
+.TBPickWN,.TBPickWNE { padding:2px 4px 2px 4px; line-height:22px; text-align:center; cursor:pointer; }
+.TBHigh .TBPickCell>div { line-height:26px; }
+.TBBig .TBPickCell>div { line-height:30px; }
+.TBLow .TBPickCell>div { line-height:16px; }
+.TBPickWNE { cursor:default; }
+.TBPickNE { cursor:default; }
+.TBPickWD { }
+.TBPickSa { }
+.TBPickSu { }
+.TBPickSel { padding:0px 1px 0px 1px; }
+.TBPickNow { }
+.TBPickOM { }
+.TBPickEmpty { background:url(CalendarEmpty.svg?v120) no-repeat center center; background-size:16px 16px; cursor:pointer; height:17px; }
+.TBWide .TBPickEmpty { background-size:20px 20px; height:20px; }
+.TBBig .TBPickEmpty { background-size:24px 24px; height:24px; }
+.TBPickHover { padding:0px 1px 0px 1px; }
+.TBPickSelHover { padding:0px 1px 0px 1px; }
+
+/* --- The second calendar table with months and years --- */
+
+/* ...Pick2TableParent - <div> tag containing the whole table; @ Set border, padding, margin and background 
+   ...Pick2Table - <table> tag inside ...Pick2TableParent; @ Do not change
+   ...Pick2Row - <tr> tags with the cells: 2 months, separator and 2 years; @ Set background and optionally height
+   ...Pick2CellM - <td> tags with month names; @ Set height, width and optionally background and padding
+   ...Pick2CellY - <td> tags with year numbers; @ Set height, width and optionally background and padding
+   ...Pick2CellSep - <td> tag, separator between months and years section; @ Set height, width and optionally background and padding
+   ...Pick2SepH - separator between the calendar header ...PickMY and calendar body ...Pick2TableParent; @ Set height to synchronize heights of both calendar dialogs
+*/
+.TBPick2TableParent { display:block; overflow:hidden; clear:both; }
+.TBHigh .TBPick2TableParent { padding-top:2px; }
+.TBBig .TBPick2TableParent { padding-top:1px; }
+.TBPick2Table { table-layout:fixed; width:0px; margin-left:3px; margin-right:3px; }
+.TBPick2Row { }
+.TBPick2CellM { width:84px; }
+.TBLow .TBPick2CellM { width:68px; }
+.TBWide .TBPick2CellM { width:105px; }
+.TBPick2CellY { width:50px; }
+.TBLow .TBPick2CellY { width:40px; }
+.TBWide .TBPick2CellY { width:58px; }
+.TBPick2CellSep { width:15px; }
+.TBLow .TBPick2CellSep { width:4px; }
+.TBWide .TBPick2CellSep { width:8px; }
+.TBPick2SepH { display:none; }
+
+/* Individual cells, <div> tag inside <td> tag
+   @ Set background, border, margin, padding, height and text attributes
+   @ All the classes should have the same height and should not be wider than ...Pick2Cell... to avoid blinking the calendar cells on mouse actions
+   ...Pick2M - month name; ...Pick2Y - year number; ...Sel - selected cell; ...Hover - cell under mouse cursor; ...SelHover - selected cell under mouse cursor
+*/
+.TBPick2M,.TBPick2Y { margin:3px 2px 3px 2px; padding:3px 2px 3px 2px; line-height:19px; cursor:pointer; text-align:center; overflow:hidden; }
+.TBHigh .TBPick2M,.TBHigh .TBPick2Y { line-height:25px; }
+.TBBig .TBPick2M,.TBBig .TBPick2Y { line-height:30px; }
+.TBLow .TBPick2M,.TBLow .TBPick2Y { line-height:16px; margin-top:2px; margin-bottom:2px; }
+.TBPick2MSel,.TBPick2YSel { padding:1px 0px 1px 0px; }
+.TBPick2MHover,.TBPick2YHover { padding:1px 0px 1px 0px; }
+.TBPick2MSelHover,.TBPick2YSelHover { padding:1px 0px 1px 0px; }
+
+/* Special cells, <div> tag inside <td> tag
+   ...Pick2Sep - separator between months and years; @ Set height, width, background, border, margin, padding
+   ...Pick2BL - button (<div> tag) showing previous 5 years; @ Set background, width and height
+   ...Pick2BR - button (<div> tag) showing next 5 years; @ Set background, width and height
+*/
+.TBPick2Sep { height:31px; width:1px; overflow:hidden; margin-left:2px; margin-right:2px; }
+.TBHigh .TBPick2Sep { height:37px; }
+.TBBig .TBPick2Sep { height:42px; }
+.TBLow .TBPick2Sep { height:26px; }
+.TBPick2BL,.TBPick2BR { width:53px; cursor:pointer; height:31px; background-repeat:no-repeat; background-position:center 7px; background-size:16px 16px; }
+.TBPick2BL { background-image:url(CalendarPrevYears.svg?v120); }
+.TBPick2BR { background-image:url(CalendarNextYears.svg?v120); }
+.TBWide .TBPick2BL,.TBWide .TBPick2BR { background-position:center 5px; background-size:20px 20px; }
+.TBHig .TBPick2BL,.TBHigh .TBPick2BR { height:38px; background-position:center 8px; }
+.TBBig .TBPick2BL,.TBBig .TBPick2BR { height:41px; background-position:center 10px; background-size:24px 24px; }
+.TBLow .TBPick2BL,.TBLow .TBPick2BR { height:24px; width:40px; background-position:center 4px; }
+ 
+/* --- The calendar footer with time --- */
+
+/* Shown when EditFormat contains time definition (H or h or m or s); it is not shown for Range cells
+   For custom calendar it is shown if set TimeFormat attribute; it is not shown if set Multi:1
+   ...PickTimeCell - the whole calendar footer (<div> tag) on the same level as ...PickTableParent; @ Set border, padding, margin, background and text-align
+   ...PickTime - set to <input> tag inside ...PickTimeCell; @ Set text attributes
+*/
+.TBPickTimeCell { padding:15px 14px 15px 0px; margin-top:0px; text-align:right; line-height:0px; height:15px; }
+.TBWide .TBPickTimeCell { height:19px; padding-right:16px; }
+.TBHigh .TBPickTimeCell { padding-top:17px; padding-bottom:17px; }
+.TBBig .TBPickTimeCell { padding-top:24px; padding-bottom:24px; }
+.TBGiant .TBPickTimeCell { height:24px; }
+.TBLow .TBPickTimeCell { padding-top:8px; padding-bottom:8px; padding-right:10px; }
+.TBTiny .TBPickTimeCell { padding-top:4px; padding-bottom:4px; }
+.TBPickTime { margin:0px; padding:0px; border:0px none; white-space:nowrap; text-align:right; outline:none; background:transparent; }
+
+/* --- The calendar footer with buttons --- */
+
+/* Contains buttons like OK, Today, Clear; shown for Range cells or when set CalendarButtons; For custom calendar is shown for Multi and for Buttons set.
+   ...PickFooter is the whole first calendar footer (<div> tag) on the same level as ...PickTableParent; @ Set border, padding, margin, background and text-align
+   ...Pick2Footer is the whole second calendar footer (<div> tag) on the same level as ...Pick2TableParent; @ Set border, padding, margin, background and text-align
+   ...PickButton is set to <button> tags; @ Set border, margin, padding, background, width, height and text attributes
+   ...PickButtonHover is added when the <button> tag is under mouse cursor; @ Set border, margin, padding, background, width, height and text attributes 
+*/
+.TBPickFooter,.TBPick2Footer { padding:10px 0px 10px 0px; cursor:default; text-align:center; }
+.TBBig .TBPickFooter,.TBBig .TBPick2Footer { padding-top:15px; padding-bottom:15px; }
+.TBLow .TBPickFooter,.TBLow .TBPick2Footer { padding-top:5px; padding-bottom:5px; }
+.TBTiny .TBPickFooter,.TBTiny .TBPick2Footer { padding-top:2px; padding-bottom:2px; }
+.TBPickButton { padding:4px 7px 3px 7px; margin:1px 4px 1px 4px; width:70px; text-align:center; white-space:nowrap; overflow:hidden; }
+.TBWide .TBPickButton { width:85px; }
+.TBHigh .TBPickButton { padding-top:6px; padding-bottom:5px; }
+.TBBig .TBPickButton { padding-top:8px; padding-bottom:8px; }
+.TBLow .TBPickButton { padding-top:2px; padding-bottom:1px; width:54px; margin-left:3px; margin-right:3px; }
+.TBTiny .TBPickButton { padding-top:1px; padding-bottom:0px; }
+.TBPickButton:active { }
+.TBPickButtonHover { }
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                              TGLib special classes not used in TreeGrid                                       */
+/*                                                            TGLib                                                              */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* --- Edit control (TGLib only) --- */
+
+/* ...EditParent is set to temporary parent div tag if the edit is shown on given position, not inside tag; @ Do not change
+   ...Edit is set to the TGLib Edit control tag (cc="Edit"); @ Set border, margin, padding, background and text attributes
+   ...EditInline is set instead if the TGLib Edit control tag has display:inline; @ Set side border, margin, padding, background and text attributes
+   ...EditMulti is added for control with Multi:1 as multiline edit in <textarea>; @ Set border, margin, padding, background and text attributes
+*/
+.TBEditParent { position:absolute; z-index:258; overflow:hidden; }
+.TBEdit,.TBEditInline {
+   padding:2px 4px 2px 4px;
+   border:1px solid #DDD; border-top:1px solid #666; border-left:1px solid #666; background:white; white-space:nowrap; overflow:hidden;
+   }
+.TBEditInline { display:inline-block; vertical-align:bottom; }
+.TBEditMulti { white-space:pre-wrap; }
+
+/* --- Enum control (TGLib only) --- */
+
+/* ...EnumControl is set to the TGLib Enum control tag (cc="Enum"); @ Set border, margin, padding, background and text attributes
+   ...EnumInline is set instead if the TGLib Enum control tag has display:inline; @ Set side border, margin, padding, background and text attributes
+   ...EnumHeader is used inside popup menu header ...MenuHeader tag and shows the Enum icon on left side; @ Set background, padding and text attributes and optionally border and margin
+*/
+.TBEnumControl,.TBEnumInline,.TBEnumHeader { cursor:pointer; background:white url(MenuEnum.svg?v120) no-repeat; background-size:16px 16px; }
+.TBEnumControl,.TBEnumInline { background-position:2px 5px; padding:2px 4px 2px 20px; border:1px solid #DDD; border-top:1px solid #666; border-left:1px solid #666; overflow:hidden; }
+.TBEnumInline { display:inline-block; vertical-align:bottom; }
+.TBEnumHeader { background-position:2px 6px; padding:3px 4px 2px 20px; }
+
+/* --- Mouse dragging (TGLib only) --- */
+
+/* ...MouseOrig is set to original tag being dragged by mouse, when copying the tag
+   ...DragObject is set to ghost tag being dragged by mouse, when copying the tag
+*/
+.TBMouseOrig { background:yellow!important; opacity:0.5; }
+.TBMouseDragObject { position:absolute; z-index:260; background:#888; opacity:0.5; }
+
+/* --- Focused control (TGLib only) --- */
+
+.TBFocus { border:1px solid #AAF; border-top:1px solid #00F; border-left:1px solid #00F; background-color:#EEE; } 
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                      Cell tooltip - Tip                                                       */
+/*                                                            TGLib                                                              */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* Tip is shown below mouse cursor on mouse hover the cell; Used only if set <Cfg StandardTip='0'/>
+   ...Main - main tip <div> tag absolutely positioned; @ Do not change
+   ...Outer - outer tip <div> tag inside ...Main, has set maximal width to overflow long text; @ Set border, margin, padding, background
+   ...Body - inner tip <div> tag inside ...Outer; @ Set text attributes and optionally border, margin, padding and background
+   ...Shadow - <div> tag displayed under tip ...Main tag, on the same position and size; @ Set margin for the shadow shift, background, opacity and border
+*/
+.TBTipMain { position:absolute; left:0px; top:0px; z-index:262; visibility:hidden; }
+.TBTipOuter { padding:5px; overflow:hidden; cursor:default; }
+.TBTipBody { white-space:nowrap; overflow:hidden; }
+.TBTipShadow { position:absolute; display:none; }
+
+/* Set to ghost tag under mouse cursor when dragging rows in grid, if set <Cfg DragObject='2'/> and <Cfg ShowDrag='1'/>
+   The tag is <div> with absolute position and contains information about the count of dragged rows
+   @ Set border, margin, padding, background, opacity, text attributes and optionally height and width
+*/
+.TBDragObject { z-index:300; margin-left:15px; margin-top:10px; padding:5px; }
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                 Line chart (cell type Chart)                                                  */
+/*                                                           TGLib                                                               */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* ...Chart - cell type, <td> tag; @ Set border, padding and background
+   ...ChartInner - inner <div> tag containing the whole chart; @ Set background
+   ...ChartLayer - individual chart layers, <div> tags, one per TChartLine, one for Axis and one for Caption; @ Do not change
+   ...ChartAxisY - horizontal axis, <div> tag; @ Set height and background
+   ...ChartAxisX - vertical axis, <div> tag; @ Set width and background
+   ...ChartAxisYLabel, ...ChartAxisXLabel - <div> tag with labels for X and Y axes; @ Set background
+   ...ChartAxisYText, ...ChartAxisXText - <div> tag inside ...Label; @ Set text attributes and optionally background, border, margin and padding
+   ...ChartCaption - chart top caption, <div> tag; @ Set background, border, padding and text attributes
+*/
+.TBChart { padding:5px; }
+.TBChartInner { background:#292C33; width:100%; }
+.TBChartLayer { overflow:hidden; height:1000px; }
+.TBChartAxisY { background:black; height:1px; overflow:hidden; }
+.TBChartAxisYLabel { overflow:hidden; }
+.TBChartAxisYText { margin-right:5px; margin-top:12px; text-align:right; }
+.TBChartAxisX { width:1px; overflow:hidden; background:black; }
+.TBChartAxisXLabel { overflow:hidden; }
+.TBChartAxisXText { text-align:center; }
+.TBChartCaption { text-align:center; margin-top:3px; }
+
+/* Individual chart points for PointType value; @ Set only background*/
+.TBChartPoint { background-repeat:no-repeat; background-size:9px 9px; background-position:11px 11px; width:32px; height:32px; overflow:hidden; }
+.TBChartPoint1 { background-image:url(ChartPointBlack.svg?v120); }
+.TBChartPoint2 { background-image:url(ChartPointRed.svg?v120); }
+.TBChartPoint3 { background-image:url(ChartPointBlue.svg?v120); }
+.TBChartPoint4 { background-image:url(ChartPointGreen.svg?v120); }
+.TBChartPoint5 { background-image:url(ChartPointFuchsia.svg?v120); }
+.TBChartPoint6 { background-image:url(ChartPointYellow.svg?v120); }
+.TBChartPoint7 { background-image:url(ChartPointAqua.svg?v120); }
+.TBChartPoint8 { background-image:url(ChartPointSilver.svg?v120); }
+
+
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                          Debug print                                                          */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* ! Note, here is no .TB style prefix
+   Controls the default debug window shown bottom the page, controlled by <bdo Debug> attribute
+   ...Tag - <div> tag containing the debug print; @ Set position attributes, background, border and padding
+   ...TagMax - used instead of ...Tag when maximized by clicking to Max button
+   ...Buttons - <div> tag placed next to ...Tag to show the debug control buttons; @ Set position attributes, background, border and padding
+   ...ButtonsMax - used instead of ...Buttons when maximized by clicking to Max button
+*/
+.GridDebugTag,.GridDebugTagMax { overflow:auto; overflow-y:scroll; border:1px solid black; background:#DDD; }
+.GridDebugTag,.GridDebugTagMax,.GridDebugButtons,.GridDebugButtonsMax { position:fixed; z-index:256; left:5px; right:5px; bottom:5px; height:200px; padding:4px; }
+.GridDebugTagMax,.GridDebugButtonsMax { top:5px; height:auto; }
+.GridDebugButtons,.GridDebugButtonsMax { text-align:right; margin-right:25px; width:150px; left:auto; }
+
+/* Individual parts of the debug print
+   ...Button - one debug button, <button> tag placed inside ...Buttons; @ Set width, height, background, border, padding, margin and text attributes
+   ...Title - <span> tag with grid or print identification; @ Set text attributes and background
+   ...Mark - <span> tag that highlights some information, e.g. actual values; @ Set text attributes and background
+   ...Stop (0), ...Error (1), ...Warning (2), ...List (3), ...Info (>3) - <div> or <span> tag containing the information according to the debug level number; @ Set text attributes and background
+*/
+.GridDebugButton { font-size:10px; width:40px; padding:0px; }
+.GridDebugTitle { font-size:10px; color:#0CD06E; font-style:normal;font-weight:normal; }
+.GridDebugMark { font-weight:bold; }
+.GridDebugStop { font-size:18px; font-weight:bold; color:red; }
+.GridDebugError { font-size:12px; color:red; }
+.GridDebugWarning { font-size:12px; color:#A60;}
+.GridDebugList { font-size:10px; color:#888;}
+.GridDebugInfo { font-size:12px; }
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                          Animations                                                           */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+.TBAnimateOverflow { overflow:hidden; }
+@keyframes TBExpandH { from { height:0px; } }
+@keyframes TBCollapseH { to { height:0px; } }
+
+.TBAnimateTransparent { opacity:0; }
+@keyframes TBShow { from { opacity:0; } to { opacity:1; } }
+@keyframes TBHide { from { opacity:1; } to { opacity:0; } }
+
+.TBAnimateHidden { display:none; }
+.TBAnimateVisible { display:inherit; }
+.TBAnimateLeftTop { overflow:hidden; transform-origin:0% 0%; }
+.TBAnimateCenterTop { overflow:hidden; transform-origin:50% 0%; }
+.TBAnimateRightTop { overflow:hidden; transform-origin:100% 0%; }
+.TBAnimateLeftBottom { overflow:hidden; transform-origin:0% 100%; }
+.TBAnimateRightBottom { overflow:hidden; transform-origin:100% 100%; }
+.TBAnimateCenterBottom { overflow:hidden; transform-origin:50% 100%; }
+.TBAnimateLeftCenter { overflow:hidden; transform-origin:0% 50%; }
+.TBAnimateRightCenter { overflow:hidden; transform-origin:100% 50%; }
+.TBAnimateCenterCenter { overflow:hidden; transform-origin:50% 50%; }
+@keyframes TBZoomInH { from { height:0px; transform:scale(1,0); } to { transform:scale(1,1); } }
+@keyframes TBZoomOutH { from { transform:scale(1,1); } to { transform:scale(1,0); height:0px; } }
+@keyframes TBZoomInY { from { transform:scale(1,0); } to { transform:scale(1,1); } }
+@keyframes TBZoomOutY { from { transform:scale(1,1); } to { transform:scale(1,0); } }
+@keyframes TBZoomInX { from { transform:scale(0,1); } to { transform:scale(1,1); } }
+@keyframes TBZoomOutX { from { transform:scale(1,1); } to { transform:scale(0,1); } }
+@keyframes TBZoomIn { from { transform:scale(0); } to { transform:scale(1); } }
+@keyframes TBZoomOut { from { transform:scale(1); } to { transform:scale(0); } }
+
+@keyframes TBRotateX90 { 0% { transform:rotateX(0deg); } 50% { transform:rotateX(90deg); } 100% { transform:rotateX(0deg); } }
+@keyframes TBRotateX90To { from { transform:rotateX(0deg); } to { transform:rotateX(90deg); } }
+@keyframes TBRotateX90From { from { transform:rotateX(90deg); } to { transform:rotateX(0deg); } }
+@keyframes TBRotateY90 { 0% { transform:rotateY(0deg); } 50% { transform:rotateY(90deg); } 100% { transform:rotateY(0deg); } }
+@keyframes TBRotateY90To { from { transform:rotateY(0deg); } to { transform:rotateY(90deg); } }
+@keyframes TBRotateY90From { from { transform:rotateY(90deg); } to { transform:rotateY(0deg); } }
+
+@keyframes TBFocus { 0% { color:inherit; } 50% { color:#EA4647; } 100% { color:inherit; } }
+@keyframes TBCopy { 0% { transform:translateX(0px); } 25% { transform:translateX(1px); } 75% { transform:translateX(-1px); } 100% { transform:translateX(0px); } }
+
+@keyframes TBOpacityBlink { 0% { opacity:1; } 50% { opacity:0.2; } 100% { opacity:1; } }
+@keyframes TBBackgroundBlink { 0% { background-color:#FFF; } 50% { background-color:#888; } 100% { background-color:#FFF; } }
+
+.TBMark { background-color:#AAA!important; }
+@keyframes TBMark { 0% { background-color:#292C33; } 25% { background-color:#888; } 75% { background-color:#888; } 100% { background-color:#292C33; } }
+@keyframes TBHighlight { 0% { background-color:#292C33; } 25% { background-color:#888; } 50% { background-color:#292C33; } 75% { background-color:#888; } 100% { background-color:#292C33; } }
+@keyframes TBHighlightDeselect { 0% { background-color:#292C33; } 25% { background-color:#883; } 50% { background-color:#292C33; } 75% { background-color:#883; } 100% { background-color:#292C33; } }
+@keyframes TBHighlightSelect { 0% { background-color:#883; } 25% { background-color:#292C33; } 50% { background-color:#883; } 75% { background-color:#292C33; } 100% { background-color:#883; } }
+@keyframes TBHighlightDelete { 0% { background-color:#600; } 25% { background-color:#292C33; } 50% { background-color:#600; } 75% { background-color:#292C33; } 100% { background-color:#600; } }
+@keyframes TBHighlightMove { 0% { background-color:#155; } 25% { background-color:#292C33; } 50% { background-color:#155; } 75% { background-color:#292C33; } 100% { background-color:#155; } }
+@keyframes TBHighlightAdd { 0% { background-color:#060; } 25% { background-color:#292C33; } 50% { background-color:#060; } 75% { background-color:#292C33; } 100% { background-color:#060; } }
+@keyframes TBHighlightChange { 0% { background-color:#006; } 25% { background-color:#292C33; } 50% { background-color:#006; } 75% { background-color:#292C33; } 100% { background-color:#006; } }
+
+/* -------------------------------------------------------------------------------------------------------------------------- */
+/*                                                          System settings                                                      */
+/* -------------------------------------------------------------------------------------------------------------------------- */
+
+/* Tag added to disable whole page, e.g. when showing modal dialog. ! Note, here is no .TB style prefix
+   Note, to disable only the grid is used .TBDisabled class instead (e.g. when showing message in grid).
+   @ Set background and opacity, optionally margin and padding
+*/
+.GridDisabled { position:absolute; z-index:256; background:black; opacity:0.7; } 
+
+/* Marks the style loaded; must be the last class in the file; @ Do not change */
+.TBDialogLoaded { border:1px solid black!important; }

@@ -1,0 +1,79 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>2. Client child paging in tree</h1>
+   <h2>Automatic paging of child rows in tree on client side</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='02-Client_child_paging.xml'>02-Client_child_paging.xml</a></div>
+      <div class="Main" style='width:100%; height:550px;'>
+         <bdo Debug='check' Data_Url='02-Client_child_paging.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li>
+         There are three independent ways, how to page children in tree.
+         None of the method affect root rows, they affect only children of some parent rows.
+      </li>
+      <li>
+         <h4>Render children on expand</h4> by Cfg attribute <h3>ChildPaging</h3><b>='2'</b>.<br />
+         The parent rows must be collapsed (must have set <b>Expanded='0'</b>) to take the child paging effect.
+         To collapse all rows in grid define &lt;Def>&lt;D Name='R' Expanded='0'/>&lt;/Def>.
+         <br />
+         It is default setting, the ChildPaging is set to 2 by default.<br />
+         The children are rendered only on first expand. 
+         To not slow the grid if there are too many children rendered, set <b>RemoveCollapsed='2'</b> to remove the rendered children on collapse and render them on every expand.
+      </li>
+      <li>
+         <h4>Render children on scroll</h4> by Cfg attribute <h3>ChildParts</h3><b>='2'</b>.<br />
+         It renders children when they become visible by scrolling, similarly to root pages. It can render only subset of children of one parent.<br />
+         The count of children rendered at once (the size of the part) is set by Cfg attribute <b>ChildPartLength</b>.<br />
+         When the parent is expanded or expanding, it can render immediately few first children to speed the rendering. Their count is set by Cfg attribute <b>ChildPartMin</b>.<br />
+         When grid has too many rendered rows, it can be slow. It is possible to remove unused child parts by setting <b>MaxChildParts</b> attribute.<br />
+         It is also possible to render all children on start or on expand, but with progress dialog to cancel the rendering and render the rest on demand, for this behavior set <b>ChildParts='1'</b>. See the second icon on toolbar.<br />
+      </li>
+      <li>
+         <h4>Group children to sub parents</h4> by row attribute <h3>MaxChildren</h3>.<br />
+         When row children count exceeds its MaxChildren value, there are created new sub rows and the children are grouped to these rows, by MaxChildren count.<br />
+         To not group children with count only few rows above MaxChildren set <b>MaxChildrenDiff</b>, the rows are grouped after the count is higher than MaxChildren+MaxChildrenDiff.<br />
+         Some attributes of the newly created row can be specified in default row named <b>CPage</b> (&lt;D Name='CPage' ... />).
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialPaging\s*=\s*(\d+)/), TGIndex = 2;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridPaging2", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialPaging="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

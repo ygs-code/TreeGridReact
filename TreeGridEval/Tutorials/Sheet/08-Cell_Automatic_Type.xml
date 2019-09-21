@@ -1,0 +1,88 @@
+<Grid>
+   <Cfg id="CellFormatDynamic" SuppressCfg="1" Sorting="0"/> <!-- Suppresses configuration and sorting -->
+   <Cfg SuppressMessage="3"/> <!-- Suppresses all messages, including page messages -->
+   <Cfg AutoIdPrefix=""/> <!-- Prefix for automatically generated row id, here set empty instead of AR -->
+
+   <!-- Automatic column and row pages -->   
+   <Cfg Paging="2" AutoPages="1" PageLength="10" MaxPages="3" RemoveUnusedFixed="0" RemoveAutoPages="1"/> <!-- Defines automatic row pages -->
+   <Pager Visible="0"/> <!-- Hides the side pager that is shown for paging by default -->
+   <Cfg ColPaging="2" AutoColPages="1" ColPageLength="10" ColPageMin="0" MaxColPages="3" ColPagingFixed="0" RemoveAutoColPages="1"/> <!-- Defines automatic column pages -->
+
+   <!-- Defines row and column indexes -->
+   <Cfg RowIndex="Index" RowIndexType="6"/> <!-- Creates number RowIndex with all variable rows except deleted -->
+   <Cfg ColIndex="Header" ColIndexType="6" ColIndexChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ"/> <!-- Creates letter ColIndex with all variable columns except deleted  -->
+
+   <!-- Cell popup menu to manipulate cells and their styles -->
+   <Cfg Menu="{Items:[
+      {Name:'Edit',Menu:1,Items:'|SetEditable|SetReadOnly|SetPreview|ClearEditable|-|SetEditableSelected|SetReadOnlySelected|SetPreviewSelected|ClearEditableSelected|-|SetEditableRow|SetReadOnlyRow|SetPreviewRow|ClearEditableRow|-|SetEditableCol|SetReadOnlyCol|SetPreviewCol|ClearEditableCol'},
+      {Name:'Clear',Menu:1,Items:'|ClearCell|ClearValue|ClearStyle|-|ClearSelectedCells|ClearSelectedValues|ClearSelectedStyles'},
+      {Name:'Span',Menu:1,Items:'|SplitCell|SplitSelected|SpanSelected'},
+      {Name:'Format',Menu:1,Items:'|ChooseFormat|ChooseFormatSelected|SetFormat|SetFormatSelected'}
+      ]}"/>
+   <Cfg ShowMenuSingle="1"/> <!-- shows menu also with single option instead of doing it immediately -->
+   <Cfg HideMenuUnused="1"/> <!-- Hide unused child items, disable parent items with no child items -->
+   <Actions OnRightClick="ShowPopupMenu OR ShowNoMenu"/> <!-- Shows the popup menu for any right click to the grid -->
+
+   <!-- Other settings often set in the sheets -->
+   <Cfg Undo="79"/> <!-- Permits undoing all actions, including scroll -->
+   <Cfg EnterMode="1"/> <!-- Enter moves cursor down -->
+   <Cfg FocusRect="31"/> <!-- Permits focusing cell range, shows the corner, hides focused cursor for the whole row, shows relative color for focused cell, permits move and copy the focused range by dragging. -->
+   <Cfg SelectingCells="3"/> <!-- Permits selecting cells and row/columns independently -->
+   <Cfg SelectingFocus="1"/> <!-- Automatically selects the focused cells and clears all other selected cells on focus change -->
+   <Cfg AutoFillType="31"/>  <!-- Permits auto filling numbers and strings, also from one cell, shrinking range clears the rest -->
+   <Cfg AcceptEnters="2"/>   <!-- CRLF can be put to the cell by ctrl/alt/shift + Enter -->
+   <Cfg StaticCursor="1"/>   <!-- Does not remove focused cells if the grid loses focus -->
+   <Actions OnDel="ClearSelectedCellsF OR ClearCellF"/> <!-- Clears the selected cells -->
+
+   <!-- Dynamic format -->
+   <Cfg DynamicFormat="2"/> <!-- Permits changing cell type and format dynamically and also sets the type and format dynamically according to the cell value -->
+   <Cfg AutoCalendar="1"/> <!-- Does not show date button for Date type, but shows calendar when editing date cell -->
+
+   <!-- Settings for cell span, borders and mass changes -->
+   <Cfg EditAttrs=",Type,Format,EditFormat,CanEdit"/> <!-- What will be affected by mass change like clear or move focus; the first empty item means value -->
+   <Cfg DynamicSpan="2"/> <!-- Permits dynamic spanning and splitting spanned cells -->
+   <Cfg SelectHidden="0"/> <!-- Select only visible, not deleted cells -->
+   <Cfg MoveFocusType="11"/> <!-- Ignore span in cells when moving focused range by dragging -->
+
+   <!-- Settings for copying and pasting cells via clipboard -->
+   <Cfg CopyCols="0"/> <!-- Copy only focused cells -->
+   <Cfg ExcludeClear="1"/> <!-- CtrlX clears the copied cells -->
+   <Cfg PasteCols="5"/> <!-- Pastes to focused cell range or to focused and next columns-->
+   <Cfg PasteFocused="11"/> <!-- Pastes to focused cell range or to focused and next rows -->
+   
+   <!--- Formula editing -->
+   <Cfg FormulaEditing="1"/> <!-- Permits formula editing; Uploads the formula in the cell value, not in EFormula attribute -->
+   <Cfg FormulaChanges="0"/> <!-- Does not mark values calculated by formula as Changed -->
+   <Cfg FormulaType="0"/> <!-- Does not calculate deleted, filtered and hidden rows and columns -->
+   <Cfg DragEdit="2" /> <!-- Permits dragging during editing to choose cell ranges in formula -->
+   <Cfg FormulaRelative="1"/> <!-- Cell references can be absolute or relative. Cell references in formulas in data xml in/out are in standard notation -->
+   <Cfg FormulaLocal="0"/> <!-- Formula names in xml in/out are not localized English format -->
+   <Cfg FormulaResults="31"/> <!-- Cells with error formulas are marked red and error message is shown; the formula results are checked against cell restrictions; the null and NaN results are not permitted  -->
+   <Cfg FormulaCircular="6"/> <!-- Circular cell references in formulas are restricted with error message -->
+   <Cfg EditErrorsMessageTime="1000"/> <!-- How long the formula and edit error message will be shown -->
+   <Cfg FormulaAddParenthesis="1"/> <!-- Tries to adds ')' to the end of formula when editing resulted to incorrect formula -->
+   <DefCols> <D Name="Auto" FormulaSuggest="6"/> </DefCols>  <!-- For every column generates suggest list of all available formula functions to use in formula editing -->
+   <Actions OnDragHeader="ChooseColsReplaceAll OR ColMoveSelected OR ColMove" OnCtrlDragHeader="ChooseColsInsert OR ColCopySelected OR ColCopy"/> <!-- Dragging header during formula edit will choose the columns to the range -->
+
+   <Panel Visible="0"/> <!-- Hides row panel, its features are not demonstrated here -->
+   <DefCols> <D Name="Auto" Width="150"/> </DefCols> <!-- Default width of all column -->
+   <Header Align="Center" Index=""/> <!-- Centers the column captions -->
+
+   <!-- Sample data -->
+   <Cfg AutoCols="20"/>
+   <Cfg FocusedRect="3,B,7,D"/>
+   <Cols><C Name="A" Width="30"></C></Cols>
+   <Body>
+      <B>
+         <I A="Cells have exact type Text/Lines/Float/Date chosen according to the cell value" Spanned="1" ASpan="4"/>
+         <I/>
+         <I B="0" C="3/19/2016" D="ABCD"/>
+         <I B="10" C="19March2016" D="ABCD EFGH IJKL MNOP"/>
+         <I NoFormat="2" B="50000" C="3/19/2016 15:30:30" D="ABCD EFGH IJKL MNOP" EType="Lines" Tip="No format is permitted to set in this row" Color="#F5F5F5"/>
+         <I B="-3.1" C="15:30:30" CType="Date" CFormat="T" D="ABCD&#x0a;EFGH&#x0a;IJKL&#x0a;MNOP" DType="Lines"/>
+         <I B="1.2345" C="3/19/2016 15:30:30" CType="Date" CFormat="L" D="ABCD&#x0a;EFGH&#x0a;IJKL&#x0a;MNOP"/>
+         <I B="=B5" C="=C5" D="=D5"/>
+         <I B="=SUM(B1:B7)" C="=MAX(C1:C7)"/>
+      </B>
+   </Body>
+</Grid>

@@ -1,0 +1,947 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Type Date</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Date and time - Date</h1>
+<p>TreeGrid documentation</p>
+
+Date type shows date and / or time in selected format.<br />
+It supports direct editing or selecting the date(s) from popup calendar.<br />
+
+<!-----------------------------------------------------------------------  Format ------------------------------------------------->
+<a name=""></a>
+<h2>Format</h2>
+
+<!-- Type -->
+<a name="CType"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"] <tt>Type = "Date"</tt></s>
+</div>
+To define Date type, set column or cell attribute Type to "<b>Date</b>"<br />
+
+<!-- value -->
+<a name="Cellvalue"></a>
+<div class="XML">
+   <u></u> <b>&lt;cell></b> <i>type</i>
+   <h4>value</h4> <s></s>
+</div>
+The date values in input XML can be set as string in these formats,<br />
+<div class="L2">date: yyyy-M-d,  M-d,  M/d/yyyy,  M/d,  dd.MM.yyyy,  dd.MM</div>
+<div class="L2">time: HH:mm, HH:mm:ss, hh.mm, hh.mm.ss, including am/pm, AM/PM, a.m./p.m., A.M./P.M.</div>
+<div class="L2">If set only time, it cannot be separated by <b>dot</b>.</div>
+The date values in input XML can be also set as number of milliseconds from 1/1/1970 00:00:00<br />
+The date values uploaded to server are by default in format "M/d/yyyy HH:mm:ss", if some part of date is 0, it is omitted.<br />
+If some date in input XML is set as number of milliseconds, all uploaded dates are also in number of milliseconds. See &lt;Cfg <a href="TypeDate.htm#CfgDateStrings">DateStrings</a>/> attribute.<br />
+The date values in API are always integers as number of milliseconds from 1/1/1970 00:00:00<br />
+
+<!-- CanEmpty -->
+<a name="CCanEmpty"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>CanEmpty</h4> <s>[1]</s>
+</div>
+If the cell date value differ between 1/1/1970 00:00:00 and "".<br />
+It has sense especially for time only values.<br />
+If set to 0, the empty input value is always converted to 1/1/1970 00:00:00, internally to 0. So the cell never contains (empty) string value.<br />
+
+<!-- EmptyValue -->
+<a name="CEmptyValue"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EmptyValue</h4> <s>[""]</s>
+</div>
+The string displayed when the date value is entered as empty string.<br />
+The cell can contain empty value only if <a href="TypeDate.htm#CCanEmpty">CanEmpty</a> is 1.<br />
+It is shown only for display, not for edit.<br />
+It is <u>not</u> escaped, it can contain HTML code.<br />
+
+<!-- DefaultDate -->
+<a name="CfgDefaultDate"></a>
+<a name="CDefaultDate"></a>
+<div class="XML">
+   <u>new <b>6.3</b> <i>upd <b>6.7</b></i></u> <b style="width:125px;">&lt;Cfg>&lt;C>&lt;cell></b> <i>string</i>
+   <h4>DefaultDate</h4> <s></s>
+</div>
+Default date (and time) shown in calendar for empty dates.<br />
+<i>(new 6.7)</i> Used also when editing date / time in cell, the missing in the input are got from the DefaultDate.<br />
+For example input: "12/12" and DefaultDate: "1/1/2000 21:30" will return "12/12/2000 21:30"<br />
+
+<!-- Format -->
+<a name="CFormat"></a>
+<div class="XML">
+   <u><i>upd <b>14.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Format</h4> <s></s>
+</div>
+Specifies date and / or time string format - how the date and / or time will be displayed.<br />
+This format string uses almost the same formatting as Microsoft .NET System.DateTime.<b>ToString</b> (string format) function.<br />
+
+<h5>Empty format</h5>
+If the <b>Format</b> is not set or is empty (default), the default US English format is used "M/d/yyyy HH:mm:ss".<br />
+If some part of the date is 0, it is omitted, some examples: "5/9/2000 12:43:56", "12:00", "6/5/2000".<br />
+If set <a href="#FormatBaseSeparators">BaseSeparators</a>, it uses the localized date and time separators.<br />
+
+<h5>Standard format (two letters)</h5>
+<i>(New 14.0.10)</i> Localized in all languages. Separated date and time, to use date with time use Assembled format like "sd*pm".<br />
+This format loads user format from file <a href="../Grid/Text.xml">Text.xml</a> or localized TextXX.xml, tag &lt;<b>Format</b>>.<br /> 
+<div class="L1">
+<table>
+<tr><td style="width:70px;"><b>sd</b></td><td style="width:200px;">Short partial date</td><td>US:"M/d", GB: "d/M", DE:"d.M"</td></tr><br />
+<tr><td><b>sy</b></td><td>Short full date</td><td>US:"M/d/yyyy", GB:"d/M/yyyy", DE:"d.M.yyyy"</td></tr>
+<tr><td><b>sw</b></td><td>Short full date with week day</td><td>US:"ddd M/d/yyyy", GB:"ddd d/M/yyyy", DE:"ddd d.M.yyyy"</td></tr>
+<tr><td><b>sm</b></td><td>Short month and year</td><td>US:"M/yyyy", GB:"M/yyyy", DE:"M/yyyy"</td></tr>
+<tr><td><b>sn</b></td><td>Short week number</td><td>US:"\wddddddd", GB:"\wddddddd", DE:"\Wddddddd"</td></tr>
+<tr><td><b>ld</b></td><td>Long partial date</td><td>US:"MMMM d", GB:"dddddd MMMM", DE:"dddddd MMMM"</td></tr>
+<tr><td><b>ly</b></td><td>Long full date</td><td>US:"MMMM d, yyyy", GB:"dddddd MMMM yyyy", DE:"dddddd MMMM yyyy"</td></tr>
+<tr><td><b>lw</b></td><td>Long full date with week day</td><td>US:"dddd, MMMM d, yyyy", GB:"dddd, dddddd MMMM yyyy", DE:"dddd dddddd MMMM yyyy"</td></tr>
+<tr><td><b>lwa</b></td><td>Long full date with abbreviated week day</td><td>US:"ddd, MMMM d, yyyy", GB:"ddd, dddddd MMMM yyyy", DE:"ddd dddddd MMMM yyyy"</td></tr>
+<tr><td><b>lm</b></td><td>Long month and year</td><td>US:"MMMMMMM yyyy", GB:"MMMMMMM yyyy", DE:"MMMMMMM yyyy"</td></tr>
+<tr><td><b>ln</b></td><td>Long week number</td><td>US:"'week' ddddddd", GB:"'week' ddddddd", DE:"'Woche' ddddddd"</td></tr>
+<tr><td><b>ad</b></td><td>Abbreviated partial date</td><td>US:"MMM d", GB:"dddddd MMM", DE:"dddddd MMM"</td></tr>
+<tr><td><b>ay</b></td><td>Abbreviated full date</td><td>US:"MMM d, yyyy", GB:"dddddd MMM yyyy", DE:"dddddd MMM yyyy"</td></tr>
+<tr><td><b>aw</b></td><td>Abbreviated full date with week day</td><td>US:"ddd, MMM d, yyyy", GB:"ddd, dddddd MMM yyyy", DE:"ddd dddddd MMM yyyy"</td></tr>
+<tr><td><b>awl</b></td><td>Abbreviated full date with long week day</td><td>US:"dddd, MMM d, yyyy", GB:"dddd, dddddd MMM yyyy", DE:"dddd dddddd MMM yyyy"</td></tr>
+<tr><td><b>am</b></td><td>Abbreviated month and year</td><td>US:"MMMMMMM yyyy", GB:"MMMMMMM yyyy", DE:"MMMMMMM yyyy"</td></tr>
+<tr><td><b>an</b></td><td>Abbreviated week number</td><td>US:"'week' ddddddd", GB:"'week' ddddddd", DE:"'Woche' ddddddd"</td></tr>
+<tr><td><b>th</b></td><td>Standalone time, hours only</td><td>US:"h tt", GB:"HH", DE:"HH"</td></tr>
+<tr><td><b>tm</b></td><td>Standalone time, hours and minutes</td><td>US:"h:mm tt", GB:"HH:mm", DE:"HH:mm"</td></tr>
+<tr><td><b>ts</b></td><td>Standalone time, hours, minutes and seconds</td><td>US:"h:mm:ss tt", GB:"HH:mm:ss", DE:"HH:mm:ss"</td></tr>
+<tr><td><b>tf</b></td><td>Standalone time, hours, minutes, seconds and ms</td><td>US:"HH:mm:ss.fff", GB:"HH:mm:ss.fff", DE:"HH:mm:ss.fff"</td></tr>
+<tr><td><b>sth</b></td><td>Time for short date, hours only</td><td>US:" h tt", GB:" HH", DE:" HH"</td></tr>
+<tr><td><b>stm</b></td><td>Time for short date, hours and minutes</td><td>US:" h:mm tt", GB:" HH:mm", DE:" HH:mm"</td></tr>
+<tr><td><b>sts</b></td><td>Time for short date, hours, minutes and seconds</td><td>US:" h:mm:ss tt", GB:" HH:mm:ss", DE:" HH:mm:ss"</td></tr>
+<tr><td><b>stf</b></td><td>Time for short date, hours, minutes, seconds and ms</td><td>US:" HH:mm:ss.fff", GB:" HH:mm:ss.fff", DE:" HH:mm:ss.fff"</td></tr>
+<tr><td><b>lth</b></td><td>Time for long date, hours only</td><td>US:", h tt", GB:", HH", DE:", HH"</td></tr>
+<tr><td><b>ltm</b></td><td>Time for long date, hours and minutes</td><td>US:", h:mm tt", GB:", HH:mm", DE:", HH:mm"</td></tr>
+<tr><td><b>lts</b></td><td>Time for long date, hours, minutes and seconds</td><td>US:", h:mm:ss tt", GB:", HH:mm:ss", DE:", HH:mm:ss"</td></tr>
+<tr><td><b>ltf</b></td><td>Time for long date, hours, minutes, seconds and ms</td><td>US:", HH:mm:ss.fff", GB:", HH:mm:ss.fff", DE:", HH:mm:ss.fff"</td></tr>
+<tr><td><b>yq</b></td><td>Year and quarter</td><td>US:"MMMMM yyyy", GB:"MMMMM yyyy", DE:"MMMMM yyyy"</td></tr>
+<tr><td><b>yq</b></td><td>Year and half</td><td>US:"MMMMMM yyyy", GB:"MMMMMM yyyy", DE:"MMMMMM yyyy"</td></tr>
+</table>
+</div>
+
+<h5>Auto format (one letter)</h5>
+Auto format is <u>one</u> letter format. This format loads user format from file <a href="../Grid/Text.xml">Text.xml</a> or localized TextXX.xml, tag &lt;<b>Format</b>>.<br /> 
+It is automatically chosen for <a href="TypeAuto.htm">Auto</a> type according to the content.<br />
+<div class="L1">
+<table>
+<tr><td style="width:70px;"><b>d</b></td><td style="width:200px;">Short date</td><td>("M/d/yyyy")</td></tr><br />
+<tr><td><b>h</b></td><td>Short date + short time</td><td>("M/d/yyyy H:mm") <i>renamed 13.0, from "g"</i></td></tr>
+<tr><td><b>H</b></td><td>Short date + long time</td><td>("M/d/yyyy H:mm:ss") <i>renamed 13.0, from "G"</i></td></tr>
+<tr><td><b>j</b></td><td>Short date + short time with am/pm</td><td>("M/d/yyyy h:mm tt") <i>new 13.0</i></td></tr>
+<tr><td><b>J</b></td><td>Short date + long time with am/pm</td><td>("M/d/yyyy h:mm:ss tt") <i>new 13.0</i></td></tr>
+<tr><td><b>m</b></td><td>Day and short month</td><td>("M/d") <i>changed 13.0</i></td></tr>
+<tr><td><b>y</b></td><td>Short month and year</td><td>("M/yyyy") <i>changed 13.0</i></td></tr>
+<tr><td><b>t</b></td><td>Short time</td><td>("H:mm")</td></tr>
+<tr><td><b>T</b></td><td>Long time</td><td>("H:mm:ss")</td></tr>
+<tr><td><b>i</b></td><td>Short time with am/pm</td><td>("h:mm tt") <i>new 13.0</i></td></tr>
+<tr><td><b>I</b></td><td>Long time with am/pm</td><td>("h:mm:ss tt") <i>new 13.0</i></td></tr>
+<tr><td style="width:70px;"><b>D</b></td><td style="width:200px;">Long date</td><td>("d. MMMM yyyy")</td></tr>
+<tr><td><b>l</b></td><td>Long date + short time</td><td>("d. MMMM yyyy H:mm") <i>renamed 13.0, from "f"</i></td></tr>
+<tr><td><b>L</b></td><td>Long date + long time</td><td>("d. MMMM yyyy H:mm:ss") <i>renamed 13.0, from "F"</i></td></tr>
+<tr><td><b>k</b></td><td>Long date + short time with am/pm</td><td>("d. MMMM yyyy h:mm tt") <i>new 13.0</i></td></tr>
+<tr><td><b>K</b></td><td>Long date + long time with am/pm</td><td>("d. MMMM yyyy h:mm:ss tt") <i>new 13.0</i></td></tr>
+<tr><td><b>M</b></td><td>Day and long month</td><td>("d. MMMM")</td></tr>
+<tr><td><b>Y</b></td><td>Long month and year</td><td>("MMMMMMM yyyy"). For month name uses the attribute <b>LongMonthNames2</b> (from file <a href="../Grid/Text.xml">Text.xml</a>, tag &lt;<b>Format</b>>). LongMonthNames2 could contain noun's first case if the language supports it.</td></tr>
+</table>
+</div>
+
+<h5>Special format (one letter)</h5>
+Special format is used for display only. It is <u>one</u> letter format. This format loads user format from file <a href="../Grid/Text.xml">Text.xml</a> or localized TextXX.xml, tag &lt;<b>Format</b>>.<br /> 
+<div class="L1">
+<table>
+<tr><td style="width:70px;"><b>g</b></td><td style="width:200px;">Short date + short time</td><td>("M/d/yyyy H:mm") <i>Deprecated 13.0, collides with number format</i></td></tr>
+<tr><td><b>G</b></td><td>Short date + long time</td><td>("M/d/yyyy H:mm:ss") <i>Deprecated 13.0, collides with number format</i></td></tr>
+<tr><td><b>f</b></td><td>Long date + short time</td><td>("d. MMMM yyyy H:mm") <i>Deprecated 13.0, collides with number format</i></td></tr>
+<tr><td><b>F</b></td><td>Long date + long time</td><td>("d. MMMM yyyy H:mm:ss") <i>Deprecated 13.0, collides with number format</i></td></tr>
+<tr><td><b>s</b></td><td>Sortable date time</td><td>("yyyy-MM-ddTHH:mm:ss")</td></tr>
+<tr><td><b>u</b></td><td>Universal sortable date time</td><td>("yyyy-MM-dd HH:mm:ssZ")</td></tr>
+<tr><td><b>U</b></td><td>Universal date time</td><td>for example: 13. January 2004 17:12:34. This date time is converted to <b>GMT</b> !</td></tr>
+<tr><td><b>r, R</b></td><td>RFC1123</td><td>("ddd MMM d HH:mm:ss UTCzzzzz yyyy"), for example: Tue, 13 Jan 2004 18:12:34 GMT <i>Deprecated 13.0, collides with number format</i></td></tr>
+<tr><td><b>a</b></td><td>Long date with week</td><td>("dddd, dddddd MMMM yyyy")</td></tr>
+</table>
+</div>
+
+<h5>Assembled format</h5>
+<i>Since 14.0</i> if the format string contains asterisk (*), it loads the user defined formats from &lt;Lang>&lt;Format ... />&lt;/Lang> tag.<br />
+For example: &lt;Lang>&lt;Format d1='d/M/yy' d2='d/M' d3='yyyy' t1=' HH:mm'/>&lt;Lang>, 
+Format="*d1" is converted to "d.M.yy", 
+Format="d1*t1" is converted to "d.M.yy HH:mm", 
+Format="d2*/*d3*+++*t1" is converted to "d/M/yyyy+++ HH:mm".<br />
+The assembled format can refer any predefined formats (Standard, Auto, Special) and any predefined custom format.<br />
+The assembled format can refer another assembled format, these references should contain asterisk on both sides.<br />
+
+<h5>User format</h5>
+User format can contain any characters but only few have special meaning and other are written into output without any change.
+<div class="L1">
+<table>
+<tr><td style="width:70px;"><b>:</b></td><td>Place for time separator, defined in file <a href="../Grid/Text.xml">Text.xml</a>, tag &lt;<b>Format</b>>, attribute <b>TimeSeparator</b>. (<i>colon</i> by default).</td></tr>
+<tr><td><b>/</b></td><td>Place for time separator, defined in file <a href="../Grid/Text.xml">Text.xml</a>, tag &lt;<b>Format</b>>, attribute <b>DateSeparator</b>. (<i>slash</i> by default).</td></tr>
+<tr><td><b>d</b></td><td>Month days 1 - 31</td></tr>
+<tr><td><b>dd</b></td><td>Month days 01 - 31</td></tr>
+<tr><td><b>ddd</b></td><td>Weekdays Sun - Sat</td></tr>
+<tr><td><b>dddd</b></td><td>Weekdays Sunday - Saturday</td></tr>
+<tr><td><b>ddddd</b></td><td>Weekdays S - S</td></tr>
+<tr><td><b>dddddd</b></td><td>Month days 1st - 31st</td></tr>
+<tr><td><b>ddddddd</b></td><td>Year weeks 1 - 52</td></tr>
+<tr><td><b>dddddddd</b></td><td>Year weeks 01 - 52 <i>(new 9.0)</i></td></tr>
+<tr><td><b>D</b></td><td><i>not used</i></td></tr>
+<tr><td><b>DD</b></td><td>The rest of days in week, in count of weeks from 1/1/1970 (it is <b>not</b> weekday!) <i>(new 6.1)</i></td></tr>
+<tr><td><b>DDD</b></td><td>Year day 0 - 365 <i>(new 6.1)</i></td></tr>
+<tr><td><b>DDDD</b></td><td>Count of days from 1/1/1970, for duration in days <i>(new 6.1)</i>. <i>Since 13.0</i> accepted also as <b>[d]</b></td></tr>
+<tr><td><b>DDDDD</b></td><td>Count of weeks from 1/1/1970, for duration in weeks, see <b>DD</b> <i>(new 6.1)</i></td></tr>
+<tr><td><b>DDDDDD</b></td><td>Tenths of month days: empty,1,2,3 <i>(new 6.3)</i></td></tr>
+<tr><td><b>DDDDDDD</b></td><td>Month days: 1-9,0-9,0-9,0-1 <i>(new 6.3)</i></td></tr>
+<tr><td><b>M</b></td><td>Month 1 - 12</td></tr>
+<tr><td><b>MM</b></td><td>Month 01 - 12</td></tr>
+<tr><td><b>MMM</b></td><td>Month Jan - Dec</td></tr>
+<tr><td><b>MMMM</b></td><td>January - December</td></tr>
+<tr><td><b>MMMMM</b></td><td>Year quarters, I, II, III, IV</td></tr>
+<tr><td><b>MMMMMM</b></td><td>Year halves, I, II</td></tr>
+<tr><td><b>MMMMMMM</b></td><td>January - December, used LongMonthNames2 for languages with inflection</td></tr>
+<tr><td><b>y</b></td><td>Year 0 - 99</td></tr>
+<tr><td><b>yy</b></td><td>Year 00 - 99</td></tr>
+<tr><td><b>yyy</b></td><td>Count of years from 1/1/1970, for duration in years <i>(new 6.1)</i>. <i>Since 13.0</i> accepted also as <b>[y]</b></td></tr>
+<tr><td><b>yyyy</b></td><td>Year 0000 - 9999</td></tr>
+<tr><td><b>h</b></td><td>Hours 1 - 12</td></tr>
+<tr><td><b>hh</b></td><td>Hours 01 - 12</td></tr>
+<tr><td><b>hhh</b></td><td>Count of hours from 1/1/1970 00:00:00, for duration in hours <i>(new 6.1)</i>. <i>Since 13.0</i> accepted also as <b>[h]</b></td></tr>
+<tr><td><b>hhhh</b></td><td>Tenths of hours empty or 1 (new 6.3)</td></tr>
+<tr><td><b>hhhhh</b></td><td>Hours 1-9, 0-2 (new 6.3)</td></tr>
+<tr><td><b>H</b></td><td>Hours 0 - 23</td></tr>
+<tr><td><b>HH</b></td><td>Hours 00 - 23</td></tr>
+<tr><td><b>HHH</b></td><td><i>not used</i></td></tr>
+<tr><td><b>HHHH</b></td><td>Tenths of hours empty or 1 <i>(new 6.3)</i></td></tr>
+<tr><td><b>HHHHH</b></td><td>Hours 0-9, 0-9, 0-3 <i>(new 6.3)</i></td></tr>
+<tr><td><b>m</b></td><td>Minutes 0 - 59</td></tr>
+<tr><td><b>mm</b></td><td>Minutes 00 - 59</td></tr>
+<tr><td><b>mmm</b></td><td>Count of minutes from 1/1/1970 00:00:00, for duration in minutes <i>(new 6.1)</i>. <i>Since 13.0</i> accepted also as <b>[m]</b></td></tr>
+<tr><td><b>mmmm</b></td><td>Tenths of minutes 0 - 5 <i>(new 6.3)</i></tr>
+<tr><td><b>mmmmm</b></td><td>Minutes 0 - 9 <i>(new 6.3)</i></td></tr>
+<tr><td><b>s</b></td><td>Seconds 0 - 59</td></tr>
+<tr><td><b>ss</b></td><td>Seconds 00 - 59</td></tr>
+<tr><td><b>sss</b></td><td>Count of seconds from 1/1/1970 00:00:00, for duration in seconds <i>(new 6.1)</i>. <i>Since 13.0</i> accepted also as <b>[s]</b></td></tr>
+<tr><td><b>ssss</b></td><td>Tenths of seconds 0 - 5 <i>(new 6.3)</i></td></tr>
+<tr><td><b>sssss</b></td><td>Seconds 0 - 9 <i>(new 6.3)</i></td></tr>
+<tr><td><b>f</b></td><td>Hundreds of milliseconds, 0 - 9 <i>(new 6.3)</i></td></tr>
+<tr><td><b>ff</b></td><td>Tenths of milliseconds 00 - 99 <i>(new 6.3)</i></td></tr>
+<tr><td><b>fff</b></td><td>Milliseconds - 000 - 999 <i>(new 6.3)</i></td></tr>
+<tr><td><b>ffff</b></td><td>Tenths of milliseconds 0 - 9 <i>(new 6.3)</i></td></tr>
+<tr><td><b>fffff</b></td><td>Milliseconds - 0 - 9 <i>(new 6.3)</i></td></tr>
+<tr><td><b>t</b></td><td>First letter of AM/PM designator, by default A or P as the first character of <b>AMDesignator</b> / <b>PMDesignator</b>. <i>Since 13.0</i> it can be set also by "a/p" or "A/P".</td></tr>
+<tr><td><b>tt</b></td><td>AM/PM designator, by default AM or PM. <i>Since 13.0</i> it can be set also by "am/pm" or "AM/PM".<br />
+    The designator is defined in file <a href="../Grid/Text.xml">Text.xml</a>, tag &lt;<b>Format</b>>, attributes <b>AMDesignator</b> and <b>PMDesignator</b>.
+</td></tr>
+<tr><td><b>z</b></td><td>Timezone hours -12, +0, +13</td></tr>
+<tr><td><b>zz</b></td><td>Timezone hours -12, +00, +13</td></tr>
+<tr><td><b>zzz</b></td><td>Timezone hours and minutes, -12:00, +0:00, +13:00</td></tr>
+<tr><td><b>\</b></td><td>Escape character, the next character is placed to output without any changes. Use to place format characters as d,M,y,... It needs to be doubled '\\'</td></tr>
+<tr><td><b>'xxx' or "xxx"</b></td><td>Characters in quotes or double quotes are placed to output without any changes. Use to place format characters as d,M,y,...</td></tr>
+<tr><td><b>%</b></td><td>Place before format when use one character user format like 'd' (=> '%d') to not be taken as standard format.</td></tr>
+<tr><td><b>;</b></td><td><i>(new 13.0)</i> Separates the format for text as prefix<b>@</b>suffix where <b>@</b> displays the text or if @ is missing, it displays only the text after the ";".<br />
+   <i>Since 13.3</i> it separates the formats with conditions.</td></tr>
+<tr><td><b>[</b>color<b>]</b></td><td><i>(new 13.0)</i> Colors the whole text in given CSS color.</td></tr>
+<tr><td><b>[</b>condition<b>]</b></td><td>
+<i>(new 13.3)</i> Uses given part (parts are separated by semicolon) only if the value fulfills the condition.<br />
+Condition can be simple as: [=date], [<>date], [&lt;date], [&lt;=date], [>date], [>=date].<br />
+Or the condition can be complex JavaScript formula. The formula can use predefined variables <b>d</b> (day), <b>M</b> (month), <b>y</b> (year), <b>w</b> (week day, 0 = Sunday), <b>h</b> (hours), <b>m</b> (minutes), <b>s</b> (seconds), <b>t</b> (milliseconds). 
+<b>yh</b> (hirji year), <b>Mh</b> (hirji month), <b>dh</b> (hirji day).
+For compatibility it can use also "=" and "<>" for comparing.<br />
+For example: <tt>Format="[y>2010&amp;&amp;y&lt;2015][blue]d.M.yyyy;[y=2018][red]d.M;d.M.yyyy"</tt><br />
+</td></tr>
+
+</table>
+</div>
+<br />
+
+For example: <tt>Format='dddd, MMMM yyyy hh:mm:ss tt' => "Sunday, February 2004 13:24:00"</tt><br />
+<tt>Format='"date:" MM/dd/yyyy", time:" HH:mm" => "date: 10/03/2001, time: 12:34"</tt><br />
+<br />
+
+If you want add <b>HTML tags</b> before and after value, use rather cell attributes <a href="CellStyle.htm#CHtmlPrefix">HtmlPrefix</a> and <a href="CellStyle.htm#CHtmlPostfix">HtmlPostfix</a> instead of <b>Format</b>.<br />
+If you really need to place <b>HTML tags</b> into output (for example to use HTML tags for one part of date only), set <tt>&lt;Cfg <a href="TypeDate.htm#CfgNoFormatEscape">NoFormatEscape</a>='1'></tt>. The HTML tags can be set in <a href="TypeDate.htm#CFormat">Format</a> only, <b>not</b> in <a href="TypeDate.htm#CEditFormat">EditFormat</a>.<br />
+
+<!-- EditFormat -->
+<a name="CEditFormat"></a>
+<div class="XML">
+   <u><i>chg <b>13.3</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EditFormat</h4> <s></s>
+</div>
+Format string for editing the date and / or time.<br />
+In this format is displayed the Date cell when edited.<br />
+It is also used for parsing entered date string if it is ambiguous, e.g. "18/04" can be "dd/MM", "MM/dd" or even "yy/MM".<br />
+
+<h5>Empty format</h5> 
+<i>Since 13.3</i> if it is not set, it uses <a href="#CFormat">Format</a> value.<br />
+If it is <b>empty</b>, it accepts all formats like input XML:<br />
+<div class="L1">
+date: yyyy-M-d,  M-d,  M/d/yyyy,  M/d,  dd.MM.yyyy,  dd.MM<br />
+time: HH:mm, HH:mm:ss, hh.mm, hh.mm.ss, including am/pm, AM/PM, a.m./p.m., A.M./P.M.<br />
+If set only time, it cannot be separated by <b>dot</b>.<br />
+</div>
+
+<h5>Standard or user format</h5>
+Its structure is the same as <a href="TypeDate.htm#CFormat">Format</a>, but not all formats are possible for input, only number inputs are supported.<br />
+<i>Since 13.3</i> if set <a href="#FormatStrictDates">StrictDates</a> 3. bit (&amp;4) (default setting), months can be entered also by their name or shortcut. In this case the separators are not required. The month names can be localized in <a href="#FormatInputMonthNames">InputMonthNames</a>.<br />
+The format should contains only these parts of custom format: d, dd, DDDD, M, MM, MMM, MMMM, y, yy, yyyy, h, hh, hhh, H, HH, m, mm, mmm, s, ss, sss, t, tt.<br />
+<i>Since 13.0</i> all the other unsupported parts of the custom format are removed or converted to supported parts.<br />
+<i>Since 13.3</i> the unsupported standard formats can be converted to supported formats according to <a href="#FormatEditFormats">EditFormats</a>.<br /> 
+The user can use more separators set by <a href="#FormatInputDateSeparators">InputDateSeparators</a>, <a href="#FormatInputTimeSeparators">InputTimeSeparators</a> and <a href="#FormatInputDateTimeSeparators">InputDateTimeSeparators</a>.<br />
+The am / pm can be localized in <a href="#FormatInputAMPMDesignators">InputAMPMDesignators</a>.<br />
+If set <a href="#FormatStrictDates">StrictDates</a> 4. bit (&amp;8) (default setting) the user can also enter the date / time without separators, only as number, in formats like HHmm, HHmmss, MMddyy, MMddyyyy, in the order set in the EditFormat.<br />
+
+<!-- ExportFormat -->
+<a name="CExportFormat"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>ExportFormat</h4> <s></s>
+</div>
+A date time format to export to Excel. Used only for <tt><a href="Export.htm#ExportType">Export_Type</a> = 0</tt>.<br />
+When set &lt;Cfg> <a href="Export.htm#CfgExportType">ExportType</a>&64 to export dates as string, this format is used as standard TreeGrid <a href="TypeDate.htm#CFormat">Format</a> to format the date string.<br />
+Otherwise it is specific Excel date format to export the date as number.<br />
+<div class="L1">
+If you don't know the format for the cell, create xls file with one cell, specify its format you want and save it as one file web page (mht file).<br />
+Open this mht file and search style property "mso-number-format" and its value set to the ExportFormat.<br />
+The standard values are "Short Date" for locale M/d/yyyy.<br />
+The format string is similar to TreeGrid number format, but with escaped all not number and not digit characters by backslash, it can look like <tt>"dddd\\\,\\ mmmm\\ dd\\\,\\ yyyy"</tt> or <tt>"h\:mm\:ss\\ AM\/PM"</tt>.<br />
+</div>
+
+<!-- NoFormatEscape -->
+<a name="CfgNoFormatEscape"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>NoFormatEscape</h4> <s>[1]</s>
+</div>
+If set to "", it means <b>0</b> for text and <b>1</b> for number and date.<br />
+If set to <b>0</b>, the Format is escaped, so the characters & and &lt; are displayed as they are.<br />
+If set to <b>1</b>, you can use HTML tags in columns <a href="TypeDate.htm#CFormat">Format</a> string, in prefix and postfix for text and anywhere for numbers.<br />
+
+<!-- ExcelDates -->
+<a name="CfgExcelDates"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ExcelDates</h4> <s>[0]</s>
+</div>
+<b>0</b> - all dates in grid are integer numbers as count of milliseconds since 1/1/1970.<br />
+<b>1</b> - all dates in grid are floating numbers as count of days since 1/1/1900. <i>Cannot be used with Gantt chart</i><br />
+It affects everything, input data and output data if dates are numbers and all dates for API.<br />
+Setting to 1 sets also all dates to GMT by &lt;Format GMT='1'/>.<br />
+<i>Due internal implementation the setting is shared among all grids on page!</i>
+
+<!-- DateStrings -->
+<a name="CfgDateStrings"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;Cfg></b> <i>type</i>
+   <h4>DateStrings</h4> <s>[0/1]</s>
+</div>
+If set to <b>0</b>, Date values are uploaded as numbers (milliseconds from 1/1/1970), see also <a href="TypeDate.htm#FormatGMT">GMT</a> attribute.<br />
+If set to <b>1</b>, Date values are uploaded as strings in English format (M/d/yyyy HH:mm:ss).<br />
+If set to <b>2</b>, Date values are uploaded as strings in JAVA format (yyyy-MM-dd HH:mm:ss).<br />
+If set to <b>string</b>, it specifies the full date format for upload.<br />
+By default it is set to <b>0</b>, if some date in input XML is set as number of milliseconds, otherwise is set to <b>1</b>.<br />
+
+<!-- GMT -->
+<a name="FormatGMT"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;Format></b> <i>bool</i>
+   <h4>GMT</h4> <s>[1]</s>
+</div>
+If set to <b>1</b>, all <u>number</u> dates are in GMT / UTC and are not affected by a user time zone, all users will see the same times.<br />
+If set to <b>0</b>, all <u>number</u> dates are in the local time of user time zone, so they are shown different for different time zones.<br />
+The number dates are the input / output dates set as count of milliseconds from 1/1/1970 00:00:00.<br />
+The dates are internally stored always as the numbers, so if you access the cell values directly, you get / set always the count of milliseconds.<br />
+<i>This setting is global for all grids on page!</i><br />
+<i>Setting GMT to <b>0</b> is <u>not</u> recommended in Gantt chart, because of shifts due summer / winter time.</i><br />
+
+<!-- GMT -->
+<a name="CGMT"></a>
+<div class="XML">
+   <u>new <b>6.2</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>GMT</h4> <s></s>
+</div>
+Cell GMT modification for display and edit.<br />
+If this attribute has different value than &lt;Format <a href="TypeDate.htm#FormatGMT">GMT</a>> value, it shows the cell date in local or GMT timezone.<br />
+It affect only display and editing date string, <u>not</u> the value itself, so for upload, API, calculations, sort, filter, search and Gantt are still used the original values.<br />
+
+<!-- Hirji -->
+<a name="FormatHirji"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>int</i>
+   <h4>Hirji</h4> <s>[0] <strong>RTL</strong></s>
+</div>
+If grid uses and shows Persian Hirji / Jalali dates and calendar instead of standard Gregorian dates, bit array.<br />
+1. bit (&amp;1) - 1 - All dates are displayed and entered in Hirji.<br />
+2. bit (&amp;2) - 2 - All dates in XML are in Hirji.<br />
+
+<!-- StrictDates -->
+<a name="FormatStrictDates"></a>
+<div class="XML">
+   <u>new <b>13.0</b> chg <b>13.3</b></u> <b>&lt;Format></b> <i>int</i>
+   <h4>StrictDates</h4> <s>[15]</s>
+</div>
+If and how restricts entering incorrect dates, bit array. <br />
+1. bit (&amp;<b>1</b>) - If set, restricts entering incorrect dates. If not set, accepts also dates like 14/30/2000 and converts it to 2/30/2001.<br />
+2. bit (&amp;<b>2</b>) - <i>new 13.3</i> If set, the entered string must contain only date, not any prefix or suffix string.<br />
+3. bit (&amp;<b>4</b>) - <i>new 13.3</i> If set, permits entering month by its name or shortcut.<br />
+4. bit (&amp;<b>8</b>) - <i>new 13.3</i> If set, permits entering date or time as a number without separators (e.g. "020718" as 2/7/2018).<br />
+5. bit (&amp;<b>16</b> - <i>new 13.3</i> If set, permits entering elapsed time (hours>23 or minutes/seconds > 59), but the time cannot be set without separators.<br />
+It affects only cells without <a href="#CEditFormat">EditFormat</a>. With EditFormat the incorrect dates are always restricted and depend on the edit format.<br />
+<i>Since 13.3 default value changed from 1 to 7.</i>
+
+<!-- DateFormatLowercase -->
+<a name="FormatDateFormatLowercase"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Format></b> <i>int</i>
+   <h4>DateFormatLowercase</h4> <s>[1]</s>
+</div>
+If set, the months can be set also by 'm' and 24hour hours also by 'h' in the <a href="#CFormat">Format</a> string.<br />
+The 'm' as month is identified if the format contains d or D or y and does not contain h or H or M.<br />
+The 'h' as 24hour hour is identified if the format does not contain t or tt.<br />
+If set to <b>2</b>, it also converts the whole Format to lower case before used.<br />
+
+<!-- DateToString -->
+<a name="DateToString"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i>string</i>
+   <h4>DateToString</h4>
+   <s>(<i>Date</i> <b>date</b>, <i>string</i> <b>format</b>)</s>
+</div>
+Converts date to string according to format string like in function ToString() in C#.NET.<br />
+<b>date</b> can be string or number, will be converted to date by standard Date(string).<br />
+If format is missing, uses English format "mm/dd/yyyy hh:mm:ss", for today uses "hh:mm:ss", for 00:00:00 uses "mm/dd/yyyy", seconds are omitted if are 0.<br />
+
+<!-- StringToDate -->
+<a name="StringToDate"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i>Date</i>
+   <h4>StringToDate</h4>
+   <s>(<i>string</i> <b>str</b>, <i>string</i> <b>format</b>)</s>
+</div>
+Converts string to date according to format string as in function ToString() in C#.NET.<br />
+If format is missing, converts str as in standard format for date "d.m.y", "d.m", "m/d/y", "m/d", "y-m-d","m-d" and time "hh:mm:ss", "hh:mm" and for date and time combines these formats separated by any other character.<br />
+
+<!-----------------------------------------------------------------------  Calendar ------------------------------------------------->
+<a name="Calendar"></a>
+<h2>Calendar component</h2>
+
+<!-- Button -->
+<a name="CButton"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Button</h4> <s>["Date"]</s>
+</div>
+For <u>editable</u> <b>Date</b> type is the button set to "Date" by default, except is set <tt>&lt;Cfg <a href="TypeDate.htm#CfgAutoCalendar">AutoCalendar</a>='1'/></tt>.<br />
+It shows right side button to display popup Calendar dialog on click to choose the date from.<br />
+To hide the calendar button set Button="", it is useful especially for time only values.<br />
+
+<!-- AutoCalendar -->
+<a name="CfgAutoCalendar"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>AutoCalendar</h4> <s></s>
+</div>
+If set to <b>1</b>, Calendar dialog for Date cells is displayed automatically when user starts editing. In this case the calendar reflects changes in the input and vice versa.<br />
+If set to <b>1</b>, the Button type Date is <u>not</u> displayed for Date type by default. To display it, there must be explicitly set by <tt><a href="CellSideButton.htm#CButton">Button</a>='Date'</tt>.<br />
+
+<!-- AutoCalendar -->
+<a name="CAutoCalendar"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>AutoCalendar</h4> <s></s>
+</div>
+If set to <b>1</b>, Calendar dialog for Date cells is displayed automatically when user starts editing. In this case the calendar reflects changes in the input and vice versa.<br />
+If set to <b>1</b>, the Button type Date is still displayed for Date type by default. To hide it, there must be explicitly set by <tt><a href="CellSideButton.htm#CButton">Button</a>=''</tt>.<br />
+The difference to <tt>&lt;Cfg <a href="TypeDate.htm#CfgAutoCalendar">AutoCalendar</a>/></tt> is only in the default visibility of the Date button.<br />
+
+<!-- CalendarButtons -->
+<a name="CCalendarButtons"></a>
+<div class="XML">
+   <u>chg <b>6.0</b> <i>upd <b>6.7</b></i></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>CalendarButtons</h4> <s>[0/7]</s>
+</div>
+Which calendar buttons will be visible. By default for empty value are all buttons displayed for <a href="CellBasics.htm#CRange">Range</a> and no button for standard date cells. Bit array.<br />
+1. bit (&1) - Today button, 2. bit (&2) - Clear button, 3. bit (&4) - OK button. = 0 no button visible, = 7 all buttons visible.<br />
+Since 6.7 there can be 4.bit (&8) for Yesterday button.<br />
+
+<!-- Calendar -->
+<a name="CCalendar"></a>
+<div class="XML">
+   <u>new <b>6.2</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Calendar</h4> <s></s>
+</div>
+Full settings of the calendar in JSON format. See the <a href="Menu.htm#Calendar">documentation</a>.<br />
+
+<!-- ActualDate -->
+<a name="CActualDate"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>ActualDate</h4> <s></s>
+</div>
+Actual date highlighted in calendar. If not used, used today according to the client time.<br />
+
+<!-- Action ShowCalendar -->
+<a name="ActionsShowCalendar"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowCalendar <i>...F</i></h4>
+   <s>Attached to events <b>OnClickSideDate</b>, <b>OnEnter</b>, <b>OnCtrlDown</b></s>
+</div>
+Displays the Calendar dialog for selecting date for the actual or focused cell.<br />
+
+<!-- OnCanEditDate -->
+<a name="OnCanEditDate"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnCanEditDate</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>Date</i> <b>date</b>)</s>
+</div>
+Called when displaying Calendar dialog for every date in the calendar to permit only some dates to be selected by user.<br />
+
+<!-- OnGetCalendarDate -->
+<a name="OnGetCalendarDate"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetCalendarDate</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>Date</i> <b>date</b>, <i>string</i> <b>text</b>, <i>string[ ]</i> <b>classes</b>, <i>bool</i> <b>range</b>)</s>
+</div>
+Called when displaying Calendar dialog for every date in the calendar to let modify the displayed date text and / or class.<br />
+<b>date</b> is the Date object for given day. <b>text</b> is the text that will be displayed for the day.<br />
+<b>classes</b> is an array of four CSS classes that will be used for the day: [normal, hover, selected, selected+hover]. The event handler can modify theses four strings to use different CSS classes.<br />
+<b>range</b> is true if the calendar will permit selecting more dates or date ranges. If it is false, the <b>classes</b> use only first two strings.<br />
+Return the text of date or <b>text</b>.<br />
+
+<!-- ShowCalendar -->
+<a name="ShowCalendar"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API method</b> <i><a href="TypeDate.htm#Calendar">TCalendar</a></i>
+   <h4>ShowCalendar</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i><a href="TypeDate.htm#Calendar">TCalendar</a></i> <b>Calendar</b>, <i><a href="Menu.htm#TPosition">TPosition</a></i> <b>Pos</b> = null, <i>function</i> <b>Func</b> = null, <i>object</i> <b>Date</b> = null, <i>bool</i> <b>always</b> = false)</s>
+</div>
+Shows custom calendar for given cell.<br />
+Closes any actually shown dialog in grid. If there is already dialog shown for this cell and <u>not</u> set <b>always</b>, it closes the dialog and returns null.<br />
+<b>Calendar</b> contains special settings for the calendar.<br />
+<b>Func</b> is function (<a href="Menu.htm#TMenuItem">TMenuItem</a> <b>I</b>) called after click to the menu. The <b>I</b> has at least <b>I.Name</b> as the item name. It replaces <b>menu</b>.<a href="Menu.htm#TMenuOnSave">OnSave</a>.<br />
+<b>Date</b> is initial date to show in calendar.<br />
+For more information about the parameters see global function <a href="Menu.htm#ShowCalendar">ShowCalendar</a>.<br />
+To manually close the calendar you can call API method <a href="CellBasics.htm#CloseDialog">CloseDialog</a> or calendar.Close().<br />
+
+<!-- ShowCalendar -->
+<a name="ShowCalendar"></a>
+<div class="API">
+   <u>new <b>6.2</b></u> <b>global func.</b> <i><a href="TypeDate.htm#Calendar">TCalendar</a></i>
+   <h4>ShowCalendar</h4>
+   <s>(<i><a href="TypeDate.htm#Calendar">TCalendar</a></i> <b>Calendar</b>, <i><a href="Menu.htm#TPosition">TPosition</a></i> <b>Pos</b>, <i>function</i> <b>Func</b>, <i>type</i> <b>Date</b>)</s>
+</div>
+Shows custom calendar on given position. For more information see the <a href="Menu.htm#ShowCalendar">ShowCalendar</a>.<br />
+
+<!-----------------------------------------------------------------------  Dates dialog ------------------------------------------------->
+<a name="Dates"></a>
+<h2>Dates dialog for date ranges and repeating</h2>
+
+<!-- Button -->
+<a name="CButton"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Button</h4> <s>["Dates"]</s>
+</div>
+It shows right side button to display popup <b>Dates</b> dialog on click to choose the date ranges.<br />
+This dialog is used for <strong><b>Text type</b></strong> in special format <tt>"<b>Repeat1<strong>#</strong>Date1a<strong>~</strong>Date1b<strong>#</strong>Value1<strong>;</strong>Repeat2<strong>#</strong>Date2a<strong>~</strong>Date2b<strong>#</strong>Value2<strong>;</strong></b>..."</tt><br />
+This format is used for <b>GanttExclude</b>, <b>GanttBackground</b> and Gantt resource <b>Availability</b>. And can be used also for any custom reason.<br />
+The default meaning of the format is repeat date range set by <b>DateXa~DateXb</b> every <b>RepeatX</b> time unit and optionally assign given <b>ValueX</b> to these ranges.<br />
+It is possible to set only <b>Value</b> as for all dates. It is also possible to omit <b>Value</b> to not use it. And it is possible to omit <b>Repeat</b> to not repeat the date range.<br />
+The Dates dialog shows new popup grid with columns defined by next attributes.<br />
+The popup grid has set its id to <b>DatesDialog</b>, you can control it in API events as usual, e.g. <tt>Grids.OnLoaded = function(G){ if(G.id=='DatesDialog') { ... } }</tt><br />
+The grid internal column names are <b>Repeat</b>, <b>Start</b>, <b>StartTime</b>, <b>End</b>, <b>EndTime</b>, <b>Value</b>.<br />
+<strong>Due internal implementation the Dates dialog is available only in Extended API!</strong><br />
+
+<!-- DatesRepeatXXX -->
+<a name="CDatesRepeatXXX"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>type</i>
+   <h4>DatesRepeatXXX</h4> <s></s>
+</div>
+Sets attribute XXX of column <b>Repeat</b> in the Dates grid.<br />
+Attribute Type of the Repeat column is Text by default.<br />
+For example set: <tt>DatesRepeatType="Enum" DatesRepeatEnum="||Weekly|Daily" DatesRepeatEnumKeys="||w|d"</tt><br />
+To hide the column set <tt>DatesRepeatVisible='0'</tt><br />
+
+<!-- DatesStartXXX -->
+<a name="CDatesStartXXX"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>type</i>
+   <h4>DatesStartXXX</h4> <s></s>
+</div>
+Sets attribute XXX of column <b>Start</b> in the Dates grid.<br />
+Attribute Type of the Start column is Date by default.<br />
+For example set: <tt>DatesStartFormat="dddd, dddddd MMMM" DatesStartEditFormat="M/d/yyyy"</tt><br />
+
+<!-- DatesStartTimeXXX -->
+<a name="CDatesStartTimeXXX"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>type</i>
+   <h4>DatesStartTimeXXX</h4> <s></s>
+</div>
+Sets attribute XXX of column <b>StartTime</b> in the Dates grid.<br />
+Attribute Type of the StartTime column is Date by default.<br />
+This column is automatically hidden, if <b>Start</b> column is not of Type Date.<br />
+
+<!-- DatesEndXXX -->
+<a name="CDatesEndXXX"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>type</i>
+   <h4>DatesEndXXX</h4> <s></s>
+</div>
+Sets attribute XXX of column <b>End</b> in the Dates grid.<br />
+Attribute Type of the End column is Date by default.<br />
+For example set: <tt>DatesEndFormat="dddd, dddddd MMMM" DatesEndEditFormat="M/d/yyyy"</tt><br />
+
+<!-- DatesEndTimeXXX -->
+<a name="CDatesEndTimeXXX"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>type</i>
+   <h4>DatesEndTimeXXX</h4> <s></s>
+</div>
+Sets attribute XXX of column <b>EndTime</b> in the Dates grid.<br />
+Attribute Type of the EndTime column is Date by default.<br />
+This column is automatically hidden, if <b>End</b> column is not of Type Date.<br />
+
+<!-- DatesValueXXX -->
+<a name="CDatesValueXXX"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>type</i>
+   <h4>DatesValueXXX</h4> <s></s>
+</div>
+Sets attribute XXX of column <b>Value</b> in the Dates grid.<br />
+Attribute Type of the Value column is Float by default.<br />
+For example set <tt>DatesValueType="Enum" DatesValueEnum="|-5|-4|-3|-2|-1|0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15"</tt><br />
+To hide the column set <tt>DatesValueVisible='0'</tt><br />
+
+<!-- DatesXXXCaption -->
+<a name="CDatesXXXCaption"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>DatesXXXCaption</h4> <s></s>
+</div>
+Caption for the XXX column, where XXX can be Repeat, Start, End or Value.<br />
+
+<!-- DatesEndLast -->
+<a name="CDatesEndLast"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>DatesEndLast</h4> <s>[1]</s>
+</div>
+If set to 1 and end date has not set time, it is shown as day before.<br />
+For example 1/1/2000 is shown as 12/31/1999, but 1/1/2000 1:00 is shown as 1/1/2000 1:00.<br />
+
+<!-- DatesHeight -->
+<a name="CDatesHeight"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>DatesHeight</h4> <s>[ ]</s>
+</div>
+Maximal height of the dialog in pixels. Default setting is grid main tag height.<br />
+For higher grids the popup grid shows vertical scrollbar.<br />
+
+<!-- DatesEmptyDate -->
+<a name="CDatesEmptyDate"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>DatesEmptyDate</h4> <s>[0]</s>
+</div>
+<b>0</b> - The start date and end date must be set both or both empty.<br />
+<b>1</b> - The start date and end can be independently set or empty.<br />
+
+<!-- OnDatesClose -->
+<a name="OnDatesClose"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnDatesClose</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TGrid</i> <b>dates</b>, <i>bool</i> <b>saved</b>)</s>
+</div>
+Called when the Dates dialog is closed.<br />
+<b>grid</b> is the source grid that opened the Dates dialog.<br />
+<b>dates</b> is the grid showing dates dialog.<br />
+<b>saved</b> is <b>false</b> if no changes were saved (clicked to cancel or clicked to ok without any change in the dialog), <b>true</b> is when something changed by the dialog.<br />
+
+<!-----------------------------------------------------------------------  Localization ------------------------------------------------->
+<a name="Localization"></a>
+<h2>Localization</h2>
+
+The default date format and setting are specified in <b>Text.xml</b>, in &lt;<b>Lang</b>>&lt;<b>Format</b> />&lt;/<b>Lang</b>> tag.<br />
+The default settings is for <b>English</b> language, changing the <b>Format</b> tag attributes you can easily localize it to another language.<br />
+
+<!-- BaseSeparators -->
+<a name="FormatBaseSeparators"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Format></b> <i>bool</i>
+   <h4>BaseSeparators</h4> <s>[0]</s>
+</div>
+Controls Int, Float and Date types conversions to string without explicit format string set.<br />
+If set to <b>1</b>, it always uses standard U.S. English decimal, date and time separators and also date order M/d/yyyy. <br />
+If set to <b>0</b>, it uses actual <a href="TypeNumber.htm#FormatDecimalSeparator">DecimalSeparator</a>, <a href="#FormatDateSeparator">DateSeparator</a> and <a href="#FormatTimeSeparator">TimeSeparator</a>
+and date format is chosed according to the date separator as "M/d/yyyy" or "d.M.yyyy" or "yyyy-M-d".<br />
+<i>Prior to 12.0 the default value and behavior was <b>1</b>, since 12.0 was changed to <b>0</b>!</i>
+
+<!-- ShortDayNames -->
+<a name="FormatShortDayNames"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string[ ]</i>
+   <h4>ShortDayNames</h4> <s></s>
+</div>
+The week day short names, starting Sunday, used for the format "ddd"<br />
+Default is "Sun,Mon,Tue,Wed,Thu,Fri,Sat"<br />
+
+<!-- LongDayNames -->
+<a name="FormatLongDayNames"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string[ ]</i>
+   <h4>LongDayNames</h4> <s></s>
+</div>
+The week day full names, starting Sunday, used for the format "dddd"<br />
+Default is "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday"<br />
+
+<!-- Day1CharNames -->
+<a name="FormatDay1CharNames"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string[ ]</i>
+   <h4>Day1CharNames</h4> <s></s>
+</div>
+The week day one character names, starting Sunday, used for the format "ddddd"<br />
+Default is "S,M,T,W,T,F,S"<br />
+
+<!-- Day2CharNames -->
+<a name="FormatDay2CharNames"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string[ ]</i>
+   <h4>Day2CharNames</h4> <s></s>
+</div>
+The week day calendar names, starting Sunday, used in calendar.<br />
+Default is "Su,Mo,Tu,We,Th,Fr,Sa"<br />
+
+<!-- DayNumbers -->
+<a name="FormatDayNumbers"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string[ ]</i>
+   <h4>DayNumbers</h4> <s></s>
+</div>
+The month day numbers 1 - 31, used for the format "dddddd"<br />
+Default is "1st,2nd,3rd,4th,5th,6th,7th,8th,9th,10th,11th,12th,13th,14th,15th,16th,17th,18th,19th,20th,21st,22nd,23rd,24th,25th,26th,27th,28th,29th,30th,31st"<br />
+
+<!-- ShortMonthNames -->
+<a name="FormatShortMonthNames"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string[ ]</i>
+   <h4>ShortMonthNames</h4> <s></s>
+</div>
+The month short names, starting January, used for the format "MMM"<br />
+Default is "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec"<br />
+
+<!-- LongMonthNames -->
+<a name="FormatLongMonthNames"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string[ ]</i>
+   <h4>LongMonthNames</h4> <s></s>
+</div>
+The month full names, starting January, used for the format "MMMM" and also in calendar<br />
+These names are expected for month name <u>with</u> day, like 20th January 2000.<br />
+Default is "January,February,March,April,May,June,July,August,September,October,November,December"<br />
+
+<!-- LongMonthNames2 -->
+<a name="FormatLongMonthNames2"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string[ ]</i>
+   <h4>LongMonthNames2</h4> <s></s>
+</div>
+The month full names, starting January, used for the format "MMMMMMM"<br />
+These names are expected for month name <u>without</u> day, like January 2000.<br />
+Default is "January,February,March,April,May,June,July,August,September,October,November,December"<br />
+
+<!-- InputMonthNames -->
+<a name="FormatInputMonthNames"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;Format></b> <i>string[ ]</i>
+   <h4>InputMonthNames</h4> <s>[...]</s>
+</div>
+The month names or shortcuts used for entering the month name, starting January, used for StrictDates &amp;4. Case insensitive.<br />
+It can contain 12, 24, 36, 48, etc. month names, defined in 12 item sets like "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec,Ja,Fe,Ma,Ap,Ma,Jn,Jl,Au,Se,Oc,No,De".<br />
+Default is empty to use ShortMonthNames, LongMonthNames and LongMonthNames2 for entering month names.<br />
+
+<!-- Quarters -->
+<a name="FormatQuarters"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string[ ]</i>
+   <h4>Quarters</h4> <s></s>
+</div>
+The year quarter names or numbers, used for the format "MMMMM"<br />
+Default is "I,II,III,IV"<br />
+
+<!-- Halves -->
+<a name="FormatHalves"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string[ ]</i>
+   <h4>Halves</h4> <s></s>
+</div>
+The year half names or numbers, used for the format "MMMMMM"<br />
+Default is "I,II"<br />
+
+<!-- CalendarMonth -->
+<a name="FormatCalendarMonth"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Format></b> <i>string</i>
+   <h4>CalendarMonth</h4> <s>["MMMMMMM yyyy"]</s>
+</div>
+Format to display month and year in calendar header.
+
+<!-- DateSeparator -->
+<a name="FormatDateSeparator"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string</i>
+   <h4>DateSeparator</h4> <s>[/]</s>
+</div>
+The string displayed in place of '/' in the format string. It is intended to separate date parts.<br />
+
+<!-- InputDateSeparators -->
+<a name="FormatInputDateSeparators"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Format></b> <i>char[ ]</i>
+   <h4>InputDateSeparators</h4> <s>[/.-]</s>
+</div>
+The characters accepted as date separator while editing<br />
+
+<!-- TimeSeparator -->
+<a name="FormatTimeSeparator"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string</i>
+   <h4>TimeSeparator</h4> <s>[:]</s>
+</div>
+The string displayed in place of ':'' in the format string. It is intended to separate time parts.<br />
+
+<!-- InputTimeSeparators -->
+<a name="FormatInputTimeSeparators"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Format></b> <i>char[ ]</i>
+   <h4>InputTimeSeparators</h4> <s>[:]</s>
+</div>
+The characters accepted as time separator while editing<br />
+
+<!-- InputDateTimeSeparators -->
+<a name="FormatInputDateTimeSeparators"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;Format></b> <i>char[ ]</i>
+   <h4>InputDateTimeSeparators</h4> <s>[...]</s>
+</div>
+The characters accepted as separator between date and time while editing. Case insensitive.<br />
+Default is any character except digits and InputTimeSeparators and InputDateSeparators, but nothing added to accepted characters for editing Date.<br />
+
+<!-- AMDesignator -->
+<a name="FormatAMDesignator"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string</i>
+   <h4>AMDesignator</h4> <s>[AM]</s>
+</div>
+The string displayed for dates before noon. It is used only for display.<br />
+
+<!-- PMDesignator -->
+<a name="FormatPMDesignator"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string</i>
+   <h4>PMDesignator</h4> <s>[PM]</s>
+</div>
+The string displayed for dates after noon. It is used only for display.<br />
+
+<!-- InputAMPMDesignators -->
+<a name="FormatInputAMPMDesignators"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;Format></b> <i>string[]</i>
+   <h4>InputAMPMDesignators</h4> <s>[...]</s>
+</div>
+AM and PM designator names used accepted for editing. Case insensitive.<br />
+It can contain more names defined like "am,pm,a,p,a.m,p.m".<br />
+Default is AMDesignator,PMDesignator and also their first character.<br />
+
+<!-- FirstWeekDay -->
+<a name="FormatFirstWeekDay"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>int</i>
+   <h4>FirstWeekDay</h4> <s>[0]</s>
+</div>
+The starting day of the week, the 0 is Sunday, 1 Monday, ....<br />
+It is used by Calendar dialog.<br />
+
+<!-- FirstWeekYearDay -->
+<a name="FormatFirstWeekYearDay"></a>
+<div class="XML">
+   <u>new <b>7.0</b> chg <b>11.0</b></u> <b>&lt;Format></b> <i>int</i>
+   <h4>FirstWeekYearDay</h4> <s>[0]</s>
+</div>
+The first day in week (always from Sunday) to be the week marked as the first week in year.<br />
+Set it to <b>0</b> for U.S. week numbering and to <b>3</b> for ISO/European week numbering.<br />
+Set <b>FirstWeekDay</b> accordingly, for standard behavior you should use FirstWeekDay=0 for U.S. numbering and 1 for ISO numbering.<br />
+<i>Since 11.0</i> the default value has been changed to <b>0</b> for U.S. week numbering to be synchronized with FirstWeekDay.<br />
+
+<!-- NaD -->
+<a name="FormatNaD"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string</i>
+   <h4>NaD</h4> <s>[NaN]</s>
+</div>
+String displayed for incorrect date - Not a Date.<br />
+
+<!-- EditFormats -->
+<a name="FormatEditFormats"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;Format></b> <i>string[]</i>
+   <h4>EditFormats</h4> <s>[""]</s>
+</div>
+Conversion for standard one letter date formats for editing.<br />
+It converts the first item to the second item, third item to the fourth item and so on.<br />
+Default value in versions 13.0 - 13.2 was "M,m,D,d,l,h,L,H,f,h,F,H,Y,y,U,H,r,H,R,H,a,d,k,j,K,J" to convert "M" => "m", "D" => "d", "f" => "h", "F" => "H", "Y" => "y", "U" => "H", "r" => "H", "R" => "H", "a" => "d" <br />
+Since 13.3 the default value is empty to not convert any format, but rather automatically remove the unsupported parts for editing.<br />
+
+<!-- HirjiYear -->
+<a name="FormatHirjiYear"></a>
+<div class="XML">
+   <u>new <b>7.1</b></u> <b>&lt;Format></b> <i>int</i>
+   <h4>HirjiYear</h4> <s>[0] <strong>RTL</strong></s>
+</div>
+Used when converting input hirji dates with year less than 100.<br />
+By default it is added 1300 to the year.<br />
+If defined HirjiYear, the years less or equal to this number are increased by 1400 instead of 1300.<br />
+
+<!-- Digits -->
+<a name="FormatDigits"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Format></b> <i>int</i>
+   <h4>Digits</h4> <s>[]</s>
+</div>
+First character separated array of 10 digits strings to replace the standard digits 0 - 10.<br />
+Useful to display Arabic digits instead of standard digits by such definition:<br />
+<tt>&lt;Lang>&lt;Format Digits="|&amp;#x660;|&amp;#x661;|&amp;#x662;|&amp;#x663;|&amp;#x664;|&amp;#x665;|&amp;#x666;|&amp;#x667;|&amp;#x668;|&amp;#x669;"/>&lt;/Lang></tt><br />
+<i>It replaces all digits in all cells, regardless of the cell type!</i><br />
+
+<!-- Digits -->
+<a name="CDigits"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>Digits</h4> <s>[]</s>
+</div>
+Digits to replace for this cell or column. <i>Used only if some &lt;Format <a href="#FormatDigits">Digits</a>> are defined.</i><br />
+Set it to empty string to not use the &lt;Format <a href="#FormatDigits">Digits</a>><br />
+
+<!-- UpdateLangFormat -->
+<a name="UpdateLangFormat"></a>
+<div class="API">
+   <u>new <b>13.3</b></u> <b>API method</b> <i>void</i>
+   <h4>UpdateLangFormat</h4>
+   <s>( )</s>
+</div>
+Updates internal language settings. Call it after a change of the Lang.Format attributes.<br />
+
+</div>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <script>
+
+// -------------------------------------------------------------------------------------------------------
+Grids.OnLoaded = function(G){
+Boxes = null;      // Global property to store the actually highlighted boxes
+BoxesText = null;  // Global property to store actually searched text used to remove the highlight on second click
+}
+// -------------------------------------------------------------------------------------------------------
+// Removes previous highlight
+function Clear(G){
+if(Boxes){  
+   for(var i=0;i<Boxes.length;i++){
+      var T = G.GetGanttRunBoxTag(Boxes[i]);
+      if(T) { 
+         if(!G.FastGantt) T = T.firstChild; 
+         T.className = T.className.replace(" mark","");
+         }
+      }
+   }
+Boxes = null;
+}
+// -------------------------------------------------------------------------------------------------------
+// Highlights all boxes containing the text in Group
+function Highlight(G,text){
+Clear(G);
+if(BoxesText==text) { BoxesText = null; return; } // Removes the highlight on second click
+BoxesText = text;
+
+// --- Highlights new boxes ---
+Boxes = G.FindGanttRunBoxes({Group:text},4+8+16,"Group");
+for(var i=0;i<Boxes.length;i++){
+   var T = G.GetGanttRunBoxTag(Boxes[i]);
+   if(T) {
+      if(!G.FastGantt) T = T.firstChild; 
+      T.className += " mark";
+      }
+   }
+}      
+
+// -------------------------------------------------------------------------------------------------------
+// Deletes all boxes containing the text in Group
+function Delete(G,text){
+Clear(G);
+BoxesText = null;
+G.StartUpdate();
+var A = G.FindGanttRunBoxes({Group:text},4+8+16,"Group");
+for(var i=A.length-1;i>=0;i--) G.DelGanttRunBox(A[i]); // The loop must be reversed to not break the box indexes due deleted boxes
+G.EndUpdate();
+}  
+
+// -------------------------------------------------------------------------------------------------------
+// Changes type of all boxes containing the text in Group to type
+function Change(G,text,type){
+G.StartUpdate();
+var A = G.FindGanttRunBoxes({Group:text},4+8+16,"Group");
+for(var i=0;i<A.length;i++) { A[i].Type = type; G.SetGanttRunBox(A[i]); }
+G.EndUpdate();
+}    
+// -------------------------------------------------------------------------------------------------------
+   
+   </script>
+
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+
+       /*Styles special for this example, marks the found boxes*/
+       .mark { background:#F94!important; }
+
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>5. Run groups and API</h1>
+   <h2>Manipulating Run box groups by actions and API</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='05-Run_groups_and_API.xml'>05-Run_groups_and_API.xml</a></div>
+      <div class="Main" style='width:100%; height:434px;'>
+         <bdo Debug='check' Data_Url='05-Run_groups_and_API.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li>
+         It is possible in <b>GanttRun</b> to assign to some or all boxes their identification - <b>Group</b> and <b>Id</b>. <br />
+         <ul>
+            <li>
+               The <h3>Id</h3> should be unique identification at least inside one group.<br />
+            </li>
+            <li>
+               The <h3>Group</h3> identifies more boxes and is possible to manipulate all the boxes in the same group together.
+            </li>
+         </ul>
+      </li>
+      <li>
+         The box ids can be automatically created for new or all unassigned boxes by setting <h3>GanttRunIds</h3>.<br />
+         It is also possible to choose the characters to generate the ids from by <b>GanttRunIdChars</b> and id prefix and suffix by <b>GanttRunIdPrefix</b> and <b>GanttRunIdPostfix</b>.<br />
+         Note that GanttRunIdPrefix has default value "new".<br />
+      </li>
+      <li>
+         If the boxes have set their <b>Id</b> attribute and is set also <h3>GanttRunStates</h3><b>='1'</b>, the grid fills for every changed box its state: Added, Deleted, Moved, Resized, Changed to identify the changed boxes in uploaded data.<br />
+         Also for every box change is called API event <b>OnGanttRunBoxChanged</b>.
+      </li>
+      <li>
+         <h3>GanttRunGroupHover</h3> attribute controls which boxes in the same group as the box under mouse cursor will be highlighted on mouse hover.<br />
+         0 - none, 1 - only in the same row, 2 - all boxes in grid (can be slow for large grids).
+      </li>
+      <li>
+         It is possible to select one or more run boxes. Which boxes can be selected can be set by <h3>GanttRunSelect</h3>.<br />
+
+      </li>
+      <li><h4>Actions</h4> for boxes and groups (<b>except dragging</b>, see previous tutorial <a href="04-Run_drag.html">04-Run_drag</a>)
+         <ul>
+            <li>
+               There are actions to <h4>delete</h4> the box under mouse cursor (<b>DeleteGanttRun</b>), to delete all boxes in the group in the same row (<b>DeleteGanttRunGroup</b>) 
+               and to delete all boxes in group (<b>DeleteGanttRunGroupAll</b>), to delete selected boxes (<b>DeleteGanttRunSelected</b>) .<br />
+               These actions can be attached to TreeGrid events and are accessible also from Gantt right click popup menu.
+            </li>
+            <li>
+               There are actions to <h4>change</h4> box type - to choose the type, class and other properties from list predefined in <h3>GanttRunTypes</h3> list.<br />
+               The actions are for one box (<b>ChooseGanttRunType</b>), for all boxes in group in the same row (<b>ChooseGanttRunGroupType</b>)
+               and for all boxes in group (<b>ChooseGanttRunGroupAllType</b>), for all selected box by (<b>ChooseGanttRunSelectedType</b>).<br />
+               These actions can be attached to TreeGrid events and are accessible also from Gantt right click popup menu.
+            </li>
+            <li>
+               The other actions are only for the one active box, not for groups: <b>EditGanttRun</b> to enter the box text and <b>EditGanttRunTip</b> to enter the box tip.
+            </li>
+            <li>
+               There are actions to <h4>select</h4> boxes: <b>SelectGanttRun</b> inverts selection of one box, by default on double click.<br />
+               <b>SelectGanttRunRect</b> selects all boxes in the rectangle created by dragging, by default by dragging by right mouse button.<br />
+               <b>DeselectGanttRunAll</b> deselects all boxes.<br />
+            </li>
+
+         </ul>
+      </li>
+      <li><h4>API</h4> for boxes
+         <ul>
+            <li>
+               <b>GetGanttRunBox</b> to get one box from run by its index or Id and Group. Returns fully filled run box object.
+            </li>
+            <li>
+               <b>SetGanttRunBox</b> to modify one box in run.
+            </li>
+            <li>
+               <b>AddGanttRunBox</b> to create new box and insert it to run to given position.
+            </li>
+            <li>
+               <b>DelGanttRunBox</b> to delete given box from run.
+            </li>
+            <li>
+               <b>ScrollToGanttRunBox</b> to show the box in chart.
+            </li>
+            <li>
+               <b>GetGanttRunBoxTag</b> to get DOM object of the box to modify its look, but not position or size.
+            </li>
+            <li>
+               <h3>FindGanttRunBoxes</h3> as complex searching function to get one or more boxes according to given parameters.<br />
+               It can search in one or more box attribute, by default in Id, Group, Type, Text, Class, Tip. It can search exact string or just part of it. 
+               Can search case insensitive and has many other options.
+            </li>
+            <li>
+               <b>SelectGanttRunBox</b> to select given box.
+            </li>
+            <li>
+               <b>SelectGanttRunRect</b> to select all boxes in given rectangle.
+            </li>
+            <li>
+               <b>GetGanttRunSelectedBoxes</b> to get all selected boxes in grid.
+            </li>
+         </ul>
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialRun\s*=\s*(\d+)/), TGIndex = 16;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridRun5", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialRun="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

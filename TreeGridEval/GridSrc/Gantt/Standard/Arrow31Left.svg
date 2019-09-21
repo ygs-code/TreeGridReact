@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 16 16">
+<polyline fill="white" points="3,4 -1,8 3,12 11,12 7,8 11,4"/>
+<polyline stroke="#090" stroke-width="1" fill="none" points="5,4 1,8 5,12"/>
+<polyline stroke="#090" stroke-width="1" fill="none" points="9,4 5,8 9,12"/>
+</svg>

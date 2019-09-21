@@ -1,0 +1,41 @@
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+   </head>
+   <body>
+      <script>
+// -----------------------------------------------------------------------------------------
+// Used in Formula to count unique customers
+function CountUnique(G,Rows,col){
+for(var i=0,O={},cnt=0;i<Rows.length;i++) if(Get(Rows[i],"X")){
+   var v = Get(Rows[i],col);
+   if(!O[v]) { cnt++; O[v] = 1; }
+   }
+return cnt;
+}
+// -----------------------------------------------------------------------------------------
+// Custom event for searching
+// Searches in orders with specified items
+Grids.OnRowSearch = function(G,row,col,found,F,type){
+if(type || G.SearchDefs!="") return found; // Only for "in orders with items" and default call
+if(row.Def.Name=="Data") return -1;        // Only for orders
+for(var r=row.firstChild;r;r=r.nextSibling) { 
+	var found = F(r,col,1);                 // calls F(r,col,type=1)
+	if(!(found<=0)) return found; 
+	}
+return 0;
+}
+// -----------------------------------------------------------------------------------------
+      </script>
+      <div style="width:100%;height:90%;" id='GRID'>   
+         <script>
+
+// Url parameters: ?cfg_file&dpi&page_width_mm&page_height_mm&horizontal_margin_mm&vertical_margin_mm
+var param = location.search.slice(1).split("&");
+var bonus = param[0] ? AjaxCall(param[0]) : null; if(typeof(bonus)=="string") bonus = bonus.replace('SearchAction="Select"','SearchAction=""'); // Reads grid configuration and changes from temporary file
+PrintTreeGrid({Layout:{Url:"FirstDef.xml",Bonus:bonus}, Data:{Url:"FirstData.xml"}},"GRID",null,{Dpi:param[1],Width:param[2],Height:param[3],MarginWidth:param[4],MarginHeight:param[5],Update:0});
+
+         </script>
+      </div>
+   </body>
+</html>

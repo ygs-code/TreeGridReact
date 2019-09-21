@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+   </head>
+   <body class="Example">
+      <style>
+         /* Examples shared styles */
+         .Example h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+         .Example h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+         .Example h3,.Example h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+         .Example h3 { background:#EE9; border:1px solid #DD8; }
+         .Example h4 { background:#BDE; border:1px solid #ACD; }
+         .Example a { text-decoration:underline; }      
+         .Example li { padding-bottom:8px; }
+         .Example ul { margin:6px 0px 0px 20px; font:13px Arial; }
+         .Example .Desc { margin:0px 5px 10px 5px; padding:10px; border:1px solid #dfdfdf; }
+         .Example .Desc > ul { margin-left:0px; padding:0px 0px 0px 15px; clear:both; }
+         .Example .Desc b { color:#0585B9; }
+         .Example .Path { font:normal 12px Arial; color:#0585B9; }
+         .Example .Path b { color:#D73938; }
+         .Example .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+         .Example .Path i { color:black; font-style:normal; font-weight:bold; }
+         .Example .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+         .Example .Border { margin:0px 5px 15px 5px; }
+         .Example .Main { }
+      </style>
+
+      <script>
+
+// --------------------------------------------------------------------------------------------
+// Creates hidden source Gantt chart with tasks and resources
+// This chart uses the data from the original Gantt.html example
+
+TreeGrid('<bdo Sync="1" Hidden="1" Debug="" Layout_Url="GanttDef.xml" Data_Url="GanttData.xml"></bdo>'); 
+// --------------------------------------------------------------------------------------------
+// Restricts entering existing name for another resource
+Grids.OnEndEdit = function(G,row,col,save,val){
+if(save&&col=="N"&&G.GetRowById(val)&&G.GetRowById(val)!=row) { alert("The resource row already exists"); return true; }
+}
+// --------------------------------------------------------------------------------------------
+// Restricts pasting existing name for another resource
+Grids.OnPasteValue = function(G,row,col,val,old){
+if(col=="N"&&G.GetRowById(val)&&G.GetRowById(val)!=row) return G.GenerateId(row);
+}
+// --------------------------------------------------------------------------------------------
+
+      </script>
+
+      <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Examples\/|\/ExamplesGantt\/)([^\/]+)\/([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+      <h1>Resource usage chart</h1>
+      <h2>Showing resource usage chart from external data and editing resources</h2>
+      <div class="Desc">
+         This example shows automatically generated resources usage chart.<br />
+         The chart is generated from hidden grid that loads the data from original <a href="Gantt.html">Gantt chart &amp; Network diagram</a> example.<br />
+         This grid supports adding, deleting, changing and renaming the resources.<br />
+      </div>
+      <div class="Border">
+         <div class="Main" id="Resources" style="WIDTH:100%;HEIGHT:500px;">
+            <script>TreeGrid('<bdo Sync="0" Debug="Check" Layout_Url="GanttResourcesDef.xml"></bdo>',"Resources");</script>
+         </div>
+      </div>
+      
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGTrialGantt\s*=\s*(\d+)/), TGIndex = 16;
+         if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunTrialHtmlGanttResources", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGantt="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+   </body>
+</html>

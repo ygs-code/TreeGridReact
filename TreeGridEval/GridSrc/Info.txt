@@ -1,0 +1,4 @@
+Source files for TreeGrid CSS responsive styles
+Modify them and run ShrinkCSS.exe to compile them to the original /Grid/Styles/ CSS styles
+
+This directory is NOT required to use TreeGrid

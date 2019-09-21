@@ -1,0 +1,92 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <script>
+// -------------------------------------------------------------------------------------------------------
+var Texts = {}; // The highest indexes of the boxes according to their original texts
+// -------------------------------------------------------------------------------------------------------
+// Updates text of new or copied box, adds increased index to it
+Grids.OnGanttRunBoxNew = function(G,A,copy){
+if(A.Type=="milestone"||A.Type=="stop") return false; // Milestone has not text
+var txt = A.Text; if(!txt) txt = "resizable";
+var pos = txt.search(/\d+/); if(pos>=0) txt = txt.slice(0,pos);
+var idx = Texts[txt]+1; if(!idx) idx = 1;
+Texts[txt] = idx;
+A.Text = txt + " " + idx;
+return true;
+}
+// -------------------------------------------------------------------------------------------------------
+// Preserves dropping boxes to the top source row
+Grids.OnGanttRunDrop = function(G,row,col,drop,src,index,keyprefix,x,y,togrid,torow,tocol,cellx,accept) {
+if(torow && torow.Fixed) return false;
+}
+// -------------------------------------------------------------------------------------------------------
+// Sets default shape for standard dependency (drag with right button) and for other dependency (drag by ctrl + right button)
+Grids.OnStartDragGanttDependency = function(G,row,col,XY,color,start,keyprefix,clientX,clientY){
+if(keyprefix=="CtrlRight") return [10,start];
+else return [20,start];
+}
+// -------------------------------------------------------------------------------------------------------
+
+   </script>
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>8. Network diagram</h1>
+   <h2>Demonstrates a canvas with boxes and lines between them</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='04-Run_drag.xml'>08-Network_diagram.xml</a></div>
+      <div class="Main" style='width:100%; height:630px;'>
+         <bdo SuppressMessage='1' Debug='check' Data_Url='08-Network_diagram.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li> Copy boxes from top row by <b>dragging</b> by <b>left mouse button</b>. Move boxes in the canvas by left mouse button. </li>
+      <li> Resize resizable boxes by <b>dragging</b> box edge by <b>left mouse button</b>. Create resizable box by dragging on empty space.</li>
+      <li> Delete boxes by <b>ctrl + click</b> or from popup menu. </li>
+      <li> Change the box text by <b>double click</b> or from popup menu. </li>
+      <li> Create standard dependency by <b>dragging</b> from source box to destination box by <b>right mouse button</b>.</li>
+      <li> Create different shape dependency by <b>dragging</b> from source box to destination box by <b>ctrl + right mouse button</b>. </li>
+      <li> Delete dependency by <b>ctrl + click</b> to the dependency line or from popup menu.</li>
+      <li><i>If one box edge has more lines, they get different colors to be more highlighted, it is set by XML attribute GanttAssignDependencies.</i></li>
+      <li><i>Permitted only one line per two same box edges, can be changed by XML attribute GanttDragDependenciesMore.</i></li>
+      <li><i>The canvas size is in this example relativelly fixed, but this behavior can be changed in many ways.</i></li>
+      <li><i>The top row with boxes can be placed also to another grid to not be scrolled with the canvas.</i></li>
+      <li><i>All mouse and key controls, behavior and features can be easily changed in XML configuration or by dynamically by JavaScript API.</i></li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialRun\s*=\s*(\d+)/), TGIndex = 128;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridRun8", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialRun="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

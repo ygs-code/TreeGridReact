@@ -1,0 +1,440 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Paging</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Paging root rows</h1>
+<p>TreeGrid documentation</p>
+
+TreeGrid can automatically split root rows to pages and display them only on demand - when the page becomes visible due scroll.<br />
+The page names and links can be displayed in large <a href="Pager.htm#SidePager">vertical pager</a> or in simple horizontal pager row.<br /> 
+For other possibilities of paging see <a href="../Tutorials/Paging/01-Client_root_paging.html">paging tutorial</a>.<br />
+See also examples in downloadable trial, for your server side script. For server paging see "Ajax table with server paging and export" example.<br /><br />
+
+This paging type can page only root rows and cannot divide children of root rows to pages. So in tree this paging can become ineffective.<br />
+For paging child rows in tree use &lt;Cfg <a href="TreePaging.htm#CfgChildPaging">ChildPaging</a>/> and / or &lt;Cfg <a href="TreePaging.htm#CfgChildParts">ChildParts</a>/>, see <a href="TreePaging.htm">paging in tree</a>.<br />
+The paging in tree is permitted by default - opposite to root paging.<br />
+
+<!-- Paging -->
+<a name="CfgPaging"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>Paging</h4> <s>[0]</s>
+</div>
+Method of root paging used.<br /> 
+This paging is done only for root rows, it is the best for plain grids or trees with many root nodes.<br /><br />
+
+<table><tr><td style="width:50px;"><b style="color:blue;">0</b></td><td><i><b>No paging</b></i></td></tr></table>
+All rows are in one page, pager cannot be visible. All rows are rendered on start. This means slow start and fast use.<br />
+It is good for small grids, up to about 1000 rows in root.<br /><br />
+
+<table><tr><td style="width:50px;"><b style="color:blue;">1</b></td><td><i><b>Show all</b></i></td></tr></table>
+Pages are automatically created, but all are rendered on start.<br /> 
+For <tt><a href="#CfgAllPages">AllPages</a> = <b>1</b></tt> it renders all pages on start, but asynchronously and also pager components can be shown and used.<br />
+For <tt><a href="#CfgAllPages">AllPages</a> = <b>0</b></tt> is the same as <b>2</b> - Client paging.<br /> 
+It is good for medium grids, 250 - 1000 rows in root, to let users to easy navigate between parts in grid.<br />
+<i>It can be used also to avoid browser "Slow script" message when rendering too many rows without paging.</i><br />
+You can also suppress the rendering message by setting <tt>&lt;Lang>&lt;Text RenderProgressText=""/>&lt;/Lang></tt> and render all the pages on background. But it will slow the grid interaction responses.<br /><br />
+
+<table><tr><td style="width:50px;"><b style="color:blue;">2</b></td><td><b>Client paging</b> &nbsp; (auto - fully done by TreeGrid)</td></tr></table>
+Pages are automatically created.<br />
+For <tt><a href="#CfgAllPages">AllPages</a> = <b>1</b></tt> is page rendered only when it is visible in window by scrolling.<br />
+For <tt><a href="#CfgAllPages">AllPages</a> = <b>0</b></tt> is page rendered immediately, but it is visible only one page at a time and after switch to another page, the body is re-rendered.<br />
+It is good for large grids up to 10 000 rows. All functions still work offline, include sorting, filtering, grouping, searching and calculations.<br />
+<i>The client paging does <u>not</u> require any server side support.</i><br /><br />
+
+<table><tr><td style="width:50px;"><b style="color:blue;">3</b></td><td><b>Server paging</b> &nbsp; (auto   fully done by TreeGrid)</td></tr></table>
+Pages are created by server and TreeGrid downloads only page(s) being displayed.<br /> 
+The server is responsible for sending data for requested page and also for sorting, filtering, grouping, searching and aggregate calculation.<br />
+Calculations are still possible offline on client, but must be prepared on server.<br />
+It is good for very large grids, with more then 10 000 rows or for grids with special relations or grids need to be online.<br />
+<strong>The server paging requires a lot of your code on server side.</strong> To simplify this task you can use <a href="DLL.htm">TreeGrid.dll/so</a>.<br />
+<b>For more information see <a href="PagingServer.htm">server paging</a>.</b>
+If you are not able to do sorting, filtering or grouping on server and you still want to use these features, you can set <a href="">OnePage</a> attribute (and <tt><a href="#CfgAllPages">AllPages</a>=0</tt>) to do them partially in actual page.<br />
+<i>Server paging should not be used with Gantt chart, because Gantt is always calculated on client side from only loaded data.</i><br />
+
+<!-- AllPages -->
+<a name="CfgAllPages"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>AllPages</h4> <s>[1]</s>
+</div>
+Paging display mode<br />
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Shows one page at a time and switches to pages only by pager click or by pressing PageUp / PageDown key.</td></tr>
+<tr><td><b>1</b></td><td>Shows all pages in grid at once and renders pages on demand, when they are displayed by scrolling.</td></tr>
+</table>
+
+<!-- PageLength -->
+<a name="CfgPageLength"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PageLength</h4> <s>[20]</s>
+</div>
+Average count of rows in page.<br /> 
+For client paging there are all pages created to contain this number of rows (except the last one).<br />
+For server paging it determines height of page - it is default value of &lt;B <a href="PagingServer.htm#BCount">Count</a>> attribute.<br />
+Exact count of rows in pages can differ due to adding or deleting rows or in last incomplete page.<br />
+Every page must contain at least one row otherwise it is deleted. Exception is when grid does not contain any row, so it contains one empty page.<br />
+In TreeGrid server is this parameter used to set count of rows in page.<br />
+<i>It is also possible to change it dynamically by API, but after change must be called grid.CreatePages(); grid.Render();</i><br />
+
+<!-- PageTime -->
+<a name="CfgPageTime"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PageTime</h4> <s>[200]</s>
+</div>
+How long (in ms) must be page visible (by scroll) before it loads data or renders (for <tt><a href="#CfgAllPages">AllPages</a>=1</tt>).<br />
+
+<!-- MaxPages -->
+<a name="CfgMaxPages"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MaxPages</h4> <s>[20]</s>
+</div>
+Maximum rendered root pages in grid, only for <a href="#CfgAllPages">AllPages</a> = '1' and <a href="#CfgPaging">Paging</a> >= 2.<br />
+When grid contains more rendered pages, the pages longer not accessed are cleared (only in HTML, pages data are <u>not</u> affected).<br />
+Used to <u>not</u> slow down the browser when too many HTML tags are displayed.<br />
+For large pages you can lower this value.<br />
+The actually displayed pages are never cleared.<br />
+Set it to <b>0</b> to disable clearing pages.<br />
+
+<!-- RemoveUnusedPages -->
+<a name="CfgRemoveUnusedPages"></a>
+<div class="XML">
+   <u>new <b>9.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RemoveUnusedPages</h4> <s>[2]</s>
+</div>
+If set to <b>0</b>, it never removes unused root pages, child pages/parts and column pages.<br />
+If set to <b>2</b>, it removes unused pages due <a href="#CfgMaxPages">MaxPages</a>, <a href="TreePaging.htm#CfgMaxChildParts">MaxChildParts</a> and <a href="ColPaging.htm#CfgMaxColPages">MaxColPages</a>.<br />
+If set to <b>3</b>, it removes also data of unused root pages or child pages.<br />
+It removes only page or child page that does not contain changed rows.<br />
+
+<!-- RemoveUnusedFixed -->
+<a name="CfgRemoveUnusedFixed"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RemoveUnusedFixed</h4> <s>[3]</s>
+</div>
+If the fixed left and right column sections will be removed when removing unused row pages by 
+<a href="#CfgMaxPages">MaxPages</a> or <a href="TreePaging.htm#CfgMaxChildParts">MaxChildParts</a>.<br />
+<b>0</b> - none, <b>1</b> - left, <b>2</b> - right, <b>3</b> - both<br />
+
+<!-- RemoveChanged -->
+<a name="CfgRemoveChanged"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RemoveChanged</h4> <s>[0]</s>
+</div>
+How will behave changed rows on RemoveCollapsed or RemoveUnused.<br />
+<b>0</b> - Don't remove changed rows and selected rows. If there is any such row, the removing is not done.<br />
+<b>1</b> - Don't remove changed rows. If there is any such row, the removing is not done.<br />
+<b>2</b> - Remove changed rows.<br />
+<b>3</b> - Save changes and remove rows immediately.<br />
+<b>4</b> - Save changes and wait for the server success response before removing rows.<br />
+
+<!-- PageWindowAdd -->
+<a name="CfgPageWindowAdd"></a>
+<div class="XML">
+   <u>new <b>6.7</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PageWindowAdd</h4> <s>[0]</s>
+</div>
+Increase this value to load and render the pages sooner than they are shown.<br />
+How many pixels before or after page can remain, before it is rendered or loaded.<br />
+By default (for 0) is page rendered after it is at least partially shown.<br />
+<i>Remember, when scrolling grid, the pages are rendered after the scrolling finishes, regardless on this value.</i><br />
+
+<!------------------------------------------------  Auto paging  ------------------------------------------------------------>
+<a name="Auto"></a>
+<h2>Auto adding pages</h2>
+<p>Automatic adding new root pages on scroll</p>
+
+<!-- AutoPages -->
+<a name="CfgAutoPages"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>AutoPages</h4> <s>[0]</s>
+</div>
+If set, adds new root pages to the end of grid when it is scrolled down to the end of grid.<br />
+To use it, must be set also <a href="#CfgPaging">Paging</a> to 1, 2 or 3 and <a href="#CfgAllPages">AllPages</a> to 1.<br />
+Printed, exported and uploaded are rows to last not empty row, see <a href="CellEdit.htm#GetLastDataRow">GetLastDataRow</a> API method.<br />
+
+<!-- RemoveAutoPages -->
+<a name="CfgRemoveAutoPages"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RemoveAutoPages</h4> <s>[0]</s>
+</div>
+If the empty added pages will be automatically removed when the grid is scrolled up.<br />
+<b>0</b> - never<br />
+<b>1</b> - yes, the removed pages will be placed to <a>RemovedPages</a> and will be recreated from this stack. Useful to preserve the ids of the new rows and for <b>Undo</b>.<br />
+<b>2</b> - yes, the removed pages will be thrown out. Useful for server paging or to remove all set attributes from the removed pages.<br>
+The page is removed only if all rows on the page and on all next pages are empty (values and <a href="CellEdit.htm#CfgEditAttrs">EditAttrs</a>).<br />
+
+<!-- OnPageAdded -->
+<a name="OnPageAdded"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnPageAdded</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>page</b>)</s>
+</div>
+Called after new page is added due <a href="#CfgAutoPages">AutoPages</a>.<br />
+
+<!-- OnRemoveAutoPage -->
+<a name="OnRemoveAutoPage"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnRemoveAutoPage</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>page</b>)</s>
+</div>
+Called before removing given page due <a href="#CfgRemoveAutoPages">RemoveAutoPages</a>.<br />
+Return true to not remove this page and any of the previous pages.<br />
+
+<!-- RemovedPages -->
+<a name="RemovedPages"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API variable</b> <i>TRow</i>
+   <h4>RemovedPages</h4> <s></s>
+</div>
+The removed pages due <a href="#CfgRemoveAutoPages">RemoveAutoPages</a>.<br />
+Can be set to null, to permanently remove these pages.<br />
+Their rows can be iterated by such loop: <tt>for(var r=grid.GetFirst(grid.RemovedPages);r;r=grid.GetNext(r)){ ... }</tt>
+
+<!-- AddAutoPages -->
+<a name="AddAutoPages"></a>
+<div class="API">
+   <u>new <b>13.2</b></u> <b>API method</b> <i>void</i>
+   <h4>AddAutoPages</h4> <s>( )</s>
+</div>
+Adds one new page. The page should be immediately shown otherwise it is later deleted.
+
+<!---------------------------------------------------  API  ------------------------------------------------------------>
+<a name="API"></a>
+<h2>API</h2>
+
+<!-- GetPageNum -->
+<a name="GetPageNum"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>int</i>
+   <h4>GetPageNum</h4>
+   <s>(<i>TRow</i> <b>page</b>)</s>
+</div>
+Returns position of page (page index) inside body, from 0.<br />
+
+<!-- GetPage -->
+<a name="GetPage"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>TRow</i>
+   <h4>GetPage</h4>
+   <s>(<i>int</i> <b>num</b>)</s>
+</div>
+Returns root page inside that row is placed.<br />
+
+<!-- GetRowPage -->
+<a name="GetRowPage"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>TRow</i>
+   <h4>GetRowPage</h4>
+   <s>(<i>TRow</i> <b>row</b>)</s>
+</div>
+Returns root page inside that row is placed.<br />
+
+<!-- GetPagePos -->
+<a name="GetPagePos"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>int</i>
+   <h4>GetPagePos</h4>
+   <s>(<i>TRow</i> <b>row</b>)</s>
+</div>
+Returns row's position in its root page. It counts only visible rows.<br />
+In tree it counts all rows above the row inside the page.<br />
+
+<!-- PagePosToRow -->
+<a name="PagePosToRow"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>TRow</i>
+   <h4>PagePosToRow</h4>
+   <s>(<i>TRow</i> <b>page</b>, <i>int</i> <b>pos</b>)</s>
+</div>
+Returns row on given position on page. It counts only visible rows. It is only for loaded pages (State>2).<br />
+In tree it counts all visible expanded rows within the tree.<br />
+
+<!-- GetFPage -->
+<a name="GetFPage"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>TRow</i>
+   <h4>GetFPage</h4>
+   <s>( )</s>
+</div>
+Returns actual root page, if only one page is displayed at a time (if set <tt>&lt;Cfg <a href="#CfgAllPages">AllPages</a>='0'/></tt><br />
+
+<!-- GoToPage -->
+<a name="GoToPage"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>GoToPage</h4>
+   <s>(<i>TRow</i> <b>page</b>)</s>
+</div>
+Scrolls or moves to given page. To get page object by index use <a href="#GetPage">GetPage</a> method.<br />
+Moves actual focus to appropriate row in the page (e.g. if the third row on the actual page was focused, the third row on the new page become focused).<br />
+
+<!-- OnGoToPage -->
+<a name="OnGoToPage"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnGoToPage</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>page</b>, <i>int</i> <b>pagepos</b>)</s>
+</div>
+Called when grid displays another page. Return true to cancel change.<br />
+<b>page</b> is page (&lt;B> tag) which will be changed to,  <b>pagepos</b> is this page position inside body, from 0.<br />
+Called from <a href="#GoToPage">GoToPage</a> method.<br />
+It is called when user clicks page link on pager.<br />
+It is <u>not</u> called when a user scrolls or focuses to new page.<br />
+
+<!-- GoToNextPage -->
+<a name="GoToNextPage"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>GoToNextPage</h4>
+   <s>( )</s>
+</div>
+Scrolls or moves to the next page. Moves actual focus to appropriate row in the page.<br />
+If you call this function from external button onclick, you should cancel the event by adding <a href="GlobalSettings.htm#CancelEvent">CancelEvent</a> (event) to your handler or use <tt><a href="Focus.htm#CfgStaticCursor">StaticCursor</a>='1'</tt> to preserve grid from loosing focus.<br />
+
+<!-- GoToPrevPage -->
+<a name="GoToPrevPage"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>GoToPrevPage</h4>
+   <s>( )</s>
+</div>
+Scrolls or moves to previous page. Moves actual focus to appropriate row in the page.<br />
+If you call this function from external button onclick, you should cancel the event by adding <a href="GlobalSettings.htm#CancelEvent">CancelEvent</a> (event) to your handler or use <tt><a href="Focus.htm#CfgStaticCursor">StaticCursor</a>='1'</tt> to preserve grid from loosing focus.<br />
+
+<!-- ShowPages -->
+<a name="ShowPages"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>ShowPages</h4>
+   <s>( )</s>
+</div>
+Starts loading and rendering displayed pages. Asynchronous.<br />
+Call this method if pages are not rendered automatically when you do some unusual changes in grid.<br />
+
+<!-- CreatePages -->
+<a name="CreatePages"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>CreatePages</h4>
+   <s>( )</s>
+</div>
+Re-creates pages. After call must be called <a href="Create.htm#Render">Render</a> to re-render the grid.<br /> 
+Useful when <a href="#CfgPageLength">PageLength</a> was changed by API.<br />
+
+<!-- AddPage -->
+<a name="AddPage"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>TRow</i>
+   <h4>AddPage</h4>
+   <s>(<i>string</i> <b>name</b>, <i>string</i> <b>xml</b>, <i>int</i> <b>count</b>)</s>
+</div>
+Adds new page to the end of pages.<br /> 
+<b>name</b> is page name in pager, can contain HTML code.<br />
+<b>xml</b> is xml content for page, it can contain only rows like <tt>"&lt;I A='10'/>&lt;I A='20'/>"</tt>.<br />
+For server paging (<tt><a href="#CfgPaging">Paging</a>=3</tt>) xml can be null and data for page will be loaded from server, in this case <b>count</b> is supposed count of rows on page.<br />
+
+<!-- OnRenderPageStart -->
+<a name="OnRenderPageStart"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderPageStart</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>)</s>
+</div>
+Called before rendering of the root page or child page started rendering.<br />
+When used child paging (&lt;Cfg ChildPaging>), this event is fired before start of rendering children when a parent row is being expanded.<br />
+
+<!-- OnRenderPageFinish -->
+<a name="OnRenderPageFinish"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderPageFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>)</s>
+</div>
+Called after the root page or child page is fully rendered and ready.<br /> 
+When used child paging (&lt;Cfg ChildPaging>), this event is fired after children are rendered when a parent row is being expanded.<br />
+
+<!-- RefreshPage -->
+<a name="RefreshPage"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>RefreshPage</h4>
+   <s>(<i>TRow</i> <b>page</b>, <i>bool</i> <b>always</b> = 0)</s>
+</div>
+Re-renders page or row's children. For always = 1 re-renders the page also if it is not visible due scroll or expand state.<br />
+
+<!-- RemovePage -->
+<a name="RemovePage"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>RemovePage</h4>
+   <s>(<i>TRow</i> <b>page</b>)</s>
+</div>
+Removes the root page. All rows are physically removed according to <a href="#CfgRemoveChanged">RemoveChanged</a> setting.<br />
+Returns false if it fails - it cannot remove page with focused cell or due <a href="#CfgRemoveChanged">RemoveChanged</a>.<br />
+
+<!-- OnRemovePage -->
+<a name="OnRemovePage"></a>
+<div class="API">
+   <u>new <b>9.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnRemovePage</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>page</b>)</s>
+</div>
+Called after removing data from page or child page, when set <tt><a href="#CfgRemoveUnusedPages">RemoveUnusedPages</a> = 3</tt>.<br />
+
+<!-- OnRemoveChanged -->
+<a name="OnRemoveChanged"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API event</b> <i>int</i>
+   <h4>OnRemoveChanged</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>page</b>)</s>
+</div>
+Called if removing page containing some changed (or selected row for RemoveChanged==0)<br />
+For RemoveChanged==2 is called always.<br />
+Return new value for RemoveChanged to use - 1, 2, 3, 4<br />
+
+<!-- State -->
+<a name="State"></a>
+<div class="API">
+   <u></u> <b>API TRow var.</b> <i>int</i>
+   <h4>State</h4>
+   <s></s>
+</div>
+Page or parent row state of loading / rendering its children.<br />
+<b>0</b> - not yet loaded, <b>1</b> - children are loading, <b>2</b> - children are loaded, but not rendered, <b>3</b> - children are rendering, <b>4</b> - fully rendered.<br />
+
+<!-- Action Repaint -->
+<a name="ActionsRepaint"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>Repaint</h4>
+   <s>Not attached to any event</s>
+</div>
+Refreshes pages, when too many pages are displayed, the grid can slow down.<br />
+
+<!-- Action RenderPages -->
+<a name="ActionsRenderPages"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>RenderPages</h4>
+   <s>Attached to event <b>OnClickButtonRepaint</b></s>
+</div>
+Switches for <b>Paging</b>, <b>ColPaging</b> and <b>ChildParts</b> between value <b>1</b> and <b>2</b>.<br />
+If any of the attribute is <b>2</b>, it switches to <b>1</b> and renders all not yet rendered pages.<br />
+If all attributes are <b>1</b>, it switches to <b>2</b> and clears all unused pages according to the MaxPages, MaxColPages and MaxChildParts settings.<br />
+
+</div>
+</body>	
+</html>

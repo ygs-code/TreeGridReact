@@ -1,0 +1,153 @@
+﻿<Grid>
+   <!-- Translations to other languages -->
+
+   <!-- German -->
+
+   <TextDE>
+      <Set Row='Toolbar,Toolbar1' WinLabelRight='Fenster scrollen' WinTip='Scrollbalken des Grids deaktivieren und die der Webseite verwenden'/>
+      <Set Row='ID' Panel='Panel' id='ID' Index='Index'/>
+      <Set Row='Panel' Panel='Panel'/>
+      <Set Row='Header' Index='Index'/>
+      <ReplaceText Col='Menu'
+         Rows='Zeilen' Columns='Spalten' Select='Auswählen' Show='Einblenden' Hide='Ausblenden' Add='Neu' Copy='Kopieren' Delete='Löschen'
+         Cells='Zellen' Edit='Eingabebereitschaft' Clear='Löschen' Format='Format' Border='Rahmen' Style='Stil' Font='Schrift' Color='Farbe' Shadow='Schatten' Align='Ausrichtung' Direction='Drehung/Umbruch'
+         header='Überschrift' panel='Panel' names='Namen' toolbar='Toolbar' index='Index' ids='IDs'
+         />
+      <Replace Col='MenuHead' Actions='Aktionen'/>
+   </TextDE>
+   <Media>
+      <M Language='DE'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Beispiel 'Sheet', Seite %3 von %6&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='width:%7px'>Horizontal: Seite %1 von %4 ,Vertikal: Seite %2 von %5&lt;/center>"/>
+      </M>
+   </Media>
+
+
+   <!-- Brazilian Portuguese -->
+
+   <TextBR>
+      <Set Row='Toolbar,Toolbar1' WinLabelRight='Rolagem da Janela' WinTip='Desativar barras de rolagem da grade e usar barras de rolagem de página'/>
+      <Set Row='ID' Panel='Painel' id='ID' Index='Índice'/>
+      <Set Row='Panel' Panel='Painel'/>
+      <Set Row='Header' Index='Índice'/>
+      <ReplaceText Col='Menu'
+         Rows='Linhas' Columns='Colunas' Select='Selecionar' Show='Mostrar' Hide='Esconder' Add='Adicionar' Copy='Copiar' Delete='Apagar'
+         Cells='Células' Edit='Editar' Clear='Limpar' Format='Formatar' Span='Span' Border='Borda' Style='Estilo' Font='Fonte' Color='Cor' Shadow='Sombra' Align='Alinhamento' Direction='Direção'
+         header='cabeçalho' panel='painel' names='nomes' toolbar='barra de ferramentas' index='índice' ids='ids'
+         />
+      <Replace Col='MenuHead' Actions='Ações'/>
+   </TextBR>
+   <Media>
+      <M Language='BR'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Planilha de exemplo da página %3 até %6&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='width:%7px'>Página %1 horizontal de %4 , página %2 vertical de %5&lt;/center>"/>
+      </M>
+   </Media>
+
+
+   <!-- Czech -->
+
+   <TextCS>
+      <Set Row='Toolbar,Toolbar1' WinLabelRight='Posun okna' WinTip='Neposunovat tabulku, ale celé okno'/>
+      <Set Row='ID' Panel='Název' id='ID'/>
+      <Set Row='Panel' Panel='Panel'/>
+      <Set Row='Header' Index='Index'/>
+      <ReplaceText Col='Menu'
+         Rows='Řádky' Columns='Sloupce' Select='Označit' Show='Zobrazit' Hide='Skrýt' Add='Přidat' Copy='Kopírovat' Delete='Smazat' 
+         Cells='Buňky' Edit='Úpravy' Clear='Vymazat' Format='Formát' Span='Sloučit' Border='Okraje' Style='Styl' Font='Font' Color='Barva' Shadow='Stínování' Align='Zarovnání' Direction='Směr'
+         header='hlavičku' panel='panel' names='názvy' toolbar='lištu' index='index' ids='id'
+         />
+      <Replace Col='MenuHead' Actions='Akce'/>
+   </TextCS>
+   <Media>
+      <M Language='CS'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Příklad 'Sheet', stránka %3 z %6&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='width:%7px'>Stránka %1 vodorovně z %4 , stránka %2 svisle z %5&lt;/center>"/>
+      </M>
+   </Media>
+
+
+   <!-- Russian -->
+
+   <TextRU>
+      <Set Row='Toolbar,Toolbar1' WinLabelRight='Прокрутка окна' WinTip='Отключить полосы прокрутки сетки и использовать полосы прокрутки страницы'/>
+      <Set Row='ID' Panel='Панель' id='ИД'/>
+      <Set Row='Panel' Panel='Панель'/>
+      <Set Row='Header' Index='Индекс'/>
+      <ReplaceText Col='Menu'
+         Rows='Строки' Columns='Столбцы' Select='Выбрать' Show='Показать' Hide='Скрыть' Add='Добавить' Copy='Копировать' Delete='Удалить'
+         Cells='Клетки' Edit='Редактировать' Clear='Очистить ' Format='Формат' Span='Объединить' Border='Граница' Style='Стиль' Font='Шрифт' Color='Цвэт' Shadow='Тень' Align='Выровнять' Direction='Направление'
+         header='Колонтитул' panel='Панель' names='Названия' toolbar='Панель инструментов' index='Индекс' ids='ид'
+         />
+      <Replace Col='MenuHead' Actions='Операции'/>
+   </TextRU>
+   <Media>
+      <M Language='RU'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Пример печатной страницы листа %3 из %6&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='width:%7px'>Страница %1 по горизонтали от %4, страница% 2 по вертикали от %5&lt;/center>"/>
+      </M>
+   </Media>
+
+   <!-- Japanese -->
+
+   <TextJP>
+      <Set Row='Toolbar,Toolbar1' WinLabelRight='ウィンドウ スクロール' WinTip='グリッドのスクロール バーを無効にしてページのスクロール バーを使用します。'/>
+      <Set Row='ID' Panel='パネル' id='ID'/>
+      <Set Row='Panel' Panel='パネル'/>
+      <Set Row='Header' Index='インデックス'/>
+      <ReplaceText Col='Menu'
+         Rows='行' Columns='列' Select='選択' Show='表示' Hide='非表示' Add='追加' Copy='コピー' Delete='削除'
+         Cells='セル' Edit='編集' Clear='クリア' Format='書式' Span='スパン' Border='罫線' Style='スタイル' Font='フォント' Color='色' Shadow='影' Align='配置' Direction='方向'
+         header='ヘッダー' panel='パネル' names='名前' toolbar='ツール バー' index='索引' ids='ID'
+         />
+      <Replace Col='MenuHead' Actions='操作'/>
+   </TextJP>
+   <Media>
+      <M Language='JP'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>%6 からのシート サンプル印刷ページ %3&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='width:%7px'>%4 から水平方向にページ %1、%5 から垂直方向にページ %2&lt;/center>"/>
+      </M>
+   </Media>
+
+
+   <!-- Persian -->
+
+   <TextFA>
+      <Set Row='Toolbar,Toolbar1' WinLabelRight='اسكرول' WinTip='غير فعال سازي اسكرول و فعال سازي اسكرول صفحه&lt;br>در این حالت غیر فعال میشود چون راست به چپ نیازمند راست به چپ شدن کل صفحه میباشد'/>
+      <Set Row='ID' Panel='پانل' id='رديف'/>
+      <Set Row='Panel' Panel='پانل'/>
+      <Set Row='Header' Index='شاخص'/>
+      <ReplaceText Col='Menu'
+         Rows='رديف' Columns='ستون' Select='انتخاب' Show='نمايش' Hide='مخفي' Add='ايجاد' Copy='كپي' Delete='حذف'
+         Cells='سلول' Edit='ويرايش' Clear='پاك' Format='فرمت' Span='جدا سازي' Border='حاشيه' Style='استايل' Font='فونت' Color='رنگ' Shadow='سايه' Align='تراز' Direction='جهت'
+         header='عنوان' panel='پانل' names='نام' toolbar='نوار ابزار' index='شاخص' ids='رديف'
+         />
+      <Replace Col='MenuHead' Actions='عمليات'/>
+   </TextFA>
+   <Media>
+      <M Language='FA'>
+         <Cfg PrintPagePostfix="&lt;center style='width:%7px'>صفحه %1 افقي از %4 , صفحه %2 عمودي  از %5&lt;/center>" PrintPagePrefix="&lt;center style='width:%7px'>صفحه %3 از %6&lt;/center>"/>
+         <Rows>
+            <I id="Toolbar" WinCanEdit="0"/>
+         </Rows>
+      </M>
+   </Media>
+
+
+   <!-- Framework for translations, English to English -->
+   <!-- To use it, rename the XX to your language code and add the language code also to the ...Def.xml to Languages Code and translate the texts !...! -->
+   <!-- Optionally extend Media tag (with Language set to your language code) to change sizes of cells and columns if translated text have different widths -->
+
+   <TextXX>
+      <Set Row='Toolbar,Toolbar1' WinLabelRight='!Window scroll!' WinTip='!Disable grid scrollbars and use page scrollbars!'/>
+      <Set Row='ID' Panel='!Panel!' id='!ID!'/>
+      <Set Row='Panel' Panel='!Panel!'/>
+      <Set Row='Header' Index='!Index!'/>
+      <ReplaceText Col='Menu'
+         Rows='!Rows!' Columns='!Columns!' Select='!Select!' Show='!Show!' Hide='!Hide!' Add='!Add!' Copy='!Copy!' Delete='!Delete!'
+         Cells='!Cells!' Edit='!Edit!' Clear='!Clear!' Format='!Format!' Span='!Span!' Border='!Border!' Style='!Style!' Font='!Font!' Color='!Color!' Shadow='!Shadow!' Align='!Align!' Direction='!Direction!'
+         header='!header!' panel='!panel!' names='!names!' toolbar='!toolbar!' index='!index!' ids='!ids!'
+         />
+      <Replace Col='MenuHead' Actions='!Actions!'/>
+   </TextXX>
+   <Media>
+      <M Language='XX'>
+         <Cfg PrintPagePrefix="!&lt;center class='%9' style='width:%7px'>Sheet example printed page %3 from %6&lt;/center>!" PrintPagePostfix="!&lt;center class='%9' style='width:%7px'>Page %1 horizontally from %4 , page %2 vertically from %5&lt;/center>!"/>
+      </M>
+   </Media>
+</Grid>

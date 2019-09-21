@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 64 64">
+<line stroke="white" stroke-width="4" x1="32" x2="32" y1="10" y2="26"/>
+<line stroke="white" stroke-width="4" x1="32" x2="32" y1="38" y2="54"/>
+<polyline fill="white" points="32,10 64,32 32,54"/>
+<polyline fill="#F90" points="32,14 60,32 32,50"/>
+</svg>

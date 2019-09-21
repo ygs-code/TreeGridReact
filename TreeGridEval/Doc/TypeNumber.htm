@@ -1,0 +1,355 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Types Int and Float</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Number - Int & Float</h1>
+<p>TreeGrid documentation</p>
+
+<b>Int</b> type shows integer number in selected format.<br />
+<b>Float</b> type show floating point number in selected format.<br />
+The only difference between the types is that the <b>Int</b> type does not accept the decimal separator and exponent characters while editing.<br />
+In the input / output XML is the <b>Float</b> type always in English notation with <b>dot</b> as floating point separator.<br />
+
+<!-----------------------------------------------------------------------  Format ------------------------------------------------->
+<a name=""></a>
+<h2>Format</h2>
+
+<!-- Type -->
+<a name="CType"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"] <tt>Type = "Int"</tt> or <tt>"Float"</tt></s>
+</div>
+To define Int type, set column or cell attribute Type to "<b>Int</b>", for Float type set Type to "<b>Float</b>".<br />
+
+<!-- CanEmpty -->
+<a name="CCanEmpty"></a>
+<div class="XML">
+   <u>new <b>6.0</b> chg <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>CanEmpty</h4> <s>[0/1]</s>
+</div>
+If the cell number value differ between 0 and "". <i>Remember the default value is <b>0</b></i>, except in Filter row.<br />
+If set to <b>0</b>, the empty input value is always converted to 0. So the cell never contains (empty) string value.<br />
+It is good to set it to <b>0</b> when the numbers are sources for a Formula.<br />
+<i>Since 12.0</i> the default value for Filter row is 1.<br />
+
+<!-- EmptyValue -->
+<a name="CEmptyValue"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EmptyValue</h4> <s>[""]</s>
+</div>
+The string displayed when the date value is entered as empty string.<br />
+The cell can contain empty value only if <a href="TypeNumber.htm#CCanEmpty">CanEmpty</a> is 1.<br />
+It is shown only for display, not for edit.<br />
+It is <u>not</u> escaped, it can contain HTML code.<br />
+
+<!-- Format -->
+<a name="CFormat"></a>
+<div class="XML">
+   <u>chg <b>7.0</b> <i>upd <b>14.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Format</h4> <s></s>
+</div>
+Specifies number string format - how the number will be displayed.<br />
+This format string uses almost the same formatting as Microsoft .NET System.DateTime.<b>ToString</b> (string format) function.<br />
+
+<h5>Empty format</h5>
+If the <b>Format</b> is not set or is empty (default), the default English format is used with a <b>dot</b> as floating point separator.<br /> 
+
+<h5>Standard format</h5>
+Standard format is <u>one</u> letter format. This format loads user format from file <a href="../Grid/Text.xml">Text.xml</a>, tag &lt;<b>Format</b>>, attributes "<b>n..</b>"
+<div class="L1">
+<table>
+<tr><td style="width:50px;"><b>"g"</b></td><td style="width:70px;">General</td><td>(<tt>ng = "0.######"</tt> , <tt>ngg = "0.###### E+00"</tt>), for numbers under 1e10 uses ng, above uses ngg.</td></tr><br />
+<tr><td><b>"f"</b></td><td>Fixed</td><td>(<tt>nf = "0.00"</tt>)</td></tr>
+<tr><td><b>"c"</b></td><td>Currency</td><td>(<tt>nc = "$###########0.00"</tt>)</td></tr>
+<tr><td><b>"p"</b></td><td>Percent</td><td>(<tt>np = "0.00%"</tt>)</td></tr>
+<tr><td><b>"r"</b></td><td>Rounded</td><td>(<tt>nr = "0.0000"</tt>, <tt>nrg = "0.0000 E+00"</tt>), for numbers under 1e10 uses nr, above uses nrg.</td></tr>
+<tr><td><b>"e"</b></td><td>Scientific</td><td>(<tt>ne = "0.000000 E+000"</tt>)</td></tr>
+</table>
+</div>
+
+<h5>Special format</h5>
+<i>Since 14.0</i> if the format string contains asterisk (*), it loads the user defined formats from &lt;Lang>&lt;Format ... />&lt;/Lang> tag.<br />
+For example: &lt;Lang>&lt;Format num='0' dec='.00##' exp='E+00'/>&lt;Lang>, 
+Format="*num" is converted to "0", 
+Format="num*dec" is converted to "0.00##", 
+Format="num*dec* *exp" is converted to "0.00## E+00".<br />
+The special format can refer another special format, these references should contain asterisk on both sides.<br />
+
+<h5>User format</h5>
+User format can contain any characters but only few have special meaning and the others are written into output without any change.<br />
+<i>Since 6.2 version if there no '<b>0</b>' and '<b>#</b>' in format string, no number is shown, only the format string.</i><br />
+<i>There can be maximally 20 digits (0 and #) shown before and after decimal point. Note, JavaScript has maximally 17 digits precision.</i>
+<div class="L1">
+<table>
+<tr><td style="width:120px;"><b>0</b></td><td>Place for a digit, displays digit or 0. If there are more digits than count of 0 and # in integer part, all the rest digits are written left to the first 0 or #.</td></tr>
+<tr><td><b>#</b></td><td>Place for a digit, displays digit or nothing if there are no more digits. Has sense only for decimal part or exponent definition.</td></tr>
+<tr><td><b>?</b></td><td><i>(new 13.0)</i> Place for a digit, displays digit or empty space if there are no more digits. Has sense only for decimal part.</td></tr>
+<tr><td><b>8</b></td><td>
+<i>(new 7.0)</i> Hidden digit, the digit will not be displayed. Digits are always counted from decimal separator position to both sides.<br />
+It cannot be combined with '#' in the same number part. It can be used only for left and right side of integer part or left side of decimal part.<br />
+<div class="L2">Example: <tt>Val = "123456.789", Format = "8000" => Result = "456"; Format = "088" => Result = "1234"; Format = "8.80" => Result = "8"</tt></div>
+</td></tr>
+<tr><td><b>.</b></td><td>
+(Dot) Decimal separator. Displays decimal separator defined in file <a href="../Grid/Text.xml">Text.xml</a>, tag &lt;<b>Format</b>>, attribute <b>DecimalSeparator</b>. (<i>dot</i> by default).<br />
+Can be only used only once. 
+</td></tr>
+<tr><td><b>,</b></td><td>
+(Comma) This character has two meanings:<br />
+If this is placed between any digits characters ('0' or '#') left to decimal separator, there will all three digits separated by thousand separator defined in file <a href="../Grid/Text.xml">Text.xml</a>, tag &lt;<b>Format</b>>, attribute <b>GroupSeparator</b>. (<i>comma</i> by default).<br />  
+<div class="L2">Example:  <tt>Val = "123456.789", Format = ",0.00" => Result = "123,456.79"</tt></div>
+<i>(since 10.0)</i> It is possible to specify different number of separated digits than 3 by &lt;<b>Format</b>> attributes <b>GroupCount1</b> (the last group) and <b>GroupCount</b> (other groups).<br />
+<div class="L2">For example for Indian number format set <tt>&lt;Format GroupCount1='3' GroupCount='2'/></tt></div>
+If this is placed between last digit and decimal separator (or to the end if decimal separator is not used),  the value will be divided by 1000. There can be more commas to divide more times.<br />
+<div class="L2">Example:  <tt>Val = "123456.789", Format = "0,,.00" => Result = "0.12"</tt></div>
+</td></tr>
+<tr><td><b>%</b></td><td>
+Place for '%' character (it is defined in file <a href="../Grid/Text.xml">Text.xml</a>, tag &lt;<b>Format</b>>, attribute <b>Percent</b>). If it is present, the number is also multiplied by <b>100</b>.<br />
+To place the % character without multiplying by 100, write it with backslash "\%".<br />
+</td></tr>
+<tr><td><b>E</b>, <b>e</b>, <b>E-</b>, <b>E+</b>, <b>e-</b>, <b>e+</b></td><td>
+Result will use exponential notation. To this location is placed 'E' or 'e' letter followed by digits of exponent.
+</td></tr>
+<tr><td><b>&nbsp;</b></td><td>
+If used exponential notation, the number of digits before decimal separator is given by count of all digit places ('0' or '#') before decimal separator.<br />
+This letter must be followed by number digit places ('0' or '#') to specify number of exponent digits.<br />
+E or e specifies case of E letter, E+ uses sign + for positive exponents, E- and E uses no sign for positive exponents.<br />
+<div class="L2">Example: <tt>Val = "123456.789", Format = "000.000 E+00" => Result = "123.456 E+03"</tt></div>
+<div class="L2">Example: <tt>Val = "-0.0123456789", Format = ":0.0000(E000)" => Result = ":-1.2346(E-002)"</tt></div>
+</td></tr>
+<tr><td><b>;</b></td><td>
+(Semicolon) Separates formats used according to the value size and type. <br />
+There can be up to four default formats without condition and next more conditional formats. <i>The conditional formats should be placed before default formats.</i><br />
+<b>1st</b> default format is used for positive numbers (and for 0 if the third format missing).<br />
+<b>2nd</b> default format is used for negative numbers (without minus sign).<br />
+<i>Remember, from the negative part is read only string before number and after the number, all other (the number format) is used always from positive part.</i><br />
+<i>So the negative part can be used only to remove, replace or change position of the minus or change CSS attribute like color by the prefix and postfix.</i><br />
+<b>3rd</b> default format is used for <b>0</b>.<br />
+<b>4th</b> default format <i>since 13.0</i> is used for text (in <a href="TypeAuto.htm">Auto</a> type only). It can contain character <b>@</b> to place actual text value here. 
+If it does not contain the <b>@</b>, the actual value is not displayed. <br />
+<i>If the 4th format is missing, the <a href="TypeAuto.htm">Auto</a> type displays the text value as is.</i><br />
+<i>If the 2nd or 3rd format contains the character <b>@</b> it is automatically used for the text value and not for negative or zero values.</i><br />
+</td></tr>
+<tr><td><b>[</b>color<b>]</b></td><td>
+<i>(new 13.0)</i> Colors the whole part (parts are separated by semicolon) in given CSS color.
+</td></tr>
+<tr><td><b>[</b>condition<b>]</b></td><td>
+<i>(new 13.0)</i> Uses given part (parts are separated by semicolon) only if the value fulfills the condition.<br />
+Condition can be: [=value], [<>value], [&lt;value], [&lt;=value], [>value], [>=value].<br />
+</td></tr>
+<tr><td><b>_</b></td><td>
+<i>(new 13.0)</i> (Underscore) Places space as wide as the next character after the "_". The next character is not printed.<br />
+</td></tr>
+<tr><td><b>$</b></td><td>
+<i>(new 14.0)</i> Places actual <b>Currency</b> string, default is $.<br />
+</td></tr>
+<tr><td><b>\</b></td><td>
+(Backslash) Escape character, the next character is placed to output without any changes. Use to place format characters as 0 # . , E e + - \ " ' %.<br />
+</td></tr>
+<tr><td>'<b>xxx</b>' or "<b>xxx</b>"</td><td>
+Characters in quotes or double quotes are placed to output without any changes. Use to place format characters as 0 # . , E e + - \ " ' %.<br />
+</td></tr>
+
+</td></tr>
+</table>
+</div>
+<br />
+For example: <tt>Format='$0.00' => "$0.10" or "$12.54"</tt><br />
+<tt>Format=' #.00##;&lt;span style=\'color:red\;\'>#.00##&lt;/span>;nothing'</tt> => negative numbers in red, 0 as nothing<br />
+<br />
+
+If you want add <b>HTML tags</b> before and after value, use rather cell attributes <a href="CellStyle.htm#CHtmlPrefix">HtmlPrefix</a> and <a href="CellStyle.htm#CHtmlPostfix">HtmlPostfix</a> instead of <b>Format</b>.<br />
+If you really need to place <b>HTML tags</b> into output (for example to use different HTML tags for positive and negative numbers), set <tt>&lt;Cfg <a href="TypeNumber.htm#CfgNoFormatEscape">NoFormatEscape=</a>'1'></tt>. The HTML tags can be set in <a href="TypeNumber.htm#CFormat">Format</a> only, <b>not</b> in <a href="TypeNumber.htm#CEditFormat">EditFormat</a>.<br />
+
+<!-- EditFormat -->
+<a name="CEditFormat"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EditFormat</h4> <s></s>
+</div>
+Format string to display the number for editing. It does <u>not</u> affect the input format of the numbers.<br />
+
+<!-- ExportFormat -->
+<a name="CExportFormat"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>ExportFormat</h4> <s></s>
+</div>
+A number format to export to Excel. Used only <tt>for <a href="Export.htm#Export_Type">Export_Type</a> = 0</tt>.<br />
+It is specific Excel number to export the number in specific format.<br />
+If you don't know the format for the cell, create xls file with one cell, specify its format you want and save it as one file web page (mht file).<br />
+Open this mht file and search style property "mso-number-format" and its value set to the ExportFormat.<br />
+The standard values are "<tt>Fixed</tt>" for 0.00 or "<tt>Scientific</tt>".<br />
+The format string is similar to TreeGrid number format, but with escaped all not number and not digit characters by backslash.<br />
+Here are some sample formats: <tt>"0\.00"</tt> displays two required decimal digits, <tt>"0\.#\#"</tt> displays maximally two decimal digits, <tt>"\#\,\#\#0\.0000"</tt> separates every 3 digits by ',' and shows decimal 4 digits.<br />
+
+<!-- NoFormatEscape -->
+<a name="CfgNoFormatEscape"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>NoFormatEscape</h4> <s>[1]</s>
+</div>
+If set to "", it means <b>0</b> for text and <b>1</b> for number and date.<br />
+If set to <b>0</b>, the Format is escaped, so the characters & and &lt; are displayed as they are.<br />
+If set to <b>1</b>, you can use HTML tags in columns <a href="TypeNumber.htm#CFormat">Format</a> string, in prefix and postfix for text and anywhere for numbers.<br />
+
+<!-- RoundNumbers -->
+<a name="CfgRoundNumbers"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RoundNumbers</h4> <s>[0]</s>
+</div>
+If all numbers (Float and Int types) in grid will be rounded to <a href="#CfgRoundNumbersDigits">RoundNumbersDigits</a>, bit array.<br />
+1. bit &amp;<b>1</b> - Rounds all numbers in cells without <a href="#CFormat">Format</a>.<br />
+2. bit &amp;<b>2</b> - Rounds all numbers in cells with <a href="#CFormat">Format</a>. Before the number is formatted.<br />
+3. bit &amp;<b>4</b> - If set, rounds to <a href="#CfgRoundNumbersDigits">RoundNumbersDigits</a> all digits, otherwise rounds only decimal digits.<br />
+
+<!-- RoundNumbers -->
+<a name="CfgRoundNumbers"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RoundNumbers</h4> <s>[5]</s>
+</div>
+Number of decimal digits to round numbers by <a href="#CfgRoundNumbers">RoundNumbers</a>. Can be also negative.<br />
+
+<!-- StrictNumbers -->
+<a name="FormatStrictNumbers"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;Format></b> <i>bool</i>
+   <h4>StrictNumbers</h4> <s>[0]</s>
+</div>
+If set, restricts entering incorrect numbers. If not set, accepts also partial numbers like "3.2.4" and converts them to correct numbers like "3.2".<br />
+
+<!-- StrictNumbers -->
+<a name="FormatStrictNumbers"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Format></b> <i>bool</i>
+   <h4>EditPercent</h4> <s>[0]</s>
+</div>
+<i>Since 14.0.11</i> If set and Format contains "%", the entered number will be always percentage value, even if a user deletes the "%" during editing.<br />
+
+<!-- NumberToString -->
+<a name="NumberToString"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i>string</i>
+   <h4>NumberToString</h4>
+   <s>(<i>Number</i> <b>num</b>, <i>string</i> <b>format</b>)</s>
+</div>
+Converts number to string according to format string as in function ToString() in C#.NET.<br />
+
+<!-- StringToNumber -->
+<a name="StringToNumber"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i>Number</i>
+   <h4>StringToNumber</h4>
+   <s>(<i>string</i> <b>str</b>, <i>string</i> <b>format</b>)</s>
+</div>
+Converts string to number<br />
+
+<!-----------------------------------------------------------------------  Localization ------------------------------------------------->
+<a name="Localization"></a>
+<h2>Localization</h2>
+
+The default number format and setting are specified in <b>Text.xml</b>, in &lt;<b>Lang</b>>&lt;<b>Format</b> />&lt;/<b>Lang</b>> tag.<br />
+The default settings is for <b>English</b> language, changing the <b>Format</b> tag attributes you can easily localize it to another language.<br />
+
+<!-- BaseSeparators -->
+<a name="FormatBaseSeparators"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Format></b> <i>bool</i>
+   <h4>BaseSeparators</h4> <s>[0]</s>
+</div>
+Controls Int, Float and Date types conversions to string without explicit format string set.<br />
+If set to <b>1</b>, it always uses standard U.S. English decimal, date and time separators and also date order M/d/yyyy. <br />
+If set to <b>0</b>, it uses actual <a href="TypeNumber.htm#FormatDecimalSeparator">DecimalSeparator</a>, <a href="#FormatDateSeparator">DateSeparator</a> and <a href="#FormatTimeSeparator">TimeSeparator</a>
+and date format is chosed according to the date separator as "M/d/yyyy" or "d.M.yyyy" or "yyyy-M-d".<br />
+<i>Prior to 12.0 the default value and behavior was <b>1</b>, since 12.0 was changed to <b>0</b>!</i>
+
+<!-- DecimalSeparator -->
+<a name="FormatDecimalSeparator"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string</i>
+   <h4>DecimalSeparator</h4> <s>[.]</s>
+</div>
+The string displayed as floating point separator.<br />
+You can set it also dynamically by API according to browser's locale by such code:<br />
+<tt>Grids.OnLoaded = function(G){ G.Lang.Format.DecimalSeparator = Number(1.5).toLocaleString().charAt(1); }</tt><br />
+
+<!-- InputDecimalSeparators -->
+<a name="FormatInputDecimalSeparators"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Format></b> <i>char[ ]</i>
+   <h4>InputDecimalSeparators</h4> <s>[.,]</s>
+</div>
+The characters permitted to input as decimal separator.<br />
+
+<!-- GroupSeparator -->
+<a name="FormatGroupSeparator"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string</i>
+   <h4>GroupSeparator</h4> <s>[,]</s>
+</div>
+The string displayed as thousands separator.<br />
+
+<!-- InputGroupSeparators -->
+<a name="FormatInputGroupSeparators"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Format></b> <i>char[ ]</i>
+   <h4>InputGroupSeparators</h4> <s>[ ]</s>
+</div>
+The characters permitted to input as group separator.<br />
+<i>Now it should be empty because it is not permitted to input numbers with group separator.</i><br />
+
+<!-- Percent -->
+<a name="FormatPercent"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string</i>
+   <h4>Percent</h4> <s>[%]</s>
+</div>
+The string displayed as percentage character.<br />
+
+<!-- Currency -->
+<a name="FormatCurrency"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Format></b> <i>string</i>
+   <h4>Currency</h4> <s>[$]</s>
+</div>
+The string displayed instead of dollar character.<br />
+
+<!-- NaN -->
+<a name="FormatNaN"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string</i>
+   <h4>NaN</h4> <s>[NaN]</s>
+</div>
+String displayed for incorrect number - Not A Number.<br />
+
+<!-- Digits -->
+<a name="FormatDigits"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Format></b> <i>int</i>
+   <h4>Digits</h4> <s>[]</s>
+</div>
+First character separated array of 10 digits strings to replace the standard digits 0 - 10.<br />
+Useful to display Arabic digits instead of standard digits by such definition:<br />
+<tt>&lt;Lang>&lt;Format Digits="|&amp;#x660;|&amp;#x661;|&amp;#x662;|&amp;#x663;|&amp;#x664;|&amp;#x665;|&amp;#x666;|&amp;#x667;|&amp;#x668;|&amp;#x669;"/>&lt;/Lang></tt><br />
+<i>It replaces all digits in all cells, regardless of the cell type!</i><br />
+
+<!-- Digits -->
+<a name="CDigits"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>Digits</h4> <s>[]</s>
+</div>
+Digits to replace for this cell or column. <i>Used only if some &lt;Format <a href="#FormatDigits">Digits</a>> are defined.</i><br />
+Set it to empty string to not use the &lt;Format <a href="#FormatDigits">Digits</a>><br />
+
+</div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>2. Auto size</h1>
+   <h2>Automatic adding of new rows and columns by scroll</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='02-Auto_size.xml' target="_blank">02-Auto_size.xml</a></div>
+      <div class="Main" style='width:770px; height:500px;'>
+         <bdo Debug='check' Data_Url='02-Auto_size.xml'></bdo>
+      </div>
+   </center>
+   <ul>
+      <li><h4>Automatic row pages</h4><br />
+         For automatic row pages it is required to set client root paging by &lt;Cfg> <b>Paging</b>='<b>2</b>'. Here is also hidden default right pager by &lt;<b>Pager Visible</b>='0'>. <br />
+         The automatic row pages are set by &lt;Cfg> <h3>AutoPages</h3>='<b>1</b>'. It adds new row page on scroll near to grid bottom.<br />
+         Length of page - count of added new rows is set by &lt;Cfg> <b>PageLength</b>. Here is set to 10 rows.<br />
+         It is possible to remove rendered pages (not their data) if they are not visible due scroll to reduce amount of HTML shown in browser. Here is set &lt;Cfg> <b>MaxPages</b>='3' to let at least 3 pages.<br />
+         Here it does not remove the left and right fixed columns in the removed pages by setting &lt;Cfg> <b>RemoveUnusedFixed</b>='<b>0</b>'.<br />
+         It is possible to remove all empty bottom pages if they are not scrolled to or focused. It removes them including data and shrinks the grid. The pages are removed after some time.
+         Set it by &lt;Cfg> <h3>RemoveAutoPages</h3>="<b>1</b>".<br />
+      </li>
+      <li><h4>Automatic column pages</h4><br />
+         For automatic column pages it is required to set column paging by &lt;Cfg> <b>ColPaging</b>='<b>2</b>'.<br />
+         The automatic column pages are set by &lt;Cfg> <h3>AutoColPages</h3>='<b>1</b>'. It adds new column page on scroll near to grid right.<br />
+         Length of page - count of added new columns is set by &lt;Cfg> <b>ColPageLength</b>. Here is set to 10 columns.<br />
+         Here can be first few columns rendered always without paging, set their count by &lt;Cfg> <b>ColPageMin</b>. Here it is set 0 to let all columns to removed by MaxColPages.<br />
+         It is possible to remove rendered pages (not their data) if they are not visible due scroll to reduce amount of HTML shown in browser. Here is set &lt;Cfg> <b>MaxColPages</b>='3' to let at least 3 pages.<br />
+         Here it always shows the head and foot rows in all the column pages by setting &lt;Cfg> <b>ColPagingFixed</b>='<b>0</b>'.<br />
+         It is possible to remove all empty right pages if they are not scrolled to or focused. It removes them including data and shrinks the grid. The pages are removed after some time.
+         Set it by &lt;Cfg> <h3>RemoveAutoColPages</h3>="<b>1</b>".<br />
+      </li>
+      <li><h4>Other features</h4><br />
+         Window scroll checkbox - Setting &lt;Cfg> <b>NoVScroll</b> / <b>NoHScroll</b> scrolls the whole window instead of the grid body.<br />
+         Standard number row index shown in new left column named "Index", for all rows except deleted. It is set by &lt;Cfg RowIndex="Index" RowIndexType="6"/>.<br />
+         Standard character column index shown in main header, for all columns except deleted. It is set by &lt;Cfg ColIndex="Header" ColIndexType="6" ColIndexChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ"/><br />
+         Here the column and row SelectAll button on header and index panel is a switch showing if all rows and columns are selected. It is set by &lt;Cfg> <b>SelectAllType</b>='<b>31</b>'.<br />
+         Cell range can be focused by mouse dragging. It is set by &lt;Cfg> <b>FocusRect</b>='<b>5</b>'.<br />
+         Enter moves cursor down. It is set by &lt;Cfg> EnterMode='1'.<br />
+         All actions can be undone, including focus and scroll. It is set by &lt;Cfg> Undo='79'.<br />
+         Other standard row and column manipulation as in the tutorial <a href="01-Index.html">01-Index.html</a>.<br />
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialSheet\s*=\s*(\d+)/), TGIndex = 2;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialSheet2", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialSheet="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

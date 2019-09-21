@@ -1,0 +1,60 @@
+<Grid>
+   <Cfg id="Html" NoVScroll="1" NoHScroll="1" Sorting="0" IdChars="0123456789" NumberId="1" CopyPasteRows="2"/>
+   <Cols>
+      <C Name="id" Type="Int" CanEdit="0" CanSort="0"/>
+      <C Name="LINK" Width="170" VarHeight="2"/>
+      <C Name="IMAGE" Width="150" VarHeight="2"/>
+      <C Name="PANEL" Type="Panel" Width="150" PanelSelectTip="Select tip" PanelDeleteTip="Delete tip" PanelMoveTip="Move tip" PanelCopyTip="Copy tip" CopyMenu="CopyRow,AddRow"/>
+      <C Name="ABS" Type="Abs" Width="60" Spanned="1"/>
+      <C Name="FILE" Type="File" Width="310"/>
+   </Cols>
+   <Body>
+      <B>
+         <I id="1"
+            LINKType="Text" LINK="Link attribute" LINKLink="http://www.treegrid.com" LINKCanEdit="0" LINKTip="Simple not editable link attached to any cell Type by Link attribute"
+            IMAGEType="Icon" IMAGE="Green.svg" IMAGETip="Icon type - Basic inactive image in cell"
+            PANEL="Select,Delete"
+            ABSRowSpan="2" ABS="|10|15|30|20|Text" ABSTip="One absolutely positioned text inside cell"
+            FILEEmptyValue="&lt;i style='color:gray;'>Choose one file&lt;/i>" FILEFormat="*Name* {*Type* *Size*B} "
+            />
+         <I id="2"
+            LINKType="Text" LINK="Link attribute edit" LINKLink="http://www.treegrid.com" LINKTip="Eitable text with not editable link defined by Link attribute"
+            IMAGE="Cell text" IMAGEIcon="Green.svg" IMAGEOnClickSideIcon="alert('Left icon clicked')" IMAGEButton="Red.svg" IMAGEOnClickSideButton="alert('Right icon clicked')" IMAGETip="Icon and Button attributes - Cell with both left and right clickable icons"
+            PANEL="Move,Select,Delete,Copy"
+            FILEEmptyValue="&lt;i style='color:gray;'>Choose one or more files&lt;/i>" FILERange="1"
+            />
+         <I id="3" MidHtml="&amp;nbsp;3 - Custom HTML section without cells"/>
+         <I id="4"
+            LINKType="Link" LINK="|http://www.treegrid.com|Link type|new_window" LINKCanEdit="0" LINKTip="Simple not editable link defined by Link type" LINKOnClickLink="Grids.Alert=1;var ret=!confirm('Do you want to navigate here?');Grids.Alert=0;return ret"
+            IMAGE="Cell text" IMAGEIcon="Green.svg" IMAGEIconAlign="Right" IMAGEOnClickSideIcon="alert('Left icon clicked')" IMAGEButton="Red.svg" IMAGEOnClickSideButton="alert('Right icon clicked')" IMAGETip="Icon and Button attributes - Cell with two right clickable icons&lt;br>It is NOT possible to have two left icons"
+            PANEL="Green,Select,Red,Copy,Delete,Yellow" PANELGreen="Green.svg" PANELRed="Red.svg" PANELYellow="Yellow.svg" PANELOnClickPanelGreen="alert('Green clicked')" PANELOnClickPanelRed="alert('Red clicked')" PANELOnClickPanelYellow="alert('Yellow clicked')" PANELPanelGreenTip="Green tip" PANELPanelYellowTip="Yellow tip" PANELPanelRedTip="Red tip" PANELPanelYellowCursor="crosshair" PANELPanelRedCursor="wait" PANELPanelGreenCursor="help"
+            ABSRowSpan="5" ABS="|20|0|||One||||10|40|25|20|Two|TSTabHtmlBase|||20|100|35|20|&lt;div style='background:pink;border:1px solid black;font-weight:bold;'>Three&lt;/div>||||2|20|||Four||||30|20|25|18|Five|TSHeaderFocus|||35|45|20|20|Six|TSRotate2|||8|120|||&lt;img src='Green.svg' height='17'/>Seven||||10|60|35|35|&lt;div style='background:brown;color:white;'>Eight&lt;/div>|TSRotate1||" ABSTip="Many absolutely positioned and independent tags inside cell"
+            FILEEmptyValue="&lt;i style='color:gray;'>Choose one image file as background&lt;/i>" FILEFormat="&lt;div style='background:url(*Url*);height:*Height*px;'>&amp;nbsp;&lt;/div>" FILEAccept="image/*"
+            />
+         <I id="5"
+            LINKType="Link" LINK="|http://www.treegrid.com|Link type edit|new_window" LINKTip="Editable link defined by Link type"
+            IMAGEType="Html" IMAGE="&lt;img src='Green.svg' height='17' onclick='alert(&quot;Green icon clicked&quot;)'>&lt;img src='Yellow.svg' height='17' onclick='alert(&quot;Yellow icon clicked&quot;)'>&lt;span style='display:inline-block;height:17px;'>Html type&lt;/span>&lt;img src='Red.svg' height='17' onclick='alert(&quot;Red icon clicked&quot;)'>" IMAGETip="Html type using &amp;lt;img> tags and other content"
+            PANEL="start,stop,end" PANELstartWidth="28" PANELstopWidth="28" PANELendWidth="28" PANELOnClickPanelstart="alert('start clicked')" PANELOnClickPanelstop="alert('stop clicked')" PANELOnClickPanelend="alert('end clicked')" PANELPanelstartTip="start tip" PANELPanelstopTip="stop tip" PANELPanelendTip="end tip"
+            FILEEmptyValue="&lt;i style='color:gray;'>Choose more image files as thumbnails&lt;/i>" FILEFormat="&lt;img src='*Url*' height='*Height*' width='*Height*'>" FILERange="1" FILESeparator="" FILEAccept="image/*"
+            />
+         <I id="6"
+            LINKType="Html" LINK="&lt;a href='http://www.treegrid.com'>Html type with &amp;lt;a>&lt;/a>" LINKTip="Link defined by custom HTML tag &amp;lt;a> in Html type cell"
+            IMAGEType="Img" IMAGE="|Yellow.svg|||||" IMAGEHtmlPostfix="Editable icon" IMAGETip="Img type - editable image"
+            PANEL="start,stop,Green,Red" PANELGreen="Green.svg" PANELRed="Red.svg" PANELstartWidth="28" PANELstopWidth="28" PANELOnClickPanelGreen="alert('Green clicked')" PANELOnClickPanelRed="alert('Red clicked')" PANELPanelGreenTip="Green tip" PANELPanelRedTip="Red tip" PANELPanelRedCursor="wait" PANELPanelGreenCursor="help" PANELOnClickPanelstart="alert('start clicked')" PANELOnClickPanelstop="alert('stop clicked')" PANELPanelstartTip="start tip" PANELPanelstopTip="stop tip"
+            FILEEmptyValue="&lt;i style='color:gray;'>Choose more image files as name &amp; thumbnails&lt;/i>" FILEFormat="*Name* &lt;img src='*Url*' height='*Height*' width='*Height*'>" FILERange="1" FILESeparator=" " FILEAccept="image/*"
+            />
+         <I id="7"
+            LINKType="Text" LINK="HtmlPrefix" LINKHtmlPrefix="&lt;a href='http://www.treegrid.com'>" LINKHtmlPostfix="&lt;/a>" LINKCanEdit="0" LINKTip="Link defined by custom HTML &amp;lt;a> in HtmlPrefix for any cell value"
+            IMAGEType="Img" IMAGE="|Yellow.svg|13|13|||http://www.treegrid.com" IMAGEHtmlPostfix="&amp;nbsp;Resized icon and link" IMAGECanEdit="0" IMAGETip="Img type with link and width and height set to shrink the image" IMAGEOnClickLink="Grids.Alert=1;var ret=!confirm('Do you want to navigate here?');Grids.Alert=0;return ret"
+            PANEL="Delete,,Yellow,,Select,Move" PANELYellow="Yellow.svg" PANELEmptyWidth="15" PANELOnClickPanelYellow="alert('Yellow clicked')" PANELPanelYellowTip="Yellow tip"
+            FILEEmptyValue="&lt;i style='color:gray;'>Choose more image files as real size&lt;/i>" FILEFormat="&lt;span style='background:url(*Url*) no-repeat;padding-left:50px;'>&amp;nbsp;&lt;/span>" FILERange="1" FILESeparator=" " FILEAccept="image/*"
+            />
+         <I id="8"
+            LINKType="Text" LINK="API OnClick" LINKOnClick="window.open('http://www.treegrid.com')" LINKCursor="Pointer" LINKTip="Link done by API event OnClick"
+            IMAGEType="Img" IMAGE="|Yellow.svg|11|11|3|3" IMAGEFormat="|||&lt;div style='float:left'>|&lt;/div>&amp;nbsp;Cut icon and edit" IMAGEEditFormat="|2|1|1|1" IMAGETip="Img type with x,y,width and height set to show only a part of the image&lt;br>Editing of all parts of the image"
+            FILEEmptyValue="&lt;i style='color:gray;'>Choose more files, show images as thumbnails&lt;/i>" FILEFormat="*Name* &lt;img src='*Url*' height='*Height*' width='*Height*'>" FILERange="1" FILESeparator=" "
+            />
+      </B>
+   </Body>
+   <Header id="id" LINK="Link" IMAGE="Image" ABS="Abs" PANEL="Panel" PANELType="Html" FILE="File"/>
+</Grid>

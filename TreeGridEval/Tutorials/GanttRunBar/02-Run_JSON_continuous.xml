@@ -1,0 +1,189 @@
+<Grid>
+   <Cfg id="ContinuousRunJSON" NoVScroll="1" IdChars="0123456789" NumberId="1" Size="Low" StyleDependencyModifier="0"/>
+   <Cfg DefaultDate="1/1/2010" MinMidWidth="100"/>
+   <Cfg FastGantt="0"/>
+   <LeftCols>
+      <C Name="id" Type="Int" CanEdit="0" CanSort="0"/>
+   </LeftCols>
+   <Cols>
+      <C Name="START" Type="Date" Format="dddddd" Width="55"/>
+      <C Name="RUN" Type="Text" Width="325"/>
+   </Cols>
+   <RightCols>
+      <C Name="GANTT" Type="Gantt"
+      GanttDataUnits="d" GanttUnits="d" GanttWidth="22"
+      GanttLeft="1" GanttRight="1"
+      GanttHeader6="d#%d"
+      GanttRun="RUN" GanttRunStart="START"
+      GanttRunShowHtml="2"
+      GanttRunNewStart="[{Duration:'0.0001',Type:'box'}]"
+      />
+   </RightCols>
+   <Body>
+      <B>
+         <I id="0"/>
+         <I id="1"
+            START="05/06/2010"
+            RUN="[{Duration:10,Type:'box',Text:'One normal box with tooltip',Tip:'this is the box tip'}]"
+            />
+         <I id="3"
+            START="5/4/2010"
+            RUN="[{Duration:10,Text:'Normal boxes with length: %n'},{},{Duration:2,Text:'%n'},{},
+            {Duration:4,Text:'%n'},{},{Duration:5,Text:'%n days'},{},{Duration:1,Text:'%n'},{},{Duration:2,Text:'%n'}]"
+            GANTTGanttRunFormat=""
+            />
+         <I id="4"
+            START="5/4/2010"
+            RUN="[{Duration:11,Text:'Normal boxes with time: %d'},{},{Duration:3,Text:'%d'},{},{Duration:4,Text:'%d'},{},
+            {Duration:5,Text:'time %d'},{},{Duration:3,Text:'%d'},{},{Duration:5,Text:'%d'}]"
+            GANTTGanttRunFormat="hhh:mm"
+            />
+         <I id="5"
+            START="5/2/2010"
+            RUN="[{Duration:9,Text:'Boxes with box side text'},{Duration:2,Type:'empty'},{Duration:4,Text:'inner text',TextLeft:'Left',TextRight:'Right'},{Duration:6,Type:'empty'},
+            {Duration:4,Text:'inner text',TextLeft:'Left text'},{Duration:1,Type:'empty'},{Duration:4,Text:'inner text',TextRight:'Right text'}]"
+            />
+         <I id="6"  GANTTGanttRunHtmlLeft="*Start*" GANTTGanttRunHtmlLeftEdge="1" GANTTGanttRunHtmlDateFormat="M/d" GANTTGanttRunHtmlRight="*4**Duration* days" GANTTGanttRunHtmlRightEdge="4"
+            START="5/3/2010"
+            RUN="[{Duration:9,Tip:'Boxes with side text - '},{Duration:2,Type:'empty'},{Duration:3},{Duration:3,Type:'empty'},
+            {Duration:4},{Duration:3,Type:'empty'},{Duration:3},{Duration:3,Type:'empty'},{Type:'milestone'}]"
+            />
+         <I id="7"
+            START="5/2/2010"
+            RUN="[{Duration:7,Text:'Not adjacent boxes'},{Duration:2,Type:'empty'},{Duration:3},{Duration:1,Type:'empty'},{Duration:4},{Duration:1,Type:'empty'},
+            {Duration:3},{},{Duration:2},{Duration:2,Type:'empty'},{Duration:1},{Duration:2,Type:'empty'},{Duration:4}]"
+            />
+         <I id="8"
+            START="5/5/2010"
+            RUN="[{Duration:6,Text:'Joined boxes'},{Duration:3},{Duration:4},{},{Duration:5,Text:'Next'},{Duration:2},{Duration:3},{Duration:4}]"
+            />
+         <I id="9"
+            START="5/2/2010"
+            RUN="[{Duration:9,Text:'Joined boxes with spaces'},{Duration:2,Type:'nbsp'},{Duration:3},{Duration:1,Type:'nbsp'},
+            {Duration:4},{Duration:1,Type:'empty'},{Duration:5,Text:'Next'},{Duration:2},{Duration:3,Type:'nbsp',Text:'Empty'},{Duration:3}]"
+            />
+         <I id="10"
+            START="5/6/2010"
+            RUN="[{Duration:3,Type:'end',Text:'Start'},{},{Duration:6,Type:'Box',Text:'Task with start'},
+            {Duration:3},{},{Duration:2},{Duration:2,Type:'empty'},{Duration:2},{Duration:7,Type:'empty'},{Duration:2}]"
+            GANTTGanttRunNewStart="[{Duration:2,Type:'end',Text:'Start'},{},{Duration:'0.0001',Type:'box'}]"
+            />
+         <I id="11"
+            START="5/6/2010"
+            RUN="[{Duration:6,Type:'Box',Text:'Task with end'},{Duration:3},{},{Duration:2},{Duration:4,Type:'empty'},
+            {Duration:2},{Duration:5,Type:'empty'},{Duration:2},{},{Duration:2,Type:'end',Text:'End'}]"
+            GANTTGanttRunNewStart="[{Duration:'0.0001',Type:'box'},{},{Duration:2,Type:'end',Text:'End'}]"
+            />
+         <I id="12"
+            START="5/6/2010"
+            RUN="[{Duration:3,Type:'end',Text:'Start'},{},{Duration:6,Type:'Box',Text:'Task with both'},{Duration:'3'},{},
+            {Duration:2},{Duration:6,Type:'empty'},{Duration:2},{Duration:3,Type:'empty'},{Duration:2},{},{Duration:2,Type:'end',Text:'End'}]"
+            GANTTGanttRunNewStart="[{Duration:2,Type:'end',Text:'Start'},{},{Duration:'0.0001',Type:'box'},{},{Duration:2,Type:end',Text:'End'}]"
+            />
+         <I id="13"
+            START="5/6/2010"
+            RUN="[{Duration:3,Type:'bound',Text:'Start'},{},{Duration:11,Type:'Box',Text:'Task with fixed start and end'},{},{Duration:2},
+            {Duration:8,Type:'empty'},{Duration:2},{Duration:1,Type:'empty'},{Duration:2},{},{Duration:2,Type:'bound',Text:'End'}]"
+            />
+         <I id="14"
+            START="5/2/2010"
+            RUN="[{Duration:5,Text:'Fixed boxes'},{Duration:1,Type:'empty'},{Duration:3,Type:'fixed',Text:'Fixed'},{Duration:1,Type:'empty'},{Duration:3},
+            {Duration:1,Type:'empty'},{Duration:2},{Duration:1,Type:'empty'},{Duration:4,Type:'Left',Text:'Fixed left'},{Duration:1,Type:'empty'},
+            {Duration:2},{Duration:1,Type:'empty'},{Duration:5,Type:'Right',Text:'Fixed right'},{Duration:1,Type:'empty'},{Duration:2}]"
+            />
+         <I id="15"
+            START="5/2/2010"
+            RUN="[{Duration:5,Text:'Solid boxes'},{Duration:2,Type:'empty'},{Duration:3,Type:'solid',Text:'Solid'},{Duration:1,Type:'empty'},
+            {Duration:4,Type:'solid',Text:'Solid'},{Duration:1,Type:'empty'},{Duration:3},{},{Duration:2,Type:'solid',Text:'Solid'},
+            {Duration:2,Type:'empty'},{Duration:1},{Duration:2,Type:'empty'},{Duration:4,Type:'solid',Text:'Solid'}]"
+            />
+         <I id="16"
+            START="5/2/2010"
+            RUN="[{Duration:11,Text:'Milestones and zero duration boxes'},{Duration:1,Type:'empty'},{Type:'Milestone'},{Duration:1,Type:'empty'},
+            {Type:'box'},{},{Duration:1},{Duration:1,Type:'empty'},{Type:'Stop'},{Duration:2,Type:'empty'},{Type:'Milestone'},{},
+            {Duration:3},{},{Type:'Milestone'},{Duration:1,Type:'empty'},{Duration:0,Type:'Box'},{Duration:2,Type:'empty'},{Type:'Milestone'},{},
+            {Type:'Milestone'},{Type:'Milestone'},{Type:'Milestone'},{Duration:3,Type:'empty'},
+            {Type:'Milestone'},{Duration:1,Type:'empty'},{Type:'Milestone'},{Duration:2,Type:'empty'},{Type:'Box'},{},{Type:'Box'},{},
+            {Type:'Box'},{Duration:4,Type:'empty'},{Type:'Stop'}]"
+            GANTTOnRightDragGantt="MoveGanttRun"
+            />
+         <I id="17" GANTTGanttRunAdjustRight="Error"
+            START="5/2/2010"
+            RUN="[{Duration:9,Text:'Errors - overlaying boxes'},{Duration:1,Type:'empty'},{Duration:3,Text:'1.'},{Duration:-2,Type:'empty'},{Duration:3,Text:'2. Error'},
+            {Duration:2,Type:'empty'},{Duration:6,Text:'3.'},{Duration:-5,Type:'empty'},{Duration:3,Text:'4. Error'},{Duration:1,Type:'empty'},{Type:'milestone'},
+            {Duration:2,Type:'empty'},{Type:'milestone'},{Duration:3,Type:'empty'},{Duration:5,Text:'5.'},{Duration:-6,Type:'empty'},{Duration:3,Text:'6. Error'},
+            {Duration:2,Type:'empty'},{Duration:3,Text:'7. Error'}]"
+            />
+         <I id="18"
+            START="5/2/2010"
+            RUN="[{Duration:6,Text:'Boxes with class'},{},{Duration:2.5,Text:'Red',Class:'Red'},{},
+            {Duration:2.5,Text:'Blue',Class:'Blue'},{},{Duration:3,Text:'Green',Class:'Green'},
+            {Duration:3.5,Text:'Fuchsia',Class:'Fuchsia'},{},{Duration:3,Text:'Aqua',Class:'Aqua'},{},
+            {Duration:2.5,Text:'Lime',Class:'Lime'},{Duration:3.5,Text:'Maroon',Class:'Maroon'},{},
+            {Duration:3,Text:'Navy',Class:'Navy'},{},{Duration:3,Text:'Olive',Class:'Olive'}]"
+            />
+         <I id="19"
+            START="5/2/2010"
+            RUN="[{Duration:6,Text:'Boxes with class'},{},{Duration:4,Text:'Orange',Class:'Orange'},
+            {Duration:3,Text:'Purple',Class:'Purple'},{},{Duration:3,Text:'Silver',Class:'Silver'},{Duration:3,Text:'Teal',Class:'Teal'},
+            {Duration:5,Type:'nbsp',Text:'Yellow (Nbsp)',Class:'Yellow'},{Duration:3,Text:'Black',Class:'Black'},{},{Duration:3,Text:'Gray',Class:'Gray'},{},
+            {Duration:3,Text:'White',Class:'White'}]"
+            />
+         <I id="20"
+            START="5/2/2010"
+            RUN="[{Duration:9,Text:'Boxes with custom class'},{Duration:2,Type:'empty'},{Duration:5,Text:'Custom 1',Class:'Custom1'},{Duration:2,Type:'empty'},{Duration:5,Text:'Custom 2',Class:'Custom2'}]"
+            />
+         <I id="21"
+            START="5/2/2010"
+            RUN="[{Duration:8,Text:'Milestones with classes'},{Duration:2,Type:'empty'},{Type:'milestone',Class:'Red'},{Duration:1,Type:'empty'},
+            {Type:'milestone',Class:'Blue'},{Duration:1,Type:'empty'},{Type:'milestone',Class:'Green'},{Duration:2,Type:'empty'},{Type:'milestone',Class:'Fuchsia'},{},
+            {Type:'milestone',Class:'Aqua'},{Duration:1,Type:'empty'},{Type:'milestone',Class:'Lime'},{Duration:1,Type:'empty'},{Type:'milestone',Class:'Maroon'},
+            {Duration:1,Type:'empty'},{Type:'milestone',Class:'Orange'},{Duration:1,Type:'empty'},{Type:'milestone',Class:'Silver'},{Duration:1,Type:'empty'},
+            {Type:'milestone',Class:'Yellow'},{Duration:1,Type:'empty'},{Type:'milestone',Class:'Black'},{Duration:2,Type:'empty'},{Type:'milestone',Text:'Red.svg',Class:'RedHover.svg'},
+            {Duration:1,Type:'empty'},{Type:'milestone',Text:'Green.svg',Class:'GreenHover.svg'},{Duration:2,Type:'empty'},{Type:'milestone',Text:'Yellow.svg',Class:'Red.svg'}]"
+            />
+         <I id="23"
+            START="5/14/2010"
+            RUN="[{Duration:2,Text:'1'},{Duration:6,Type:'empty'},{Duration:3,Text:'2'},{Duration:2,Type:'empty'},{Duration:3,Text:'3'},
+            {Duration:-14,Type:'empty'},{Duration:4,Text:'4'},{Duration:-18,Type:'empty'},{Duration:11,Text:'Boxes defined in random order 5'}]"
+            GANTTGanttRunError="Sort"
+            />
+         <I id="24" GANTTGanttRunError="sort" GANTTGanttRunAdjust="error"
+            START="5/2/2010"
+            RUN="[{Duration:8,Text:'Independent boxes'},{},{Duration:2,Text:'1'},{},{Duration:1,Text:'2'},{Duration:1,Type:'empty'},
+            {Duration:3,Text:'3'},{Duration:-1,Type:'empty'},{Duration:4,Text:'4'},{Duration:2,Type:'empty'},{Duration:5,Text:'5'},{Duration:-2,Type:'empty'},{Duration:6,Text:'6'}]"
+            />
+         <I id="25" GANTTGanttRunError="sort" GANTTGanttRunErrorsShift="-2" GANTTGanttRunAdjust="error"
+            START="5/2/2010"
+            RUN="[{Duration:13,Text:'Overlaid boxes moved to different levels'},{Duration:-5,Type:'empty'},{Duration:2,Text:'1'},{Duration:1,Type:'empty'},
+            {Duration:1,Text:'2'},{Duration:1,Type:'empty'},{Duration:4,Text:'3'},{Duration:-3,Type:'empty'},{Duration:13,Text:'4'},{Duration:-10,Type:'empty'},{Duration:4,Text:'5'},
+            {Duration:-1,Type:'empty'},{Duration:6,Text:'6'},{Duration:-3,Type:'empty'},{Duration:3,Text:'7'},{},
+            {Duration:3,Text:'8'},{},{Duration:3,Text:'9'}]"
+            />
+         <I id="26" GANTTGanttRunError="sort" GANTTGanttRunErrors="0" GANTTGanttRunAdjust="error"
+            START="5/2/2010"
+            RUN="[{Duration:11,Text:'Different height and level boxes'},{Duration:-8,Type:'empty'},{Type:'Milestone',Top:20},{Duration:2,Type:'empty'},
+            {Type:'Milestone',Text:'Red.svg',Class:'Yellow.svg',Top:30},{Duration:2,Type:'empty'},
+            {Duration:5,Text:'Left&lt;br>&lt;div style=\'text-align:right;color:red;\'>Right&lt;/div>&lt;div style=\'text-align:center;color:blue;\'>Center&lt;/div>',Top:20,Height:47},{Duration:1,Type:'empty'},
+            {Duration:5,Text:'Top'},{Duration:-4,Type:'empty'},{Duration:5,Text:'Middle',Class:'Yellow',Top:22},{Duration:-8,Type:'empty'},
+            {Duration:6,Text:'Bottom',Top:50},{Duration:3,Type:'empty'},{Type:'Milestone',Text:'Red.svg',Class:'Yellow.svg',Top:0},{},
+            {Type:'Milestone',Text:'Green.svg',Class:'Yellow.svg',Top:20},{},{Type:'Milestone',Top:40},{},
+            {Type:'Milestone',Top:53},{Duration:2,Type:'empty'},{Duration:6,Text:'1'},{Duration:-5,Type:'empty'},
+            {Duration:5,Text:'2',Top:6},{Duration:-4,Type:'empty'},{Duration:4,Text:'3',Top:12},{Duration:-3,Type:'empty'},
+            {Duration:3,Text:'4',Top:18},{Duration:-2,Type:'empty'},{Duration:2,Text:'5',Top:24},{Duration:1,Type:'empty'},
+            {Duration:4,Text:'normal&lt;div style=\'background:red;color:white;text-align:center;\'>red&lt;/div>&lt;div style=\'background:url(Yellow.svg) no-repeat right center\'>left&lt;/div>bottom',Top:0,Height:65}]"
+            />
+         <I id="27" GANTTGanttRunLevels="21" GANTTGanttRunTop="1" GANTTGanttRunErrors="0" GANTTGanttRunMove="Move" GANTTGanttRunAdjust="error" Height="70" GANTTGanttRunHtml="*Index* *Text*"
+            START="5/2/2010"
+            RUN="[{Duration:6,Text:'The run boxes'},{Duration:-4,Type:'empty'},{Duration:6,Text:'can be created',Top:22},{Duration:-6,Type:'empty'},
+            {Duration:6,Text:'or moved',Top:43},{Duration:-4,Type:'empty'},{Duration:6,Text:'on these levels',Top:64}]"
+            />
+         <I id="28" Height="65"
+            START="5/2/2010"
+            RUN="[{Duration:6,Text:'Custom content'},{Duration:1,Type:'empty'},{Duration:7,Text:'1st text'},{Duration:5,Type:'empty'},
+            {Duration:5,Text:'2nd text'},{},{Duration:6,Text:'3rd text'}]"
+            />
+      </B>
+   </Body>
+   <Header id="id" SortIcons="2"/>
+</Grid>

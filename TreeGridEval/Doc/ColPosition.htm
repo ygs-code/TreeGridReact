@@ -1,0 +1,202 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Column positions</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Column position and moving</h1>
+<p>TreeGrid documentation</p>
+
+There are three column sections in grid - <b>Left</b> (<b>0</b>), <b>Mid</b> (<b>1</b>) and <b>Right</b> (<b>2</b>). In API methods are the sections identified by their indexes (0,1,2).<br />
+The <b>Left</b> (<b>0</b>) and <b>Right</b> (<b>2</b>) sections are fixed sections by default and always show all its content and no horizontal scrollbars. It is possible to have scrollable also the <b>Left</b> and <b>Right</b> section, see <a href="GridSize.htm#Widths">Section widths</a>.<br />
+The <b>Mid</b> (<b>1</b>) section is positioned between Left and Right section and its content can be scrolled horizontally.<br /><br />
+
+Column are placed into its section in input XML, in &lt;<b>LeftCols</b>> (<b>Left</b>), &lt;<b>Cols</b>> (<b>Mid</b>), &lt;<b>RightCols</b>> (<b>Right</b>).<br />
+Column position inside section is set by the position of &lt;C> tag inside its XML section &lt;LeftCols>, &lt;Cols>, &lt;RightCols>.<br />
+The column position is saved to <b>cookies</b>, so the mentioned position is used only first time. To not save the position to cookies set <tt>&lt;<b>Cfg ColsPosLap='1'</b>/></tt> or <tt>&lt;<b>ColsLap='1'</b>/></tt>.<br /><br />
+
+The columns can be moved by a user by mouse dragging, inside or among sections, controlled by <tt>&lt;C <a href="#CCanMove">CanMove</a>/></tt> attribute.<br />
+Or can be moved by API method <a href="#MoveCol">MoveCol</a>.<br />
+
+<!-- ColMoving  -->
+<a name="CfgColMoving"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ColMoving</h4> <s>[1]</s>
+</div>
+If columns can be moved by a user -  dragged by mouse. Use column <a href="#CCanMove">CanMove</a> attribute to specify if and how can be individual columns moved.<br />
+
+<!-- CanMove -->
+<a name="CCanMove"></a>
+<div class="XML">
+   <u>chg <b>6.3</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>CanMove</h4> <s>[2/1/0]</s>
+</div>
+If and how column can be moved by a user - dragged by mouse.<br /> 
+<b>0</b> - no<br />
+<b>1</b> - only inside its section (Left, Mid, Right)<br />
+<b>2</b> - inside and also between sections - user can freeze variable columns and vice versa.<br />
+For spanned columns see also <a href="Group.htm#CfgGroup">Group</a> attribute.<br />
+By default it is <b>0</b> for Panel, Index, Gantt and ConstWidth columns, <b>1</b> for columns added by AutoCols, and <b>2</b> for all other columns.<br />
+When column has <tt>CanMove='0'</tt>, <i>since 6.3</i> can be moved columns right to this column in left section, left to it in right section and both side in variable columns.<br />
+
+<!-- Block -->
+<a name="CBlock"></a>
+<div class="XML">
+   <u>renamed <b>9.2</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>Block</h4> <s>[0]</s>
+</div>
+Controls moving column, it is useful especially if there are some cells spanned to or from other columns.<br />
+If set to > 0, it is the block the column belongs to. Create blocks that contain the spanned cells. The blocks must be continuous.<br />
+The columns can be moved only inside its block and any other column cannot be moved into the block from outside.<br />
+The first (left) column in the block cannot be moved within the block and also must stay the first.<br />
+The whole block can be moved by dragging the first left column to another location.<br />
+It also preserves splitting block of columns to more pages when printing and for column paging.<br />
+<i>Since 9.2 it was renamed from <b>Group</b>.</i><br />
+
+<!-- ColsPosLap  -->
+<a name="CfgColsPosLap"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ColsPosLap</h4> <s></s>
+</div>
+Suppresses loading column positions from cookies and always use their positions in input XML.<br />
+
+<!-- ColsLap  -->
+<a name="CfgColsLap"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ColsLap</h4> <s></s>
+</div>
+Suppresses loading column positions, visibility and widths from cookies and always use the settings in input XML.<br />
+
+<!-- ShowDrag  -->
+<a name="CfgShowDrag"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ShowDrag</h4> <s>[1] <i>Saved to cookies, to not load it, set <tt>ShowDragLap='1'</i></tt></s>
+</div>
+If shows dragged object under mouse cursor. The dragged row(s) or moved column(s).<br />
+It can be changed by a user in configuration menu.<br />
+
+<!-- ScrollColOnDrag  -->
+<a name="CfgScrollColOnDrag"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ScrollColOnDrag</h4> <s>[100]</s>
+</div>
+The step (speed) when automatically scrolling column section horizontally while dragging column on the left or right edge.<br />
+
+<!-- AllCols  -->
+<a name="CfgAllCols"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>AllCols</h4> <s>[0]</s>
+</div>
+If set in input data XML, it says that the XML contains all columns definition and their position in &lt;Cols> tag will change their position in grid.<br />
+Useful to set to change already defined columns position in later XML.<br />
+It is cleared before every input XML and must be defined before all &lt;LeftCols>,&lt;Cols> and &lt;RightCols> definition.<br />
+
+<!-- Next  -->
+<a name="CNext"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>Next</h4> <s></s>
+</div>
+If set in input data XML, it moves or places the column before the Next column. The Next column must already exist.<br />
+If it is set to empty string, moves existing column to the end of the section where it is defined.<br />
+It is cleared after the column is placed or moved.<br />
+
+<!-- Action ColMove -->
+<a name="ActionsColMove"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ColMove</h4>
+   <s>Attached to <b>OnDragHeader</b>, can be attached only to <b>OnDrag...</b> event</s>
+</div>
+Starts moving column by mouse dragging.<br />
+The column can be moved inside Header or to DropCols cells.<br />
+It is affects by <a href="#CfgColMoving">ColMoving</a> and <a href="#CCanMove">CanMove</a> attributes.<br />
+
+<!-- Action ColMoveSelected -->
+<a name="ActionsColMoveSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ColMoveSelected</h4>
+   <s>Attached to <b>OnDragHeader</b>, can be attached only to <b>OnDrag...</b> event</s>
+</div>
+Starts moving selected columns by mouse dragging. Fails if actual column is not selected.<br />
+The columns can be moved only inside Header. Ignores <a href="CBlock">Block</a> attributes.<br />
+It is affects by <a href="#CfgColMoving">ColMoving</a> and <a href="#CCanMove">CanMove</a> attributes.<br />
+
+<!-- OnColMove -->
+<a name="OnColMove"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b>API event</b> <i>void</i>
+   <h4>OnColMove</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>col</b>, <i>string</i> <b>copy</b>)</s>
+</div>
+Called after column is moved to another position by a user (not by API).<br />
+<i>(new 12.0)</i> <b>copy</b> is new column name when the column is copied, not moved.<br />
+
+<!-- MoveCol -->
+<a name="MoveCol"></a>
+<div class="API">
+   <u><i>upd <b>6.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>MoveCol</h4>
+   <s>(<i>string</i> <b>col</b>, <i>string</i> <b>tocol</b>, <i>bool</i> <b>right</b>, <i>bool</i> <b>noshow</b> = 0) or (<i>string</i> <b>col</b>, <i>int</i> <b>sec</b>, <i>bool</i> <b>last</b>, <i>bool</i> <b>noshow</b> = 0)</s>
+</div>
+Moves column to new position. If <b>noshow</b> is set, does not display changes and needs to call <b>Render</b>.<br />
+a) Moves column <b>col</b> in front of column <b>tocol</b> (or after <b>tocol</b> if <b>right</b> is 1).<br />
+b) Moves column <b>col</b> to section <b>sec</b> (0 - left, 1 - mid, 2 - right), to beginning (or to the end if <b>last</b> is 1). Use when destination section is empty.<br />
+<i>Remember, moving column is slow process, much slower than moving row, all the column cells must be moved one by one.</i><br />
+<i>Remember, this function can re-render the whole grid in some cases (when it leads to hide or show the whole column section).</i><br />
+
+<!-- ChangeColsPositions -->
+<a name="ChangeColsPositions"></a>
+<div class="API">
+   <u>chg <b>7.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ChangeColsPositions</h4>
+   <s>(<i>string[ ]</i> <b>leftcols</b>, <i>string[ ]</i> <b>cols</b>, <i>string[ ]</i> <b>rightcols)</b></s>
+</div>
+Changes positions of all columns in grid and splits them to sections.<br />
+All three arguments are Arrays of column names sorted according to their positions in given section.<br />
+<i>Since <b>7.0</b> it can be called only in <b>OnLoaded</b> or <b>OnCfgLoaded</b> to change the column positions on grid start.</i><br />
+<i>All column names in grid must be given!</i><br />
+<i>It does <u>not</u> save changes to cookies.</i><br />
+<i>It does <u>not</u> update horizontally spanned cells!</i><br />
+
+<!-- MainSec -->
+<a name="CMainSec"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API TCol var.</b> <i>int</i>
+   <h4>MainSec</h4>
+   <s style="color:red;">read only</s>
+</div>
+Column section - 0 Left, 1 Mid, 2 Right<br />
+
+<!-- Sec -->
+<a name="CSec"></a>
+<div class="API">
+   <u>chg <b>7.0</b></u> <b>API TCol var.</b> <i>int</i>
+   <h4>Sec</h4>
+   <s style="color:red;">read only</s>
+</div>
+Column section/page - 0 Left, 1 Mid, 2 Right<br />
+<i>(New 7.0)</i> When set <b>ColPaging</b>, it is number of column page, 0 Left, 1 - (N-2) Mid, (N-1) Right, where N is the <tt>ColNames.length</tt><br />
+
+<!-- Pos -->
+<a name="CPos"></a>
+<div class="API">
+   <u></u> <b>API TCol var.</b> <i>int</i>
+   <h4>Pos</h4>
+   <s style="color:red;">read only</s>
+</div>
+Column position inside its section / page <a href="#CSec">Sec</a>, from 0. All columns including hidden.<br />
+
+</div>
+</body>	
+</html>

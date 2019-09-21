@@ -1,0 +1,57 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>2. Calculated rows</h1>
+   <h2>Fixed summary rows</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='02-Calculated_Rows.xml'>02-Calculated_Rows.xml</a></div>
+      <div class="Main" style='width:100%; height:252px;'>
+         <bdo Debug='check' Data_Url='02-Calculated_Rows.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li>Calculated row must have set attribute <h3>Calculated</h3>='1'. And for every its cell you can set its <h3>Formula</h3>.</li>
+      <li>In calculated rows there are used also the formulas defined in columns; set the cell <b>Formula</b> attribute to empty string to ignore the column Formula.</li>
+      <li>Calculated rows are usually fixed rows or rows with children, but in fact, calculated can be any row in grid.</li>
+      <li>In calculated rows you can use also <a href='../../Doc/CellFormula.htm#AggFunc'>aggregate functions</a> to iterate all variable rows or row's children.</li>
+      <li>Calculated row cells cannot be edited by a user by default. see <a href="07-Editable_Calculated_Cells.html">07-Editable_Calculated_Cells.html</a> tutorial for editable calculated cells.</li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialBasic\s*=\s*(\d+)/), TGIndex = 128;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridCalculation2", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialBasic="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

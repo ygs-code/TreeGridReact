@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>TreeGrid in HTML and NodeJS server</title>
+      <script src="../../../Grid/GridE.js"></script>
+      <script src="Index.js"></script>
+   </head>
+   <body>
+      <link rel="stylesheet" href="Index.css" />
+      <div class="ExampleName">TreeGrid in HTML and NodeJS server</div>
+      <div class="ExampleShort">Simple example in pure JavaScript without any installation; Creates TreeGrid statically by &lt;treeGrid> tag</div>
+      <div class="ExampleShort">Creates grid from and saves changes back to database on NodeJS server and SQLite3 database or static file</div>
+
+      <!-- Links to examples -->
+      <div class="ExampleNav ExampleDesc" id="SampleLinks">
+         <span class="Title">Examples:</span>
+         <span class="Link Active" onclick="TG.Reload('Static',this)">Static file</span> (no upload) <!-- Static file without upload link -->
+         <span class="Link" onclick="TG.Reload('Table',this)">Plain table</span> (SQL)  <!-- Plain table link -->
+         <span class="Link" onclick="TG.Reload('Tree',this)">Tree table</span> (SQL) <!-- Tree table link -->
+         <span class="Link" onclick="TG.Reload('GanttBasic',this)">Plain Gantt</span> (SQL) <!-- Plain Gantt link -->
+         <span class="Link" onclick="TG.Reload('GanttTree',this)">Gantt tree</span> (SQL) <!-- Gantt tree link -->
+         <span class="Link" onclick="TG.Reload('Run',this)">Run chart</span> (SQL) <!-- Run chart link -->
+         <span class="Link" onclick="TG.Reload('Sheet',this)">Sheet</span> (file upload) <!-- Sheet link -->
+      </div>
+
+      <!-- Example descriptions -->
+      <div class="ExampleDesc">
+         <i>Source files:</i> <a id='LayoutLink' href="Layouts/StaticDef.js" target="_blank"><h4 id="LayoutName">StaticDef.js</h4></a> (static JSON layout), 
+         <a id='DataLink' href="Layouts/StaticData.js" target="_blank"> <h4 id="DataName">Layouts/StaticData.js</h4></a><span id="DataDesc"> (static JSON data)</span>
+      </div>
+      <div class="ExampleDesc">
+         The <b>Static</b> file example loads data directly without server and cannot upload changes. 
+         The <b>SQL</b> examples use <h4>SQLite3</h4> <b>SQLite.db</b> file as source SQL database.
+         The <b>Sheet</b> example loads and saves the whole data on server as file.
+      </div>
+
+      <div class="ExampleBorder">
+
+         <!-- TreeGrid main tag, it will contain the grid -->
+         <div class="ExampleMain" style='width:"100%",height:"530px"'>
+            <treegrid Debug='check' id='SampleGrid'
+               Layout_Url="Layouts/StaticDef.js" 
+               Data_Url="Layouts/StaticData.js"
+               ExportPDF_Url="http://localhost:8000/getpdf" ExportPDF_Type="Cfg,Def,Cols,All"
+               ></treegrid>
+         </div>
+
+      </div>
+  </body>
+
+<!-- Google Analytics code run once for trial -->
+<script>
+   var TGTrial = document.cookie.match(/TGNode\s*=\s*(\d+)/), TGIndex = 128;
+   if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+      var n = "RunHtmlStatic", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGNode="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+      var u = document.cookie.match(/TGNodeUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGNodeUsed="+u+";path=/;expires="+d;
+      var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+            +(u==1||u==3||u==5||u==10?"UsedNode"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+      var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+      },100);
+</script>
+
+</html>

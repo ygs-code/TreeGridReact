@@ -1,0 +1,120 @@
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+      <title>TreeGrid SpreadSheet online by JavaScript component | TreeGrid</title>
+      <meta name="description" content="Add full featured and customizable spreadsheet to your web pages to let your user to view, create, edit and save their data in grid" />
+   </head>
+   <body class="Example" dir="rtl" id="ExampleBody">
+      <style>
+         /* Examples shared styles */
+         .Example h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+         .Example h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+         .Example h3,.Example h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+         .Example h3 { background:#EE9; border:1px solid #DD8; }
+         .Example h4 { background:#BDE; border:1px solid #ACD; }
+         .Example a { text-decoration:underline; }      
+         .Example li { padding-bottom:8px; }
+         .Example ul { margin:6px 0px 0px 20px; font:13px Arial; }
+         .Example .Desc { margin:0px 5px 10px 5px; padding:10px; border:1px solid #dfdfdf; }
+         .Example .Desc > ul { margin-left:0px; padding:0px 0px 0px 15px; clear:both; }
+         .Example .Desc b { color:#0585B9; }
+         .Example .Path { font:normal 12px Arial; color:#0585B9; }
+         .Example .Path b { color:#D73938; }
+         .Example .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+         .Example .Path i { color:black; font-style:normal; font-weight:bold; }
+         .Example .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+         .Example .Border { margin:0px 5px 15px 5px; }
+         .Example .Main { }
+      </style>
+      <script>
+
+// --- Custom actions to hide / show fixed rows ---
+Grids.ShowHeader = function(G,focused,test){ return ChangeRow(G,G.Header,1,test); }
+Grids.HideHeader = function(G,focused,test){ return ChangeRow(G,G.Header,0,test); }
+Grids.ShowPanelRow = function(G,focused,test){ return ChangeRow(G,G.Rows.Panel,1,test); }
+Grids.HidePanelRow = function(G,focused,test){ return ChangeRow(G,G.Rows.Panel,0,test); }
+Grids.ShowNames = function(G,focused,test){ return ChangeRow(G,G.Rows.ID,1,test); }
+Grids.HideNames = function(G,focused,test){ return ChangeRow(G,G.Rows.ID,0,test); }
+Grids.ShowToolbar = function(G,focused,test){ return ChangeRow(G,G.Toolbar,1,test); }
+Grids.HideToolbar = function(G,focused,test){ return ChangeRow(G,G.Toolbar,0,test); }
+function ChangeRow(G,row,show,test){
+if(!row.Visible==!show) return false;
+if(test) return true;
+if(show) G.ShowRow(row);
+else G.HideRow(row);
+return true;
+}
+
+// --- Custom actions to hide / show fixed columns ---
+Grids.ShowIndex = function(G,focused,test){ return ChangeCol(G,"Index",1,test); }
+Grids.HideIndex = function(G,focused,test){ return ChangeCol(G,"Index",0,test); }
+Grids.ShowPanel = function(G,focused,test){ return ChangeCol(G,"Panel",1,test); }
+Grids.HidePanel = function(G,focused,test){ return ChangeCol(G,"Panel",0,test); }
+Grids.ShowIds = function(G,focused,test){ return ChangeCol(G,"id",1,test); }
+Grids.HideIds = function(G,focused,test){ return ChangeCol(G,"id",0,test); }
+function ChangeCol(G,col,show,test){
+if(!G.Cols[col].Visible==!show) return false;
+if(test) return true;
+if(show) G.ShowCol(col);
+else G.HideCol(col);
+return true;
+}
+
+// Called when NoVScroll / NoHScroll is set automatically due small window size, disables the checkbox for manual change of NoVScroll / NoHScroll
+// First time it hides resource usage rows. Sets OnceLimit custom attribute to not run it again if a user shows the resource rows again
+Grids.OnLimitScroll = function(G,clr,noh,nov){ 
+G.SetAttribute(G.Rows.Toolbar,"Win","CanEdit",clr,1); 
+var tip = clr?"Disable grid scrollbars and use page scrollbars":"Used page scrollbars because browser window is too small to show this example with its own scrollbars";
+G.SetAttribute(G.Rows.Toolbar,"Win","Tip",tip,1); 
+G.SetAttribute(G.Rows.Toolbar,"WinLabelRight","Tip",tip,1); 
+G.SetAttribute(G.Rows.Toolbar1,"Win","Tip",tip,1); 
+G.SetAttribute(G.Rows.Toolbar1,"WinLabelRight","Tip",tip,1); 
+setTimeout( function(){ ChangeLayout(G,!clr); },10); // Calls it in timeout, because it changes grid layout and the handler is called during layout update
+}
+
+// Changes page and grid layout if changed scrolling window (win = true) / grid (win = false)
+function ChangeLayout(G,win){
+document.body.style.margin = win ? "" : "0px";
+GetElem('Border').style.margin = win?'0px':''; 
+if(win){ G.HideRow(G.Rows.ID); G.HideCol('id'); } 
+else { G.ShowRow(G.Rows.ID); G.ShowCol('id'); }
+}
+
+// Disables Window scroll on TreeGrid web, because the TreeGrid web is in LTR
+Grids.OnLoaded = function(G){
+if(document.body.id!="ExampleBody") { var r = G.GetRowById("Rtl"); r.WinVisible = 0; r.WinLabelRightVisible = 0; G.LimitScroll = 0; }
+}
+
+      </script>
+
+      <center class="Path" dir="ltr"><script>document.write(location.href.replace(/(.*)(\/Examples\/|\/ExamplesGantt\/)([^\/]+)\/([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+      <h1>SpreadSheet RTL</h1>
+      <h2>A demonstration of cell based spreadsheet program in RTL mode - texts from right to left</h2>
+      <div class="Desc">
+         The example demonstrates three features related to RTL. They are controlled by the three top right (left) checkboxes.<br />
+         <b>RTL mode</b> - texts from right to left. The browser page or its part is switched to RTL mode by dir='rtl' HTML attribute and TreeGrid shows in RTL.<br />
+         <b>Hirji dates</b> - all dates in grid are shown in Persian Hirji calendar instead of Gregorian. Also all month and day names are translated to Persian.<br />
+         <b>Arabic digits</b> - all digits in grid cells and dialogs are shown by Arabic digit characters instead of Latin<br />
+      </div>
+      <center id="Border" class="Border">
+         <div class="Main" style="width:100%;height:500px;">
+            <bdo Layout_Url="SheetRtlDef.xml" Data_Url="SheetRtlData.xml"
+               Upload_Tag="Debug" Upload_Type="Cells,EditAttrs,Index,NoEmpty"
+            ></bdo>
+         </div>
+      </center>
+   </div>
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGTrialGrid\s*=\s*(\d+)/), TGIndex = 2048;
+         if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunTrialHtmlSheetRtl", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGrid="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+   </body>
+</html>

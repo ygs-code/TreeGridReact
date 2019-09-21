@@ -1,0 +1,121 @@
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+   </head>
+   <body class="Example">
+      <style>
+         /* Examples shared styles */
+         .Example { border-bottom:1px solid transparent; }
+         .Example .Desc b { color:#800; }
+         .Example .Desc a { text-decoration:underline; }      
+         .Example .Desc li { padding-bottom:8px; }
+         .Example .Desc ul { margin-left:20px; margin-top:6px; margin-bottom:0px; font: 13px Arial; }
+         .Example .Desc > ul { margin-left:0px; padding-left:15px; }
+         .Example h1 { font:bold 30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+         .Example h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; }
+         .Example h3 { display:inline; font:bold 15px Arial; padding-left:6px; padding-right:6px; background:#F6F250; border:1px solid #888; color:black; margin:0px; font-style:normal; }
+         .Example h4 { display:inline; font:bold 15px Arial; padding-left:6px; padding-right:6px; background:#87DAE5; border:1px solid #888; color:black; margin:0px; font-style:normal; }
+         .Example h5 { display:inline; font:bold 20px Arial; padding-left:6px; padding-right:6px; background:#87DAE5; border:1px solid #888; color:black; margin:0px; font-style:normal; }
+         .Example .Path { font:normal 16px Arial; color:blue; }
+         .Example .Path b { color:#800; }
+         .Example .Path i { color:black; font-style:normal; font-weight:bold; }
+         .Example .Path u { text-decoration:none; color:#0B0; font-weight:bold; padding:0px 2px 0px 2px; }
+         .Example .Desc { margin:0px 5px 0px 5px; padding:5px; border:1px solid #AAA; }
+         .Example .Border { margin:0px 5px 15px 5px; clear:both; zoom:1; }
+         .Example .Main { background:#F8F8F8; }
+         .Example .Err { margin:50px auto 10px auto; padding:5px; line-height:30px; border:1px solid black; color:red; width:800px; text-align:center; display:none; }
+      </style>
+      <script>
+
+// --- Custom actions to hide / show fixed rows ---
+Grids.ShowHeader = function(G,focused,test){ return ChangeRow(G,G.Header,1,test); }
+Grids.HideHeader = function(G,focused,test){ return ChangeRow(G,G.Header,0,test); }
+Grids.ShowPanelRow = function(G,focused,test){ return ChangeRow(G,G.Rows.Panel,1,test); }
+Grids.HidePanelRow = function(G,focused,test){ return ChangeRow(G,G.Rows.Panel,0,test); }
+Grids.ShowNames = function(G,focused,test){ return ChangeRow(G,G.Rows.ID,1,test); }
+Grids.HideNames = function(G,focused,test){ return ChangeRow(G,G.Rows.ID,0,test); }
+Grids.ShowToolbar = function(G,focused,test){ return ChangeRow(G,G.Toolbar,1,test); }
+Grids.HideToolbar = function(G,focused,test){ return ChangeRow(G,G.Toolbar,0,test); }
+function ChangeRow(G,row,show,test){
+if(!row.Visible==!show) return false;
+if(test) return true;
+if(show) G.ShowRow(row);
+else G.HideRow(row);
+return true;
+}
+
+// --- Custom actions to hide / show fixed columns ---
+Grids.ShowIndex = function(G,focused,test){ return ChangeCol(G,"Index",1,test); }
+Grids.HideIndex = function(G,focused,test){ return ChangeCol(G,"Index",0,test); }
+Grids.ShowPanel = function(G,focused,test){ return ChangeCol(G,"Panel",1,test); }
+Grids.HidePanel = function(G,focused,test){ return ChangeCol(G,"Panel",0,test); }
+Grids.ShowIds = function(G,focused,test){ return ChangeCol(G,"id",1,test); }
+Grids.HideIds = function(G,focused,test){ return ChangeCol(G,"id",0,test); }
+function ChangeCol(G,col,show,test){
+if(!G.Cols[col].Visible==!show) return false;
+if(test) return true;
+if(show) G.ShowCol(col);
+else G.HideCol(col);
+return true;
+}
+
+// Called when NoVScroll / NoHScroll is set automatically due small window size, disables the checkbox for manual change of NoVScroll / NoHScroll
+// First time it hides resource usage rows. Sets OnceLimit custom attribute to not run it again if a user shows the resource rows again
+Grids.OnLimitScroll = function(G,clr,noh,nov){ 
+G.SetAttribute(G.Rows.Toolbar,"Win","CanEdit",clr,1); 
+var tip = clr?"Disable grid scrollbars and use page scrollbars":"Used page scrollbars because browser window is too small to show this example with its own scrollbars";
+G.SetAttribute(G.Rows.Toolbar,"Win","Tip",tip,1); 
+G.SetAttribute(G.Rows.Toolbar,"WinLabelRight","Tip",tip,1); 
+G.SetAttribute(G.Rows.Toolbar1,"Win","Tip",tip,1); 
+G.SetAttribute(G.Rows.Toolbar1,"WinLabelRight","Tip",tip,1); 
+setTimeout( function(){ ChangeLayout(G,!clr); },10); // Calls it in timeout, because it changes grid layout and the handler is called during layout update
+}
+
+// Changes page and grid layout if changed scrolling window (win = true) / grid (win = false)
+function ChangeLayout(G,win){
+document.body.style.margin = win ? "" : "0px";
+GetElem('Border').style.margin = win?'0px':''; 
+GetElem('Desc').style.display = win?'none':''; 
+if(win){ G.HideRow(G.Rows.ID); G.HideCol('id'); } 
+else { G.ShowRow(G.Rows.ID); G.ShowCol('id'); }
+}
+      </script>
+      <center class="Path"><script>document.write(location.href.replace(/(.*)(\/ExamplesPDF\/)([^\/]+)\/([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+      <h1>SpreadSheet - PDF export</h1>
+      
+      <div class="Err">
+         <script> if(location.protocol=="file:") document.write("<style>.Example .Desc, .Example .Border {display:none;} .Example .Err { display:block; } </style>"); </script>
+         Do <b>not</b> run this file locally!<br />Run it from your local or remote web http server where is installed PHP.<br>
+      </div>
+      <center class="Border">
+         <div class="Main" style="width:100%;height:500px;">
+            <bdo Debug="check" 
+               Layout_Url="SheetDef.xml" 
+               Data_Url="SheetData.xml"
+               Export_Url="../Export.php"
+               ExportPDF_Url="../ExportPdf.php" ExportPDF_Type="Selected,Settings,Cells,Resized,EditAttrs,NoEmpty,Index" ExportPDF_Param_Source="Sheet/SheetExportPDF.html"
+               Upload_Tag="Debug" Upload_Type="Cells,Resized,EditAttrs,NoEmpty,Index"
+               ></bdo>
+         </div>
+      </center>
+      <div class="Desc">
+         <button onclick='Grids[0].ActionExportPDF();'>Print to PDF</button>
+         <button onclick='Grids[0].ActionPrint();'>Print to printer</button>
+         <button onclick='Grids[0].ExportFormat="xlsx"; Grids[0].ActionExport()'>Export to XLSX</button>
+         <button onclick='Grids[0].ExportFormat="xls"; Grids[0].ActionExport()'>Export to old XLS (XHTML)</button>
+         <button onclick='Grids[0].ExportFormat="csv"; Grids[0].ActionExport()'>Export to CSV</button>
+      </div>
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGPDFPHP\s*=\s*(\d+)/), TGIndex = 32768;
+         if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunPdfPHPSheet", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGPDFPHP="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGPDFUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGPDFUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedPdf"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+   </body>
+</html>

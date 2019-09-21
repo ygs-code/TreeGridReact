@@ -1,0 +1,108 @@
+<Grid>
+   <Cfg SuppressCfg="1" ConstWidth="0" Size="Low"/>
+   <Cfg ShowVScroll="1"/>
+   <Cfg LeftCanResize="4" RightCanResize="4" LeftWidth="180" MidWidth="300" RightWidth="2000" SectionShrinkOrder="right,mid,left"/>
+   <Cfg Sync="Sec,Zoom,Horz,Style"/>
+   <Header Height="52" SortIcons="2" PREV="&lt;&#x0a;&lt;&#x0a;&lt;" NEXT=">&#x0a;>&#x0a;>" PREVClass="Prev" NEXTClass="Next"/>
+
+   <RightCols>
+      <C Name="PREV" Width="15" ConstWidth="1" RelWidth="0" OnClick="Grid.ExtendGantt(-1)" Class="Prev"/>
+      <C Name="GANTT" GanttSizeFit="0" GanttZoomFit="13" GanttZoom="weeks and days" GanttZoomDate="1/1/2010" GanttZoomDateAlign="Left" MaxWidth="20000"/>
+      <C Name="NEXT" ConstWidth="1" MinWidth="15" RelWidthType="15" OnClick="Grid.ExtendGantt(1)" Class="Next"/>
+   </RightCols>
+
+   <!-- Gantt Zoom defines zoom levels definition -->
+   <!-- The individual levels predefine various Gantt zoom settings -->
+   <!-- GanttUnits and GanttWidth specify the zooming size, to GanttUnits are all the dates rounded for display and drag -->
+   <!-- GanttChartRound specifies rounding of first and last date in the chart -->
+   <!-- Some zoom levels changes GanttBackground to mark different units -->
+   <!-- GanttHeader1 specifies the dates shown in the first line in Gantt header -->
+   <!-- GanttHeader2 and possibly also 3,4,5 specify next lines in Gantt header -->
+   <!-- The ...Ex values are chosen when Exclude is hidden, they are appropriate only for excluded weekends -->
+
+   <Zoom>
+
+      <!-- Big levels - without GanttSize and right side pager -->
+      <Z Name="years and halves"       GanttUnits="M6" GanttChartRound="y" GanttWidth="22" GanttWidthEx="30.8" GanttPrintRound="y" GanttBackground=";y#1/1/2008"
+                                       GanttHeader1="y#yyyy" GanttHeaderStyle1="4" GanttHeader3="M6#MMMMMM"/>
+      <Z Name="years and quarters"     GanttUnits="M3" GanttChartRound="y" GanttWidth="30" GanttWidthEx="42" GanttPrintRound="y" GanttBackground=";y#1/1/2008"
+                                       GanttHeader1="y#yyyy" GanttHeader3="M3#MMMMM"/>
+      <Z Name="halves and months"      GanttUnits="M" GanttChartRound="y" GanttWidth="25" GanttWidthEx="35" GanttPrintRound="M6" GanttBackground=";M6#1/1/2008"
+                                       GanttHeader1="M6#MMMMMM. yyyy" GanttHeader3="M#MM"/>
+      <Z Name="quarters and months"    GanttUnits="M" GanttChartRound="M6" GanttWidth="35" GanttWidthEx="49" GanttPrintRound="M3" GanttBackground=";M3#1/1/2008"
+                                       GanttHeader1="M3#MMMMM. yyyy" GanttHeader2="M#MMM"/>
+      <Z Name="months and weeks"       GanttUnits="d" GanttChartRound="M" GanttWidth="4" GanttWidthEx="5.6"  GanttPrintRound="M" GanttBackground=";M#1/1/2008"
+                                       GanttHeader1="M#MMM yyyy" GanttHeader2="w#ddddddd" GanttHeader3="w#d."/>
+      <Z Name="months and days"        GanttUnits="d" GanttChartRound="M" GanttWidth="12" GanttWidthEx="16.8" GanttPrintRound="M"
+                                       GanttHeader1="M#MMMM yyyy" GanttHeader5="d#DDDDDD'&lt;br/>'DDDDDDD"/>
+      <Z Name="weeks and days"         GanttUnits="d" GanttChartRound="w" GanttWidth="25" GanttWidthEx="35" GanttPrintRound="w"
+                                       GanttHeader1="w#'&lt;i>/'ddddddd'/&lt;/i>' MMMM yyyy" GanttHeader2="d#%d" GanttHeader3="d#ddddd"/>
+      <Z Name="days and quarters"      GanttUnits="h" GanttChartRound="w" GanttWidth="5" GanttPrintRound="d"
+                                       GanttHeader1="d#dd MMM yyyy" GanttHeader2="d#dddd" GanttHeader3="h6#HH" GanttHeaderRound3="1"/>
+      <Z Name="days and hours"         GanttUnits="h" GanttChartRound="d" GanttWidth="12" GanttPrintRound="d"
+                                       GanttHeader1="d#dddd dddddd MMMM yyyy" GanttHeader5="h#HHHH'&lt;br/>'HHHHH"/>
+
+      <!-- Small levels - with GanttSize set and right side pager -->
+      <Z Name="halves and hours"       GanttUnits="h" GanttChartRound="d" GanttWidth="24" GanttPrintRound="h12" GanttBackground="w#1/6/2008#5"
+                                       GanttHeader1="h12#ddd dddddd MMMM yyyy &lt;b>tt&lt;/b>" GanttHeader1Ex="d#dddd dddddd MMMM yyyy" GanttHeader3="h#HH"
+                                       GanttSize="w" GanttSizeLeft="24" GanttSizeRight="24"/>
+      <Z Name="hours and quarters"     GanttUnits="h" GanttChartRound="d" GanttWidth="90" GanttPrintRound="h3" GanttBackground="w#1/5/2008~1/7/2008; h#00:00"
+                                       GanttHeader1="h3#dddd dddddd MMMM yyyy" GanttHeader2="h#HH 'hour'" GanttHeader3="m15#mm"
+                                       GanttSize="d" GanttSizeLeft="3" GanttSizeRight="3"/>
+      <Z Name="hours and 5 minutes"    GanttUnits="m5" GanttChartRound="h" GanttWidth="25" GanttPrintRound="h" GanttBackground="w#1/5/2008~1/7/2008; h#00:00"
+                                       GanttHeader1="h#dddd dddddd MMMM yyyy" GanttHeader2="h#HH 'hour'" GanttHeader3="m5#mm"
+                                       GanttSize="d" GanttSizeLeft="12" GanttSizeRight="12"/>
+      <Z Name="hours and minutes"      GanttUnits="m" GanttChartRound="h" GanttWidth="10" GanttPrintRound="h" GanttBackground="m15#00:00; h#00:00"
+                                       GanttHeader1="h#dddd dddddd MMMM yyyy, '&lt;b>'HH 'hour&lt;/b>'" GanttHeader5="m#mmmm'&lt;br/>'mmmmm"
+                                       GanttSize="h6" GanttSizeLeft="60" GanttSizeRight="60"/>
+      <Z Name="halves and minutes"     GanttUnits="m" GanttChartRound="h" GanttWidth="15" GanttPrintRound="m30" GanttBackground="m15#00:00; h#00:00"
+                                       GanttHeader1="m30#dddd dddddd MMMM yyyy, '&lt;b>'HH:mm '&lt;/b>'" GanttHeader5="m#mmmm'&lt;br/>'mmmmm"
+                                       GanttSize="h3" GanttSizeLeft="30" GanttSizeRight="30"/>
+      <Z Name="quarters and minutes"   GanttUnits="m" GanttChartRound="h" GanttWidth="25" GanttPrintRound="m15" GanttBackground="m15#00:00; h#00:00"
+                                       GanttHeader1="m15#dddd dddddd MMMM yyyy, '&lt;b>'HH:mm '&lt;/b>'" GanttHeader3='m#mm'
+                                       GanttSize="h2" GanttSizeLeft="15" GanttSizeRight="15"/>
+      <Z Name="5 minutes and minutes"  GanttUnits="m" GanttChartRound="m15" GanttWidth="45" GanttPrintRound="m5" GanttBackground="m5#00:00; h#00:00"
+                                       GanttHeader1="m5#ddd d MMM yyyy, '&lt;b>'HH:mm'&lt;/b>'" GanttHeader3="m#mm"
+                                       GanttSize="h" GanttSizeLeft="5" GanttSizeRight="5"/>
+      <Z Name="minutes and 15 seconds" GanttUnits="s15" GanttChartRound="m15" GanttWidth="22" GanttPrintRound="m2" GanttBackground="m#00:00; h#00:00"
+                                       GanttHeader1="m2#ddd d MMM yyyy" GanttHeaderStyle1="2" GanttHeader2="m#HH:mm" GanttHeaderStyle2="1" GanttHeader3="s15#ss"
+                                       GanttSize="m30" GanttSizeLeft="8" GanttSizeRight="8"/>
+      <Z Name="minutes and 5 seconds"  GanttUnits="s5" GanttChartRound="m15" GanttWidth="22" GanttPrintRound="m" GanttBackground="m#00:00; h#00:00"
+                                       GanttHeader1="m#dddd dddddd MMMM yyyy" GanttHeaderStyle1="2" GanttHeader2="m#HH:mm" GanttHeaderStyle2="1" GanttHeader3="s5#ss"
+                                       GanttSize="m15" GanttSizeLeft="12" GanttSizeRight="12"/>
+      <Z Name="minutes and seconds"    GanttUnits="s" GanttChartRound="m5" GanttWidth="10" GanttPrintRound="m" GanttBackground="s15#00:00; m#00:00"
+                                       GanttHeader1="m#dddd dddddd MMMM yyyy, '&lt;b>'HH:mm '&lt;/b>minute'" GanttHeader5="s#ssss'&lt;br/>'sssss"
+                                       GanttSize="m5" GanttSizeLeft="60" GanttSizeRight="60"/>
+      <Z Name="halves and seconds"     GanttUnits="s" GanttChartRound="m5" GanttWidth="15" GanttPrintRound="s30" GanttBackground="s15#00:00; m#00:00"
+                                       GanttHeader1="s30#dddd dddddd MMMM yyyy, '&lt;b>'HH:mm '&lt;/b>half minute'" GanttHeader5="s#ssss'&lt;br/>'sssss"
+                                       GanttSize="m2" GanttSizeLeft="15" GanttSizeRight="15"/>
+      <Z Name="quarters and seconds"   GanttUnits="s" GanttChartRound="m" GanttWidth="22" GanttPrintRound="s15" GanttBackground="s15#00:00; m#00:00"
+                                       GanttHeader1="s15#ddd dddddd MMMM yyyy, '&lt;b>'HH:mm'&lt;/b> quarter minute'" GanttHeader3="s#ss"
+                                       GanttSize="m2" GanttSizeLeft="15" GanttSizeRight="15"/>
+      <Z Name="5 seconds and seconds"  GanttUnits="s" GanttChartRound="s15" GanttWidth="45" GanttBackground="s5#00:00; m#00:00"
+                                       GanttHeader1="s5#ddd d MMM yyyy, '&lt;b>'HH:mm'&lt;/b> ...'" GanttHeader3="s#ss"
+                                       GanttSize="m" GanttSizeLeft="5" GanttSizeRight="5"/>
+      <Z Name="seconds and 100 ms"     GanttUnits="ms100" GanttChartRound="s2" GanttWidth="11" GanttPrintRound="s2" GanttBackground="s#00:00; m#00:00"
+                                       GanttHeader1="s2#dddd dddddd MMMM yyyy" GanttHeaderStyle1="2" GanttHeader2="s#HH:mm:ss" GanttHeaderStyle2="1" GanttHeader3="ms100#%f"
+                                       GanttSize="s15" GanttSizeLeft="20" GanttSizeRight="20"/>
+      <Z Name="seconds and 100 ms 2"   GanttUnits="ms100" GanttChartRound="s" GanttWidth="75" GanttPrintRound="s" GanttBackground="s#00:00; m#00:00"
+                                       GanttHeader1="s#dddd dddddd MMMM yyyy" GanttHeader3="ms100#HH:mm:ss.'&lt;b>'f'&lt;/b>'"
+                                       GanttSize="s5" GanttSizeLeft="10" GanttSizeRight="10"/>
+      <Z Name="100 ms and 10 ms"       GanttUnits="ms10" GanttChartRound="ms100" GanttWidth="12" GanttPrintRound="ms100" GanttBackground="ms100#00:00; s#00:00"
+                                       GanttHeader1="ms100#ddd d MMM yyyy" GanttHeaderStyle1="2" GanttHeader2="ms100#HH:mm:ss.'&lt;b>'f'&lt;/b>'" GanttHeaderStyle2="1" GanttHeader3="ms10#ffff"
+                                       GanttSize="s" GanttSizeLeft="10" GanttSizeRight="10"/>
+      <Z Name="100 ms and 10 ms 2"     GanttUnits="ms10" GanttChartRound="ms100" GanttWidth="80" GanttPrintRound="ms100" GanttBackground="ms100#00:00; s#00:00"
+                                       GanttHeader1="ms100#dddd dddddd MMMM yyyy"  GanttHeader3="ms10#HH:mm:ss.'&lt;b>'ff'&lt;/b>'"
+                                       GanttSize="s" GanttSizeLeft="10" GanttSizeRight="10"/>
+      <Z Name="10 ms and ms"           GanttUnits="ms" GanttChartRound="ms10" GanttWidth="14" GanttPrintRound="ms10" GanttBackground="ms10#00:00; ms100#00:00"
+                                       GanttHeader1="ms10#ddd d MMM yyyy" GanttHeaderStyle1="2" GanttHeader2="ms10#HH:mm:ss.'&lt;b>'ff'&lt;/b>'" GanttHeaderStyle2="1" GanttHeader3="ms#fffff"
+                                       GanttSize="ms100" GanttSizeLeft="10" GanttSizeRight="10"/>
+      <Z Name="10 ms and ms 2"         GanttUnits="ms" GanttChartRound="ms10" GanttWidth="100" GanttPrintRound="ms10" GanttBackground="ms10#00:00; ms100#00:00"
+                                       GanttHeader1="ms10#dddd dddddd MMMM yyyy" GanttHeader3="ms#HH:mm:ss.'&lt;b>'fff'&lt;/b>'"
+                                       GanttSize="ms100" GanttSizeLeft="10" GanttSizeRight="10"/>
+      <Z Name="10 ms and ms 3"         GanttUnits="ms" GanttChartRound="ms10" GanttWidth="220" GanttPrintRound="ms" GanttBackground="ms10#00:00; ms100#00:00"
+                                       GanttHeader1="ms#dddd dddddd MMMM yyyy" GanttHeaderStyle1="2" GanttHeader2="ms#HH:mm:ss.'&lt;b>'fff'&lt;/b>'" GanttHeaderStyle2="1"
+                                       GanttSize="ms10" GanttSizeLeft="1" GanttSizeRight="1"/>
+   </Zoom>
+
+</Grid>

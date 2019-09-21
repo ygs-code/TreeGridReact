@@ -1,0 +1,100 @@
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+   </head>
+   <body class="Example">
+      <style>
+         /* Examples shared styles */
+         .Example h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+         .Example h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+         .Example h3,.Example h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+         .Example h3 { background:#EE9; border:1px solid #DD8; }
+         .Example h4 { background:#BDE; border:1px solid #ACD; }
+         .Example a { text-decoration:underline; }      
+         .Example li { padding-bottom:8px; }
+         .Example ul { margin:6px 0px 0px 20px; font:13px Arial; }
+         .Example .Desc { margin:0px 5px 10px 5px; padding:10px; border:1px solid #dfdfdf; }
+         .Example .Desc > ul { margin-left:0px; padding:0px 0px 0px 15px; clear:both; }
+         .Example .Desc b { color:#0585B9; }
+         .Example .Path { font:normal 12px Arial; color:#0585B9; }
+         .Example .Path b { color:#D73938; }
+         .Example .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+         .Example .Path i { color:black; font-style:normal; font-weight:bold; }
+         .Example .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+         .Example .Border { margin:0px 5px 15px 5px; }
+         .Example .Main { }
+
+         .Example .Right { width:200px; overflow:hidden; float:right; margin-right:-205px; }
+         .Example .Right input { margin-bottom:2px; }
+      </style>
+      <script src="EAPI.js"> </script>
+      <script src="EAPISup.js"> </script>
+      <div>
+         <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Examples\/|\/ExamplesGantt\/)([^\/]+)\/([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+         <h1>Extended API example</h1>
+         <h2>Using TreeGrid JavaScript API - methods and events</h2>
+
+         <div style="padding-right:205px;">
+
+            <!-- Right panel with controls -->
+            <div id="RIGHT" class="Right">
+		
+               <!-- Change example combo -->
+               <div style='border:1px solid #eee;padding:3px;font-size:12px;'>
+                  Load data: <select style='font-size:10px;width:115px;' id='SData' onchange='LoadData();'>
+                  <option>First example</option> <option>Ajax</option> <option>Table</option> <option>Books</option> <option>Paging</option>
+                  <option>Main Gantt</option> <option>Big Gantt</option> <option>Simple Gantt</option> <option>Run chart</option>
+                  <option>Error to test</option>  
+               </select>
+               </div>
+			
+               <!-- Focus cell combos -->
+               <div style='border:1px solid #eee;padding:3px;'>
+                  <span onclick='Focus();' style='cursor:pointer;font-size:12px;'>Focus cell</span>:&nbsp;
+                  <select style='font-size:10px;' id='SIds' size=1 style='width:50px;' onchange='Focus();'></select>
+                  <select style='font-size:10px;' id="SCols" size=1 style='width:40px;' onchange='Focus();'></select>
+               </div>
+		
+               <!-- Find (color,filter,selece) cells buttons -->
+               <div style='border:1px solid #eee;padding:3px;'>
+                  <span style='font-size:12px;'>Cells with value: </span><input id='IColor' type=text style='width:80px;font-size:10px;' onkeydown='if(event.keyCode==13 || event.charCode==13) Color();' NAME="IColor"><br>
+                  <button style='width:80px;padding:0px;margin:0px;font-size:10px;' onclick='Color(0);'>Original</button>&nbsp; 
+                  <button style='width:80px;padding:0px;margin:0px;font-size:10px;' onclick='Color(1);'>Color cells</button>
+                  <button style='width:80px;padding:0px;margin:0px;font-size:10px;' onclick='Color(2);'>Filter rows</button>&nbsp;  
+                  <button style='width:80px;padding:0px;margin:0px;font-size:10px;' onclick='Color(3);'>Select rows</button>
+               </div>
+		
+               <!-- Inputs with values of focused row, genereated by FillIds() function -->
+               <div id='DRow' style='border:1px solid #eee;padding:5px;font-size:12px;margin-bottom:5px;'></div>
+		
+               <!-- End of right panel -->
+            </div>
+
+            <!-- Main Tag for the grid -->
+            <div class="Main" id="GRID"></div>
+
+         </div>
+
+         <!-- Log -->
+         <div style='border: 1px solid #ddd;font-size:12px; margin-top:10px;'>
+            Event log: &nbsp;&nbsp;&nbsp; <button style='font-size:12px;' onclick='DLog.innerHTML="";'>Clear</button>
+            <input type=checkbox id='IDisable'>Disable
+            <input type=checkbox id="IStyle">Show style events (very slow) 
+            <input type=checkbox id="IFunc">Show function (filter,...) events (slow) 
+            <div style='border-top:1px solid #eee;overflow:auto;width:100%;height:200px;' id='LOG'></div>
+         </div>
+      </div>
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGTrialGrid\s*=\s*(\d+)/), TGIndex = 16384;
+         if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunTrialHtmlEAPI", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGrid="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+   </body>
+</html>

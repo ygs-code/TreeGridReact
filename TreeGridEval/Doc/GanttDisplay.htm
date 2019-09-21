@@ -1,0 +1,440 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Gantt display objects</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Gantt display objects</h1>
+<p>TreeGrid documentation</p>
+
+<!-----------------------------------------------------------------------  Gantt column Header ------------------------------------------------->
+<a name="Header"></a>
+<h2>Gantt column Header</h2>
+<p class="H2">One or more lines in header displaying dates</p>
+
+In header you can show one or more lines with dates that are displayed in the chart.<br />
+You can specify how the dates will be repeated and the format for the dates.<br />
+Up to <b>5</b> different header lines can be defined.<br />
+
+<!-- GanttHeader1 -->
+<a name="CGanttHeader1"></a>
+<div class="XML">
+   <u>chg <b>6.3</b> <i>upd <b>10.0</b></i></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttHeader1<i>, ...,</i> GanttHeaderX</h4> <s></s>
+</div>
+Header time/number and format in the first header line: "repeater<strong>#</strong>format<strong>#</strong>shift".<br />
+The possible values of <b>repeater</b> are the same as <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a>, e.g. "w", "d", "h" or "1", "0.5", "2", ...<br />
+The <b>format</b> is standard <a href="TypeDate.htm#CFormat">TreeGrid date / time format</a> string for date repeaters, or standard <a href="TypeNumber.htm#CFormat">TreeGrid number format</a> string for number repeaters.<br />
+The <b>shift</b> <i>(new 6.4)</i> is optional and moves the header by the <b>shift repeater</b> units left, it can be floating point number. It is usually 0.5 to center the label above the position.<br />
+<i>The number repeaters and formats are supported since 6.4.</i><br />
+<i>Since 7.0</i> when <b>shift</b> is not set and <b>repeater</b> is number, the negative numbers are shifted for one unit, so zero is printed twice. Set <b>shift</b> to 0 if you don't want this behavior.<br />
+For custom headers (e.g. fiscal year, more years, etc.) use <a href="GanttZoom.htm#AddGanttUnits">AddGanttUnits</a> and <A href="#OnGetGanttHeader">OnGetGanttHeader</a> API methods.<br />
+<i>Since 10.0</i> the count of Gantt headers in unlimited and is set by <a href="#CGanttHeaderCount">GanttHeaderCount</a>.<br />
+In the default CSS styles the individual headers have this meaning:<br />
+<b>1</b> - main header line, with the important information, can have bigger font.<br />
+<b>2</b> - second header line, it often has inverse colors.<br />
+<b>3</b> - third header line, it can have also inverse colors and / or complementary borders to the second header <b>2</b>.<br />
+<b>4</b> - standard header with no special meaning and effects.<br />
+<b>5</b> - small header, usually with smaller font.<br />
+<b>6</b> - single header, if the Gantt header has only one line.</br>
+
+
+<!-- GanttHeaderCount -->
+<a name="CGanttHeaderCount"></a>
+<div class="XML">
+   <u>new <b>10.0</b> <i>upd <b>13.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttHeaderCount</h4> <s>[6]</s>
+</div>
+Count of available headers in the Gantt chart. How many GanttHeader...X attributes can be defined.<br />
+By default there are 6 headers (<i>prior to 13.0 it was 5</i>), GanttHeader1, GanttHeader2, GanttHeader3, GanttHeader4, GanttHeader5, GanttHeader6.<br />
+<i>Note the difference to GanttCount, the main bars are indexed from 0, but headers from 1.</i><br />
+
+<!-- GanttFormat1 -->
+<a name="CGanttFormat1"></a>
+<div class="DEL">
+   <u>deleted <b>6.3</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttFormat1</h4> <s></s>
+</div>
+Moved to GanttHeader.<br />
+Date / time format to format items in the first header line, the same as standard <a href="TypeDate.htm#CFormat">TreeGrid date / time format</a>.<br />
+
+<!-- GanttHeaderRound1 -->
+<a name="CGanttHeaderRound1"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttHeaderRound1<i>, ...,</i> GanttHeaderRoundX</h4> <s></s>
+</div>
+If rounds header date to workdays / work hours, defined by <a href="GanttCalendars.htm#CGanttExclude">GanttExclude</a>. Only for <tt><a href="GanttCalendars.htm#CGanttHideExclude">GanttHideExclude</a>=1</tt>.<br />
+
+<!-- GanttHeaderId1 -->
+<a name="CGanttHeaderId1"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttHeaderId1<i>, ...,</i> GanttHeaderIdX</h4> <s></s>
+</div>
+<b>id</b> of the header row where the header line will be displayed. If not set, the header line will be displayed in main header.<br />
+One header row can show more Gantt header lines.<br />
+
+<!-- GanttHeaderHeight1 -->
+<a name="CGanttHeaderHeight1"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttHeaderHeight1<i>, ...,</i> GanttHeaderHeightX</h4> <s></s>
+</div>
+Height in pixels of the header line. Useful when used some special formatting in header or displaying it in more lines.<br />
+
+<!-- GanttHeaderStyle1 -->
+<a name="CGanttHeaderStyle1"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttHeaderStyle1<i>, ...,</i> GanttHeaderStyleX</h4> <s></s>
+</div>
+By default the GanttHeaderX gets the X as its style, CSS class G..GanttHeaderX.<br />
+This attribute changes style to different header index, to have e.g. style of 4th header in the first header.<br />
+Standard predefined header styles are: <b>1</b> - big, <b>2</b> - medium inverse, <b>3</b> - medium with separator, <b>4</b> - medium, <b>5</b> - small.<br />
+It is possible to set it to any string XXX and define the G..HeaderXXX CSS class, in this case set also GanttHeaderHeightX.<br />
+
+<!-- GanttHeaderTrim -->
+<a name="CGanttHeaderTrim"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttHeaderTrim</h4> <s></s>
+</div>
+<b>0</b> - The incomplete header items are shown, <b>1</b> - the incomplete header items are replaced by '...'<br />
+The trimming '...' is set by <tt>&lt;Lang>&lt;Format Cont='...' ContLeft='... ' ContRight=' ...'/>&lt;/Lang></tt> attributes.<br />
+
+<!-- GanttHeaderMaxUnits -->
+<a name="CGanttHeaderMaxUnits"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttHeaderMaxUnits</h4> <s>[10000]</s>
+</div>
+Maximal count of cells in all Gantt headers together. If headers contain more cells, error is shown.<br /> 
+Setting this value too high can slow down the grid or even throw JS errors in some browsers, especially in IE.<br />
+
+<!-- OnGetGanttHeader -->
+<a name="OnGetGanttHeader"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetGanttHeader</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>val</b>, <i>int</i> <b>index</b>, <i>int</i> <b>date</b>, <i>int</i> <b>nextdate</b>, <i>string</i> <b>units</b>, <i>int</i> <b>width</b>, <i>int</i> <b>partial</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Called for every date in every Gantt header line to get the caption displayed.<br />
+Return the new value or <b>val</b> to not change the original caption. <b>index</b> is the header index (from 1).<br />
+<b>date</b> is the first date in the range. <b>nextdate</b> is the first date after the range, <b>units</b> is the range unit width like <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a>, <b>width</b> is width of the space for the caption in pixels.<br />
+<b>partial</b> is <b>0</b> for full range, <b>1</b> for range trimmed from left, <b>2</b> for range trimmed from right, <b>3</b> for range trimmed from both sides. The date and nextdate are the trimmed dates in these cases.<br />
+To highlight some header cell by background or another CSS attribute return the val in &lt;div>, e.g. return <tt>"&lt;div style='background:red;'>"+val+"&lt;/div>";</tt><br />
+
+<!-----------------------------------------------------------------------  Background  ------------------------------------------------->
+<a name="Background"></a>
+<h2>Background</h2>
+<p class="H2"><b>Marks workdays, weekends or any other dates - <i>for all rows the same</i></b></p>
+
+Defined by <a href="#CGanttBackground">GanttBackground</a> (date ranges with repeater).<br />
+You can color any dates or date range that are periodically repeated as workdays, weekends, working hours and so on and also exact not repeated dates.<br />
+The background is the same for whole chart and cannot be set for individual rows.<br />
+<strong>The background is just visual setting, to exclude some date from Gantt calculation, use <a href="GanttCalendars.htm#CGanttExclude">GanttExclude</a> instead.</strong>
+
+<!-- GanttBackground -->
+<a name="CGanttBackground"></a>
+<div class="XML">
+   <u>chg <b>6.3</b> <i>upd <b>10.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttBackground</h4> <s></s>
+</div>
+Date ranges displayed as background, useful for marking some period repeatedly.<br />
+Similar to GanttLines, but with two differences: the GattBackground can be repeated, but can be changed by API only by refreshing the whole Gantt background.<br />
+The order of the rendered background is GanttExclude, GanttBackground, GanttLines, GanttBase, GanttFinish. If overlaid, the latter is visible.<br />
+<br />
+
+The format is: <b>rep</b>1<strong>#</strong><b>date</b>1a<strong>~</strong><b>date</b>1b<strong>#</strong><b>class</b>1<strong>;</strong><b>rep</b>2<strong>#</strong><b>date</b>2a<strong>~</strong><b>date</b>2b<strong>#</strong><b>class</b>2<strong>;</strong>...<br />
+The repeater <b>rep</b> can be one of <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a>. If it is missing, the date is not repeated. The date is repeated also before it.<br />
+The seconds date in range can be missing to show single line.<br />
+<i>(Since 7.0)</i> The <b>class</b> is CSS class defined by GxGanttBackXXX, where Gx is the style prefix like "GW" for White and XXX is the <b>class</b> value.<br /> 
+<div class="L1">
+   If the <b>class</b> is missing, it set to the item position in the GanttBackground, from <b>1</b>.<br />
+   <i>(Since 10.0)</i> There are 11 predefined gray classes from <b>0</b> (white) to <b>10</b> (black)<br />
+   <i>(Since 10.0)</i> There are 17 predefined color classes, case <u>sensitive</u> - 
+      <b>Aqua</b>, <b>Black</b>, <b>Blue</b>, <b>Fuchsia</b>, <b>Gray</b>, <b>Green</b>, <b>Lime</b>, <b>Maroon</b>, <b>Navy</b>, 
+      <b>Olive</b>, <b>Orange</b>, <b>Purple</b>, <b>Red</b>, <b>Silver</b>, <b>Teal</b>, <b>White</b>, <b>Yellow</b><br />
+</div>
+<i>(Since 7.0)</i> It is possible to limit the repeating, when the <b>date</b> range is wider than the <b>rep</b>, the range is rounded to the <b>rep</b> range and repeated only between the <b>dates</b>.<br />
+<div class="L1">For example <tt>'w<strong>#</strong>1/5/2008~12/29/2008'</tt> marks all weekends, but only in year 2008.</div>
+<i>(Since 7.0)</i> It is possible to set the second date before the first one, it will be updated to correctly fill the repeat range.<br />
+<div class="L1">
+   For example <tt>'d<strong>#</strong>18:00<strong>~</strong>8:00'</tt> marks all times from 18:00 to 8:00.<br />
+   For example: <tt>GanttBackground = '<b>d</b><strong>#</strong>1/5/2008<strong>~</strong>1/7/2008<strong>;</strong> <b>M</b><strong>#</strong>1/1/2008'</tt> colors weekends and separates months by line
+</div>
+<i>Since 8.0</i> it can be set and displayed different for every row. <i>It can be much slower.</i><br />
+If the value is changed by API, call <a href="GanttAPI.htm#RefreshGantt">RefreshGantt</a> (<b>5</b>) to show the changes.<br />
+
+<!-- GanttAddBackground -->
+<a name="CGanttAddBackground"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttAddBackground</h4> <s>[0]</s>
+</div>
+If and how the column GanttBackground is added to the row GanttBackground, if both of them defined.<br />
+<b>0</b> - no, <b>1</b> - before, <b>2</b> - after<br />
+
+<!-- PrintGanttBackground -->
+<a name="CfgPrintGanttBackground"></a>
+<div class="XML">
+   <u>new <b>8.0</b> chg <b>13.2</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PrintGanttBackground</h4> <s>[1]</s>
+</div>
+If prints global Gantt background, shown for attributes GanttBackground, GanttExclude, GanttBase, GanttFinish.<br />
+<i>Since 13.0</i> if set to <b>2</b> or to <b>4</b>, it prints background in &lt;svg> to speed up the rendering.<i>It can cause problems for some PDF exporters.</i><br />
+<i>Since 13.2</i> if set to <b>1</b> or <b>2</b> it prints the global background once on the grid background, 
+if set to <b>3</b> or <b>4</b> it prints the global background in every row background - more compatible but remarkably slower.<br />
+<i>Since 13.2</i> the default value was set back to <b>1</b> because 2 has problems with PDF exporters.<br />
+
+<!-- GanttBackgroundMaxUnits -->
+<a name="CGanttBackgroundMaxUnits"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttBackgroundMaxUnits</h4> <s>[5000]</s>
+</div>
+Maximal count of items in Gantt background. If background contain more items, error is shown.<br /> 
+Setting this value too high can slow down the grid or even throw JS errors in some browsers, especially in IE.<br />
+
+<!-- GanttBackgroundRepeat -->
+<a name="CGanttBackgroundRepeat"></a>
+<div class="DEL">
+   <u>deleted <b>6.3</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttBackgroundRepeat</h4> <s></s>
+</div>
+Replaced by repeater in GanttBackground.<br />
+<a href="#CGanttBackground">GanttBackground</a> will be repeated by these units, can be empty to not repeat. Possible values are the same as <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a>.<br />
+If <a href="#CGanttBackground">GanttBackground</a> contains more date ranges, it should contain more units (one per range), comma separated.<br />
+
+<!-- GanttColor -->
+<a name="CGanttColor"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttColor</h4> <s></s>
+</div>
+Base background color of the Gantt cell, shown in place where no GanttBackground and GanttExclude piece is active.<br />
+<i><strong>If set to cell, it forces rendering all the column GanttBackground and GanttExclude to the cell, so it can remarkably slow down the grid if they contain many pieces.</strong></i> 
+
+<!-----------------------------------------------------------------------  Line  ------------------------------------------------->
+<a name="Line"></a>
+<h2>Line</h2>
+<p class="H2"><b>Background line, e.g. actual date</b> - <i>one or more vertical lines per chart, editable</i></p>
+
+<!-- GanttLines -->
+<a name="CGanttLines"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttLines</h4> <s></s>
+</div>
+Lines or date ranges displayed as background, not repeated.<br />
+Similar to GanttBackground, but with two differences: the GattLines cannot be repeated, but can be easily changed by API.<br />
+The order of the rendered background is GanttExclude, GanttBackground, GanttLines, GanttBase, GanttFinish. If overlaid, the latter is visible.<br />
+<br />
+
+The format is: <b>flags</b>1<strong>#</strong><b>date</b>1a<strong>~</strong><b>date</b>1b<strong>#</strong><b>class</b>1<strong>;</strong><b>flags</b>2<strong>#</strong><b>date</b>2a<strong>~</strong><b>date</b>2b<strong>#</strong><b>class</b>2<strong>;</strong>...<br />
+<b>flags</b> are editing flags, bit array:<br />
+<div class="L1">
+   <b>&1</b> - to let the line move by a user,<br />
+   <b>&2</b> - to permit moving line to excluded dates,<br />
+   <b>&4</b> - the line is moved left from excluded dates instead of right. Only if <u>not</u> set &2.<br />
+   <b>&8</b> - <b>date1a</b> is end date instead of start date, only if <b>date1b</b> is missing. The line is shown before the date.<br />
+</div> 
+The seconds <b>date</b> in range is usually missing to show single line.<br />
+<b>class</b> is the line CSS class part, the class is defined as GxGanttLineXXX, where Gx is style prefix, e.g. GW for White style and XXX is <b>class</b> value.<br />
+There are 17 basic color classes, case <u>sensitive</u> - <b>Aqua</b>, <b>Black</b>, <b>Blue</b>, <b>Fuchsia</b>, <b>Gray</b>, <b>Green</b>, <b>Lime</b>, <b>Maroon</b>, <b>Navy</b>, <b>Olive</b>, <b>Orange</b>, <b>Purple</b>, <b>Red</b>, <b>Silver</b>, <b>Teal</b>, <b>White</b>, <b>Yellow</b>, these lines are one pixel wide.<br />
+There are two next sets for 17 basic colors and two and three pixels wide, e.g. <b>Red2</b> is two pixels wide and <b>Red3</b> is three pixels wide.<br /> 
+There is one special class <b>Hidden</b> for not displayed lines - to mark some other line as changeable, e.g. the <a href="#ganttprogressline">ganttprogressline</a>.<br />
+For example <tt>"0#4/26/2014#Blue; 1#4/29/2014#Green3; 0#4/8/2014~4/9/2014#Silver"</tt><br />
+
+<!-- GanttLinesXTip -->
+<a name="CGanttLinesXTip"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttLinesXTip</h4> <s></s>
+</div>
+Tip string shown for individual lines on mouse hover. The X is line index from 0 in <a href="#CGanttLines">GanttLines</a>.<br />
+It can show also the specials: <b>*Start*</b> - start date of the line, <b>*End*</b> - end date of the line, if any.<br />
+To dynamically generate the tip text use <a href="GanttAPI.htm#OnGanttTip">OnGanttTip</a> API event.<br />
+
+<!-- GanttLinesTip -->
+<a name="CGanttLinesTip"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttLinesTip</h4> <s></s>
+</div>
+Tip string shown for all lines on mouse hover in not defined the <a href="#CGanttLinesXTip">GanttLinesXTip</a> for the individual line.<br /> 
+It can show also the specials: <b>*Start*</b> - start date of the line, <b>*End*</b> - end date of the line, if any.<br />
+To dynamically generate the tip text use <a href="GanttAPI.htm#OnGanttTip">OnGanttTip</a> API event.<br />
+
+<!-- GanttLineTipDateFormat -->
+<a name="CGanttLineTipDateFormat"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttLineTipDateFormat</h4> <s></s>
+</div>
+Date format for GanttLinesTip, GanttLinesXTip, GanttBaseTip, GanttBaseAutoTip, GanttFinishTip and GanttFinishAutoTip, values *Start*, *End*<br />
+
+<!-- GetGanttLine -->
+<a name="GetGanttLine"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>type[ ]</i>
+   <h4>GetGanttLine</h4> 
+   <s>(<i>int</i> <b>index</b>, <i>string</i> <b>col</b> = null)</s>
+</div>
+Returns one Gantt line.<br /> 
+<b>index</b> is the line position from 0 in <a href="#CGanttLines">GanttLines</a>. <b>col</b> is the Gantt column or null for the first one.<br />
+<b>index</b> can be also <b>-1</b> to get GanttBase line and <b>-2</b> to get GanttFinish line.<br />
+Returns array as [date1,date2,class,edit], the <b>date1</b> and <b>date2</b> are line dates as count of milliseconds since 1/1/1970.<br />
+Can be used only when the Gantt is rendered, otherwise manually parse the <a href="#CGanttLines">GanttLines</a>, accessible as <tt>grid.Cols[gantt_col].GanttLines</tt><br />
+
+<!-- SetGanttLine -->
+<a name="SetGanttLine"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>SetGanttLine</h4> 
+   <s>(<i>int</i> <b>index</b>, <i>string</i> <b>date1</b>, <i>string</i> <b>date2</b>, <i>string</i> <b>class</b>, <i>bool</i> <b>edit</b>, <i>bool</i> <b>update</b> = 1, <i>string</i> <b>col</b> = null)</s>
+</div>
+Changes one Gantt line.<br />
+<b>index</b> is the line position from 0 in <a href="#CGanttLines">GanttLines</a>. <b>col</b> is the Gantt column or null for the first one.<br />
+<b>date1</b>, <b>date2</b>, <b>class</b>, <b>edit</b> are items to change. If set to null, it is not changed.<br />
+If set <b>update</b>, updates also the line in fixed rows and rows with custom background or calendar.<br />
+Can be used only when the Gantt is rendered, otherwise set the <a href="#CGanttLines">GanttLines</a> directly as <tt>grid.Cols[gantt_col].GanttLines</tt>.<br />
+It is <u>not</u> possible to add new lines, only change existing ones. To add new lines, modify the <a href="#CGanttLines">GanttLines</a> directly and call <tt>grid.RefreshGantt(5);</tt><br /> 
+To hide some line, set the <b>date1</b> to empty string - the line is not deleted, it can be next shown by setting the date1 to some date.<br />
+It is possible to use the function to change <b>edit</b> (<u>only</u>) value of GanttBase (<b>index</b> = -1) and GanttFinish (<b>index</b> = -2).<br />
+Returns true for success.<br />
+
+<!-- OnGanttLineChange -->
+<a name="OnGanttLineChange"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnGanttLineChange</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>index</b>, <i>int</i> <b>date1</b>, <i>int</i> <b>date2</b>, <i>string</i> <b>class</b>, <i>bool</i> <b>edit</b>, <i>int</i> <b>odate1</b>, <i>int</i> <b>odate2</b>, <i>string</i> <b>oclass</b>, <i>bool</i> <b>oedit</b>)</s>
+</div>
+Called before change of any Gantt line. Called from <a href="#SetGanttLine">SetGanttLine</a> method.<br />
+<b>index</b> is line position from 0 in <a href="#CGanttLines">GanttLines</a>,<br /> 
+<b>date1</b> and <b>date2</b> are line new dates as count of milliseconds since 1/1/1970. <b>class</b> and <b>edit</b> are new line values.<br />
+<b>odate1</b>, <b>odate2</b>, <b>oclass</b> and <b>oedit</b> are actual values of the line.<br />
+It is called also for change of <a href="GanttCompute.htm#CGanttBase">GanttBase</a> with <tt><b>index = -1</b></tt> and for <a href="GanttCompute.htm#CGanttFinish">GanttFinish</a> with <tt><b>index = -2</b></tt>.<br />
+Return <b>true</b> to suppress the change.<br />
+
+<!-- OnGanttLineChanged -->
+<a name="OnGanttLineChanged"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnGanttLineChanged</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>index</b>, <i>int</i> <b>date1</b>, <i>int</i> <b>date2</b>, <i>string</i> <b>class</b>, <i>bool</i> <b>edit</b>, <i>int</i> <b>odate1</b>, <i>int</i> <b>odate2</b>, <i>string</i> <b>oclass</b>, <i>bool</i> <b>oedit</b>)</s>
+</div>
+Called after change of any Gantt line. Called from <a href="#SetGanttLine">SetGanttLine</a> method. See parameters in <a href="#OnGanttLineChange">OnGanttLineChange</a>.<br />
+
+<!-- Action MoveGanttLine -->
+<a name="ActionsMoveGanttLine"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>MoveGanttLine</h4>
+   <s>Attached to <b>OnDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+Moves Gantt line under mouse cursor by mouse dragging. Used for <a href="#CGanttLines">GanttLines</a>, <a href="GanttCompute.htm#CGanttBase">GanttBase</a> and <a href="GanttCompute.htm#CGanttFinish">GanttFinish</a> lines.<br />
+
+<!-----------------------------------------------------------------------  Mark  ------------------------------------------------->
+<a name="Mark"></a>
+<h2>Mark</h2>
+<p class="H2"><b>Mark line, e.g. actual date</b> - <i>one or more vertical lines per row, not editable</i></p>
+
+Defined by <a href="#CGanttMark">GanttMark</a> (date ranges).<br />
+It is a mark line showing some important date or deadline. It is often the same for whole column, but it need not be.<br />
+It is displayed above the other Gantt items, so the line should not be too thick.<br />
+It cannot be dynamically changed by a user, only by API.<br />
+
+<!-- GanttMark -->
+<a name="CGanttMark"></a>
+<div class="XML">
+   <u><i>upd <b>13.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttMark</h4> <s>Gantt source - column name or exact value</s>
+</div>
+Other times to mark in chart, useful for displaying actual date or vertically divide chart to bigger units or mark weekends and so on.<br />
+It can be column name or date range string "d1~d2;d3~d4;d5;..." (date string (M/d/yyyy hh:mm:ss) or count of milliseconds).<br />
+If set to column, the column must be <tt><b>Type='Text'</tt></b>.<br /> 
+These dates do <u>not</u> extend the displayed date range in chart. When the date is outside the actual displayed range in chart, it is not shown.<br />
+<i>Since 7.0</i> the dates can have postfix <b>#class</b> to display in css class GxGanttMarkXXX with the <b>class</b> index. It cannot be used for Mark set as column! For example <tt>GanttMark='1/1/2000#2;1/7/2000#5'</tt>.<br />
+<div class="L1">There are predefined color classes <b>1</b> - <b>5</b> with full height, <b>6</b> - <b>8</b> bottom bars, <b>9</b> - <b>11</b> top bars, <b>12</b> - <b>14</b> middle lines, <b>16</b> - <b>18</b> <i>(new 13.0)</i> higher middle bars to display text inside</div>
+<i>Since 9.1</i> there is shown image instead of class in case the css postfix is text (not number).<br />
+<div class="L1">
+   By default the image is read from CSS style directory as GanttLineXXX.png, where XXX is the value set in GanttMark. It can be changed by <a href="#CGanttMarkPath">GanttMarkPath</a>.<br />
+   There are four predefined images for lines 'A' as line <strong>&lt;</strong>, 'B' as line <strong>></strong>, 'C' as line <strong>/</strong> and 'D' as line <strong>\</strong><br />
+   The image is always resized or shrunk to fill the whole date range defined by the GanttMark. To display normal image in Gantt use <a href="GanttIcons.htm#CGanttFlags">GanttFlags</a> instead.<br />
+</div>
+
+<!-- GanttMarkTexts -->
+<a name="CGanttMarkTexts"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttMarkTexts</h4> <s>Gantt source - column name or exact value</s>
+</div>
+A list of inner html texts for the individual marks. The texts can extend the marked area.
+Separated by semicolon or by <a href="#CGanttTextsSeparator">GanttTextsSeparator</a>.<br /> 
+It can be column name or a list of strings.<br />
+
+<!-- GanttMarkRound -->
+<a name="CGanttMarkRound"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttMarkRound</h4> <s>['m']</s>
+</div>
+Mark rounding, to these units will be all dates in <a href="#CGanttMark">GanttMark</a> rounded, possible values are the same as <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a>.<br />
+To display just thin vertical lines, set it to 'm', for thicker lines higher the value according to actual <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a> used.<br />
+
+<!-- GanttMarkPath -->
+<a name="CGanttMarkPath"></a>
+<div class="XML">
+   <u>new <b>9.1</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttMarkPath</h4> <s></s>
+</div>
+Path to images for GanttMark when the third parameter in definition is string that represents image.<br />
+If the GanttMarkPath is not set, the images are read from actual TreeGrid CSS directory in format GanttLineXXX.png.<br />
+If the GanttMarkPath is set (even to empty string), the images are read from this path (relative to actual HTML page) as PathXXX.png<br />
+
+<!-- GanttMarkExt -->
+<a name="CGanttMarkExt"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttMarkExt</h4> <s>["svg" / "gif"]</s>
+</div>
+Extension for all GanttMark images (if the css class index is text). Can be set to empty string to not use extension at all. <br />
+Default value is "svg" except on IE8 and older where is "gif". <br />
+If not set (default) and the GanttMark value is progress line default image "A", "B", "C" or "D", it uses CSS class GanttMarkA/B/C/D instead of the &lt;img>.<br />
+
+<!-- GanttTextsSeparator -->
+<a name="CGanttTextsSeparator"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttTextsSeparator</h4> <s></s>
+</div>
+If set, it is used instead of Lang.Format.ValueSeparator to separate texts in GanttFlagTexts and GanttMarkTexts.
+
+<!-- Action ganttprogressline -->
+<a name="ganttprogressline"></a>
+<div class="ACT">
+   <u>new <b>9.1</b></u> <b>formula</b> <i>string</i>
+   <h4>ganttprogressline</h4>
+   <s>(<i>string</i> <b>date</b>, <i>string</i> <b>left</b> = 'A', <i>string</i> <b>right</b> = '0', <i>int</i> <b>none</b> = 15, <i>string</i> <b>start</b> = null, <i>string</i> <b>end</b> = null, <i>string</i> <b>duration</b> = null, <i>string</i> <b>complete</b> = null, <i>string</i> <b>ganttcol</b> = null)</s>
+</div>
+Calculates progress line as <a href="#CGanttMark">GanttMark</a> string for given cell. Use it in formula for GanttMark column to show the progress line as GanttMark.<br />
+<b>date</b> is base date of the progress line (as English date string or count of milliseconds since 1/1/1970).<br />
+<b>left</b> is name of the left side progress line image (for dates before base <b>date</b>), set it to <b>0</b> to never show left side progress line or to <b>1</b> for default image '<b>A</b>'.<br />
+<b>right</b> is name of the right side progress line image (for date after base <b>date</b>), set it to <b>0</b> to never show right side progress line or to <b>1</b> for default image '<b>B</b>'.<br />
+<b>none</b> is GanttMask CSS class used for straight progress line<br />
+For <tt><b>type = 0</b></tt> it shows the progress line only left side to <b>date</b>. For <tt><b>type = 1</b></tt> it show also right side progress line.<br />
+<b>start</b> is tasks start date (string or count of ms). If it is null, it is used value GanttStart.<br />
+<b>end</b> is tasks end date (string or count of ms). If it is null, it is used value GanttEnd. If GanttEnd is also not set, it uses <b>duration</b>.<br />
+<b>duration</b> is task duration in GanttDataUnits. If it is null, it is used value GanttDuration. Used only if <b>end</b> is not defined.<br />
+<b>complete</b> is percent completion (0 - 100). If it is null, it is used value GanttComplete. For 100% complete tasks is never shown left progress line, for 0% complete tasks is never shown right progress line.<br />
+It is possible to have more progress lines in chart by calling more these functions like <tt>Formula="ganttprogressline(parameters1)+';'+ganttprogressline(parameters2)+';'+ganttprogressline(parameters3)+..."</tt><br />
+
+</div>
+</body>
+</html>

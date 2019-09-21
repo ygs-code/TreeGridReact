@@ -1,0 +1,113 @@
+<Grid>
+   <Cfg id='MasterNestedNested' SuppressCfg='1' ExternalAlign='1' MainCol='NAME' ShowVScroll='1' ConstWidth='600' Undo='1' FullId='1' NumberId='1' IdChars='0123456789'/>
+   <Cfg ExportType='Hidden,Expanded,Outline,FixedRows'/> 
+   <Cfg CopyPasteTree='3' CopyCols='2'/> <!-- Copies & pastes rows with children and all columns, including hidden, because of data in detail grids -->
+   <Cols>
+      <C Name='id' Type='Text' Width='50' Format='||||\$|g|-' CanCopyPaste='0' CanExport='0'/>
+      <C Name='NAME' Type='Text' GroupWidth='1' Width='280'/>
+      <C Name='SURNAME' Type='Text' Width='160'/>
+      <C Name='AGE' Type='Int'/>
+      <C Name='MARRIED' Type='Bool'/>
+
+      <!-- Detail grid columns, defined here for Save and Copy & Paste -->
+      <C Name='ADDRESS' Type='Lines' Visible='0' CanHide='0'/>
+      <C Name='NOTE' Type='Lines' Visible='0' CanHide='0'/>
+      <C Name='REMARK' Type='Lines' Visible='0' CanHide='0'/>
+
+      <!-- Const width column, shown only if grid width is less than 600px to preserve grid minimal width to show nested grids -->
+      <C Name='EMPTY' Def='ConstWidth'/>
+   </Cols>
+   <Panel Copy='1'/>
+   <Def>
+      <!-- The default row for all master rows -->
+      <D Name='MAIN' CDef='DETAIL' Expanded='0'/>
+
+      <!--  The default row for all detail grid parents -->
+      <D Name='DETAIL' DetailCol='NAME' DetailLayout='08-Detail.xml' Spanned='1' NAMESpan='5' CanExport='2'
+         Expanded='0' CanExpand='0' CanFilter='0' CDef='DETAILROW' AcceptDef='DETAILROW' AGECopyValue='' MARRIEDCopyValue=''/>
+
+      <!-- The default row for rows in detail grid -->
+      <D Name='DETAILROW' CDef='DETAILDETAIL' AcceptDef='DETAILDETAIL' AGECopyValue='' MARRIEDCopyValue='' AGEExportValue='' MARRIEDExportValue=''/>
+
+      <!--  The default row for all detail detail grid parents -->
+      <D Name='DETAILDETAIL' DetailCol='ADDRESS' DetailLayout='08-DetailDetail.xml' Spanned='1' ADDRESSSpan='2' CanExport='2'
+         Expanded='0' CanExpand='0' CanFilter='0' CDef='DETAILDETAILROW' AcceptDef='DETAILDETAILROW' AGECopyValue='' MARRIEDCopyValue=''>
+         <I REMARK='new remark'/>
+      </D>
+
+      <!-- The default row for rows in detail grid -->
+      <D Name='DETAILDETAILROW' CDef='' AcceptDef='' AGECopyValue='' MARRIEDCopyValue='' AGEExportValue='' MARRIEDExportValue=''/>
+      
+      <!-- Default row for group rows -->
+      <D Name='Group' AggChildren='1' Expanded='1' CanFilter='2'/>
+   </Def>
+   <Root CDef='MAIN' AcceptDef='MAIN'/>
+   <Header id='ID' MenuName='Header' NAME='First name' EMPTY=' '/>
+   <Head>
+      <Filter
+         NAMECanEdit='0' NAMEShowMenu='0' NAMEButton='Defaults' NAMEDefaults='|*FilterOff|*RowsDefMAIN' NAMERange='1'
+         SURNAMECanEdit='0' SURNAMEShowMenu='0' SURNAMEButton='Defaults' SURNAMEDefaults='|*FilterOff|*RowsSibling' SURNAMERange='1'
+         />
+   </Head>
+   <Foot>
+      <I id='Sum' Calculated='1' CanEdit='0' MenuName='Summary'
+         NAME='Summary'
+         AGEFormula='min()+" - "+max()' AGEType='Text' AGEAlign='Right'
+         MARRIEDFormula='count("MARRIED","MARRIED")+" / "+count()' MARRIEDType='Text' MARRIEDAlign='center'
+         />
+   </Foot>
+   <Solid>
+      <Toolbar1 id='Group' Cells='GROUP'
+         GROUPType='Bool' GROUPLabelRight='Group rows by Surname' 
+         GROUPOnChange='Grid.DoGrouping(Value?"SURNAME":"")'        
+         />
+   </Solid>
+   <Toolbar Kind='Toolbar2'/>
+   <Body>
+      <B>
+         <I id='1' NAME='James' SURNAME='Jackson' AGE='24' MARRIED='0' Expanded='1'>
+            <I id='1'>
+               <I id='1' ADDRESS='3703 Tenth Ave, New York, NY 10034'>
+                  <I id='1'>
+                     <I id='1' REMARK='Remark 1'/>
+                     <I id='2' REMARK='Remark 2'/>
+                  </I>
+               </I>
+               <I id='2' ADDRESS='201 Varick Street 4th Floor New York, NY 10014'/>
+               <I id='3' ADDRESS='1419 Westwood Blvd, Los Angeles, CA 90024'>
+                  <I id='1'>
+                     <I id='1' REMARK='Remark 1'/>
+                  </I>
+               </I>
+            </I>
+         </I>
+         <I id='2' NAME='Daniel' SURNAME='Moore' AGE='38' MARRIED='1' Expanded='1'>
+            <I id='1'>
+               <I id='1' ADDRESS='11525 Del Amo Blvd., Cerritos, CA 90703'>
+                  <I id='1'>
+                     <I id='1' REMARK='Remark 1'/>
+                     <I id='2' REMARK='Remark 2'/>
+                     <I id='3' REMARK='Remark 3'/>
+                  </I>
+               </I>
+               <I id='2' ADDRESS='1419 Westwood Blvd, Los Angeles, CA 90024'/>
+            </I>
+         </I>
+         <I id='3' NAME='Lisa' SURNAME='Moore' AGE='12' MARRIED='0'>
+            <I id='1'>
+               <I id='1' ADDRESS='11525 Del Amo Blvd., Cerritos, CA 90703' NOTE='Daniel&apos;s daughter'/>
+            </I>
+         </I>
+         <I id='4' NAME='Nancy' SURNAME='Allen' AGE='65' MARRIED='1'>
+            <I id='1'>
+               <I id='1' ADDRESS='701 Howard Road SE, Washington, DC 20020'>
+                  <I id='1'>
+                     <I id='1' REMARK='Remark 1'/>
+                     <I id='2' REMARK='Remark 2'/>
+                  </I>
+               </I>
+            </I>
+         </I>
+      </B>
+   </Body>
+</Grid>

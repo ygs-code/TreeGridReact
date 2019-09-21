@@ -1,0 +1,479 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Copying and pasting</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Copy & paste via clipboard</h1>
+<p>TreeGrid documentation</p>
+
+TreeGrid supports copying cells, rows, columns and cell ranges into and from clipboard.<br />
+The data are in the same format as standard in spreadsheet programs like MS Excel, so it is possible to copy & paste cells between TreeGrid and MS Excel.<br /><br />
+
+<i><b style="font-size:120%;">The format of copied & pasted data</b></i><br />
+Rows are separated by CRLF. Last row is <u>not</u> followed by CRLF. In pasting it accepts also single CR and LF as row separators.<br />
+Cells are separated by tabulator. Last cell is <u>not</u> followed by tabulator.<br />
+If cell value contains one of characters CR (\r), LF (\n) (&amp;#x0a;), tabulator (\t) (&amp;#x09;) and double quote (") (&amp;#x022;), it encloses the value into double quotes and doubles all double quotes inside.<br />
+<br />
+To copy & paste the <b>Gantt dependencies</b> it must be set <a href="CopyPaste.htm#CfgCopyPasteInternal">CopyPasteInternal</a> 
+or <i>since 13.3</i> there must be defined and copied column named "<b>id</b>" that contains the row ids 
+or <i>since 13.3</i> there must be copied column <b>IdNames</b> and <b>IdNames</b> must contain only one column and <b>FullId</b> must be <b>0</b>.<br />
+
+<!-- CanCopyPaste -->
+<a name="CCanCopyPaste"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>CanCopyPaste</h4> <s>[1]</s>
+</div>
+If values can be copied from this column to clipboard by Ctrl+C and pasted to this column from clipboard by Ctrl+V.<br />
+If the column has <tt>CanCopyPaste = 0</tt>, it is ignored for both copying and pasting.<br />
+
+<!-- CanCopyPaste -->
+<a name="ICanCopyPaste"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;I></b> <i>int</i>
+   <h4>CanCopyPaste</h4> <s>[1]</s>
+</div>
+If values can be copied from this row to clipboard by Ctrl+C and pasted to this row from clipboard by Ctrl+V.<br />
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Row cannot be copied and pasted.</td></tr>
+<tr><td><b>1</b></td><td>Row can be copied and pasted.</td></tr>
+<tr><td><b>2</b></td><td>Row can be copied and pasted only with its parent (when set <a href="#CfgCopyPasteTree">CopyPasteTree</a>).</td></tr>
+<tr><td><b>3</b></td><td>Only for fixed row, the row is always copied when all rows are selected and copied or all variable rows are copied. By default it is set for main Header.</td></tr>
+</table>
+        
+<!-- CopyPasteTree -->
+<a name="CfgCopyPasteTree"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>13.3</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>CopyPasteTree</h4> <s>[0]</s>
+</div>
+If and how there will be copied children of the rows.<br />
+If set to another value than <b>0</b>, it adds level information to beginning of the first cell, as count of characters U65279.<br />
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Does not copy tree.</td></tr>
+<tr><td><b>1</b></td><td>Copies also visible children of expanded parents.</td></tr>
+<tr><td><b>2</b></td><td>Copies also visible children of all parents.</td></tr>
+<tr><td><b>3</b></td><td>Copies also all children.</td></tr>
+<tr><td><b>4</b></td><td><i>(new 13.3)</i> Does not copy any children, but preserves the tree structure, if copied selected parent with children.</td></tr>
+</table>        
+
+<!-- CopyPasteInternal -->
+<a name="CfgCopyPasteInternal"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>CopyPasteInternal</h4> <s>[0]</s>
+</div>
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Copies cell values to system clipboard and pastes from system clipboard.</td></tr>
+<tr><td><b>1</b></td><td>Copies cell values to TreeGrid global private cache, it will be available for all grids on page.</td></tr>
+<tr><td><b>2</b></td><td>Copies cell values to TreeGrid local private cache, it will be available only for this grid.</td></tr>
+</table>    
+
+<!-- CopyPasteRows -->
+<a name="CfgCopyPasteRows"></a>
+<div class="XML">
+   <u>new <b>6.3</b> <i>upd <b>14.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>CopyPasteRows</h4> <s>[0]</s>
+</div>
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Copies cell values, but no other row or cell attributes.</td></tr>
+<tr><td><b>1</b></td><td>Copies row ids only. It should be set with CopyPasteInternal>0 to copy the whole rows internally, with all attributes. Copies always all cells.</td></tr>
+<tr><td><b>2</b></td><td><i>(new 14.0)</i> Copies cell valuse and also row ids. If there are more grids on page, copies also grid id as the first cell. When pasting and the source row exists in the grid, makes a copy of this row.</td></tr>
+<tr><td><b>3</b></td><td><i>(new 14.0)</i> Like <b>2</b>, but never copies the grid id. When pasting, it looks for the row only in the destination grid.</td></tr>
+<tr><td><b>4</b></td><td><i>(new 14.0)</i> Like <b>3</b>, but never copies the row id. It stores the last copy and when pasting, it looks for the last copied row.</td></tr>
+</table>    
+
+<!-- CopyPasteHidden -->
+<a name="CfgCopyPasteHidden"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>CopyPasteHidden</h4> <s>[0]</s>
+</div>
+<table>
+<tr><td style="width:50px;">1.bit &amp;<b>1</b></td><td>Copies and pastes also hidden columns. Affects <a href="#CfgCopyCols">CopyCols</a> (0,3,4) and <a href="#CfgPasteCols">PasteCols</a> (0,3,4,5).</td></tr>
+<tr><td>2.bit &amp;<b>2</b></td><td>Copies and pastes also hidden rows. Affects <a href="#CfgCopyFocused">CopyFocused</a> (1) and <a href="#CfgPasteFocused">PasteFocused</a> (1-12)</td></tr>
+</table>    
+
+<!-- CopyPasteDeleted -->
+<a name="CfgCopyPasteDeleted"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>CopyPasteDeleted</h4> <s>[0]</s>
+</div>
+<table>
+<tr><td style="width:50px;">1.bit &amp;<b>1</b></td><td>Copies and pastes also deleted columns.</td></tr>
+<tr><td>2.bit &amp;<b>2</b></td><td>Copies and pastes also deleted rows. If permitted, the pasted new rows are <u>not</u> marked as deleted.</td></tr>
+</table>    
+
+<!-- EditAttrs -->
+<a name="CfgEditAttrs"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>EditAttrs</h4>
+   <s>[...]</s>
+</div>
+The copy & paste is affected by EditAttrs, for more information see <a href="CellEdit.htm#Mass">Mass cell changes</a>.<br />
+
+<!-----------------------------------------------------------------------  Copying to clipboard  ------------------------------------------------->
+<a name="Copy"></a>
+<h2>Copying to clipboard</h2>
+
+Copying to clipboard can be done only by pressing <b>Ctrl</b> + <b>C</b> or <b>Ctrl</b> + <b>X</b>.<br /> 
+There is <u>no</u> API method to copy to clipboard due browser security restriction.<br />
+
+<!-- CopySelected -->
+<a name="CfgCopySelected"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>CopySelected</h4> <s>[1]</s>
+</div>
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Never copy selected rows.</td></tr>
+<tr><td><b>1</b></td><td>Copy all selected rows/cells if any, otherwise copy focused row according to <a href="#CfgCopyFocused">CopyFocused</a>.</td></tr>
+</table>    
+
+<!-- CopyFocused -->
+<a name="CfgCopyFocused"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>CopyFocused</h4> <s>[1]</s>
+</div>
+It is applied only if <a href="#CfgCopyFocused">CopySelected</a> is 0 or if no row in grid is selected.<br />
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Never copy focused row.</td></tr>
+<tr><td><b>1</b></td><td>Copy only focused rows.</td></tr>
+<tr><td><b>20</b></td><td>Copy all visible variable rows in the same parent as focused row.</td></tr>
+<tr><td><b>30</b></td><td>Copy all visible variable rows (if set <a href="#CfgCopyPasteTree">CopyPasteTree</a>, it affect only root rows, the other are handled by <a href="#CfgCopyPasteTree">CopyPasteTree</a>), copies also rows with <tt><a href="#ICanCopyPaste">CanCopyPaste</a>=<b>3</b></tt>.</td></tr>
+<tr><td><b>31</b></td><td>Copy all variable rows (if set <a href="#CfgCopyPasteTree">CopyPasteTree</a>, it affect only root rows, the other are handled by <a href="#CfgCopyPasteTree">CopyPasteTree</a>), copies also rows with <tt><a href="#ICanCopyPaste">CanCopyPaste</a>=<b>3</b></tt>.</td></tr>
+</table>    
+
+<!-- CopyEdit -->
+<a name="CfgCopyEdit"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>CopyEdit</h4> <s>[1]</s>
+</div>
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Copies displayed text, usable for copying outside TreeGrid.</td></tr>
+<tr><td><b>1</b></td><td>Copies value in editable format, usable when copying inside grid.</td></tr>
+</table>
+
+<!-- CopyFormulas -->
+<a name="CfgCopyFormulas"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>CopyFormulas</h4> <s>[1]</s>
+</div>
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Copies only the cell value, never the <a href="CellEditFormula.htm#CellEFormula">EFormula</a>.</td></tr>
+<tr><td><b>1</b></td><td>If cell has the <a href="CellEditFormula.htm#CellEFormula">EFormula</a>, it is copied internally to be pasted to TreeGrid. To clipboard there is always copied the cell value.</td></tr>
+<tr><td><b>2</b></td><td>If cell has the <a href="CellEditFormula.htm#CellEFormula">EFormula</a>, it is copied internally and also to clipboard with '=' prefix. If pasted outside TreeGrid, the formula cell references are <b>not</b> updated!</td></tr>
+</table>
+
+<!-- CopyCols -->
+<a name="CfgCopyCols"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>11.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>CopyCols</h4> <s>[1]</s>
+</div>
+Which columns will be used for copy paste.<br />
+See also column attribute <a href="#CCanCopyPaste">CanCopyPaste</a>.<br />
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Only focused columns</td></tr>
+<tr><td><b>1</b></td><td>All visible columns</td></tr>
+<tr><td><b>2</b></td><td>All columns</td></tr>
+<tr><td><b>3</b></td><td><i>(new 11.0)</i> Only focused cell range or all visible columns for selected rows</td></tr>
+<tr><td><b>4</b></td><td><i>(new 11.0)</i> Only focused cell range or all columns for selected rows</td></tr>
+</table>
+
+<!-- ExcludeClear -->
+<a name="CfgExcludeClear"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ExcludeClear</h4> <s>[0]</s>
+</div>
+How the excluded cells will be cleared.<br />
+<b>0</b> - rows will be deleted.<br />
+<b>1</b> - cells will be cleared.<br />
+
+<!-- CopyValue -->
+<a name="CellCopyValue"></a>
+<div class="XML">
+   <u></u> <b>&lt;cell></b> <i>string</i>
+   <h4>CopyValue</h4> <s></s>
+</div>
+Cell value used for <b>copying</b> to clipboard by Ctr+C / Ctrl+X instead of actual cell value. Useful for HTML type columns.<br />
+
+<!-- CopyTime -->
+<a name="CfgCopyTime"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>CopyTime</h4> <s>[""]</s>
+</div>
+Copying too many values to clipboard can be too slow and in this case the copying can fail, especially in IE and FF.<br />
+If the copying time exceeds this value (in milliseconds), the copying action is canceled and the user must press the Ctrl+C again to finish the copying.<br />
+The CopyTime can contain up to four values used for different browsers in this order: [all, IE, FF, Safari/Chrome].<br />
+Reasonable value is <tt>"200,500,150,1000"</tt> or <tt>"150"</tt>.<br />
+
+<!-- OnGetCopyValue -->
+<a name="OnGetCopyValue"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>type</i>
+   <h4>OnGetCopyValue</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>val</b>)</s>
+</div>
+Called to get value for <b>copying</b> to clipboard by Ctrl+C.<br />
+<b>val</b> is predefined/actual cell value, return <b>val</b> or new value.<br />
+
+<!-- OnGetRowText -->
+<a name="OnGetRowText"></a>
+<div class="API">
+   <u>new <b>6.4</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetRowText</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string[ ]</i> <b>col</b>, <i>string</i> <b>txt</b>, <i>bool</i> <b>sel</b>)</s>
+</div>
+Called to get the whole row text, without ending CRLF.<br />
+<b>cols</b> are the cells to copy, <b>txt</b> is the default text to copy, <b>sel</b> is set if only selected cells are wanted.<br />
+Return new row text to copy to clipboard or <b>txt</b>.<br />
+The row text must <u>not</u> contain CRLF string.<br />
+
+<!-- Action Copy -->
+<a name="ActionsCopy"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>Copy</h4>
+   <s>Attached to event <b>OnCtrlC</b>, can be attached only to <b>OnCtrlC</b> or <b>OnCtrlX</b></s>
+</div>
+Copies data to clipboard.<br />
+<i>Action in the CtrlC and CtrlX events must return 0 to permit the default function, use zero after comma like "Copy,0".</i><br />
+
+<!-- Action Exclude -->
+<a name="ActionsExclude"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>Exclude</h4>
+   <s>Attached to event <b>OnCtrlX</b>, can be attached only to <b>OnCtrlC</b> or <b>OnCtrlX</b></s>
+</div>
+Copies data to clipboard and deletes the copied rows (only if all cells are copied).<br />
+<i>Action in the CtrlC and CtrlX events must return 0 to permit the default function, use zero after comma like "Exclude,0".</i><br />
+
+<!-- OnCopyStart -->
+<a name="OnCopyStart"></a>
+<div class="API">
+   <u>new <b></b>6.0</u> <b>API event</b> <i>bool</i>
+   <h4>OnCopyStart</h4>
+   <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+Called before the data for copy is generated. Return true to suppress copying.<br />
+
+<!-- OnCopy -->
+<a name="OnCopy"></a>
+<div class="API">
+   <u>new <b></b>6.0</u> <b>API event</b> <i>string</i>
+   <h4>OnCopy</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>txt</b>)</s>
+</div>
+Called after the data for copy is generated. <b>txt</b> is data to be copied to clipboard.<br />
+Return null to use the original txt, empty string to suppress copying or new text to copy.<br />
+
+<!-----------------------------------------------------------------------  Pasting from clipboard  ------------------------------------------------->
+<a name="Paste"></a>
+<h2>Pasting from clipboard</h2>
+
+Pasting from clipboard can be done only by pressing <b>Ctrl + V</b>.<br /> 
+There is <u>no</u> API method to paste from clipboard due browser security restriction.<br />
+
+<!-- Pasting -->
+<a name="CfgPasting"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Pasting</h4> <s>[1]</s>
+</div>
+If pasting into grid is permitted
+
+<!-- PasteSelected -->
+<a name="CfgPasteSelected"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>PasteSelected</h4> <s>[1]</s>
+</div>
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Never paste to selected rows.</td></tr>
+<tr><td><b>1</b></td><td>Paste to selected rows/cells if any, otherwise paste to focused row according to <a href="#CfgPasteFocused">PasteFocused</a>.</td></tr>
+<tr><td></td><td>If the pasted range is bigger, the remaining source rows/cells are discarded.</td></tr>
+</table>
+
+<!-- PasteFocused -->
+<a name="CfgPasteFocused"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>13.3</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PasteFocused</h4> <s>[8]</s>
+</div>
+It is applied only if <a href="#CfgPasteSelected">PasteSelected</a> is 0 or if no row in grid is selected.<br />
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Never paste to focused row.</td></tr>
+<tr><td><b>1</b></td><td>To focused rows only, if the pasted range contains more rows, they are discarded.</td></tr>
+<tr><td><b>2</b></td><td>To focused rows and to the next rows below, in the same parent only; if the pasted range contains more rows, they are discarded.</td></tr>
+<tr><td><b>3</b></td><td>To focused rows and to the next rows below, including expanded children and parents; if the pasted range contains more rows, they are discarded.</td></tr>
+<tr><td><b>4</b></td><td>To focused rows and new next rows are added after the focused rows.</td></tr>
+<tr><td><b>5</b></td><td>Inserts one new row in front of the focused rows; if the pasted range contains more rows, they are discarded. The focused row itself is <u>not</u> changed.</td></tr>
+<tr><td><b>6</b></td><td>Inserts new rows in front of the focused rows. The focused rows themselves are <u>not</u> changed.</td></tr>
+<tr><td><b>7</b></td><td>Inserts one new row in front of the focused rows; if the pasted range contains more rows, they are discarded. The focused row itself is <u>not</u> changed.</td></tr>
+<tr><td></td><td>If clipboard contains only one value, it pastes it to the actual focused cell.</td></tr>
+<tr><td><b>8</b></td><td>Inserts new rows in front of the focused rows. The focused rows themselves are <u>not</u> changed. </td></tr>
+<tr><td></td><td>If clipboard contains only one value, it pastes it to the actual focused cell.</td></tr>
+<tr><td><b>9</b></td><td><i>(new 11.0)</i> To focused rows and to the next rows below, in the same parent only; if the pasted range contains more rows, they are added to end of the parent.</td></tr>
+<tr><td><b>10</b></td><td><i>(new 11.0)</i> To focused rows and to the next rows below, including expanded children and parents; if the pasted range contains more rows, they are added to end of the grid.</td></tr>
+<tr><td><b>11</b></td><td>
+   <i>(new 12.0)</i> If focused more cells, only to the focused rows, otherwise to focused rows and to the next rows below, in the same parent only; if the pasted range contains more rows, they are added to end of the parent. (= <b>1</b> or <b>9</b>).<br />
+   <i>Since 13.3</i> if the focused range contains last row in grid and pasted range contains more rows, they are added to the grid end.<br />
+   </td></tr>
+<tr><td>
+   <b>12</b></td><td><i>(new 12.0)</i> If focused more cells, only to the focused rows, otherwise to focused rows and to the next rows below, including expanded children and parents; if the pasted range contains more rows, they are added to end of the grid. (= <b>1</b> or <b>10</b>).<br />
+   <i>Since 13.3</i> if the focused range contains last row in grid and pasted range contains more rows, they are added to the grid end.<br />
+   </td></tr>
+<tr><td><b>20</b></td><td>Paste to all visible variable rows in the same parent as focused row.</td></tr>
+<tr><td><b>21</b></td><td>Replace all siblings of focused row by the pasted rows.</td></tr>
+<tr><td><b>30</b></td><td>Paste to all visible variable rows (if set <a href="#CfgCopyPasteTree">CopyPasteTree</a>, it affect only root rows, the other are handled by <a href="#CfgCopyPasteTree">CopyPasteTree</a>), pastes also to rows with <tt><a href="#ICanCopyPaste">CanCopyPaste</a>=<b>3</b></tt>.</td></tr>
+<tr><td><b>31</b></td><td>Paste to all variable rows (if set <a href="#CfgCopyPasteTree">CopyPasteTree</a>, it affect only root rows, the other are handled by <a href="#CfgCopyPasteTree">CopyPasteTree</a>) , pastes also to rows with <tt><a href="#ICanCopyPaste">CanCopyPaste</a>=<b>3</b></tt>.</td></tr>
+<tr><td><b>32</b></td><td>Replace all variable rows with the pasted rows.</td></tr>
+</table>
+
+<!-- PasteCols -->
+<a name="CfgPasteCols"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PasteCols</h4> <s>[4]</s>
+</div>
+Which columns will be used for paste.<br />
+See also column attribute <a href="#CCanCopyPaste">CanCopyPaste</a>.<br />
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Paste only to focused columns.</td></tr>
+<tr><td><b>1</b></td><td>Paste to all visible columns.</td></tr>
+<tr><td><b>2</b></td><td>Paste to all columns.</td></tr>
+<tr><td><b>3</b></td><td>Paste to all columns right to the focused cell, including the focused one.</td></tr>
+<tr><td><b>4</b></td><td>Paste from actually focused column or, if the data are longer than the rest right to the cursor, pastes from the first column (= <b>2</b> or <b>1</b> or <b>3</b>)</td></tr>
+<tr><td><b>5</b></td><td><i>(new 12.0)</i> Paste to only focused columns (like <b>0</b>), if there are more focused cells. Otherwise like <b>4</b>.</td></tr>
+</table>
+
+<!-- PasteTree -->
+<a name="CfgPasteTree"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PasteTree</h4> <s>[2]</s>
+</div>
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Ignore the pasted children.</td></tr>
+<tr><td><b>1</b></td><td>Fill the children to the existing children only, use settings from <a href="#CfgCopyPasteTree">CopyPasteTree</a>.</td></tr>
+<tr><td><b>2</b></td><td>Replace the children, if required, delete remaining children or add new children, use settings from <a href="#CfgCopyPasteTree">CopyPasteTree</a>.</td></tr>
+</table>
+
+<!-- PasteErrors -->
+<a name="CfgPasteErrors"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PasteErrors</h4> <s>[1]</s>
+</div>
+If the <a href="CellEdit.htm#CfgEditErrors">EditErrors</a> messages will be displayed for pasting.<br />
+<b>0</b> - never, <b>1</b> - only if pasted to cell range and not to the whole rows, <b>2</b> - always.<br />
+
+<!-- PasteNaN -->
+<a name="CfgPasteNaN"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>PasteNaN</h4> <s>[0]</s>
+</div>
+If can be pasted value to cell that lead to NaN in cell, e.g. string to number cell.<br />
+<b>0</b> - no, the cell will have original value.<br />
+<b>1</b> - yes, the cell will get NaN value. <i>(default setting prior 14.0)</i><br />
+<b>2</b> - empty, the cell will get empty or zero value.<br />
+
+<!-- CanPaste -->
+<a name="CellCanPaste"></a>
+<div class="XML">
+   <u>new <b>6.0</b> chg <b>10.0</b></u> <b>&lt;cell></b> <i>int</i>
+   <h4>CanPaste</h4> <s>[1]</s>
+</div>
+If and how can be pasted values written to the cell.<br />
+If pasted value cannot be written to the cell, it is discarded (it is <u>not</u> written to the next cell).<br />
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>The cell cannot accept pasted value.</td></tr>
+<tr><td><b>1</b></td><td>The cell accepts pasted value only if it is editable. To the pasted value are applied EditMask, ResultMask and Size.</td></tr>
+<tr><td></td><td><i>Since 10.0</i> cannot be pasted <u>not</u> existing value to Enum type cell.</td></tr>
+<tr><td></td><td><i>It permits pasting any value to not editable cell with Defaults Button or to Select type cell and to cell with <tt>SuggestType='Existing'</tt>. Use ResultMask to restrict pasting some value here.</i></td></tr>
+<tr><td><b>2</b></td><td>The cell always accepts the pasted value as is.</td></tr>
+</table>
+
+<!-- OnPaste -->
+<a name="OnPaste"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnPaste</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string[ ]</i> <b>cols</b>, <i>string[ ]</i> <b>pastedtext</b>)</s>
+</div>
+Called before cell values are pasted by Ctrl+V from clipboard.<br /> 
+Return true to suppress default action.<br /> 
+<b>pastedtext</b> is array of texts to paste into individual rows. You can modify this array.<br />
+<b>cols</b> is array of column names only where will be pasting done. You can modify this array.<br />
+
+<!-- OnPasteFinish -->
+<a name="OnPasteFinish"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnPasteFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+Called after cell values were pasted from clipboard.<br />
+
+<!-- OnPasteRow -->
+<a name="OnPasteRow"></a>
+<div class="API">
+   <u>new <b>6.4</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnPasteRow</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string[ ]</i> <b>cols</b>, <i>string[ ]</i> <b>values</b>, <i>bool</i> <b>added</b>)</s>
+</div>
+Called before the <b>values</b> are pasted to the row cells (<b>cols</b>).<br /> 
+The <b>cols</b> array should <u>not</u> be modified - it is used also in next pasted rows.<br />
+<b>added</b> is set if the row was added by pasting.<br />
+Return true to cancel default behavior.<br /> 
+<i>If true is returned and the row was added by pasting, it is <u>not</u> removed - must be removed by the handler!</i><br />
+
+<!-- OnPasteRowFinish -->
+<a name="OnPasteRowFinish"></a>
+<div class="API">
+   <u>new <b>6.4</b></u> <b>API event</b> <i>void</i>
+   <h4>OnPasteRowFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string[ ]</i> <b>cols</b>, <i>string[ ]</i> <b>values</b>, <i>bool</i> <b>added</b>)</s>
+</div>
+Called after the <b>values</b> are pasted to the <b>row</b> cells (<b>cols</b>).<br /> 
+<b>added</b> is set if the row was added by pasting.<br />
+
+<!-- OnPasteValue -->
+<a name="OnPasteValue"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>type</i>
+   <h4>OnPasteValue</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>value</b>, <i>type</i> <b>oldvalue</b>, <i>type[]</i> <b>attrvalues</b>, <i>string[]</i> <b>attrnames</b>, <i>object</i> <b>errors</b>)</s>
+</div>
+Called when pasting <b>value</b> to the cell. <b>oldvalue</b> is actual cell value.<br />
+Return new value to paste or <b>value</b> or <b>oldvalue</b> to <u>not</u> change the cell value.<br />
+It is possible to modify both the values in <b>attrvalues</b> and in <b>attrnames</b>.<br />
+For <b>errors</b> see <a href="CellEdit.htm#OnEditErrors">OnEditErrors</a> API event.
+
+<!-- Action Paste -->
+<a name="ActionsPaste"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>Paste</h4>
+   <s>Attached to event <b>OnCtrlV</b>, can be attached only to <b>OnCtrlV</b></s>
+</div>
+Pastes data from clipboard.<br />
+<i>Action in the CtrlV event must return 0 to permit the default function, use zero after comma like "Paste,0".</i><br />
+
+</div>
+</body>	
+</html>

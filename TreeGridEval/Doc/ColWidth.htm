@@ -1,0 +1,297 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Column width</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Column width</h1>
+<p>TreeGrid documentation</p>
+
+Every column can have set its width by <a href="#CWidth">Width</a> otherwise its width is automatically calculated on start, but it can slow down the grid.<br />
+Every column's width can be also automatically calculated to fill all the main tag, set it by <a href="#CRelWidth">RelWidth</a>.<br />
+Columns can be resized by a user, by mouse dragging.<br />
+Space row cells are independent on columns and have set their <a href="#SpaceCellWidth">Width</a> attributes.<br />
+
+<!-- Width -->
+<a name="CWidth"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>int</i>
+   <h4>Width</h4> <s><i>Saved to cookies, avoid it by <tt>&lt;C WidthLap='1'/></tt></i></s>
+</div>
+Column width in pixels. It is outer width including all side buttons, cell border and padding.<br />
+If it is not set, it is automatically computed before the grid is first displayed according to the width of first few cells in the column.<br />
+<i>If there any many columns, the automatic width calculation can slow down the rendering, so you should set Width for all or most of them!</i><br />
+If the cell content is wider than column width, it is overflowed in normal cells and wrapped in multiline cells (Type=Lines, Html, ...).<br />
+
+<!-- RelWidth -->
+<a name="CRelWidth"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>int</i>
+   <h4>RelWidth</h4> <s></s>
+</div>
+If set, the column width is automatically computed to fill all the remaining space in <b>main tag</b>.<br /> 
+The width is automatically recalculated whenever the width of the main tag or its content changes.<br />
+If there are more RelWidth columns in grid, their width is computed as ratio of their RelWidth values.<br />
+The RelWidth columns together fill the remaining vertical space in main tag, so the grid has always constant height of the main tag.<br />
+<strong>Using too many RelWidth columns can remarkably slow down grid usage!</strong><br />
+You can set <tt>&lt;fg <a href="GridSize.htm#CfgShowVScroll">ShowVScroll</a>='1'/></tt> to always show vertical scrollbar to speed up grid, especially in tree.<br />
+You can set minimal width by <a href="#CMinWidth">MinWidth</a>.<br />
+It is ignored when set <tt>&lt;Cfg <a href="GridSize.htm#CfgNoHScroll">NoHScroll</a></tt> or <tt><a href="GridSize.htm#CfgMaxHScroll">MaxHScroll</a></tt> or <tt><a href="GridSize.htm#CfgNoScroll">NoScroll</a> /></tt> attribute.<br />
+If the RelWidth column is resized by a user, it looses its capability and gets fixed width. Back to relative width can be forced by resizing it to zero width.<br />
+For successful printing set <a href="Print.htm#CPrintWidth">PrintWidth</a> for the relative width column.<br />
+
+<!-- RelWidthType -->
+<a name="CRelWidthType"></a>
+<div class="XML">
+   <u>new <b>11.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>RelWidthType</h4> <s>[0]</s>
+</div>
+Changes <a href="#CRelWidth">RelWidth</a> behavior. Bit array.<br />
+<table>
+<tr><td style="width:50px;"><b>1.</b> bit</td><td style="width:50px;"><b>&1</b></td><td><b>0</b> - Resizes the column to fill the main tag (the whole grid)</td></tr>
+<tr><td></td><td></td><td><b>1</b> - Resizes the column to fill its column section, the <a href="GridSize.htm#CfgLeftWidth">LeftWidth</a> / <a href="GridSize.htm#CfgMidWidth">MidWidth</a> / <a href="GridSize.htm#CfgRightWidth">RightWidth</a>.</td></tr>
+<tr><td><b>2.</b> bit</td><td><b>&2</b></td><td><i>(new 12.0)</i> If set with <b>1</b>.bit, it shrinks the column until the column section hides its scrollbar.</td></tr>
+<tr><td><b>3.</b> bit</td><td><b>&4</b></td><td><i>(new 12.0)</i> If set with <b>1</b>.bit, it never hides column with <a href="#CMinWidth">MinWidth</a>. If not set, it hides the column if it would be narrower than <a href="#CMinWidth">MinWidth</a>.</td></tr>
+<tr><td><b>4.</b> bit</td><td><b>&8</b></td><td><i>(new 12.0)</i> If set with <b>1</b>.bit, it also resizes the column to fill the main tag (the whole grid) width.</td></tr>
+</table>
+
+<!-- ConstWidth -->
+<a name="CConstWidth"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>ConstWidth</h4> <s>[0]</s>
+</div>
+Empty relative width column. Useful to automatically maximize column section (with <tt><a href="#CRelWidthType">RelWidthType</a>='1'</tt>) or the whole grid (with <tt><a href="#CRelWidthType">RelWidthType</a>='0'</tt>).<br />
+By default it is created by <tt>&lt;Cfg <a href="GridSize.htm#CfgConstWidth">ConstWidth</a>/></tt>.<br />
+It is completely inactive, with special empty CSS class.<br />
+
+<!-- MinWidth -->
+<a name="CMinWidth"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>int</i>
+   <h4>MinWidth</h4> <s></s>
+</div>
+Minimal width for width calculated on start (no Width set), for width calculated by <a href="#CRelWidth">RelWidth</a> and for column resizing by a user.<br />
+If not set, minimal column width is cell border + padding.<br />
+If not set or set less than 20, resizing column by a user below the MinWidth sets the column to automatic width and calculates it according to its content.<br />
+
+<!-- MaxWidth -->
+<a name="CMaxWidth"></a>
+<div class="XML">
+   <u>new <b>13.2</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>MaxWidth</h4> <s></s>
+</div>
+Maximal width for width calculated on start (no Width set), for width calculated by <a href="#CRelWidth">RelWidth</a> and for column resizing by a user.<br />
+
+<!-- OverflowEllipsis -->
+<a name="COverflowEllipsis"></a>
+<div class="DEL">
+   <u></u> <b>&lt;C></b> <i>bool</i>
+   <h4>OverflowEllipsis</h4> <s><i>Removed, used "text-overflow:ellipsis;" in ...Grid.css file.</i></s>
+</div>
+
+<!-- GroupWidth -->
+<a name="CGroupWidth"></a>
+<div class="XML">
+   <u><i>upd <b>7.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>GroupWidth</h4> <s></s>
+</div>
+A width of column when it is set as main column to show tree when grid is grouped.<br />
+You can specify this width to change column width when it becomes main column while grouping - to resize column to accommodate the tree.<br />
+When grid is ungrouped or it shows the tree in another column, the column width returns to previous setting.<br />
+<i>Since 7.0</i>, if set to <b>1</b>, the width of the column will be automatically increased by the widths of columns hidden by grouping.<br />
+
+<!-- Overlay -->
+<a name="CfgOverlay"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>Overlay</h4> <s>[0]</s>
+</div>
+Permits using column attribute <b>Overlay</b> to overlay empty cells like in MS Excel.<br />
+If set to <b>2</b> it also updates cell borders of the overlaid cells <i>Value 2 can slow down the grid!</i><br />
+If set to <b>3</b> it also overlays right aligned cell to left instead of right.<br />
+
+<!-- Overlay -->
+<a name="COverlay"></a>
+<div class="XML">
+   <u>new <b>13.0</b> <i>upd <b>14.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>Overlay</h4> <s>[0]</s>
+</div>
+If the cell value can overlay next cells and if previous cell value can overlay this cell. Bit array. <i>Used only if set &lt;Cfg Overlay></i><br />
+<b>1</b>. bit &amp;<b>1</b> - If the cell value can overlay next cells if it is wider than the cell width.<br />
+<b>2</b>. bit &amp;<b>2</b> - If previous cell will not overlay this cell if it has some value.<br />
+<b>3</b>. bit &amp;<b>4</b> - If set with 2.bit, the cell will not be overlaid either if it has empty value.<br />
+<b>4</b>. bit &amp;<b>8</b> - <i>(new 14.0)</i> It overlays also wrapped cells - the cell is extended horizontally if possible, rather than vertically. Requires &lt;Cfg Overlay=2 or 3.<br />
+Standard value for MS Excel like behavior is <b>3</b>.<br />
+It never overlays: cells with side buttons, main column, cells between column sections, header and filter rows. In Chrome it does not overlay cells between column pages.<br />
+<i>The cells overlaying next cells are ignored when calculating column width automatically.</i><br />
+
+<!-- Overflow -->
+<a name="COverflow"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>Overflow</h4> <s>[0]</s>
+</div>
+Use to speed up large grids with many cells on WebKit browsers (Chrome, Safari, Opera).<br />
+There is a bug in WebKit engine that causes the more tags with overflow:hidden is on page, the slower is every re-flow action on page.<br />
+You can define Overflow for all columns that are enough wide to show all theit content, so they don't need to overflow their cells content.<br />
+<b>0</b> - Hidden, sets overflow:hidden to all column cells except empty. Standard, but slow.<br />
+<b>1</b> - Visible, sets overflow:visible to all column cells. Fast, but the wider cell value overflows to next cell(s). <br />
+<b><i>number</i></b> - sets overflow:hidden to all cells if the column has Width &lt; number or sets overflow:visible to all cells if the column has Width > number.<br />
+It does <u>not</u> affect Header and Filter rows, they always use overflow:hidden.<br />
+
+<!-- CanResize -->
+<a name="CCanResize"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>bool</i>
+   <h4>CanResize</h4> <s>[1]</s>
+</div>
+If column can be resized by a user by mouse dragging by column's right edge. The column resizing must be also permitted globally by <tt>&lt;Cfg <a href="#CfgColResizing">ColResizing</a>='1'/></tt>.<br />
+If set to 1, fixed column can also be resized automatically if there is no room for it, to preserve displaying "Too small extents" message.<br />
+
+<!-- ColResizing -->
+<a name="CfgColResizing"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ColResizing</h4> <s>[1]</s>
+</div>
+All columns that have set <tt>&lt;C <a href="#CCanResize">CanResize</a>='1'/></tt> can be resized by a user.<br />
+
+<!-- Resizing -->
+<a name="CResizing"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>Resizing</h4> <s>[0/2]</s>
+</div>
+If the cell checks its edges for mouse actions, bit array.<br /> 
+Default value is <b>2</b> for Header rows and <b>0</b> for other rows.<br />
+<b>0</b> - no edge<br />
+<b>1</b> - top and bottom edge for row resizing, event target is HeaderTop and HeaderBottom<br />
+<b>2</b> - left and right edge for column resizing, event target is HeaderLeft and HeaderRight. Cannot be set for Space cell.<br />
+<b>3</b> - both vertical and horizontal edges.<br />
+
+<!-- VarHeight -->
+<a name="CVarHeight"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>VarHeight</h4> <s>[0]</s>
+</div>
+Set to columns containing wrap able cells, to shrink row height when the column is resized by a user and cells values occupy less height.<br />
+For <b>1</b> the rows are resized after column resizing finishes.<br />
+For <b>2</b> it resizes the rows during column resizing, it can be slow and should be used only for small grids.<br />
+This attribute also affect printing, see <a href="Print.htm#CVarHeight">VarHeight</a>.<br />
+
+<!-- MaxCalcWidth -->
+<a name="CMaxCalcWidth"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>MaxCalcWidth</h4> <s>[100]</s>
+</div>
+Maximal count of rows to iterate when calculating column width.<br />
+<i>Increasing the value can slow down the action.</i><br />
+
+<!-- Width -->
+<a name="SpaceCellWidth"></a>
+<div class="XML">
+   <u></u> <b>&lt;Space cell></b> <i>int</i>
+   <h4>Width</h4> <s>[100/-1]</s>
+</div>
+Width of the Space cell in pixels. If not set, it has default value 100 and for Button and Label has -1. It is inner width without side buttons and border and cell padding.<br />
+It can be set to <b style="color:blue;">-1</b> to automatically calculate width according to cell content every time. If the cell value is changed, its width is updated.<br />
+It can be set to <b style="color:blue;">-2</b> to automatically calculate width according to cell content first time.<br />
+
+<!-- MinWidth -->
+<a name="SpaceCellMinWidth"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Space cell></b> <i>int</i>
+   <h4>MinWidth</h4> <s></s>
+</div>
+Minimal width of the cell for <a href="#SpaceCellWidth">Width</a> = -1 or -2. In pixels.
+
+<!-- MaxWidth -->
+<a name="SpaceCellMaxWidth"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Space cell></b> <i>int</i>
+   <h4>MaxWidth</h4> <s></s>
+</div>
+Maximal width of the cell for <a href="#SpaceCellWidth">Width</a> = -1 or -2. In pixels.
+
+<!-- MinEditWidth -->
+<a name="SpaceCellMinEditWidth"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Space cell></b> <i>int</i>
+   <h4>MinEditWidth</h4> <s>[10]</s>
+</div>
+Minimal width of the tab cell if edited. In pixels. Usually used for renaming sheet.<br />
+
+<!-- Action ColResize -->
+<a name="ActionsColResize"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ColResize</h4>
+   <s>Mouse dragging action, only for <b>OnDrag...</b> event</s>
+</div>
+Starts resizing column by mouse. This actions resizes also right side <b>Pager</b>.<br />
+By default is the action attached to <b>OnDragHeaderLeft</b> (header left edge), <b>OnDragHeaderRight</b> (header right edge) and <b>OnDragPagerHeaderRight</b> (right side pager header right edge).<br />
+
+<!-- OnColResize -->
+<a name="OnColResize"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnColResize</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Called when column is resized, by a user or due <a href="#CRelWidth">RelWidth</a> or by API call <a href="#SetWidth">SetWidth</a>.<br />
+It can be called more times during resizing column by a user, for every change.<br />
+
+<!-- OnAfterColResize -->
+<a name="OnAfterColResize"></a>
+<div class="API">
+   <u>new <b>6.3</b> <i>upd <b>9.2</b></i></u> <b>API event</b> <i>void</i>
+   <h4>OnAfterColResize</h4> 
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>col</b>, <i>TRow</i> <b>row</b>, <i>int</i> <b>chg</b>)</s>
+</div>
+Called after column or right pager is resized by a user. Called only once.<br />
+<i>(Since 9.2)</i> <b>row</b> is the header row where the column edge was dragged.<br />
+<i>(Since 9.2)</i> <b>chg</b> is change of width in pixels.<br />
+
+<!-- SetWidth -->
+<a name="SetWidth"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>SetWidth</h4> 
+   <s>(<i>string</i> <b>col</b>, <i>int</i> <b>dx</b>)</s>
+</div>
+Changes column with about <b>dx</b> pixels. Displays the change in grid.<br /> 
+The <b>dx</b> can be positive (enlarge) or negative (shrink). The resulted column width will be <tt>grid.Cols[col].Width + dx</tt>.<br />
+If the resulted width will be less than <a href="#CMinWidth">MinWidth</a>, the column width is automatically calculated according to its content or it restores <a href="#CRelWidth">RelWidth</a> if it was set.<br />
+
+<!-- CalcWidth -->
+<a name="CalcWidth"></a>
+<div class="API">
+   <u><i>upd <b>13.2</b></i></u> <b>API method</b> <i>void</i>
+   <h4>CalcWidth</h4> 
+   <s>(<i>string</i> <b>col</b>, <i>bool</i> <b>noupdate</b> = 0, <i>TRow[]</i> <b>rows</b> = null)</s>
+</div>
+Computes column width according to the first 100 (set by <a href="#CMaxCalcWidth">MaxCalcWidth</a>) visible cells in this column, including all fixed cells and header.<br /> 
+<i>In <b>server paging</b> if no rows are loaded yet it uses only fixed cells for calculation!</i><br />
+<i>Since 13.2</i> if set <b>rows</b> it checks all these rows instead of the first 100. The <b>rows</b> array can be got by <a href="GridSize.htm#GetShownRows">GetShownRows</a> to check actually visible rows.<br />
+By default updates the column width in grid, if set <tt><b>noupdate</b> = 1</tt>, it just sets the <a href="#CWidth">Width</a> attribute.<br />
+This method is called on start for every column that has not set <a href="#CWidth">Width</a> or <a href="#CRelWidth">RelWidth</a>.<br />
+
+<!-- TestCellWidth -->
+<a name="TestCellWidth"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>int</i>
+   <h4>TestCellWidth</h4> 
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b> = 0)</s>
+</div>
+If the cell shows its content fully. <i>Works only for already rendered cell.</i><br />
+Returns required change of the column width to show the whole cell content. Returns only 0 or positive value.<br />
+
+</div>
+</body>	
+</html>

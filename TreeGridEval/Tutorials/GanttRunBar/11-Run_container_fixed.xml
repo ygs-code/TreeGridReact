@@ -1,0 +1,107 @@
+<Grid>
+   <Cfg id="RunContainers" IdChars="0123456789" NumberId="1" Undo="1" SuppressCfg="1" ExactSize="0" FastGantt="0" NoVScroll="1" StyleDependencyModifier="0"/>
+   <Cfg DefaultDate="1/1/2010" MinMidWidth="100"/>
+   <Header id="id"/>
+   <Panel Visible="0"/>
+   <LeftCols>
+      <C Name="id" Type="Int" CanEdit="0" CanSort="0" Visible="0"/>
+      <C Name="RUN" Type="Text" Width="50" Visible="0"/>
+   </LeftCols>
+   <Cols>
+      <C Name="GANTT" Type="Gantt"
+         GanttDataUnits="d" GanttUnits="d" GanttLastUnit="" GanttWidth="20" 
+         GanttLeft="1" GanttRight="1" GanttRunContainerTop=""
+         GanttHeader6="d#%d"
+         GanttRun="RUN"
+         GanttRunShowHtml="2"
+         GanttRunNewStart="[{Duration:'0.0001',Type:'box',Text:''}]"
+         GanttRunResize="resize,container"
+         GanttRunMove="move,selected,entire,clear"
+         GanttRunMoveCtrl="copy,entire,selected,clear"
+         GanttRunMoveCtrlRight="copy,entire,selected,clear"
+         GanttRunMoveShift="slide,move,vert,entire,selected,clear"
+         GanttRunAdjust="Error,Containers,ContainersUnique,ContainersLevels,ContainersMerge"
+         GanttRunAdjustShiftRight="Error,Containers,ContainersUnique,ContainersLevels,ContainersMerge,ContainersDelete"
+         GanttRunAdjustCtrlRight="Error,Containers,ContainersUnique,ContainersLevels,ContainersMerge,ContainersDelete"
+         GanttRunErrorsShift="-4"
+         GanttRunErrors="0"
+         GanttRunSelect="5" GanttTask="Box"
+         GanttRunContainers='{Menu:1,Include:1, Items:[{Name:"D.1",Text:"Add Duty"},{Name:"P.0",Text:"Add Pairing"}]}'
+         GanttRunTypes='{Menu:1, Items:[{Text:"Type1",Box:",,,Red"},{Text:"Type2",Box:",,,Blue"},{Text:"Type3",Box:",solid,xxx,White"}]}'
+         GanttRunContainersResize='1' GanttRunContainersDelete='1'
+         GanttRunContainersSelect='^'
+         GanttRunTop="11"
+         />
+      <!-- <C Name="GANTT" GanttExclude="w#1/5/2008~1/7/2008" /> --> <!-- Enable it to test calendars too -->
+   </Cols>
+   <Toolbar Cells65='RESIZE,DELETE,SELECT' 
+      RESIZELabel='Resize' RESIZEWidth='50' RESIZEType='Select' RESIZEDefaults='|None|Defined|All' 
+      RESIZEFormula='Grid.GetDefaultsValue(Row,Col,Grid.Cols.GANTT.GanttRunContainersResize)' RESIZEOnChange='Grid.Cols.GANTT.GanttRunContainersResize = Grid.GetDefaultsIndex(Row,Col);'
+      RESIZETip='Which contained can be resized by dragging its edge. Defined are the containers in the last row.'
+      DELETELabel='Delete all empty' DELETEType='Bool' DELETECanEdit='1'
+      DELETEFormula='Grid.Cols.GANTT.GanttRunContainersDelete==3' DELETEOnChange='Grid.Cols.GANTT.GanttRunContainersDelete = Value?3:1'
+      DELETETip='If also the containers with defined width will be deleted if they has no box'
+      SELECTLabel='Select' SELECTWidth='50' SELECTType='Select' SELECTDefaults='|Boxes|Duty|Pairing|&lt;i>Top&lt;/i>|&lt;i>All&lt;/i>'
+      SELECTFormula='Grid.GetDefaultsValue(Row,Col,{"":0,"D":1,"P":2,"^":3,"*":4}[Grid.Cols.GANTT.GanttRunContainersSelect])' SELECTOnChange='Grid.Cols.GANTT.GanttRunContainersSelect = ["","D","P","^","*"][Grid.GetDefaultsIndex(Row,Col)]; Grid.RefreshGantt(1);'
+      SELECTTip='What will be selected by double click or right button dragging'
+      />
+   <Body>
+      <B>
+         <I id="0" RUN=""/>
+         <I id="1"
+            RUN="[
+             {Start:'5/1/2010',Width:'3',Containers:'P#1.D#1',Text:'A'},{Width:2,Type:'Empty'},{Width:'3',Containers:'P#1.D#1',Text:'B'},{Width:1,Type:'Empty'},{Width:'3',Containers:'P#1.D#1',Text:'C'},
+             {Width:2,Type:'Empty'},
+             {Width:'3',Containers:'P#1',Text:'D'},
+             {Width:2,Type:'Empty'},
+             {Width:'3',Containers:'P#1.D#2',Text:'E'},{Width:1,Type:'Empty'},{Width:'3',Containers:'P#1.D#2',Text:'F'},{Width:1,Type:'Empty'},{Width:'3',Containers:'P#1.D#2',Text:'G'},
+             {Width:2,Type:'Empty'},
+             {Width:'3',Containers:'P#2.D#3',Text:'I'},{Width:2,Type:'Empty'},{Width:'3',Containers:'P#2.D#3',Text:'J'},{Width:1,Type:'Empty'},{Width:'3',Containers:'P#2.D#3',Text:'K'}
+             ]"/>
+         <I id="2" RUN="[
+             {Start:'5/1/2010',Width:'3',Containers:'P#1.D#1',Text:'L'},
+             {Width:2,Type:'Empty'},
+             {Width:'3',Containers:'',Text:'H'},
+             {Width:2,Type:'Empty'},
+             {Width:'3',Containers:'.D#2',Text:'M'},{Width:1,Type:'Empty'},{Width:'3',Containers:'.D#2',Text:'N'},
+             {Width:2,Type:'Empty'},
+             {Width:'3',Containers:'P#2',Text:'O'},{Width:1,Type:'Empty'},{Width:'3',Containers:'P#2',Text:'P'},
+             {Width:3,Type:'Empty'},
+             {Width:'3',Containers:'P#3.D#3',Text:'Q'},{Width:2,Type:'Empty'},{Width:'3',Containers:'P#3.D#3',Text:'R'},{Width:1,Type:'Empty'},{Width:'3',Containers:'P#3.D#3',Text:'S'}
+             ]"/>
+         <I id="3"
+            RUN="[
+             {Start:'5/1/2010',Width:'3',Containers:'P#1.D#1',Text:'a'},{Width:-1,Type:'Empty'},{Width:'3',Containers:'P#1.D#1',Text:'b'},{Width:1,Type:'Empty'},{Width:'3',Containers:'P#1.D#1',Text:'c'},
+             {Width:2,Type:'Empty'},
+             {Width:'3',Containers:'P#1',Text:'d'},
+             {Width:-2,Type:'Empty'},
+             {Width:'3',Containers:'P#1.D#2',Text:'e'},{Width:1,Type:'Empty'},{Width:'3',Containers:'P#1.D#2',Text:'f'},{Width:1,Type:'Empty'},{Width:'3',Containers:'P#1.D#2',Text:'g'},
+             {Width:-2,Type:'Empty'},
+             {Width:'3',Containers:'',Text:'h'},
+             {Width:2,Type:'Empty'},
+             {Width:'3',Containers:'P#2.D#3',Text:'i'},{Width:2,Type:'Empty'},{Width:'3',Containers:'P#2.D#3',Text:'j'},{Width:-1,Type:'Empty'},{Width:'3',Containers:'P#2.D#3',Text:'k'},
+             {Width:-1,Type:'Empty'},
+             {Width:'3',Containers:'P#3.D#4',Text:'l'},
+             {Width:-5,Type:'Empty'},
+             {Width:'3',Containers:'.D#5',Text:'m'},{Width:1,Type:'Empty'},{Width:'3',Containers:'.D#5',Text:'n'},
+             {Width:-3,Type:'Empty'},
+             {Width:'3',Containers:'P#4',Text:'o'},{Width:1,Type:'Empty'},{Width:'3',Containers:'P#4',Text:'p'},
+             ]"/>
+         <I id="4" RUN="[
+            {Start:'5/1/2010',Containers:'P#1',Type:'Edge'},
+            {Width:1,Type:'Empty'},
+            {Containers:'P#1.D#1',Type:'Edge'},
+            {Width:1,Type:'Empty'},
+            {Width:'3',Containers:'P#1.D#1',Text:'q'},{Width:2,Type:'Empty'},{Width:'3',Containers:'P#1.D#1',Text:'r'},{Width:2,Type:'Empty'},{Containers:'P#1.D#1',Type:'Edge'},
+            {Width:2,Type:'Empty'},
+            {Width:'3',Containers:'P#1',Text:'s'},
+            {Width:3,Type:'Empty'},
+            {Containers:'P#1',Type:'Edge'},
+            {Width:-2,Type:'Empty'},
+            {Containers:'P#2',Type:'Edge'},{},{Containers:'P#2.D#2',Type:'Edge'},{},
+            {Width:'3',Containers:'P#2.D#2',Text:'t'},{Width:2,Type:'Empty'},{Width:'3',Containers:'P#2.D#2',Text:'u'},{Width:2,Type:'Empty'},{Containers:'P#2.D#2',Type:'Edge'},{Width:0,Type:'Empty'},{Containers:'P#2',Type:'Edge'}
+            ]"/>
+
+      </B>
+   </Body>
+</Grid>

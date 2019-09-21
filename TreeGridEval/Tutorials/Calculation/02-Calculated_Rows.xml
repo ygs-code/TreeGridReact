@@ -1,0 +1,22 @@
+<Grid>
+   <Cfg id='CalcRows' NoVScroll="1" NoHScroll="1"/>
+   <Cols>
+      <C Name='X' Type='Int'/>
+      <C Name='Y' Type='Int'/>
+      <C Name='A' Type='Int' Formula='X*Y'/>
+      <C Name='B' Type='Int' Formula='Math.sqrt(X*X+Y*Y)' Format='0.00'/>
+   </Cols>
+   <Header A='A=X*Y' B='B=&#x221a;(X&#xb2;+Y&#xb2;)' SortIcons='2'/>
+   <Body>
+      <B>
+         <I X='10' Y='1'/>
+         <I X='3' Y='4'/>
+         <I X='12' Y='8' />
+         <I X='7' Y='-8'/>
+      </B>
+   </Body>
+   <Foot>
+      <I CanEdit='0' CanFocus='0' X='count()' XType='Text' Y='sum()' YType='Text' A='product() / count()' AFormula='' AType='Text' B='min(); max(); sum(>10)' BFormula='' BType='Text'/>
+      <I Calculated='1' XFormula='count()' YFormula='sum()' AFormula='product() / count()' BFormula='min()+"; "+max()+"; "+sum("B>10")' BRange='1' />
+   </Foot>
+</Grid>

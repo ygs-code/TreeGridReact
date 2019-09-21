@@ -1,0 +1,61 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+
+       /* Change for inverse Black style */
+      .TBDataRow * { color:black; } 
+      .TBClassFocusedCell { color:white; }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>6. Calculated attributes</h1>
+   <h2>Setting Formula for cell and row attributes</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='06-Calculated_Attributes.xml'>06-Calculated_Attributes.xml</a></div>
+      <div class="Main" style='width:100%; height:253px;'>
+         <bdo Debug='check' Data_Url='06-Calculated_Attributes.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li>It is possible to calculate also the most of cell and row attribute values by <h3>Formula</h3> attached to cell attribute name, e.g. Col1CanEditFormula="...".</li>
+      <li>If the row calculates some of its attributes, the row must have defined <h3>CalcOrder</h3> that will list all the formulas in the row.</li>
+      <li>The calculated attribute is listed in the <b>CalcOrder</b> without the Formula keyword, e.g. CalcOrder='Col1CanEdit,Col2'</li>
+      <li>See also <a href="../Cells/07-Conditional_Formatting.html">07 Conditional formatting</a> tutorial for more calculated attributes.</li>
+      <li>If some attribute depends on some cell value, sometimes is better to use OnChange event to modify the attribute by API instead of calculating all the attributes by Formula, to speed up the calculations. See <a href="07-Editable_Calculated_Cells.html">07-Editable_Calculated_Cells.html</a> tutorial.</li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialBasic\s*=\s*(\d+)/), TGIndex = 2048;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridCalculation6", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialBasic="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

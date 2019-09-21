@@ -1,0 +1,1138 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Cell basics</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Cells</h1>
+<p class="H1">TreeGrid documentation</p>
+
+<!-----------------------------------------------------------------------  Cell type ------------------------------------------------->
+<a name="CellType"></a>
+<h2>Cell type</h2>
+
+<!-- Type -->
+<a name="CType"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"]</s>
+</div>
+Cell type. Specifies the basic behavior of the cell. How it will be displayed, edited, calculated sorted, filtered and so on.
+<h6>Editable types</h6>
+<table>
+   <tr><td style="width:70px;"><a href="TypeText.htm">Text</a></td><td>One line text, formatted, edited in &lt;input>.</td></tr>
+   <tr><td><a href="TypeText.htm">Lines</a></td><td>Multi line text, formatted, edited in &lt;textarea>, can accept Enters.</td></tr>
+   <tr><td><a href="TypeNumber.htm">Int</a></td><td>Integer number, formatted, edited in &lt;input></td></tr>
+   <tr><td><a href="TypeNumber.htm">Float</a></td><td>Floating point number, formatted, edited in &lt;input></td></tr>
+   <tr><td><a href="TypeDate.htm">Date</a></td><td>Date and / or time, formatted, edited in &lt;input> or selected from popup calendar.</td></tr>
+   <tr><td><a href="TypeText.htm">Pass</a></td><td>Password. It is displayed as “***”, editing in &lt;input type="password">.</td></tr>
+   <tr><td><a href="TypeHtml.htm#TImg">Img</a></td><td>Editable image. Displayed as &lt;img> tag or as background image in &lt;div>. For simple not editable image use Icon type.</td></tr>
+   <tr><td><a href="TypeHtml.htm#TLink">Link</a></td><td>Editable link to any url. For simple not editable link use Link attribute with any type.</td></tr>
+</table>
+
+<h6>Changeable types</h6>
+<table>
+   <tr><td style="width:70px;"><a href="TypeBool.htm">Bool</a></td><td>Boolean value 1 and 0 – it is displayed and edited as checkbox.</td></tr>
+   <tr><td><a href="TypeEnum.htm">Radio</a></td><td>Enumeration with radio buttons instead of combo box. Displayed and edited as radio buttons or checkboxes.</td></tr>
+   <tr><td><a href="TypeEnum.htm">Enum</a></td><td>Combo box to select one or more values from menu.</td></tr>
+   <tr><td><a href="TypeEnum.htm">Select</a></td><td>Cell with predefined values chosen from menu. It is shortcut for Button of type Defaults with non-editable Html cell.</td></tr>
+</table>
+
+<h6>Button types</h6>
+<table>
+   <tr><td style="width:70px;"><a href="TypeButton.htm">Button</a></td><td>One button in cell: clickable button, switch button, radio / tab button, menu button, combo switch button, combo radio / tab button.</td></tr>
+   <tr><td><a href="TypePanel.htm">Panel</a></td><td>One or more clickable buttons in cell.</td></tr>
+</table>
+
+<h6>Special interactive types</h6>
+<table>
+   <tr><td style="width:70px;"><a href="Paging.htm#TypePager">Pager</a></td><td>Special simple pager cell, only for Space rows.<br />
+                  Displays buttons GoFirst,GoPrevious,GoNext,GoLast and editable cell with page number and number of pages.</td></tr>
+   <tr><td><a href="Paging.htm#TypePages">Pages</a></td><td>Special simple page links, displays links for all pages as numbers from 1.</td></tr>
+   <tr><td><a href="TypeHtml.htm#TDropCols">DropCols</a></td><td>Drop target to drag column names here. Only for cell in Space rows.</td></tr>
+   <tr><td><a href="GanttObjects.htm">Gantt</a></td><td>Interactive Gantt chart. This type must be used for <C> tag only.</td></tr>
+</table>
+<h6>Not editable HTML types</h6>
+<table>
+   <tr><td style="width:70px;"><a href="TypeHtml.htm#THtml">Html</a></td><td>Any HTML code displayed as is.</td></tr>
+   <tr><td><a href="TypeHtml.htm#TIcon">Icon</a></td><td>Simple image.</td></tr>
+   <tr><td><a href="TypeHtml.htm#TAbs">Abs</a></td><td>HTML elements absolutely positioned inside the cell in layers. It does not affect row height, it is always overflowed.</td></tr>
+   <tr><td><a href="TypeHtml.htm#TList">List</a></td><td>List of items to build an HTML string.</td></tr>
+</table>
+
+<!-- OnGetType -->
+<a name="OnGetType"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>string</i>
+   <h4>OnGetType</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>type</b>)</s>
+</div>
+Called whenever grid reads the cell type to change the Type dynamically. It must be very fast.<br />
+Return new type or <b>type</b>.<br />
+
+<!-- GetType -->
+<a name="GetType"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>string</i>
+   <h4>GetType</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Returns cell <a href="#CType">Type</a> in string. It just reads all appropriate <a href="#CType">Type</a> attributes and calls <a href="#OnGetType">OnGetType</a>.<br />
+
+<!-- Simple -->
+<a name="CSimple"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>Simple</h4> <s>[0]</s>
+</div>
+Use to speed up rendering of simple cells without the most TreeGrid attributes. Bit array.<br />
+It has sense only in large grids with many simple cells like numbers, dates or simple strings or HTML.<br />
+<i>If set to whole column &lt;C>, it is used only for variable cells, not fixed.</i><br />
+<table>
+   <tr><td style="width:70px;">1.bit (<b>&amp;1</b>)</td><td>Ignores attributes: CanFocus, CanEdit, Class, NoColor, Color, Background, Wrap, Align, Visible, Link, HtmlPrefix, HtmlPostfix, ClassInner, Rotate.</td></tr>
+   <tr><td>2.bit (<b>&amp;2</b>)</td><td>Sets CanEdit value for bit 1. It means Simple = 1 for not editable cells, Simple = 3 for editable cells.</td></tr>
+   <tr><td>3.bit (<b>&amp;4</b>)</td><td>Ignores Button and Icon and does not show any side button for Enum and Date.</td></tr>
+   <tr><td>4.bit (<b>&amp;8</b>)</td><td>Ignores Format and Type specification, use only for simple not formatted texts or numbers.</td></tr>
+</table>
+For example Simple = 7 shows simple editable cell without side button. Simple = 9 shows simple not editable, not formatted text, but possibly with side button.<br />
+
+<!-- Rtl -->
+<a name="CfgRtl"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Rtl</h4> <s>[0/1]</s>
+</div>
+If TreeGrid is in RTL mode (right to left direction, for Middle East languages). In RTL mode TreeGrid is horizontally reversed, cells go from right to left and their texts are also in RTL.<br />
+It is automatically set if some TreeGrid parent tag or &lt;body> has set dir='rtl'.<br />
+
+<!-- Rtl -->
+<a name="CRtl"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>Rtl</h4> <s>[ ]</s>
+</div>
+If the cell is in RTL mode (right to left).<br />
+Set it to <b>0</b> to switch the cell to LTR (normal left to right direction) if grid is in RTL mode. Useful for entering numbers and dates that are always in LTR also in Middle East languages.<br />
+Set it to <b>1</b> to switch the cell to RTL if grid is not in RTL mode. Useful to display and edit some text in RTL direction.<br />
+Set it to <b>2</b> to switch the cell to RTL if grid is not in RTL mode. Editing is still in LTR mode, right aligned.<br />
+
+<!-----------------------------------------------------------------------  Cell format ------------------------------------------------->
+<a name="CellFormat"></a>
+<h2>Cell format</h2>
+Cells are formatted according to its type. Individual formats are described in individual types documents.
+
+<!-- Format -->
+<a name="CFormat"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Format</h4> <s></s>
+</div>
+Specifies a cell format for display. Its presence, meaning and structure varies according to the cell type therefore the formats are described for individual types.<br />
+See <a href="TypeText.htm#CFormat">text format</a> (Text, Lines, Pass), <a href="TypeNumber.htm#CFormat">number format</a> (Int, Float), 
+<a href="TypeDate.htm#CFormat">Date format</a>, <a href="TypeHtml.htm#CFormat">Html format</a>, 
+<a href="TypeHtml.htm#CFormatImg">Img format</a>, <a href="TypeHtml.htm#CFormatLink">Link format</a>, 
+<a href="TypeHtml.htm#CFormatList">List format</a>, <a href="TypeHtml.htm#SpaceCellFormat">DropCols format</a>.
+
+<!-- EditFormat -->
+<a name="CEditFormat"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EditFormat</h4> <s></s>
+</div>
+Specifies cell format for editing. Its presence, meaning and structure varies according to the cell type therefore the formats are described for individual types.<br />
+See <a href="TypeText.htm#CEditFormat">text edit format</a> (Text, Lines, Pass), <a href="TypeNumber.htm#CEditFormat">number edit format</a> (Int, Float), 
+<a href="TypeDate.htm#CEditFormat">Date edit format</a>, <a href="TypeHtml.htm#CEditFormat">Html edit format</a>, 
+<a href="TypeHtml.htm#CEditFormatImg">Img edit format</a>, <a href="TypeHtml.htm#CEditFormatLink">Link edit format</a>.
+
+<!-- OnGetFormat -->
+<a name="OnGetFormat"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>string</i>
+   <h4>OnGetFormat</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>format</b>, <i>bool</i> <b>edit</b>)</s>
+</div>
+Called to get cell format dynamically. Returns new format or <b>format</b>. It must be very fast.<br />
+If <b>edit</b> is false, it should return standard format, for true it should return format for editing.<br />
+
+<!-- GetFormat -->
+<a name="GetFormat"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>string</i>
+   <h4>GetFormat</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>edit</b> = false)</s>
+</div>
+Returns <a href="#CFormat">Format</a> string for given cell. If <b>edit</b> is true, returns <a href="#CEditFormat">EditFormat</a>. Calls also <a href="#OnGetFormat">OnGetFormat</a>.<br />
+
+<!-----------------------------------------------------------------------  Dynamic format ------------------------------------------------->
+<a name="DynamicFormat"></a>
+<h2>Dynamic format</h2>
+
+<i>See also auto Type <a href="TypeAuto.htm">Auto</a>.</i>
+
+<!-- DynamicFormat -->
+<a name="CfgDynamicFormat"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>DynamicFormat</h4>
+   <s>[0]</s>
+</div>
+If the cell Type, Format and other such attributes can be changed dynamically by users or automatically according to the cell value.<br />
+<b>0</b> - no<br />
+<br />
+<b>1</b> - yes<br />
+The cell format can be dynamically changed by users using actions <a href="#ActionsSetFormat">SetFormat...</a> and <a href="#ActionsChooseFormat">ChooseFormat...</a>.<br /> 
+It shows also <b>Format</b> combo cell on toolbar.<br />
+<br />
+<b>2</b> - yes + auto type<br />
+<i>Since 13.0 it is replaced by Type <a href="TypeAuto.htm">Auto</a>.</i><br />
+Like 1 and also chooses cell <a href="#CType">Type</a> according to cell value. It does <b>not</b> change <b>Auto</b> type.<br />
+The Type is chosen: on grid load, after value is edited by a user, after value is calculated by editable formula.<br />
+If the Type is changed, it resets also other cell attributes according to <a href="#CfgTextFormat">TextFormat</a>, <a href="#CfgNumberFormat">NumberFormat</a> or <a href="#CfgDateFormat">DateFormat</a>.<br />
+
+<!-- Formats -->
+<a name="CfgFormats"></a>
+<div class="XML">
+   <u>new <b>12.0</b> <i>upd <b>13.0</b></i></u> <b>&lt;Cfg></b> <i>TMenu</i>
+   <h4>Formats</h4>
+   <s>[...]</s>
+</div>
+<a href="Menu.htm">JSON menu</a> definition with all available formats to be set to cells.<br />
+The definition is "{Items:[{<i>format1</i>},{<i>format2</i>},...]}" where <i>formatx</i> object defines these attributes:<br />
+<b>Name</b> - unique name of the format definition. It is shown in Format combo value on toolbar; it is use in Format, DateFormat, NumberFormat and TextFormat attributes. Name can be '-' for menu item separator.<br />
+<b>Text</b> - menu item text shown in the popup menu or list with the formats.<br />
+<b>Type</b> - cell Type attribute; it is set to cell when format item is chosen or by action SetFormat when Format contains this menu item Name. It is ignored for cell type <b>Auto</b>.<br />
+<b>Format</b>, <b>EditFormat</b>, <b>EditMask</b>, <b>ResultMask</b> and similar attributes are set to the cell like the Type attribute.<br />
+Default value of Formats see in Defaults.xml file.<br />
+<br />
+<i>Since 13.0</i> it can contain special named items (the attribute <b>Name</b> starts by "@"):<br />
+Name="<b>@Enter</b>" - A user can enter custom format string that is used as is in the cell <a href="#CFormat">Format</a> attribute.<br />
+Name="<b>@Custom</b>" - A item with submenu showing all custom formats in grid and added custom formats. The item must have attributes Menu and Items.<br />
+Name="<b>@Refresh</b>" - A user can clear all unused custom formats, it lists only formats used in grid cells.<br />
+
+<!-- Format -->
+<a name="CfgFormat"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>Format</h4>
+   <s>[...]</s>
+</div>
+Predefined format Name from <a href="#CfgFormats">Formats</a> that will be set to cell(s) by <a href="#ActionsSetFormat">SetFormat...</a> action.<br />
+
+
+<!-- NoFormat -->
+<a name="INoFormat"></a>
+<a name="CNoFormat"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;I></b> <i>int</i>
+   <h4>NoFormat</h4> <s>[0/2]</s>
+</div>
+If the format can be set dynamically or automatically in the row or column cells.<br />
+<b>0</b> - both automatically and dynamically (like <a href="#CfgDynamicFormat">DynamicFormat</a>=<b>2</b>)<br /> 
+<b>1</b> - only dynamically by users, not automatically according to the cell value (like <a href="#CfgDynamicFormat">DynamicFormat</a>=<b>1</b>)<br />
+<b>2</b> - never (like <a href="#CfgDynamicFormat">DynamicFormat</a>=<b>0</b>).<br />
+By default it is 2 for Header and Panel rows and Index and Panel columns and 0 for other rows and columns.<br />
+
+<!-- FormatTextPrefix -->
+<a name="FormatTextPrefix"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Format></b> <i>string</i>
+   <h4>TextPrefix</h4> <s>[']</s>
+</div>
+Starting cell value by this character forces its auto type to "Text" or "Lines".<br />
+This first character is not displayed in the cell. Default is apostrophe.<br />
+In <b>Auto</b> type it forces to always display the value as string regardless on its Format.<br />
+
+<!-- FindFormat -->
+<a name="FindFormat"></a>
+<div class="API">
+   <u>new <b>13.0</b></i></u> <b>API method</b> <i>string</i>
+   <h4>FindFormat</h4> <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>format</b>, <i>string</i> <b>default</b>)</s>
+</div>
+Searches the cell Type and Format in <b>formats</b> menu and returns the item Name if found. Otherwise returns <b>default</b>.<br />
+<b>formats</b> has the same format as <a href="#CfgFormats">Formats</a>.<br />
+
+<!-- AddCustomFormat -->
+<a name="AddCustomFormat"></a>
+<div class="API">
+   <u>new <b>13.0</b></i></u> <b>API method</b> <i>string</i>
+   <h4>AddCustomFormat</h4> <s>(<i>string</i> <b>format</b>, <i>string</i> <b>name</b> = null)</s>
+</div>
+Adds given <b>format</b> string to the <a href="#CfgFormats">Formats</a> value, as a child of the <b>@Custom</b> item.<br />
+If the <b>name</b> is set, sets it to the item Name, otherwise the <b>format</b> is set also to the Name.<br />
+The <b>format</b> and <b>name</b> can be also arrays to add more items at once.<br />
+
+<!-- Action SetFormat... -->
+<a name="ActionsSetFormat"></a>
+<a name="ActionsSetFormatCells"></a>
+<a name="ActionsSetFormatSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetFormat</h4>, 
+   <h4>SetFormatCells</h4>, 
+   <h4>SetFormatSelected <i>...F</i></h4>
+   <s>Attached to Toolbar cell Format <b>OnChange</b> and <b>OnSame</b> events</s>
+</div>
+Sets attributes chosen by <a href="#CfgFormat">Format</a> in <a href="#CfgFormats">Formats</a> to <a href="CTextColor">TextColor</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action ChooseFormat... -->
+<a name="ActionsChooseFormat"></a>
+<a name="ActionsChooseFormatCells"></a>
+<a name="ActionsChooseFormatSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseFormat</h4>, 
+   <h4>ChooseFormatCells</h4>, 
+   <h4>ChooseFormatSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Shows menu with items in global <a href="#CfgFormats">Formats</a>.
+If used in Menu, shows submenu with the global <a href="#CfgFormats">Formats</a>.<br />
+And sets attributes chosen in the menu to <a href="CTextColor">TextColor</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-----------------------------------------------------------------------  Dynamic type ------------------------------------------------->
+<a name="DynamicType"></a>
+<h2>Dynamic type</h2>
+<i>Since 13.0 it is replaced by Type <a href="TypeAuto.htm">Auto</a>.</i><br />
+<br />
+Dynamic type is active if set &lt;Cfg <a href="#CfgDynamicFormat">DynamicFormat</a>="<b>2</b>"/>. <br />
+It is used for types Text, Lines, Int, Float and Date. <i>It is not used for <a href="TypeAuto.htm">Auto</a> type.</i><br />
+
+<!-- TextFormat -->
+<a name="CfgTextFormat"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>TextFormat</h4>
+   <s>[...]</s>
+</div>
+Predefined format Name from <a href="#CfgFormats">Formats</a> that will be set to cell(s) 
+when auto choosing the cell Type as "Text" or "Lines" due <a href="CfgDynamicFormat">DynamicFormat</a>='2'.<br />
+
+<!-- NumberFormat -->
+<a name="CfgNumberFormat"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>NumberFormat</h4>
+   <s>[...]</s>
+</div>
+Predefined format Name from <a href="#CfgFormats">Formats</a> that will be set to cell(s) 
+when auto choosing the cell Type as "Int" or "Float" due <a href="CfgDynamicFormat">DynamicFormat</a>='2'.<br />
+
+<!-- DateFormat -->
+<a name="CfgDateFormat"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>DateFormat</h4>
+   <s>[...]</s>
+</div>
+Predefined format Name from <a href="#CfgFormats">Formats</a> that will be set to cell(s) 
+when auto choosing the cell Type as "Date" due <a href="CfgDynamicFormat">DynamicFormat</a>='2'.<br />
+
+<!-- NoDateNumber -->
+<a name="CfgNoDateNumber"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>NoDateNumber</h4>
+   <s>[0]</s>
+</div>
+When it is restricted to convert cell type to Date for <a href="#CfgDynamicFormat">DynamicFormat</a> = 2
+<b>0</b> - the type is set as Date if it is positive number less than 4e12, the cell Type is not Float and it is not called from calculating editable formula. Or if the value is a date string (containing only numbers, spaces and date/time separators).<br />
+<b>1</b> - the type is set as Date only if the value is a number and cell Type is Date or the value is a date string.<br />
+<b>2</b> - the type is set as Date only if the value is date string.<br />
+<b>3</b> - the type is never set as Date automatically.<br />
+
+<!-- OnFindType -->
+<a name="OnFindType"></a>
+<div class="API">
+   <u>new <b>12.0</b> <i>upd <b>12.1</b></i></u> <b>API event</b> <i>string</i>
+   <h4>OnFindType</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>type</b>, <i>type</i> <b>val</b>, <i>bool</i> <b>calc</b>)</s>
+</div>
+Called to choose cell Type according to the value <b>val</b>. <b>type</b> is suggested Type.<br />
+Return new Type according to the value <b>val</b>, permitted types are now "Text", "Lines", "Int", "Float" and "Date".<br />
+It is called from <a href="#FindType">FindType</a> method.<br />
+(<i>new 12.1</i>) If set <b>calc</b>=1, it is called when calculating editable formula.<br />
+
+<!-- FindType -->
+<a name="FindType"></a>
+<div class="API">
+   <u>new <b>12.0</b> <i>upd <b>12.1</b></i></u> <b>API method</b> <i>string</i>
+   <h4>FindType</h4> <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>val</b>, <i>bool</i> <b>refresh</b> = 0, <i>bool</i> <b>calc</b> = 0)</s>
+</div>
+Chooses cell <a href="#CType">Type</a> according to the value <b>val</b>.<br />
+Chooses the cell type as text, number or date, reads the <a href="#CfgTextFormat">TextFormat</a>, <a href="#CfgNumberFormat">NumberFormat</a> or <a href="#CfgDateFormat">DateFormat</a> and sets all its attributes from <a href="#CfgFormats">Formats</a> to the cell.<br />
+Returns the chosen cell Type.<br />
+If set <b>refresh</b>=1, refreshes the cell HTML to show the changes.<br />
+(<i>new 12.1</i>) If set <b>calc</b>=1, it means calculated from edit formula, it is less restrictive in changing Float to Date.<br />
+
+
+<!-----------------------------------------------------------------------  Cell value ------------------------------------------------->
+<a name="CellValue"></a>
+<h2>Cell value</h2>
+
+<!-- value -->
+<a name="Cellvalue"></a>
+<div class="XML">
+   <u></u> <b>&lt;cell></b> <i>string</i>
+   <h4><i>[value]</i></h4>
+   <s>Uploaded to server when Added or Changed, supports Undo</s>
+</div>
+Cell value in the row. It cannot be set into the whole column, to preset default value to more or all rows in some column use default &lt;D> rows.<br />
+<strong>The <b>value</b> is <u>not</u> an attribute name!</strong> The cell value is set as assignment to column name in row, e.g &lt;I Col1=’value of col1’ Col2=’value of col2’ Col2CanEdit=’0’/>.<br />
+Floating point numbers always use ‘.’ as decimal separator and no thousands separator.<br />
+Date and time values are in XML in string in English format (M/d/yyyy HH:mm:ss) and in API are in number of milliseconds from 1.1.1970 00:00:00.000.<br />
+By API you can read the value by GetValue, GetString or by global functions Get or Is.<br />
+By API you can set SetValue / SetString. You can set the value also directly by row[col] = val, but without any update and refresh.<br />
+
+<!-- OnGetHtmlValue -->
+<a name="OnGetHtmlValue"></a>
+<div class="API">
+   <u><i>upd <b>13.0</b></i></u> <b>API event</b> <i>type</i>
+   <h4>OnGetHtmlValue</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>val</b>)</s>
+</div>
+Called to get formatted HTML cell value to display. <b>val</b> is unformatted cell value.<br />
+Return formatted value as HTML string. If returned value is not null, it is used instead of internal formatting by <a href="#CFormat">Format</a> or <a href="TypeEnum.htm#CEnum">Enum</a> attributes.<br />
+Return null to use default formatting behavior.<br />
+<i>Since 13.0</i> return an array as [<b>value</b>,<b>type</b>,<b>format</b>] to change some or all of the attributes. 
+The <b>value</b> is raw value to be formatted by given or default <b>type</b> and <b>format</b>.<br />
+
+<!-- GetValue -->
+<a name="GetValue"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>type</i>
+   <h4>GetValue</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Returns cell value as number or string. For date returns internal format (count of msec from 1/1/1970).<br />
+The cell value can be set by <a href="CellEdit.htm#SetValue">SetValue</a> method.<br />
+
+<!-- GetString -->
+<a name="GetString"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>string</i>
+   <h4>GetString</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Returns cell value as string, in standard format (non editing).<br />
+The cell value as string can be set by <a href="CellEdit.htm#SetString">SetString</a> method.<br />
+
+<!-- GetStringEdit -->
+<a name="GetStringEdit"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>string</i>
+   <h4>GetStringEdit</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Returns cell value as string for editing. If the cell contains <a href="CellEditFormula.htm#CellEFormula">EFormula</a>, it returns the <a href="CellEditFormula.htm#CellEFormula">EFormula</a> starting by '='.<br /> 
+
+<!-- StartUpdate -->
+<a name="StartUpdate"></a>
+<div class="API">
+   <u>new <b>6.4</b></u> <b>API method</b> <i>void</i>
+   <h4>StartUpdate</h4> <s>( )</s>
+</div>
+Call it before mass update of cell values, adding more rows, showing / hiding more rows and so on.<br />
+It disables calculations, updating layout, uploading changes with AutoUpdate and updating Gantt chart. It also starts Undo block.<br />
+It is possible to nest blocks StartUpdate / EndUpdate - only the call of the most outer block's EndUpdate will enable updating.<br />
+
+<!-- EndUpdate -->
+<a name="EndUpdate"></a>
+<div class="API">
+   <u>new <b>6.4</b></u> <b>API method</b> <i>void</i>
+   <h4>EndUpdate</h4>
+   <s>(<i>TRow</i> <b>row</b> = null, <i>string</i> <b>col</b> = null)</s>
+</div>
+Call it after the action for <a href="#StartUpdate">StartUpdate</a> finished.<br />
+It enables calculations and recalculates grid. If set <b>row</b> and <b>col</b> it recalculates grid like after change the cell, otherwise it recalculates the whole grid.<br />
+It updates grid layout by calling <a href="GridSize.htm#Update">Update</a>.<br />
+It enables <a href="DataUpload.htm#CfgAutoUpdate">AutoUpdate</a> and uploads changes to server. If set <b>row</b>, it uploads only changes in the row, otherwise it uploads all changes.<br />
+It updates Gantt chart and dependencies.<br />
+It closes actual Undo block, all actions within StartUpdate and EndUpdate will be undone or redone together.<br />
+
+
+<!-----------------------------------------------------------------  Reading / writing attributes by API ---------------------------------------------->
+<a name="CellAPI"></a>
+<h2>Reading / writing attributes by API</h2>
+
+<!-- Get -->
+<a name="Get"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i>type</i>
+   <h4>Get</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>attribute</b>)</s>
+</div>
+Returns value of <b>row</b>’s <b>attribute</b>. Remember, all attributes are often of string types. If the <b>row</b> has not this <b>attribute</b> set, it returns default value from its default row.<br />
+To get cell attribute use Get(row,col+"attribute"), e.g. Get(row,"Col1CanEdit")<br />
+
+<!-- Is -->
+<a name="Is"></a>
+<div class="API">
+   <u></u> <b>global func.</b> <i>bool</i>
+   <h4>Is</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>attribute</b>)</s>
+</div>
+Returns true if <b>row</b>’s <b>attribute</b> has positive value or returns false for 0, null or empty string. Remember, all attributes are often of string types.<br />
+If the <b>row</b> has not this attribute set, it returns default value from its default row.<br />
+
+<!-- GetAttribute -->
+<a name="GetAttribute"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API method</b> <i>string</i>
+   <h4>GetAttribute</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>attribute</b>)</s>
+</div>
+Returns a cell (&lt;I>), row (&lt;I>) or column (&lt;C>) attribute, in this order.<br />
+If <b>row</b> is null, returns only column attribute.<br />
+If <b>col</b> is null, returns only row attribute.<br />
+If <b>attribute</b> is null, returns cell value as internal value. To get cell value as string use <a href="#GetString">GetString</a> method.<br />
+Example: <tt>grid.GetAttribute(row,col,"CanEdit");</tt><br />
+
+<!-- SetAttribute -->
+<a name="SetAttribute"></a>
+<div class="API">
+   <u>new <b>6.0</b> <i>upd <b>6.4</b></i></u> <b>API method</b> <i>void</i>
+   <h4>SetAttribute</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>attribute</b>, <i>string</i> <b>value</b>, <i>bool</i> <b>refresh</b>, <i>bool</i> <b>undo</b>)</s>
+</div>
+Sets a cell (&lt;I>), row (&lt;I>) or column (&lt;C>) attribute to the value and refreshes it.<br />
+<strong>Remember, not all attributes can be set via this method! If there exists a direct API method for setting the attribute, use it instead !</strong><br />
+If <b>row</b> is null, sets only column attribute. In this case the refresh of the whole column can be slow!<br />
+If <b>col</b> is null, sets only row attribute and refreshes the whole row.<br />
+If <b>attribute</b> is null, sets cell value via <a href="CellEdit.htm#SetString">SetString</a> method.<br />
+If set undo adds the change to Undo and can undone and redone. If called for cell value, the undo is always 1.<br />
+Example: <tt>grid.SetAttribute(row,col,"CanEdit",0,1);</tt><br />
+
+
+<!----------------------------------------------------------------------  Cell HTML -------------------------------------------------->
+<a name="CellHTML"></a>
+<h2>Cell HTML</h2>
+
+<!-- RefreshCell -->
+<a name="RefreshCell"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>RefreshCell</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Refreshes cell’s html element, re-renders the whole cell.<br />
+Call it after any change that affects the cell, like when you directly set its value by row[col] or any attribute by row[col+attribute]<br />
+
+<!-- RefreshRow -->
+<a name="RefreshRow"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>RefreshRow</h4>
+   <s>(<i>TRow</i> <b>row</b>)</s>
+</div>
+Refreshes <b>row</b>’s html element, re-renders whole row.<br />
+Call it after any change that affects the whole row, like changing its Class.<br />
+The API functions for changing rows like DeleteRow do the changes automatically.<br />
+It is faster than refreshing all cells in row by <a href="#RefreshCell">RefreshCell</a>.<br />
+
+<!-- GetCell -->
+<a name="GetCell"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API method</b> <i>object</i>
+   <h4>GetCell</h4> 
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Returns HTML cell element, tag &lt;td>.<br />
+<strong>Don’t change the HTML directly! To change the cell content use some grid method to change data and call <a href="#RefreshCell">RefreshCell</a>.</strong><br />
+You should use this method only if you really know what are you doing.<br />
+<strong>Remember, TreeGrid can anytime re-render the cell and any your custom changes done in the HTML will be lost.</strong><br />
+
+<!-----------------------------------------------------------------------  Cell default ------------------------------------------------->
+<a name="CellDef"></a>
+<h2>Cell default</h2>
+
+<!-- Def -->
+<a name="CellDef"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;cell></b> <i>string</i>
+   <h4>Def</h4> <s></s>
+</div>
+Name of default cell to read the cell undefined attributes from.<br />
+<i>Use especially for special rows like Filter or Space to predefine more similar cells.</i><br />
+<i>Don't set it in many rows, it can remarkably slow down the initialization. Set it only in default rows and fixed rows.</i><br />
+The default cell is defined as <b>D</b> tag in the same Def array as <a href="RowDefaults.htm">default rows</a>.<br />
+The default cell can contain only cell / column attributes without column name prefix. <br />
+<i>The cell attributes are read from the default cell on start, therefore changing the default cell later by API has no effect for existing cells.</i><br />
+<br />
+For example:<br /><tt>
+&lt;Def>&lt;D Name='CellFilter' Edit='0' Button='Defaults' Defaults='|*FilterOff|*RowsAll' DefaultFilter='1' ShowMenu=0'/>&lt;/Def><br />
+&lt;Head>&lt;Filter ADef='CellFilter' CDef='CellFilter' GDef='CellFilter/>&lt;/Head></tt>
+
+<!-- CellDef -->
+<a name="CCellDef"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;I> &lt;D></b> <i>string</i>
+   <h4>CellDef</h4> <s></s>
+</div>
+Name of default cell to read all the row cells' undefined attributes from. The same as cell <a href="#CellDef">Def</a>, but for all the row cells together.<br />
+If the cell has defined <b>Def</b> attribute and the row has defined <b>CellDef</b> attribute, both the Def and CellDef are applied, the CellDef is applied first.<br />
+<i>Use especially for special rows like Filter or Space to predefine more similar cells.</i><br />
+<i>Don't set it in many rows, it can remarkably slow down the initialization. Set it only in default rows and fixed rows.</i><br />
+
+<!-- AddColCellDef -->
+<a name="CfgAddColCellDef"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>AddColCellDef</h4> <s>[0]</s>
+</div>
+By default if added new column the <a href="#CellDef">Def</a> and <a href="#ICellDef">CellDef</a> attributes in existing rows are processed only in default rows and fixed rows.<br />
+If set AddColCellDef='1' it process the <a href="#CellDef">Def</a> and <a href="#ICellDef">CellDef</a> also in all existing variable rows.<br />
+
+<!----------------------------------------------------------------------  Range or more values in one cell -------------------------------------------------->
+<a name="CellRange"></a>
+<h2>Range or more values in one cell</h2>
+
+<!-- Range -->
+<a name="CRange"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>Range</h4> <s>[0]</s>
+</div>
+If the cell accepts a range or more values. Usable especially in <a href="Filter.htm#Filter">filter</a> cell or in Gantt source cells.<br />
+Cell types <a href="TypeNumber.htm">Int</a>, <a href="TypeNumber.htm">Float</a> and <a href="TypeDate.htm">Date</a> accept more values separated by '<b>;</b>' and range of values separated by '<b>~</b>'. For example <tt>"1;3~7;12;16~33"</tt> or <tt>"1/1/2000~3/3/2000;1/1/2007"</tt>.<br />
+<a href="TypeDate.htm#Calendar">Calendar</a> component for selecting date supports selecting more dates or range of dates by mouse drag.<br />
+Cell types <a href="TypeEnum.htm">Enum</a> and <a href="TypeEnum.htm">Select</a> can select more values from combo box. Defaults dialog supports selecting more values for any cell type.<br />
+Cell types <a href="TypeText.htm">Text</a> and <a href="TypeText.htm">Lines</a> accepts more strings separated by '<b>;</b>'.<br />
+The characters '<b>;</b>' and '<b>~</b>' can be changed by &lt;Lang>&lt;Format ValueSeparator=';' RangeSeparator='~'/>&lt;/Lang><br />
+The range value should not be used as input for calculations, because formulas treats is as single string.<br />
+Sorting of range value is done only according to the first value ascending and the last value descending.<br />
+Filtering is done only according to the first value.<br />
+Search and group treat the range value as single string.<br />
+
+<!-- ValueSeparator -->
+<a name="FormatValueSeparator"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string</i>
+   <h4>ValueSeparator</h4> <s>[;]</s>
+</div>
+Separator to separate individual values in <a href="#CRange">Range</a> cell. This separator must not be contained in any individual value.<br />
+This separator is used in the value itself and for editing.<br />
+The default is semicolon.<br />
+
+<!-- ValueSeparatorHtml -->
+<a name="FormatValueSeparatorHtml"></a>
+<div class="XML">
+   <u><i>upd <b>9.0</b></i></u> <b>&lt;Format></b> <i>string</i>
+   <h4>ValueSeparatorHtml</h4> <s>[; ]</s>
+</div>
+A string displayed in cell instead of <a href="#FormatValueSeparator">ValueSeparator</a> in <a href="#CRange">Range</a> cell.<br />
+The default is semicolon + space.<br />
+It is displayed in <b>Int</b>, <b>Float</b>, <b>Date</b>. Since 9.0 it is displayed also in <b>Enum</b> and <b>Html</b> type.<br />
+It is not displayed in <b>Text</b> and <b>Lines</b> type, use their <a href="TypeText.htm#CFormat">Format</a> attribute to change the separator, e.g. Format="||||\;|g| ... "<br />
+
+<!-- RangeSeparator -->
+<a name="FormatRangeSeparator"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string</i>
+   <h4>RangeSeparator</h4> <s>[~]</s>
+</div>
+Separator to separate the bounds in <a href="#CRange">Range</a> cell. Used only for number types: <b>Int</b>, <b>Float</b> and <b>Date</b>.<br />
+This separator is used in the value itself and for editing.<br />
+The default is tilde.<br />
+
+<!-- RangeSeparatorHtml -->
+<a name="FormatRangeSeparatorHtml"></a>
+<div class="XML">
+   <u></u> <b>&lt;Format></b> <i>string</i>
+   <h4>RangeSeparatorHtml</h4> <s>[ ~ ]</s>
+</div>
+A string displayed in cell instead of <a href="#FormatRangeSeparator">RangeSeparator</a> in <a href="#CRange">Range</a> cell. Used only for number types: <b>Int</b>, <b>Float</b> and <b>Date</b> and for <b>Html</b> type.<br />
+The default is space + tilde + space.<br />
+
+
+<!----------------------------------------------------------------------  Cell with link URL -------------------------------------------------->
+<a name="CellLink"></a>
+<h2>Cell with link URL</h2>
+
+Cells can display it content as clickable link (&lt;a href>).<br />
+The cell must not be editable to process the link click or the editing must not be started on cell click.<br />
+Only <a href="#CType">types</a> <b>Html</b>, <b>Img</b>, <b>Text</b>, <b>Lines</b>, <b>Int</b>, <b>Float</b> and <b>Date</b> can have a link.<br />
+
+<!-- Link -->
+<a name="CLink"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Link</h4> <s></s>
+</div>
+The link URL (&lt;a href>). If set, the cell has a link and browser will be navigated to this link after click to the link.<br />
+Remember, the cell must not be editable to process the link click or the editing must not be started on click.<br />
+
+<!-- LinkTarget -->
+<a name="CLinkTarget"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>LinkTarget</h4> <s></s>
+</div>
+The link target (&lt;a target>). Name of browser window to open the link here. <br />
+It can be "<b>_blank</b>" to open in new window or "<b>_top</b>" to open in main frame.<br />
+By default the link opens in the same window.<br />
+
+<!-- LinkBase -->
+<a name="CLinkBase"></a>
+<div class="XML">
+   <u style="margin-right:-40px;">new <b>6.0</b></u> <b style="margin-right:40px;white-space:nowrap;">&lt;Cfg>&lt;C>&lt;cell></b> <i>string</i>
+   <h4>LinkBase</h4> <s></s>
+</div>
+Link base url prefix.<br />
+This string is added before the Link. To easily change an url of more links together.<br />
+
+<!----------------------------------------------------------------------  Cell hint -------------------------------------------------->
+<a name="CellHint"></a>
+<h2>Cell hint</h2>
+
+The hint is a complete cell value displayed in place of the cell, if the cell content is bigger than the cell itself.<br />
+The hint can also display anything else than the cell content, it can be changed in <a href="#OnHint">OnHint</a> event.<br />
+The hint is displayed immediately the mouse enters the cell and is displayed until the mouse leaves the cell or click happens or grid enters edit mode or shows dialog.<br />
+
+<!-- ShowHint -->
+<a name="CShowHint"></a>
+<div class="XML">
+   <u>chg <b>14.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>int</i>
+   <h4>ShowHint</h4> <s>[4]</s>
+</div>
+If the Hint is shown for the cell.<br />
+<b>0</b> - never.<br />
+<b>1</b> - on not fully visible cell due its size.<br />
+<b>2</b> - <i>(new 11.0)</i> also on not fully visible cell due scroll.<br />
+<b>3</b> - <i>(new 12.0)</i> always, should be controlled by <a href="#OnHint">OnHint</a> API event.<br />
+<b>4</b> - <i>(new 14.0)</i> on not fully visible cell due its size - like <b>1</b>, but precisely, always shown when text shown ellipsis.<br />
+<b>5</b> - <i>(new 14.0)</i> also on not fully visible cell due scroll - like <b>2</b>, but precisely, always shown when text shown ellipsis.<br />
+The Hint is <u>never</u> shown for cell <a href="#CType">types</a> <b>Bool</b>, <b>Radio</b>, <b>Icon</b>, <b>Pages</b>, <b>Abs</b>, <b>Chart</b> and <b>Gantt</b>.<br />
+<i>It is read from row before column</i>.<br /> 
+
+<!-- HintValue -->
+<a name="CHintValue"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>type</i>
+   <h4>HintValue</h4> <s>[]</s>
+</div>
+Hint value to be used instead of cell value. It must correspond with the cell type. It is formatted by the cell format before it is shown in the hint.<br /> 
+
+<!-- ShiftHint -->
+<a name="CShiftHint"></a>
+<div class="XML">
+   <u>new <b>12.1</b> chg <b>14.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ShiftHint</h4> <s>[1]</s>
+</div>
+If set, shifts the hint left, if there is no room for it on right side.
+<i>Since 14.0</i> the default value set to <b>1</b>.
+
+<!-- OnHint -->
+<a name="OnHint"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b>API event</b> <i>string</i>
+   <h4>OnHint</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>hint</b>, <i>int</i> <b>reason</b>)</s>
+</div>
+Called when Hint is being displayed for given cell.<br />
+<i>Since 12.0</i> the <b>reason</b> is why the hint is shown, bit array: &amp;<b>1</b> due width overflow, &amp;<b>2</b> due height overflow, &amp;<b>4</b> due cell overflow.<br />
+Return new string to display or <b>hint</b>. <b>hint</b> is by default cell html content.<br />
+Return null to not display the Hint at all.<br />
+
+<!-- Action ShowHint -->
+<a name="ActionsShowHint"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowHint</h4>
+   <s>Attached to events <b>OnMouseOverContent</b> and <b>OnMouseOverCaption</b></s>
+</div>
+Displays value of the actual cell as Hint, only if required and possible.<br />
+
+<!-- Action ShowHintStatic -->
+<a name="ActionsShowHintStatic"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowHintStatic</h4>
+   <s>Not attached to any event</s>
+</div>
+Displays value of the actual cell as Hint, only if required and possible.<br />
+This Hint is static and is <u>not</u> hidden on mouse move, only on mouse click.<br />
+
+<!-- ShowHint -->
+<a name="ShowHint"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b>API method</b> <i>bool</i>
+   <h4>ShowHint</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>static</b> = 0, <i>bool</i> <b>test</b> = 0)</s>
+</div>
+Displays cell value as Hint, only if required and possible.<br />
+<i>Since 12.0</i> if set <b>static</b> = 1, the hint is <u>not</u> hidden on mouse move, only on mouse click.<br />
+<i>Since 12.0</i> if set <b>test</b> = 1, the hint is not shown, just tests the possibility.<br />
+<i>Since 12.0</i> it returns true for success.<br />
+<!-- HideHint -->
+<a name="HideHint"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>HideHint</h4> <s>( )</s>
+</div>
+Hides the actually displayed Hint.<br />
+
+
+<!----------------------------------------------------------------------  Cell tooltip / title -------------------------------------------------->
+<a name="CellTip"></a>
+<h2>Cell tooltip / title</h2>
+
+<!-- Tip -->
+<a name="CTip"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b> <i>upd <b>13.0</b></i></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>Tip</h4> <s></s>
+</div>
+Tool tip text displayed when mouse hovers the cell.<br />
+The tip can contain HTML code except is set <a href="#CfgStandardTip">StandardTip</a>='<b>1</b>'.<br />
+When cell contains <a href="CellEdit.htm#CellError">Error</a> attribute, the Error string is displayed instead of the Tip.<br />
+It can be set to <b>1</b> to display cell value as tip.<br />
+<i>Since 13.0</i> it can contain keyword "<b>*Value*</b>" to display the cell value inside the tip text.<br />
+
+<!-- TipXXX -->
+<a name="CTipXXX"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>TipXXX</h4> <s></s>
+</div>
+Tool tip text displayed for given cell value. The <b>XXX</b> is actual cell value. If such tip does not exist, the normal <a href="#CTip">Tip</a> is displayed.<br />
+It has sense especially for <b>Bool</b> or <b>Button</b> types, to show different tooltip for checked / pressed and unchecked / not pressed state.<br />
+For example: <tt>&lt;C Type="Bool" Tip0="Unchecked" Tip1="Checked"/></tt>
+
+<!-- XXXTip -->
+<a name="CXXXTip"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>XXXTip</h4> <s></s>
+</div>
+Tool tip text displayed for given cell event target. The <b>XXX</b> is actual cell event target under mouse cursor. If such tip does not exist, the normal <a href="#CTip">Tip</a> is displayed.<br />
+The XXX can be any event target name, see <a href="Events.htm#Targets">mouse event targets</a>, for example EditIntTip, ButtonSaveTip, SideDefaultsTip, SideTip, ContentTip and so on.<br />
+It is intended to show different tool tip for part of the cell like side or tree button.<br />
+
+<!-- TipClass -->
+<a name="CTipClass"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>TipClass</h4> <s></s>
+</div>
+An inner class for the tip.<br />
+It can be used to show the tip in different classes in different rows, columns or cells.<br />
+
+<!-- TipPosition -->
+<a name="CTipPosition"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>TPosition</i>
+   <h4>TipPosition</h4> <s></s>
+</div>
+Position of the tip dialog. By default it is placed under mouse cursor.<br />
+You can specify different Align to align it to the cell instead. For example <tt>TipPosition='{Align:"left above",Y:-4}'</tt> places the dialog above the cell.<br />
+See <a href="Menu.htm#TPosition">TPosition</a> JSON attributes. The TipPosition automatically contains the actual cell as <b>Tag</b> attribute.<br />
+
+<!-- OnTip -->
+<a name="OnTip"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>string</i>
+   <h4>OnTip</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>tip</b>, <i>int</i> <b>clientX</b>, <i>int</i> <b>clientY</b>, <i>int</i> <b>X</b>, <i>int</i> <b>Y</b>)</s>
+</div>
+Called when tooltip is being displayed. Return new string to display or <b>tip</b>. Return <i>empty string</i> to <u>not</u> display the tip.<br />
+It is called whenever mouse doesn’t move for <a href="#CfgTipStart">TipStart</a> milliseconds. It is called only once for the mouse position.<br />
+<b>clientX</b>, <b>clientY</b> are mouse coordinates in browser window. <b>X</b>, <b>Y</b> are mouse coordinates inside the cell <b>row</b>, <b>col</b>.<br />
+
+<!-- StandardTip -->
+<a name="CfgStandardTip"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>StandardTip</h4> <s>[0]</s>
+</div>
+By default is the <a href="#CTip">Tip</a> shown as TreeGrid tooltip. Its behavior can be controlled by other attributes and events. It also supports multiline and HTML tip.<br />
+Set it to <b>1</b>, to show the <a href="#CTip">Tip</a> by standard browser tooltip - by HTML <b>title</b> attribute. All the other settings and events are ignored in this case.<br />
+
+<!-- TipStart -->
+<a name="CfgTipStart"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>TipStart</h4> <s>[500]</s>
+</div>
+Time in milliseconds before tooltip is displayed while mouse is not moving.<br />
+If set to <b>0</b>, the tip is never displayed, if set to <b>1</b>, the tip is displayed immediately.<br />
+
+<!-- TipEnd -->
+<a name="CfgTipEnd"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>TipEnd</h4> <s></s>
+</div>
+Time in milliseconds when tip will be automatically hidden. It must be higher than TipStart otherwise the tip is never shown.<br />
+If it is empty or <b>0</b>, the tip is never automatically hidden.<br />
+
+<!-- TipDialog -->
+<a name="CfgTipDialog"></a>
+<div class="XML">
+   <u>new <b>13.2</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>TipDialog</h4> <s></s>
+</div>
+JSON setting for tip dialog, similar to TreeGrid JSON menu settings.<br />
+For example &lt;Cfg TipDialog="{CloseMove:1000}"/>, never closes the tip just for mouse move.<br />
+
+<!-- ShowTip -->
+<a name="ShowTip"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ShowTip</h4>
+   <s>(<i>string</i> <b>tip</b>)</s>
+</div>
+Shows tip on actual mouse position.<br />
+
+<!-- HideTip -->
+<a name="HideTip"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>HideTip</h4> <s>( )</s>
+</div>
+Hides the actually displayed tooltip.<br />
+
+
+<!----------------------------------------------------------------------  Cell popup menu -------------------------------------------------->
+<a name="CellMenu"></a>
+<h2>Cell popup menu</h2>
+
+<!-- Menu -->
+<a name="CfgMenu"></a> <a name="CMenu"></a>
+<div class="XML">
+   <u>chg <b>12.0</b> <i>upd <b>14.0</b></i></u><b>&lt;Cfg>&lt;C>&lt;I>&lt;cell></b> <i>string [*]</i>
+   <h4>Menu</h4> <s></s>
+</div>
+An action menu for the cell. It can be displayed on click to the cell, to the panel button, on right click to the cell and so on. 
+It is shown by action <a href="#ActionsShowMenu">ShowMenu</a> (next to the cell) and <a href="#ActionsShowPopupMenu">ShowPopupMenu</a> (on mouse position).<br />
+It can contain two item types, <b>action</b> item and <b>custom</b> item.<br />
+<br />
+The <b>action</b> item (<i>since 12.0</i>) is named as some TreeGrid action and this action is run on click to the item.<br />
+The <b>action</b> item is automatically hidden, if the <b>action</b> is not suitable for the cell or its actual state.<br />
+The <b>action</b> item name can end with <b>@<i>num</i></b>, it will show the item only if the action will affect at least num items. 
+For example "DeleteRows@2" will be shown only if there are at least two focused rows to delete.<br />
+<i>Sicne 14.0</i> the <b>action</b> item name can end with <b>@<i>char</i></b>, where the <i>char</i> can be "<b>f</b>", "<b>s</b>", "<b>fc</b>" or "<b>sc</b>", 
+it will show the item only if there are at least two affected items or the one affected item is not also hovered item. 
+<b>f</b> = focused rows, <b>s</b> = selected rows, <b>fc</b> = focused columns, <b>sc</b> = selected columns.<br />
+
+
+<br />
+As the <b>action</b> can be used any TreeGrid &lt;Action> <u>except</u>:
+all <s>dragging</s> actions, all <s>mouse cursor</s> actions, 
+<s>ShowPage</s> (click to pager page), <s>ShowTreeLevel</s> (click Levels button), 
+<s>Invert...First</s> (invert range according to the first cell), 
+<s>Tab...</s> (tab navigation - focus), <s>ChangeRadio</s> (clicked radio button), 
+<s>ButtonUp</s> / <s>ButtonDown</s> (simulated click to Button), <s>Paste</s> (paste from clipboard).<br />
+The <b>action</b> item names and their texts are defined in <a href="Files.htm#TextXml">Text.xml</a>, in <b>&lt;MenuCell></b> tag.<br />
+
+<br />
+The <b>custom</b> item is any other name than TreeGrid action name. It is always visible.<br />
+It can have assigned <a href="Menu.htm#TMenuItemOnClick">OnClick</a> action, if the Menu is defined in JSON format to be called after click to the item.
+The OnClick function can return true to not call the OnContextMenu.
+<br />
+After user clicks to <b>custom</b> menu item it is called <a href="#OnContextMenu">OnContextMenu</a>.<br />
+<br />
+The Menu can be first character separated array of menu item names. They can contain any HTML code. Separator can be shown as item named '-'<br />
+Or it can be in standard <a href="Menu.htm">TreeGrid menu</a> format as complex menu with sub levels, sub menus, columns and so on.<br />
+See also API <a href="Menu.htm#ShowMenu">ShowMenu</a> function to show custom menu from JavaScript.<br />
+<br />
+By default it is set in &lt;Panel> as <b>PanelCopyMenu</b>, <b>PanelCopyAllMenu</b>, <b>PanelColCopy</b>, <b>PanelColCopyAll</b> 
+and in &lt;Toolbar> as <b>AddMenu</b>, <b>AddChild</b> and <b>AddCol</b>.<br />
+
+<!-- PanelxxxMenu -->
+<a name="CPanelxxxMenu"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string [*]</i>
+   <h4>PanelxxxMenu</h4> <s></s>
+</div>
+<a href="#CMenu">Menu</a> for the individual Panel button.<br />
+
+<!-- HideMenuUnused -->
+<a name="CfgHideMenuUnused"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>HideMenuUnused</h4> <s>[0]</s>
+</div>
+If the menu action items that cannot be run are hidden.<br />
+<b>0</b> no, they are disabled<br /> 
+<b>1</b> yes, they are hidden<br /> 
+<b>2</b> yes like 1 and also if the parent item contains only one available child item, the child item is shown instead of the parent.<br />
+<b>3</b> yes like 1 and also the parent items are hidden, if they have no child items<br />
+<b>4</b> yes like 2 and 3.
+
+<!-- ShowMenuSingle -->
+<a name="CfgShowMenuSingle"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ShowMenuSingle</h4> <s>[0]</s>
+</div>
+For <b>1</b>, if the <a href="#CMenu">Menu</a> contains only one valid action item, it shows the menu anyway. 
+Otherwise for <b>0</b> it does the action immediately without showing the menu.
+
+<!-- OnGetMenu -->
+<a name="OnGetMenu"></a>
+<div class="API">
+   <u>new <b>6.2</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetMenu</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>menu</b>)</s>
+</div>
+Called to get the popup <a href="#CMenu">Menu</a> attribute dynamically by JavaScript.<br />
+<b>menu</b> is the original <a href="#CMenu">Menu</a> for the cell. It should return new menu string.<br />
+
+<!-- OnMenu -->
+<a name="OnMenu"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnMenu</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>TMenu</i> <b>menu</b>, <i>TPosition</i> position)</s>
+</div>
+Called before the cell <a href="#CMenu">Menu</a> is shown.<br />
+<b>menu</b> is the <a href="Menu.htm#Base">TMenu</a> menu object for the cell.
+<b>position</b> is the menu <a href="Menu.htm#TPosition">TPosition</a> object.<br />
+The <b>menu</b> and <b>position</b> can be changed in this event.
+Return true to <u>not</u> show the menu.<br />
+
+<!-- OnContextMenu -->
+<a name="OnContextMenu"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnContextMenu</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>result</b>)</s>
+</div>
+Called when user clicks to context menu set by <a href="#CMenu">Menu</a> attribute.<br />
+<b>result</b> is Value or Name of the clicked item or all values.<br />
+Return true to <u>not</u> close the menu.<br />
+
+<!-- Action ShowMenu -->
+<a name="ActionsShowMenu"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowMenu <i>...F</i></h4>
+   <s>Attached to <b>OnClickPanelCopy</b>, <b>OnClickButtonAdd</b> and <b>OnClickButtonAddChild</b></s>
+</div>
+Displays <a href="#CMenu">Menu</a> for the actual or focused cell.<br />
+<i>Since 12.0 it processes the menu for TreeGrid actions, for previous behavior use ShowPopupMenuNoActions instead.</i><br />
+
+<!-- Action ShowPopupMenu -->
+<a name="ActionsShowPopupMenu"></a>
+<div class="ACT">
+   <u>chg <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowPopupMenu <i>...F</i></h4>
+   <s>Attached to <b>OnRightClick</b> and <b>OnClick2Cell</b> events</s>
+</div>
+Displays <a href="#CMenu">Menu</a> for the actual or focused cell on mouse position.<br />
+
+<!-- Action ShowPopupMenuNoActions -->
+<a name="ActionsShowPopupMenuNoActions"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowPopupMenuNoActions<i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Displays <a href="#CMenu">Menu</a> for the actual or focused cell on mouse position.<br />
+Shows the menu without processing the <b>action</b> items. <i>Use for compatibility with versions prior to 12.0</i>
+
+<!-- Action ShowNoMenu -->
+<a name="ActionsShowNoMenu"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowNoMenu</h4>
+   <s>Not attached to any event</s>
+</div>
+Shows message that there is no available menu items. Never fails.
+
+<!-- ShowPopup -->
+<a name="ShowPopup"></a>
+<div class="API">
+   <u>new <b>6.2</b></u> <b>API method</b> <i>TMenu</i>
+   <h4>ShowPopup</h4>
+   <s>(<i><a href="Menu.htm#TMenu">TMenu</a></i> <b>Menu</b>, <i>function</i> <b>Func</b>)</s>
+</div>
+Shows custom popup menu on mouse position.<br />
+Closes any actually shown dialog in grid.<br />
+<b>Menu</b> is string with menu items (first character separated) or <a href="Menu.htm#TMenu">TMenu</a> object.<br />
+<b>Func</b> is function (<a href="Menu.htm#TMenuItem">TMenuItem</a> I) called after click to the menu. The <b>I</b> has set at least <b>I.Name</b> as the item name. It replaces <b>Menu.</b><a href="Menu.htm#TMenuOnSave">OnSave</a>.<br />
+If no <b>Func</b> is set, calls <b>Menu.</b><a href="Menu.htm#TMenuOnSave">OnSave</a> if defined or <a href="#OnContextMenu">OnContextMenu</a> API event.<br />
+For more information about the parameters see global function <a href="Menu.htm#ShowMenu">ShowMenu</a> or <a href="Menu.htm#ShowPopup">ShowPopup</a>.<br />
+
+<!-- ShowMenu -->
+<a name="ShowMenu"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API method</b> <i>TMenu</i>
+   <h4>ShowMenu</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i><a href="Menu.htm#TMenu">TMenu</a></i> <b>Menu</b>, <i><a href="Menu.htm#TPosition">TPosition</a></i> <b>Pos</b> = null, <i>function</i> <b>Func</b> = null, <i>string</i> <b>Init</b> = null, <i>bool</i> <b>always</b> = false)</s>
+</div>
+Shows custom menu for given cell.<br />
+Closes any actually shown dialog in grid. If there is already dialog shown for this cell and not set always, it closes the dialog and returns null.<br />
+<b>Menu</b> is string with menu items (first character separated) or <a href="Menu.htm#TMenu">TMenu</a> object.<br />
+<b>Func</b> is function (<a href="Menu.htm#TMenuItem">TMenuItem</a> I) called after click to the menu. The <b>I</b> has set at least <b>I.Name</b> as the item name. It replaces <b>Menu.</b><a href="Menu.htm#TMenuOnSave">OnSave</a>.<br />
+For more information about the parameters see global function <a href="Menu.htm#ShowMenu">ShowMenu</a>.<br />
+
+<!-- ShowDialog -->
+<a name="ShowDialog"></a>
+<div class="API">
+   <u>chg <b>11.0</b></u> <b>API method</b> <i>TDialog</i>
+   <h4>ShowDialog</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i><a href="Menu.htm#TDialog">TDialog</a></i> <b>Dialog</b>, <i><a href="Menu.htm#TPosition">TPosition</a></i> <b>Pos</b> = null, <i>bool</i> <b>always</b> = false)</s>
+</div>
+Shows custom dialog for given cell.<br />
+Closes any actually shown dialog in grid. If there is already dialog shown for this cell and not set always, it closes the dialog and returns null.<br />
+<b>Dialog</b> is string with HTML to display or <a href="Menu.htm#TDialog">TDialog</a> object with dialog settings.<br />
+<i>Since 11.0 the parameters changed, although the previous parameter set still work.</i><br />
+
+<!-- ShowPopupGrid -->
+<a name="ShowPopupGrid"></a>
+<div class="API">
+   <u>new <b>7.0</b> <i>upd <b>11.0</b></i></u> <b>API method</b> <i>TGrid</i>
+   <h4>ShowPopupGrid</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>data</b>, <i>int</i> <b>width</b> = null, <i>int</i> <b>height</b> = null, <i><a href="Menu.htm#TDialog">TDialog</a></i> <b>Dialog</b> = null, <i><a href="Menu.htm#TPosition">TPosition</a></i> <b>Pos</b> = null)</s>
+</div>
+Creates and shows new grid as popup dialog for given cell.<br />
+<b>data</b> is XML or JSON string to be used as data source to create the grid from. The grid is always created synchronously (Sync=1).<br />
+<b>width</b> <i>(new 7.1)</i> is exact width of the main grid tag in pixels. If not set, the grid has set NoHScroll and uses scrollbar of the dialog.<br />
+<b>height</b> <i>(new 7.1)</i> is exact height of the main grid tag in pixels. If not set, the grid has set NoVScroll and uses scrollbar of the dialog.<br />
+<b>Dialog</b> <i>(since 11.0)</i> is the <a href="Menu.htm#TDialog">TDialog</a> object with settings for grid parent dialog.<br />
+<b>Pos</b> <i>(since 11.0)</i> is the <a href="Menu.htm#TPosition">TPosition</a> with position settings for the dialog.<br />
+The grid will get <a href="CellStyle.htm#CfgZIndex">ZIndex</a> = 270 or if the parent has set ZIndex, it will get ZIndex+20.<br />
+It returns the popup grid object.<br />
+<i>(Since 11.0)</i> <i>popupgrid</i>.<b>ParentGrid</b> returns the parent grid from popup grid.<br />
+<i>(Since 11.0)</i> <i>popupgrid</i>.<b>ParentDialog</b> returns the dialog object from popup grid. For example <tt>popup.ParentDialog.Close()</tt> closes the popup dialog and clears the popup grid.<br />
+<i>(Since 11.0)</i> <i>popupgrid</i>.<b>ParentDialog</b>.<b>Row</b> returns the row in parent grid from popup grid.<br />
+<i>(Since 11.0)</i> <i>popupgrid</i>.<b>ParentDialog</b>.<b>Col</b> returns the column in parent grid from popup grid.<br />
+<i>(Since 11.0)</i> <i>parentgrid</i>.<b>Dialog</b>.<b>Grid</b> returns the popup grid from parent grid. Note, here is an exception, because in other dialogs the Dialog.Grid shows back to the parent grid.<br />
+<i>(Since 11.0)</i> <i>parentgrid</i>.<b>Dialog</b> returns the dialog object from parent grid.<br />
+<i>Note, this function is expected to show small grids as popup dialog for the source grid. For large popup grids use your own dialogs / windows with dynamically created grid by <a href="Create.htm#TreeGrid">TreeGrid</a>( ) function.</i><br />
+
+<!-- Action CloseDialog -->
+<a name="ActionsCloseDialog"></a>
+<div class="ACT">
+   <u>new <b>14.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CloseDialog</h4> <s>Attached to events <b>OnClickNothing</b> and <b>OnClickOther</b></s>
+</div>
+Closes actually displayed grid popup menu or dialog (<a href="TypeEnum.htm">Enum</a>, <a href="CellEdit.htm#CDefaults">Defaults</a>, <a href="#CMenu">Menu</a>, <a href="TypeDate.htm#Calendar">Calendar</a>). Clears the <a href="#Dialog">Dialog</a> property.<br />
+Closes also custom menus or dialogs shown by <a href="#ShowPopup">ShowPopup</a>, <a href="#ShowMenu">ShowMenu</a>, <a href="#ShowDialog">ShowDialog</a>, <a href="TypeDate.htm#ShowCalendar">ShowCalendar</a>, or <a href="#ShowPopupGrid">ShowPopupGrid</a>.<br />
+
+<!-- CloseDialog -->
+<a name="CloseDialog"></a>
+<div class="API">
+   <u><i>upd <b>6.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>CloseDialog</h4> <s>( )</s>
+</div>
+Closes actually displayed grid popup menu or dialog (<a href="TypeEnum.htm">Enum</a>, <a href="CellEdit.htm#CDefaults">Defaults</a>, <a href="#CMenu">Menu</a>, <a href="TypeDate.htm#Calendar">Calendar</a>). Clears the <a href="#Dialog">Dialog</a> property.<br />
+Closes also custom menus or dialogs shown by <a href="#ShowPopup">ShowPopup</a>, <a href="#ShowMenu">ShowMenu</a>, <a href="#ShowDialog">ShowDialog</a>, <a href="TypeDate.htm#ShowCalendar">ShowCalendar</a>, or <a href="#ShowPopupGrid">ShowPopupGrid</a>.<br />
+
+<!-- Dialog -->
+<a name="Dialog"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API variable</b> <i>TMenu</i>
+   <h4>Dialog</h4> <s></s>
+</div>
+Actually displayed grid popup dialog or menu.<br />
+It is <a href="Menu.htm#TMenu">TMenu</a> object with all settings.<br />
+Set it if you show custom dialog by <u>global</u> (not TGrid method) API function <a href="Menu.htm#ShowMenu">ShowMenu</a>, <a hred="Menu.htm#ShowDialog">ShowDialog</a> or <a href="Menu.htm#ShowCalendar">ShowCalendar</a>.<br />
+Or set it to you custom dialog object if you create your custom dialog, this object must have defined Close ( ) method that closes the dialog.<br />
+
+</div>
+</body>	
+</html>

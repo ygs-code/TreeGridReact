@@ -1,0 +1,252 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Undo and redo</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Undo & Redo</h1>
+<p>TreeGrid documentation</p>
+
+<!-- Undo -->
+<a name="CfgUndo"></a>
+<div class="XML">
+   <u><i>upd <b>12.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>Undo</h4> <s>[0]</s>
+</div>
+Which changes can be undone and redone by <b>Undo</b>/<b>UndoAll</b> and <b>Redo</b>/<b>RedoAll</b> actions, by default for CtrlZ and CtrlY events. Bit array.<br />
+<table>
+<tr><td style="width:50px;"><b>1</b>.bit</td><td style="width:50px;">&amp;<b>1</b></td><td>All changes (<b>change cell value</b>, <b>delete row</b>, <b>add row</b>, <b>move row</b>, <b>copy row</b>)</td></tr>
+<tr><td></td><td></td><td>Does <u>not</u> affect changes in <b>Filter</b> row and rows with <tt><a href="DataUpload.htm#INoUpload">NoUpload</a>='1'</tt> (by default <b>Group</b>, <b>Search</b>, <b>Tabber</b>, <b>Toolbar</b>)</td></tr>
+<tr><td></td><td></td><td><i>(new 12.0)</i> Also <b>adding</b> and <b>deleting</b> columns.</td></tr>
+<tr><td></td><td></td><td><i>(new 7.0)</i> Next modifications are change Def by <b>ChangeDef</b>, change attribute by <b>SetAttribute</b>.</td></tr>
+<tr><td></td><td></td><td><i>(new 7.0)</i> If set <tt>&lt;Cfg <a href="CellSpan.htm#CfgDynamicSpan">DynamicSpan</a>='1'/></tt>, also <b>span cell</b>, <b>split cell</b> and <b>move column</b> can be undone.</td></tr>
+<tr><td></td><td></td><td><i>(new 12.0)</i> If set <tt>&lt;Cfg <a href="CellStyle.htm#CfgDynamicBorder">DynamicBorder</a>='1'/></tt>, also cell <b>border change</b> can be undone.</td></tr>
+<tr><td><b>2</b>.bit</td><td>&amp;<b>2</b></td><td><i>(new 11.0)</i> <b>Selecting</b> rows and cells. More selection changes done subsequently are undone at once, including Focusing cells.</td></tr>
+<tr><td><b>3</b>.bit</td><td>&amp;<b>4</b></td><td><i>(new 11.0)</i> <b>Focusing</b> cell(s). More focus changes done subsequently are undone at once, including Selecting cells.</td></tr>
+<tr><td><b>4</b>.bit</td><td>&amp;<b>8</b></td><td><i>(new 11.0)</i> <b>Resizing</b> rows, columns, sections and grid. <b>Moving</b> columns.</td></tr>
+<tr><td></td><td></td><td><i>(new 12.0)</i> Also <b>showing</b> / <b>hiding</b> rows and columns.</td></tr>
+<tr><td><b>5</b>.bit</td><td>&amp;<b>16</b></td><td><i>(new 11.0)</i> Features (<b>filter</b> cell and operator change, <b>sort</b> change, <b>search action</b> change except Find and Help actions). </td></tr>
+<tr><td></td><td></td><td><i>Note, rows cannot be sorted into original state if no Sort was defined on grid load.</i></td></tr>
+<tr><td></td><td></td><td>The <b>group</b> change and <b>search</b> expression change is covered by undo cell change. Set <tt>NoUpload='0'</tt> to these rows to provide undo.</td></tr>
+<tr><td></td><td></td><td>Cannot be used in server paging (<tt><a href="Paging.htm#CfgPaging">Paging</a>=3</tt>).</td></tr>
+<tr><td><b>6</b>.bit</td><td>&amp;<b>32</b></td><td><i>(new 11.0)</i> Undo can go beyond saved (accepted) changes. </td></tr>
+<tr><td></td><td></td><td>If set <a href="DataUpload.htm#CfgAutoUpdate">AutoUpdate</a>, every undone or redone change is uploaded to server immediately.</td></tr>
+<tr><td></td><td></td><td><i>Incompatible with <a href="GanttRun.htm#CGanttRunStates">GanttRunStates</a>.</i></td></tr>
+<tr><td><b>7</b>.bit</td><td>&amp;<b>64</b></td><td><i>(new 12.0)</i> Also scroll, both vertical and horizontal</td></tr>
+</table><br />
+
+TreeGrid buffers all modifications since last save or reload. For server paging the buffer is cleared by any action reloading body like sort or filter.<br />
+Undo undoes the last unsaved modification and it is disabled with <a href="DataUpload.htm#CfgAutoUpdate">AutoUpdate</a> except if is set the 6th bit (&amp;32).<br />
+
+<!-- UndoMerge -->
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string[*][ ]</i>
+   <h4>UndoMerge</h4> <s>[ ]</s>
+</div>
+Which undo actions will be merged and undone at once.<br /> 
+It is two dimensional array, the first dimension (groups) is first character separated, the second dimension (actions) is comma separated. Like <tt>"|action11,action12,...|actions21,actions22,...|..."</tt><br />
+All actions in one group will be merged, if there is no other action between them. No action can be in more groups.<br />
+To merge always all actions of the same type, place one empty group, like <tt>"||action11,action12,...|..."</tt><br />
+For example <tt>UndoMerge="|Focus,Select,Scroll|ColsVisibility|Filter"</tt> means to merge Focus,Select and Scroll actions. To merge all actions of type ColsVisibility and to merge all actions od type Filter.<br />
+The undo actions are listed in <a href="#OnUndo">OnUndo</a>.<br />
+
+<!-- NoUpload -->
+<a name="INoUpload"></a>
+<div class="XML">
+   <u><i>upd <b>11.0</b></i></u> <b>&lt;I></b> <i>int</i>
+   <h4>NoUpload</h4> <s>[0/1]</s>
+</div>
+If set to <b>1</b>, ignores changes in this row and does not upload them to server.<br />
+If set to <b>1</b>, it also does <u>not</u> save undo for changed cells except the cell has set <tt><a href="#CellUndo">Undo</a>='1'</tt>.<br />
+<i>(Since 11.0)</i> If set to <b>2</b>, it works like <b>1</b> and if the row contains some pending changes, they are not accepted after save.<br />
+Default value is <b>0</b> for data rows and <b>1</b> for space rows.<br /> 
+Filter row has always set <b>1</b>.<br />
+
+<!-- Undo -->
+<a name="CellUndo"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;cell></b> <i>bool</i>
+   <h4>Undo</h4> <s>[0/1]</s>
+</div>
+If the change in cell will be saved to undo list and can be undone.<br />
+By default it is set <b>1</b> for data rows and <b>0</b> for space rows. Exactly default value is set to <b style="color:red;">!</b></b><a href="#INoUpload">NoUpload</a>.<br /> 
+Filter row cells have always set <b>0</b>.<br />
+
+<!-- Action Undo -->
+<a name="ActionsUndo"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>Undo</h4>
+   <s>Attached to event <b>OnCtrlZ</b> and <b>OnClickButtonUndo</b></s>
+</div>
+Undoes the last grid modification (cell change, add row, delete row(s), move row(s), copy row(s)).<br />
+
+<!-- Action UndoAll -->
+<a name="ActionsUndoAll"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>UndoAll</h4>
+   <s>Not attached to any event</s>
+</div>
+Undoes all modifications done since last save or accepting changes or reloading body or grid.<br />
+
+<!-- Action Redo -->
+<a name="ActionsRedo"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>Redo</h4>
+   <s>Attached to event <b>OnCtrlY</b> and <b>OnClickButtonRedo</b></s>
+</div>
+Does again the last undone action. It can be done only when between Undo and Redo was <u>not</u> done any other modification.<br />
+
+<!-- Action RedoAll -->
+<a name="ActionsRedoAll"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>RedoAll</h4>
+   <s>Not attached to any event</s>
+</div>
+Does again all undone actions. It can be done only when between Undo and Redo was not done any other modification.<br />
+
+<!-- Action ClearUndo -->
+<a name="ActionsClearUndo"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearUndo</h4>
+   <s>Not attached to any event</s>
+</div>
+Clears undo buffer.<br />
+<i>Remember, the undo buffer is cleared automatically on save (except <b>6</b>. bit  of <a href="#CfgUndo">Undo</a> is set) or reload or reload body.</i><br />
+
+<!-- CanUndo -->
+<a name="CanUndo"></a>
+<div class="API">
+   <u>new <b>6.3</b></u> <b>API method</b> <i>bool</i>
+   <h4>CanUndo</h4>
+   <s>( )</s>
+</div>
+Returns true, if there is something to undo.<br />
+
+<!-- CanRedo -->
+<a name="CanRedo"></a>
+<div class="API">
+   <u>new <b>6.3</b></u> <b>API method</b> <i>bool</i>
+   <h4>CanRedo</h4>
+   <s>( )</s>
+</div>
+Returns true, if there is something to redo.<br />
+
+<!-- StartUndo -->
+<a name="StartUndo"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>void</i>
+   <h4>StartUndo</h4>
+   <s>( )</s>
+</div>
+Starts new undo block.<br />
+Call it before doing more changes in grid to be undone all at once<br />
+The undo blocks can be nested. But the count of calling StartUndo must be the same as count of calling EndUndo.<br />
+
+<!-- EndUndo -->
+<a name="EndUndo"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>void</i>
+   <h4>EndUndo</h4>
+   <s>( )</s>
+</div>
+Ends new undo block.<br />
+Call it after doing more changes in grid to be undone all at once.<br />
+
+<!-- ClearUndo -->
+<a name="ClearUndo"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>ClearUndo</h4>
+   <s>(<i>bool</i> <b>recalc</b>)</s>
+</div>
+Clears undo buffer.<br />
+<i>Remember, the undo buffer is cleared automatically on save or reload or reload body, except <a href="#CfgUndo">Undo</a> has set flag 32.</i><br />
+If set <b>recalc</b>, it recalculates the space rows to refresh toolbar buttons.<br />
+
+<!-- CustomUndo -->
+<a name="CustomUndo"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>void</i>
+   <h4>CustomUndo</h4>
+   <s>(<i>object</i> <b>Object</b>, <i>function</i> <b>Undo</b>, <i>function</i> <b>Redo</b>)</s>
+</div>
+Adds into undo queue custom undo action.<br />
+The <b>Object</b> should contain all information you require to do both undo and redo actions.<br />
+On undo is called <b>Undo</b>(<b>Object</b>), on redo is called <b>Redo</b>(<b>Object</b>). Or is possible also to use OnUndo / OnRedo API events.<br />
+
+<!-- MergeUndo -->
+<a name="MergeUndo"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API method</b> <i>void</i>
+   <h4>MergeUndo</h4>
+   <s>(<i>string</i> <b>type1</b> = null, <i>string</i> <b>type2</b> = null)</s>
+</div>
+Merges two last blocks of undo to one.<br />
+If set <b>type1</b> it merges the blocks only if the older block contains undos only of types <b>type1</b> or <b>type2</b>.<br />
+
+<!-- OnUndo -->
+<a name="OnUndo"></a>
+<div class="API">
+   <u>new <b>7.0</b> <i>upd <b>12.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>OnUndo</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>action</b>, ....  )</s>
+</div>
+Called after given action is undone by clicking Undo button or Ctrl + Z. <b>action</b>:<br />
+<table> 
+<tr><td style="width:110px;">"Start"</td><td>OnUndo (TGrid grid, string action)</td><td>Called before block of undo actions starts, but undo is already disabled</td></tr>
+<tr><td>"End"</td><td>OnUndo (TGrid grid, string action)</td><td>Called after block of undo actions finishes, but before undo is enabled</td></tr>
+<tr><td>"Change"</td><td style="width:600px;">OnUndo (TGrid grid, string action, TRow row, string col, type value)</td><td>After cell changed to original value. value is previous value</td></tr>
+<tr><td>"EFormula"</td><td>OnUndo (TGrid grid, string action, TRow row, string col, type value)</td><td>After cell formula changed to original value. value is previous value</td></tr>
+<tr><td>"Add"</td><td>OnUndo (TGrid grid, string action, TRow row, TRow src)</td><td>After added or copied row is deleted, but before it is removed</td></tr>
+<tr><td>"Delete"</td><td>OnUndo (TGrid grid, string action, TRow row)</td><td>After deleted row is undeleted or undeleted row is deleted</td></tr>
+<tr><td>"Move"</td><td>OnUndo (TGrid grid, string action, TRow row, TRow parent, TRow next)</td><td>After moved row is moved to original position</td></tr>
+<tr><td>"Show"</td><td>OnUndo (TGrid grid, string action, TRow row)</td><td>After row is hidden (<i>new 12.0</i>, if set <tt>Undo&amp;8</tt>)</td></tr>
+<tr><td>"Hide"</td><td>OnUndo (TGrid grid, string action, TRow row)</td><td>After row is shown (<i>new 12.0</i>, if set <tt>Undo&amp;8</tt>)</td></tr>
+<tr><td>"Span"</td><td>OnUndo (TGrid grid, string action, TRow row1, string col1, TRow row2, string col2)</td><td>After spanned cell is split back (if set <tt>DynamicSpan='1'</tt>)</td></tr>
+<tr><td>"Split"</td><td>OnUndo (TGrid grid, string action, TRow row1, string col1, TRow row2, string col2)</td><td>After split cell is spanned back (if set <tt>DynamicSpan='1'</tt>)</td></tr>
+<tr><td>"AddCol"</td><td>OnUndo (TGrid grid, string action, string col, TCol C)</td><td>After added column is removed <i>(new 12.0)</i></td></tr>
+<tr><td>"DeleteCol"</td><td>OnUndo (TGrid grid, string action, string col, int del, TCol C)</td><td>After column is deleted or undeleted <i>(new 12.0)</i></td></tr>
+<tr><td>"MoveCol"</td><td>OnUndo (TGrid grid, string action, string col, string tocol, string rightcol)</td><td>After moved column is moved back to original position (if set <tt>DynamicSpan='1'</tt> or <tt>Undo&amp;8</tt>)</td></tr>
+<tr><td>"ColsVisibility"</td><td>OnUndo (TGrid grid, string action, string[ ] show, string[ ] hide)</td><td>After columns are hidden or shown (<i>new 12.0</i>, if set <tt>Undo&amp;8</tt>)</td></tr>
+<tr><td>"ChangeDef"</td><td>OnUndo (TGrid grid, string action, TRow row, string def)</td><td>After row Def attribute is changed back to original value</td></tr>
+<tr><td>"SetAttribute"</td><td>OnUndo (TGrid grid, string action, TRow row, string col, string attr, type value)</td><td>After the attribute set by <b>SetAttribute</b> method changed to original value</td></tr>
+<tr><td>"CopyAttrs"</td><td>OnUndo (TGrid grid, string action, TRow row, string col, string attrs[ ], type values[ ])</td><td>After the attributes changed due <b>CopyAttrs</b> changed to original value <i>(new 12.0)</i></td></tr>
+<tr><td>"GanttBase"</td><td>OnUndo (TGrid grid, string action, string base, string col)</td><td>After GanttBase is moved back to original position</td></tr>
+<tr><td>"GanttFinish"</td><td>OnUndo (TGrid grid, string action, string finish, string col)</td><td>After GanttFinish is moved back to original position</td></tr>
+<tr><td>"Focus"</td><td>OnUndo (TGrid grid, string action, TRow row, string col, int pagepos, type[ ] Rect)</td><td>After moved focus back to original position (<i>new 11.0</i>, if set <tt>Undo&amp;2</tt>)</td></tr>
+<tr><td>"ResizeRow"</td><td>OnUndo (TGrid grid, string action, TRow row, int height)</td><td>After resizing row back to original height (<i>new 11.0</i>, if set <tt>Undo&amp;8</tt>)</td></tr>
+<tr><td>"ResizeCol"</td><td>OnUndo (TGrid grid, string action, string col, int width)</td><td>After resizing column back to original width (<i>new 11.0</i>, if set <tt>Undo&amp;8</tt>)</td></tr>
+<tr><td>"ResizeSec"</td><td>OnUndo (TGrid grid, string action, int Left, int Mid, int Right)</td><td>After resizing sections back to original widths (<i>new 11.0</i>, if set <tt>Undo&amp;8</tt>)</td></tr>
+<tr><td>"ResizeMain"</td><td>OnUndo (TGrid grid, string action, int Width, int Height)</td><td>After resizing grid main tag to original size (<i>new 11.0</i>, if set <tt>Undo&amp;8</tt>)</td></tr>
+<tr><td>"Select"</td><td>OnUndo (TGrid grid, string action, TRow row, string col, bool select)</td><td>After selecting cell (col!=null), row (row!=null) or all rows to original selection state (<i>new 11.0</i>, if set <tt>Undo&amp;4</tt>)</td></tr>
+<tr><td>"Filter"</td><td>OnUndo (TGrid grid, string action, TRow row, string col, string value, int operator, bool hasoperator)</td><td>After changing filter cell value or operator back to original value (<i>new 11.0</i>, if set <tt>Undo&amp;16</tt>)</td></tr>
+<tr><td>"Sort"</td><td>OnUndo (TGrid grid, string action, string sort)</td><td>After changing sort setting back to original value (<i>new 11.0</i>, if set <tt>Undo&amp;16</tt>)</td></tr>
+<tr><td>"Search"</td><td>OnUndo (TGrid grid, string action, string action)</td><td>After changing search action back to original value (<i>new 11.0</i>, if set <tt>Undo&amp;16</tt>)</td></tr>
+<tr><td>"Filtered"</td><td>OnUndo (TGrid grid, string action, bool filtered)</td><td>After changing Filtered value back to original value (<i>new 11.0</i>, if set <tt>Undo&amp;16</tt>)</td></tr>
+<tr><td>"Sorted"</td><td>OnUndo (TGrid grid, string action, bool sorted)</td><td>After changing Sorted value back to original value (<i>new 11.0</i>, if set <tt>Undo&amp;16</tt>)</td></tr>
+<tr><td>"Searched"</td><td>OnUndo (TGrid grid, string action, bool searched)</td><td>After changing Searched value back to original value (<i>new 11.0</i>, if set <tt>Undo&amp;16</tt>)</td></tr>
+<tr><td>"Grouped"</td><td>OnUndo (TGrid grid, string action, bool grouped)</td><td>After changing Grouped value back to original value (<i>new 11.0</i>, if set <tt>Undo&amp;16</tt>)</td></tr>
+<tr><td>"Scroll"</td><td>OnUndo (TGrid grid, string action, int vscroll, int hscrollleft, int hscrollmid, int hscrollright)</td><td>After grid is scrolled (<i>new 12.0</i>, if set <tt>Undo&amp;64</tt>)</td></tr>
+<tr><td>"Custom"</td><td>OnUndo (TGrid grid, string action, object Object)</td><td>After undo of custom undo set by <a href="#CustomUndo">CustomUndo</a></td></tr>
+</table>
+
+<!-- OnRedo -->
+<a name="OnRedo"></a>
+<div class="API">
+   <u>new <b>7.0</b> <i>upd <b>12.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>OnRedo</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>action</b>, ....  )</s>
+</div>
+Called after given action is redone by clicking Redo button or Ctrl + Y. <b>action</b> and parameters are the same as in <a href="#OnUndo">OnUndo</a>.<br />
+
+</div>
+</body>	
+</html>

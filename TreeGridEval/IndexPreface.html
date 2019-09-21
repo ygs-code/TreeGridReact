@@ -1,0 +1,214 @@
+<html>
+   <head>
+      <style>
+      body { color:#333; font-size:14px; margin:0px; font-family:'Open Sans', Arial, Verdana, Tahoma, sans-serif; min-width:318px; }
+      .Distribution { margin:32px 10px 10px 10px; line-height:1.3; }
+      .Distribution h1 { display:block; text-align:center; font-size:30px; margin:20px 0px 0px 0px; padding:0px; font-weight:normal; }
+      .Distribution h2 { display:block; text-align:center; font-size:20px; margin:0px 0px 10px 0px; padding:0px; font-weight:normal; color:red; }
+      .Distribution h3 { display:block; text-align:center; font-size:20px; margin:0px; padding:0px; font-weight:normal; }
+      .Distribution h4 { display:block; text-align:center; font-size:15px; margin:0px; padding:0px; font-weight:normal; }
+      .Distribution div { margin:15px auto 0px auto; line-height:1.4; width:800px; border:1px solid #DFDFDF; padding:10px 10px 10px 10px; }
+      .Distribution h5 { display:block; text-align:center; font-size:20px; margin:40px 0px 0px 0px; padding:0px; font-weight:normal; }
+      .Distribution h6 { display:inline-block; font-size:15px; margin:0px; padding:0px 0px 3px 0px; font-weight:bold; }
+      .Distribution h1+p { display:block; text-align:center; font-size:15px; color:#757575; margin:0px; padding:0px 0px 20px 0px; font-weight:normal; }
+      .Distribution .ExampleErr { margin:50px auto 10px auto; padding:5px; border:1px solid black; color:red; width:800px; text-align:left; }
+      .Distribution b { font-weight:normal; color:#04A; }
+      .Distribution .ExampleErr b { font-weight:bold; color:inherit; }
+      .Distribution .ExampleErr h5 { margin:0px;font-weight:bold;  }
+      </style>
+   </head>
+    <body>
+      <div class="Distribution">
+         <h1>Editable JavaScript TreeGrid with Gantt chart and SpreadSheet</h1>
+         <h2>evaluation version</h2>
+         <h3>&#x00A9; COQsoft 2004 - <script>document.write(new Date().getFullYear())</script></h3>
+         <h4>(<a href="http://www.coqsoft.com/">www.coqsoft.com</a>)</h4>
+         <script> 
+            if(location.protocol=="file:") { // Run locally, not from server
+               // IE & FF => Can load local XML
+               if((navigator.appName.search("Netscape")>=0 || navigator.appName.search("Microsoft")>=0 || navigator.userAgent.search("Trident")>=0) && navigator.appName.search("Opera")<0 && navigator.userAgent.search("Opera")<0 && navigator.userAgent.search("KHTML")<0){
+                  
+                  document.write( '<div class="ExampleErr"><h5>Warning!</h5>Because you run the package index locally from filesystem, the <b>Server, PDF and Frameworks examples will not work</b>.<br/>'
+                                + 'To run also the Server examples, <b>run this package index from your local or remote web http server</b> (e.g. localhost).<br>'
+                                + 'The http server must have installed appropriate server script environment (ASP.NET / PHP / JSP)</div>');
+                  }
+               // Chrome & Opera => Cannot load local XML
+               else {
+                  document.write( '<div class="ExampleErr"><h5>Warning!</h5>Because you run the package index locally from filesystem, the most of the <b>examples will not work</b>.<br>'
+                                + 'Because your browser has restricted <b>AJAX</b> communication for local files. Chrome and Opera browsers restrict AJAX on file://.<br/>'
+                                + 'Now you can run only the three <b>JSONP</b> examples (<a href="Examples/Html/BasicAjax/FirstJson.html">FirstJson</a>, <a href="Examples/Html/BasicAjax/SheetJson.html">SheetJson</a> and <a href="ExamplesGantt/Html/Gantt/GanttJson.html">GanttJson</a>).<br>'
+                                + 'To run also all the other examples, <b>run this package index from your local or remote web http server</b> (e.g. localhost).<br>'
+                                + 'To run the Server examples, the http server must have installed appropriate server script environment (ASP.NET / PHP / JSP)</div>');
+                  }
+               }
+            </script>
+         <h5>Distribution content</h5>
+         <div>
+            <h6>TreeGrid with Gantt chart and SpreadSheet and Extended API component core</h6><br />
+            It is <b>fully</b> working <b>trial</b> version. There is <b>no expiration date</b> for the trial version.<br />
+            All the TreeGrid required redistributable files are located in <b>/Grid/</b> directory, see their <a href="Doc/Files.htm">description</a>.<br />
+            <span style="color:red;">The trial version may be used only for evaluation or testing purposes.</span><br />
+            <br />
+            <h6>Local examples</h6> (of all three components TreeGrid, Gantt chart and SpreadSheet)<br />
+            <b>Complex</b> examples demonstrating many features at once.<br />
+            These examples use static <b>XML</b> files as data sources, without any server script and without saving changes back to the data.<br />
+
+            There are also three complex examples with <b>JSON</b> format: 
+            <a href="Examples/Html/BasicAjax/FirstJson.html">FirstJson</a>,
+            <a href="Examples/Html/BasicAjax/SheetJson.html">SheetJson</a>,
+            and <a href="ExamplesGantt/Html/Gantt/GanttJson.html">GanttJson</a>.<br />
+            
+            There are also three complex examples in <b>RTL</b> (right to left) mode: 
+            <a href="Examples/Html/BasicAjax/FirstRtl.html">FirstRtl</a>,
+            <a href="Examples/Html/BasicAjax/SheetRtl.html">SheetRtl</a>,
+            and <a href="ExamplesGantt/Html/Gantt/GanttRtl.html">GanttRtl</a>.<br />
+            <br />
+            <h6>Local tutorial examples</h6> (of all three components TreeGrid, Gantt chart and SpreadSheet)<br />
+            <b>Simple</b> examples demonstrating particular feature.<br />
+            These examples use static <b>XML</b> files as data sources, without any server script and without saving changes back to the data.<br />
+            <br />
+            <h6>Framework examples</h6> (of all three components TreeGrid, Gantt chart and SpreadSheet)<br />
+            <b>Simple</b> examples demonstrating TreeGrid usage with famous JavaScript frameworks.<br />
+            There are three similar example sets for <b>Angular</b>, <b>React</b> and <b>Vue</b> framework.<br />
+            There is also one universal <b>Html</b> example for other JavaScript frameworks.<br />
+            These examples show also communication with <b>NodeJS</b> server and <b>SQL database</b> or <b>JSON file</b>.<br />
+            The sample scripts can be used as framework of your application.<br />
+            <br />
+            <h6>Server examples</h6> (of all three components TreeGrid, Gantt chart and SpreadSheet)<br />
+            <b>Simple</b> examples demonstrating communication with server.<br />
+            There are four similar example sets for <b>ASP.NET</b> (<b>C#</b>, <b>VB</b>), <b>PHP</b> and <b>JSP</b> (<b>JAVA</b>).<br />
+            These examples show various ways of loading data from and saving data back to <b>SQL database</b> or <b>XML file</b>.<br />
+            The sample server scripts can be used as framework of your application.<br />
+            <br />
+            <h6>PDF export examples</h6> (of all three components TreeGrid, Gantt chart and SpreadSheet)<br />
+            <b>Simple</b> examples demonstrating printing to PDF feature.<br /> 
+            The examples demonstrate communication with server and using headless Chrome for HTML to PDF conversion.<br />
+            There are four similar example sets for <b>ASP.NET</b> (<b>C#</b>, <b>VB</b>), <b>PHP</b> and <b>JSP</b> (<b>JAVA</b>).<br />
+            The sample server scripts can be used as framework for your printing to PDF.<br />
+            <br />
+            <h6>Documentation</h6> (for all three components TreeGrid, Gantt chart and SpreadSheet)<br />
+            <b>Full</b> offline documentation in HTML, with <b>content tree</b>, <b>search</b> and <b>glossary</b>. 
+         </div>
+
+         <h5>How to run / set up the examples</h5>
+         <div>
+            <h6>Installation</h6><br />
+            <b style="color:green;">No installation is required, just unzip the whole package to some directory and run the Index.html from the http web server.</b><br />
+            Notes for individual http servers to better set up the TreeGrid examples are listed below.<br />
+            <br />
+            Only the <b>Framework</b> examples require usual installation via <b>NodeJS</b>, see the installation procedure in individual framework example: 
+            <a href="Index.html#/ExamplesNode/Server/TreeGridNodeServer.html" target="_top">Node server</a>,
+            <a href="Index.html#/ExamplesNode/Angular/TreeGridAngular.html" target="_top">Angular examples</a>,
+            <a href="Index.html#/ExamplesNode/React/TreeGridReact.html" target="_top">React examples</a>,
+            <a href="Index.html#/ExamplesNode/Vue/TreeGridVue.html" target="_top">Vue examples</a>,
+            <a href="Index.html#/ExamplesNode/Html/TreeGridHtml.html" target="_top">Other frameworks examples</a>.
+            <br />
+         </div>
+         <div>
+            <h6>Basic requirements</h6><br />
+            To test examples properly you should <b>preserve the default directory structure</b> in the whole package.<br />
+            To run the <b>Server & PDF examples</b> your http server must have installed appropriate server script environment (ASP.NET/PHP/JSP).<br />
+            To run the <b>Frameworks examples</b> see the description for the individual example how to install and run them.<br />
+            You need to <b>permit</b> appropriate <b>read and write rights</b> to all data files in this distribution.<br />
+            <span style="padding-left:20px;">For all XML files must be read access and for database files like MDB or TXT files must be read and write access.</span><br />
+            <span style="padding-left:20px;">These rights must be granted to all users (or to appropriate server script processor), even if you are system administrator.</span><br>
+            All examples use files from <b>/Grid/</b> directory directly from browser. This url is accessed relatively, usually as <b>../../../Grid/</b>.<br /> 
+            <span style="padding-left:20px;">Therefore this path must be accessible for browser on actual web server.</span><br />
+            <span style="padding-left:20px;">It means you must create http virtual folder from this package root directory and <b>not</b> from any nested one like /Examples.</span><br>
+         </div>
+         <div>
+            <h6>Without web server</h6><br />
+            <b>Tutorials</b> and <b>Local examples</b> can be executed locally on local computer directly from file system, just in browser from disk.<br>
+            Click on any sample html file in Windows Explorer, IE, Firefox, Safari or Linux file explorer to run it from disk on <b>file://</b> protocol.<br>
+            <span style='color:red;'>It is <strong>not</strong> possible to do it in <strong>Chrome</strong> and <strong>Opera</strong> browsers, in these browsers you must run the examples from http server.</span><br />
+            <i>In some IE on Windows you have to confirm JavaScript execution if you browse html locally from file system, fortunately, when running it remotely (even on local or remote server), it is not needed.</i><br>
+            <i>If you are not system administrator, you must, especially on <b>Linux</b> systems, permit <b>read rights</b> to all <b>XML</b> files in this package.</i><br>
+         </div>
+         <div>
+            <h6>Windows IIS</h6><br>
+            Create new virtual IIS web folder from TreeGrid distribution or copy it to existing virtual folder. In this case, this file will be accessible from <a href="http://localhost/treegrid/Index.html">http://localhost/<i>virtual_folder</i>/Index.html</a>.<br>
+            If you are not familiar with IIS, you can copy it to your default IIS root usually located at <a href="file:///c:/inetpub/wwwroot/">c:/inetpub/wwwroot/</a>, 
+            for example to <a href="file:///c:/inetpub/wwwroot/treegrid/">c:/inetpub/wwwroot/treegrid/</a> 
+            and in this case this file will be accessible from <a href="http://localhost/treegrid/Index.html">http://localhost/treegrid/Index.html</a>.<br>
+            Of course, instead of localhost you can use any remote server and use its IP address or URL to access TreeGrid examples.<br>
+         </div>
+         <div>
+            <h6>Visual Studio .NET</h6><br />
+            Open the <b>TreeGrid_VSNET.sln</b> solution file in the package root directory in Visual Studio.<br />
+            In <b>Solution Explorer</b> (Ctrl+Alt+L) expand the package directory and set the <b>Index.html</b> as <b>Start page</b> (from popup menu).<br />
+            Run this package index on VS.NET temporary web server in IE by <b>F5</b>.
+         </div>
+         <div>
+            <h6>ASP.NET MVC 3, 4 or 5 + Visual Studio .NET</h6><br />
+            Create new MVC project in Visual Studio (MVC3, MVC4 or MVC5).<br />
+            If the project is empty, create new <b>Controller</b> and new <b>View</b> for that controller.<br />
+            Copy <b>/Grid</b> directory from this package root to the <b>root</b> of the MVC project (where are directories like Views and Controllers).<br />
+            Copy sample XML data to MVC project, e.g. copy /Examples/Html/BasicAjax/<b>FirstDef.xml</b> and <b>FirstData.xml</b> to the <b>/Models</b>.<br />
+            Add TreeGrid script to the View .cshtml file &lt;head> as<br />
+            <code style="padding-left:50px;display:block;">&lt;script src="Grid/GridE.js"> &lt;/script></code>
+            Add TreeGrid to the View .cshtml file, .e.g. add this code for the First example data in Models:
+            <code style="padding-left:50px;display:block;">
+               &lt;div style="width:100%;height:500px;"><br />
+               &nbsp;&nbsp;&nbsp;&lt;bdo Layout_Url="Models/FirstDef.xml" Data_Url="Models/FirstData.xml">&lt;/bdo><br />
+               &lt;/div>
+            </code>
+            Run the project controller with the view in browser by <b>F5</b>. Optionally add the Controller name to the url shown in browser.<br />
+            <i>Note, you should run the TreeGrid examples and tutorials in VS.NET <b>without MVC</b> first to learn TreeGrid basic concepts.</i><br />
+         </div>
+         <div>
+            <h6>SharePoint + Visual Studio .NET</h6><br />
+            Copy the whole package to <b>wpresources</b> directory.<br /> 
+            <span style="padding-left:20px;">This directory is located by default at c:\inetpub\wwwroot\wss\VirtualDirectories\80\wpresources</span><br />
+            In Visual Studio create new Project as C#/VB -> SharePoint -> 2010 or 2007 -> <b>Visual Web Part</b>.<br />
+            Add such simple lines to the <b>.ascx</b> page to the end after the &lt;%@ ... %> directives :<br />
+            <code style="padding-left:50px;display:block;">
+               &lt;script src="/wpresources/Grid/GridE.js"> &lt;/script><br />
+               &lt;div style="width:900px;height:400px;"><br />
+               &nbsp;&nbsp;&nbsp;&lt;bdo Sync="1" Layout_Url="/wpresources/Examples/Html/BasicAjax/FirstDef.xml"<br />
+               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Data_Url="/wpresources/Examples/Html/BasicAjax/FirstData.xml">&lt;/bdo><br />
+               &lt;/div><br />
+            </code>
+            Run VS.NET debugger. Or just build and deploy the component and go to the SharePoint web page.<br />
+            Edit the web page and add the Custom Web Part to some location, save, refresh and the grid will be displayed in SharePoint.
+            <i>Note, you should run the TreeGrid examples and tutorials in VS.NET <b>without SharePoint</b> first to learn TreeGrid basic concepts.</i><br />
+         </div>
+         <div>
+            <h6>Linux Apache</h6><br>
+            Copy the whole TreeGrid distribution to some subdirectory of the Apache <b>DocumentRoot</b>.<br>
+            Or create linux symbolic link in <b>DocumentRoot</b> to TreeGrid distribution. 
+            In the <b>DocumentRoot</b> (or in its subdirectory) must be permitted <b>Option</b> <b>FollowSymLinks</b>.<br>
+            Or create <b>Alias</b> to the TreeGrid distribution in <font color="#800000"><b>httpd.conf</b></font> file 
+            (usually in section module <font color="#800000"><b>mod_alias</b></font>), followed by settings of directory rights.<br>
+            For example writing to <b>httpd.conf</b> these two lines creates alias 
+            "<a href="http://localhost/treegrid/">http://localhost/treegrid/</a>" to treegrid located at "/opt/TreeGrid/":
+               <code style="padding-left:50px;display:block;">
+                  Alias /treegrid  /opt/TreeGrid/<br />
+                  &lt;Directory /opt/TreeGrid&gt;Allow from all&lt;/Directory&gt;<br />
+               </code>
+            <i>After any change in <b>httpd.conf</b> file you must restart Apache by calling "<b>httpd -k restart</b>"</i><br>
+            <i>On Linux are urls case sensitive, therefore you must use exact spelling, this package files have the first letter upper case.</i><br>
+            Of course, instead of localhost you can use  any remote server and use its IP address or URL to access TreeGrid examples.<br>
+         </div>
+         <div>
+            <h6>Apache Tomcat</h6><br />
+            Copy the whole TreeGrid distribution to some subdirectory in the Apache Tomcat <b>/webapps/ROOT/</b>.<br>
+            Or copy the whole TreeGrid distribution to some directory on your disk and create virtual Tomcat directory.<br />
+            For example copy the distribution to <b>c:\treegrid</b> and to Tomcat <b>/conf/server.xml</b> to <b>&lt;Host></b> add tag:<br />
+               <code>&lt;Context path="/treegrid" docBase="c:\treegrid" crossContext="false" reloadable="true" /></code><br />
+               and run it from <b>http://localhost/treegrid/Index.html</b>
+         </div>
+      </div>
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGTrial\s*=\s*(\d+)/), TGIndex = 1;
+         if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunTrialIndex", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrial="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+   </body>
+</html>

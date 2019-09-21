@@ -1,0 +1,64 @@
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+      <title>Multiline editing in JavaScript tree grid component | TreeGrid</title>
+      <meta name="description" content="Live sample shows TreeGrid features: multiline editing, edit masks and permissions, cell span, images and links in cells, rows with variable heights" />
+   </head>
+   <body class="Example">
+      <style>
+         /* Examples shared styles */
+         .Example h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+         .Example h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+         .Example h3,.Example h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+         .Example h3 { background:#EE9; border:1px solid #DD8; }
+         .Example h4 { background:#BDE; border:1px solid #ACD; }
+         .Example a { text-decoration:underline; }      
+         .Example li { padding-bottom:8px; }
+         .Example ul { margin:6px 0px 0px 20px; font:13px Arial; }
+         .Example .Desc { margin:0px 5px 10px 5px; padding:10px; border:1px solid #dfdfdf; }
+         .Example .Desc > ul { margin-left:0px; padding:0px 0px 0px 15px; clear:both; }
+         .Example .Desc b { color:#0585B9; }
+         .Example .Path { font:normal 12px Arial; color:#0585B9; }
+         .Example .Path b { color:#D73938; }
+         .Example .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+         .Example .Path i { color:black; font-style:normal; font-weight:bold; }
+         .Example .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+         .Example .Border { margin:0px 5px 15px 5px; }
+         .Example .Main { }
+      </style>
+      <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Examples\/|\/ExamplesGantt\/)([^\/]+)\/([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+      <h1>A list of books</h1>
+      <h2>Variable row height, multiline editing, mask editing, image and link types</h2>
+      <div class="Desc">
+         The example has two modes switched by radio buttons in the first row.<br> 
+         In the <b>read-only mode</b> you can preview texts by focusing them or activate and follow the links and images by clicking them.<br>
+         In the <b>write mode</b> you can change texts. Editing changes in multiline texts can be accepted by <b>Ctrl+Enter</b> or click outside the cell.
+         You can also edit image and link sources by special masks, so you can change only few parts of edited string.
+         When editing multiline texts, you can see automatic height changing, but only to predefined maximal value.<br />
+      </div>
+      <center class="Border">
+         <div class="Main" style="WIDTH:100%;HEIGHT:550px">
+            <bdo Layout_Url="BooksDef.xml" Data_Url="BooksData.xml"></bdo>
+         </div>
+      </center>
+      <script>
+
+Grids.OnGetColor = function(G,row,col,r,g,b){ 
+if(!Get(row,"Spanned")&&row.Kind=="Data") return "rgb("+r+","+g+","+(b-20)+")";   // colors main rows
+}
+
+      </script>
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGTrialGrid\s*=\s*(\d+)/), TGIndex = 16;
+          if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunTrialHtmlBooks", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGrid="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+   </body>
+</html>

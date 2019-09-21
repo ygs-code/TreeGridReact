@@ -1,0 +1,100 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - External objects</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>External objects<br /><span style="font-size:70%;padding-bottom:8px;">(e.g. Flash and SilverLight)</span></h1>
+<p>TreeGrid documentation</p>
+
+TreeGrid can display any external object in any cell.<br />
+To display the object create and place this object in <a href="#OnRenderRow">OnRenderRow</a> event.<br />
+Because some external objects need to refresh after its parent tag is moved, re-displayed or scrolled, catch the other events to do the needed action.<br />
+It is strongly recommended to <u>not</u> use 'Class' cursor for the external object cells, set <tt><b>CellFocus='Border,Color'</b></tt> for the column or cell.<br />
+
+<!-- OnRenderRow -->
+<a name="OnRenderRow"></a>
+<div class="API">
+   <u>chg <b>13.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnRenderRow</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Called whenever the row or its cell is being rendered or refreshed. <i>Since 13.0</i> it is called also for fixed and space rows.<br />
+Use this event to create or update some custom HTML code in the row cells, for example when using dynamic objects via plugins like <b>Flash</b>, <b>SilverLight</b>, external JavaScript <b>charts</b> and so on.<br />
+Use the <a href="CellBasics.htm#GetCell">GetCell</a> method to get the cell object. <i>Do not expect the exact cell structure, always search for your custom tags like "object".</i><br />
+<b>col</b> is set to column name when only this cell is being refreshed, otherwise is set to null and you need to update all your custom cells in the row.<br />
+<i>Remember, the cell is refreshed also if used <b>Class</b> type focus or hover cursor (by default is for Focus, to disable it set <tt style="font-style:normal;"><b>CellFocus='Border,Color'</b></tt>)</i><br />
+
+<!-- OnClearRow -->
+<a name="OnClearRow"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnClearRow</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Called whenever the row or its cell is being rendered or refreshed, before the content is cleared.<br />
+Use this event to dispose custom data assigned to the HTML code in the row cells.<br />
+Use the <a href="CellBasics.htm#GetCell">GetCell</a> method to get the cell object. <i>Do not expect the exact cell structure, always search for your custom tags like "object".</i><br />
+<b>col</b> is set to column name when only this cell is being refreshed, otherwise is set to null and you need to update all your custom cells in the row.<br />
+<i>Remember, the cell is refreshed also if used <b>Class</b> type focus or hover cursor (by default is for Focus, to disable it set <tt style="font-style:normal;"><b>CellFocus='Border,Color'</b></tt>)</i><br />
+
+<!-- OnDisplaceRow -->
+<a name="OnDisplaceRow"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnDisplaceRow</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Called when the row or its cell has been physically moved inside HTML table.<br />
+When row is moved, this event is called also for every row's rendered child, only for expanded parents.<br />
+Use this event to update some external objects like dynamic <b>Flash</b> or <b>SilverLight</b> that need to be updated when their parent is moved by DOM.<br />
+<b>col</b> is set to column name when only this cell is being moved (when moving column), otherwise is set to null and you need to update all your custom cells in the row.<br />
+
+<!-- OnDisplayRow -->
+<a name="OnDisplayRow"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnDisplayRow</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>)</s>
+</div>
+Called when the row has been displayed => changed its state from display:none.<br />
+Called when the row is shown, but it is not re-rendered. Usually when the row is shown due filtering or by parent row expand.<br />
+Use this event to update some external objects like dynamic <b>Flash</b> or <b>SilverLight</b> that need to be updated when their parent state is changed from display:none.<br />
+
+<!-- OnScrollRow -->
+<a name="OnScrollRow"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnScrollRow</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>)</s>
+</div>
+Called when the row is scrolled into visible area.<br />
+Use this event to update some problematic external object like dynamic <b>Flash</b> in Firefox that cannot be displayed into invisible area due overflow.<br />
+
+<!-- OnScrollCol -->
+<a name="OnScrollCol"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnScrollCol</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Called when the column is scrolled into visible area.<br />
+Use this event to update some problematic external object like dynamic <b>Flash</b> in Firefox that cannot be displayed into invisible area due overflow.<br />
+
+<!-- ExactSize -->
+<a name="CfgExactSize"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ExactSize</h4> <s>[1]</s>
+</div>
+If the size of grid is computed according to the real main tag size.<br />
+For <b>1</b> it preserves also percentage width inside tables and similar layouts.<br />
+Set it to <b>0</b> for large tables when grid becomes slow when updating layout.<br />
+<i>If used external objects like Flash or SilverLight  in grid cells, it should be set to 0.</i><br />
+
+</div>
+</body>	
+</html>

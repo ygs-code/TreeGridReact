@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 33 32">
+   <linearGradient id="G1" gradientTransform="rotate(90)"> <stop offset="0%" stop-color="#0D3645"/> <stop offset="100%" stop-color="#166785"/> </linearGradient>   
+   <rect x="1" y="0" fill="url(#G1)" width="32" height="32"/>
+   <line x1="0" y1="0" x2="0" y2="32" stroke="#ABD7D3" stroke-width="1"/>
+   <path stroke="white" stroke-width="3" fill="none" d="M9,12 L17,20 L25,12"/>
+</svg>

@@ -1,0 +1,95 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>5. Cell style</h1>
+   <h2>Cell text styles, color, shadow, size, align, background</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='05-Cell_style.xml' target="_blank">05-Cell_style.xml</a></div>
+      <div class="Main" style='width:770px; height:500px;'>
+         <bdo Debug='check' Data_Url='05-Cell_style.xml'></bdo>
+      </div>
+   </center>
+   <ul>
+      <li> 
+         <h4>Dynamic style</h4><br />
+         Dynamic style is turned on by &lt;Cfg> attribute <h3>DynamicStyle</h3> and permits changing style attributes and also undo / redo these actions by users.<br />
+         It shows also the style buttons on default Toolbar.
+         <ul>
+            <li>
+               <h4>Text style attributes</h4><br />
+               Text style is set by bit array in <h3>TextStyle</h3> and controls <b>bold</b> font, <b>italic</b> font, line <b>below</b>, line <b>through</b>, line <b>above</b>. 
+               Lower case characters as <b>small caps</b>.<br />
+               Every the text style setting can be set or cleared individually by appropriate action.<br />
+            </li>
+            <li><h4>Text and background colors and shadows</h4><br />
+               Text color is set by <h3>TextColor</h3>, background color by <h3>Color</h3>.<br />
+               Text shadow style is set by <h3>TextShadow</h3> and / or the text shadow color by <h3>TextShadowColor</h3>.
+               The predefined text colors are in &lt;Cfg> <b>TextColors</b>, background colors in <b>DefaultColors</b>, shadows in <b>TextShadows</b> and shadow colors in <b>TextShadowColors</b>.<br />
+               All the predefined color lists can be fully customized to contain more, less or different colors. The predefined shadows can be customized in CSS.<br />
+            </li>
+            <li><h4>Font and size</h4><br />
+               Font name is set by <h3>TextFont</h3> and font size by <h3>TextSize</h3>.<br />
+               The predefined font names are in &lt;Cfg> <b>TextFonts</b> and predefined font sizes in <b>TextSizes</b>.<br />
+               Both the predefined lists can be fully customized to contain more, less or different items.<br />
+            </li>
+            <li><h4>Align, wrap and rotate</h4>
+               Horizontal alignment is set by <h3>Align</h3>, vertical alignment by <h3>VAlign</h3>.<br />
+               Cell can be rotated by 90 or 270 degrees and is set by <h3>Rotate</h3>. Wrapping cell value vertically is set by <h3>Wrap</h3>.<br />
+            </li>
+         </ul>
+      </li>
+      <li><h4>Dynamic border</h4><br />
+         Dynamic border is turned on by &lt;Cfg> attribute <h3>DynamicBorder</h3> and permits setting and changing individual cell border width, style and color and also undo / redo these changes.<br />
+         It also shows the Border button on default toolbar.<br />
+         The border is set by attributes for specific edge <h3>BorderTop</h3>, <h3>BorderBottom</h3>, <h3>BorderLeft</h3> and <h3>BorderRight</h3>.<br />
+         The border can be modified for every edge or for more or all edges at once.<br />
+         There are 8 predefined border width and styles in TreeGrid: 0px, 1px solid, 2px solid, 3px solid, 1px dotted, 2px dotted, 1px dashed, 2px dashed. Every border style can have any color.<br />
+      </li>
+      <li><h4>Dynamic span</h4><br />
+         Dynamic span is turned on by &lt;Cfg> attribute <h3>DynamicSpan</h3> and permits spanning and splitting cells and also undo / redo these changes.<br />
+         It also shows the Span and Split buttons on default toolbar.<br />
+         The horizontal span is set by <h3>Span</h3> attribute, vertical span by <h3>RowSpan</h3> attribute.<br />
+      </li>
+      <li><h4>Mass changes</h4><br />
+         All the style, border and span can be affected by mass change like clear cells, move cells, copy cells, auto fill cells, copy &amp; paste cells via clipboard.<br />
+         To be the attribute affected by the mass change, include in it in <h3>EditAttrs</h3> list.<br />
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialSheet\s*=\s*(\d+)/), TGIndex = 16;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialSheet5", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialSheet="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

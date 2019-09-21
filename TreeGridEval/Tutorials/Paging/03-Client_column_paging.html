@@ -1,0 +1,98 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+  <script>
+
+// -------------------------------------------------------------------------------
+// --- Creates cell content to better see the cells ---
+Grids.OnLoaded = function(G){
+function update(row){
+   for(var r=row.firstChild,i=1;r;r=r.nextSibling,i++) {
+      for(var c in G.Cols) if(c!="Panel" && r[c]==null) { r[c] = r.id+" "+c; }
+      if(r.firstChild) update(r);
+      }
+   }
+update(G.Body.firstChild); // First page   
+}
+// -------------------------------------------------------------------------------
+  </script>
+  <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>3. Client column paging</h1>
+   <h2>Automatic paging of columns on client side</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='03-Client_column_paging.xml'>03-Client_column_paging.xml</a></div>
+      <div class="Main" style='width:100%; height:550px;'>
+         <bdo Debug='problem' Data_Url='03-Client_column_paging.xml'></bdo>
+         <!-- Here is not used Debug='check' because for the column count is slow, but you can set it, the grid is still usable except in IE6/IE7 -->
+      </div>
+   </center>
+
+   <ul>
+      <li>
+         Client column paging distributes <b>variable (middle) columns</b> to pages.<br />
+         The column paging is set by Cfg attribute <h3>ColPaging</h3><b>='2'</b>.<br />
+         The column pages are rendered when the page becomes visible due scroll at least for time specified by Cfg attribute <b>PageTime</b>, default value is 200 ms.<br />
+       </li>
+       <li>
+         The size of column page is set by Cfg attribute <h3>ColPageLength</h3>.<br />
+         It is possible to always render the first few columns on start, their count is set by Cfg attribute <h3>ColPageMin</h3>.<br />
+      </li>
+      <li>
+         It is possible to render all columns on start, but with progress dialog to let users to cancel the rendering and render the rest of pages on demand.<br />
+         For this behavior set <b>ColPaging='1'</b>. It can be switched also by (the second) Toolbar button Repaint, it calls action <b>RenderPages</b>.<br />
+         <i>Remember this grid has 1,000 columns and 150,000 cells, so rendering all pages on start takes some time.</i><br />
+      </li>
+      <li>
+         If grid has rendered too many cells, it becomes slow. It is possible to automatically clear the unused column pages (the oldest, not displayed). <br />
+         The maximal count of the rendered column pages is set by <h3>MaxColPages</h3>.
+      </li>
+      <li>
+         To show all cells in fixed rows, especially in header(s), set <h3>ColPagingFixed</h3><b>='0'</b>. It will page only variable rows.
+      </li>
+      <li>
+         If grid has many columns, it is strongly recommended to set their <b>Width</b> attribute to not slow the grid down by calculating their widths.<br />
+         It is possible to preset the Width (like any other attribute) for all columns in default column: &lt;Def>&lt;D Name='C' Width='xxx'/>&lt;/Def>.<br />
+      </li>
+      <li>
+         If grid contains a lot of cells, it is possible to set attribute <b>Prepared='1'</b> for all columns that do not need updating their cells to speed up the grid start.<br />
+         The grid prepares the Date type cells set by string, the empty Int and Float cells with CanEmpty attribute, Select type and Calculated rows without CalcOrder set.<br />
+         So for all other cases you can set the Prepared attribute to avoid iterating all cells on start and checking their type.
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialPaging\s*=\s*(\d+)/), TGIndex = 4;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridPaging3", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialPaging="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

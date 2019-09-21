@@ -1,0 +1,151 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <script>
+
+// Preserves the row id when moving to another grid
+Grids.OnRowCopyId = function(G,row,src,move){
+if(move==0) return;  // Only for moving, not copying
+var orow = G.GetRowById(src.id);
+if(!orow||orow.Deleted) { row.id = src.id; return true; } // This example uses unique ids among all grids, so moved row preserves its id (except both grids got added rows with the same id or copied subitem) 
+}
+
+// Shows simulated save. 
+// Can be used to save all changes in all grids and send them to server
+function Save(){
+var s = "";
+for(var i=0;i<Grids.length;i++){
+   if(Grids[i] && Grids[i].HasChanges()) {
+      s += "\n<Grid id='"+Grids[i].id+"'>"+Grids[i].GetXmlData("changes,nogrid,noio").replace(/\</g,"\n<")+"\n</Grid>\n";
+      Grids[i].AcceptChanges();
+      }
+   }
+if(s) s = "<Grids>"+s+"</Grids>";
+GetElem("Output").value = s;
+if(s) alert("Simulated save done");
+else alert("No changes to save");
+}
+   </script>
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+
+      .Tutorial .Panel { padding-left:20px; background-size:15px 15px; background-repeat:no-repeat; }
+      .Tutorial .Icon { padding-left:22px; padding-bottom:5px; background-size:18px 18px; background-repeat:no-repeat; }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>2. Dragging rows between grids</h1>
+   <h2>Dragging rows inside and between grids</h2>
+
+   <div class="Border" id="Border">
+      <div style="float:left; margin-right:10px; margin-bottom:20px;">
+         <div class="Xml">Source: <a href='02-Tree.xml'>02-Tree.xml</a></div>
+         <div class="Main" style='width:410px; height:300px;'>
+            <bdo Debug='check' Data_Url='02-Tree.xml'></bdo>
+         </div>
+      </div>
+      <div style="float:left; width:600px; overflow:hidden;">
+         <div style="float:left; margin-right:10px;">
+            <div class="Xml">Source: <a href='02-Nodes.xml'>02-Nodes.xml</a></div>
+            <div class="Main" style='width:220px; height:300px;'>
+               <bdo Debug='check' Data_Url='02-Nodes.xml'></bdo>
+            </div>
+         </div>
+         <div style="float:left; margin-right:10px;">
+            <div class="Xml">Source: <a href='02-Items.xml'>02-Items.xml</a></div>
+            <div class="Main" style='width:200px; height:300px;'>
+               <bdo Debug='check' Data_Url='02-Items.xml'></bdo>
+            </div>
+         </div>
+         <div style="float:left;">
+            <div class="Xml">Source: <a href='02-Subitems.xml'>02-Subitems.xml</a></div>
+            <div class="Main" style='width:150px; height:300px;'>
+               <bdo Debug='check' Data_Url='02-Subitems.xml'></bdo>
+            </div>
+         </div>
+      </div>
+      <br style="clear:both;"/>
+      <button onclick="Save()" style="margin-bottom:5px;">Save changes</button>
+      <textarea id='Output' style="width:100%;height:150px;"></textarea>
+   </div>
+
+   <ul>
+      <li>See <a href="../../Doc/RowMove.htm">Row moving and dragging documentation</a> and <a href="../../Doc/RowDefaults.htm">Default rows documentation</a>.</li>
+      <li>
+         <h4>Example description</h4><br />
+         <ul>
+         <li><i><b>Move</b> row with children by dragging by <b>left</b> mouse button, <b>copy</b> row by dragging by <b>right</b> mouse button, <b>copy</b> row with <b>children</b> by dragging by <b>ctrl+right</b> mouse button.
+         <b>Select</b> more rows (by panel <span class="TSPanelSelect Panel"></span> button) and drag them together.</i></li>
+         <li><i>There are three row types (default rows), NODE, ITEM and SUBITEM. The NODE can contain only ITEM. The ITEM can contain ITEM and SUBITEM. The SUBITEM can contain only SUBITEM.</i></li>
+         <li><i>New child in NODE is ITEM. New child in ITEM is SUBITEM. New child in SUBITEM is SUBITEM.</i></li>
+         <li><i>The Tree and Nodes grids can contain all rows (NODE, ITEM, SUBITEM), root rows are NODE. The Items grid can contain ITEM and SUBITEM rows, root rows are ITEM. 
+         The Subitems grid does not accept new rows.</i></li>
+         <li><i>Rows dragged from Tree, Nodes and Items grids are moved (or copied if dragged by right or middle mouse button) and rows dragged from Subitems grid are always copied.</i></li>
+         </ul>
+      </li>
+      <li>
+         <h4>Basic dragging settings</h4><br /> are described in the previous example, see <b><a href="01-Dragging_rows.html">01-Dragging_and_copying_rows</a> tutorial</b>.
+      </li>
+      <li><h4>Dragging permissions</h4><br />
+         By default it is permitted to drag rows between grids.<br />
+         Set <b>&lt;Cfg Dragging='0'/></b> to restrict dragging from the grid, set <b>&lt;Cfg Dropping='0'/></b> to restrict dropping rows to the grid.<br />
+         On row level set row attribute <h3>CanDrag</h3> to 0 to restrict dragging the row.<br />
+         Dragging permissions can be controlled dynamically by API event <b>OnStartDrag</b>, dropping permissions by API event <b>OnCanDrop</b>.<br />
+      </li>
+      <li><h4>API</h4><br />
+         On move row to another grid there is called <b>OnRowMoveToGrid</b> API event.<br />
+         Move row(s) to another grid by <b>MoveRowsToGrid</b> API method.
+      </li>
+      <li><h4>Save changes to server</h4><br />
+         <ul>
+         <li>
+            Moved row to another grid is <u>not</u> marked by Moved attribute. It is marked as <h3>Deleted='1'</h3> in source grid and <h3>Added='1'</h3> in the destination grid.<br />
+            See <a href="../../Doc/DataUpload.htm#XML">XML structure sent to server documentation</a>
+         </li>
+         <li>
+            If the destination grid contains <b>Deleted='1'</b> row with the same id as moved row (when moving row back to source grid), the row is not added, but the original deleted row is undeleted and its cells are copied from the moved row. <br />
+            The source row is still marked as Deleted='1' in this case, so there is deleted row in source grid, but not added row in the destination grid.<br />
+            Use <b>OnRowCopyId</b> API event to preserve the row id when moving to provide the behavior described above.<br />
+         </li>
+         <li>
+            Because the move changes two grids it is good to save all grids together to have their state always synchronized. <br />
+            To do it create function that will read the grid changes by <b>GetXmlData</b> API method and merge them together and send them to server. After the save is done, call <b>AcceptChanges</b> API method for all grids.<br />
+         </li>
+         </ul>
+      </li>
+      <li>
+         <b>Undo</b> feature is <u>not</u> fully compatible with moving rows between grids. It undoes changes only in one grid, so there can be inconsistent state, when the moving action is undone only in one grid.
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialBasic\s*=\s*(\d+)/), TGIndex = 16384;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridDrag2", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialBasic="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

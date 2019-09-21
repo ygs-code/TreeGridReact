@@ -1,0 +1,66 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>5. Calculation order in tree</h1>
+   <h2>When the particular parent and child rows are calculated</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='05-Calculation_Order_in_Tree.xml'>05-Calculation_Order_in_Tree.xml</a></div>
+      <div class="Main" style='width:100%; height:358px;'>
+         <bdo Debug='check' Data_Url='05-Calculation_Order_in_Tree.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li>By default are parent row's children cells calculated before the parent row's cells. 
+         You can change this direction by adding '<b>*</b>' to <h3>CalcOrder</h3> to position, where you want to calculate the children.</li>
+      <li>For more complex calculation order you can divide <b>CalcOrder</b> attributes to more parts (<b>CalcOrder</b>,<b>CalcOrder1</b>,<b>CalcOrder2</b>,...)
+         and reference these orders from parent row's <b>CalcOrder</b> by *,*1,*2,...</li>
+      <li>In this example is used this calculation order:
+         <ul class="square">
+         <li>First are calculated columns <i>Total</i> and <i>Tmp</i> upstairs (child rows before parent). 
+            The <i>Tmp</i> column is used only as temporary and should be hidden by setting Visible='0' and CanHide='0'.</li>
+         <li>Next are calculated columns <i>PerParent</i> and <i>PerTotal</i> downstairs (parent before child rows). 
+            Because formulas in these columns use calculated result <i>Total</i> from fixed Root row.</li>
+         </ul>
+      </li>
+      <li>Because of complex calculation order, the <h3>Recalc</h3> attribute of all rows is set to 256 to recalculate the whole grid after any change.</li>
+      <li>If you have more fixed rows and you want to calculate their cells in specific order, you can use &lt;Cfg> attribute <b>CalcOrder</b> instead of CalcOrder in fixed rows.</li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialBasic\s*=\s*(\d+)/), TGIndex = 1024;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridCalculation5", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialBasic="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

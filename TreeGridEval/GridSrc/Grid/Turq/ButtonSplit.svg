@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="-5 -5 48 48">
+<rect x="20.9" fill="#103F51" width="17.1" height="17.1"/>
+<rect fill="#103F51" width="17.1" height="17.1"/>
+<rect x="20.9" y="20.9" fill="#103F51" width="17.1" height="17.1"/>
+<rect y="20.9" fill="#103F51" width="17.1" height="17.1"/>
+<rect x="1.9" y="1.9" fill="#FFFFFF" width="13.3" height="13.3"/>
+<rect x="1.9" y="22.8" fill="#FFFFFF" width="13.3" height="13.3"/>
+<rect x="22.801" y="22.8" fill="#FFFFFF" width="13.299" height="13.3"/>
+<rect x="22.801" y="1.9" fill="#FFFFFF" width="13.299" height="13.3"/>
+<polygon transform="rotate(180,29.5,8.5)" fill="#103F51" points="33.986,2.916 25.84,11.063 25.84,4.743 24.23,4.743 24.23,13.809 33.297,13.809 33.297,12.2 26.977,12.2 35.123,4.053"/>
+</svg>

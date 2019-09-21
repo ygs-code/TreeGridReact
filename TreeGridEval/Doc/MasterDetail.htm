@@ -1,0 +1,382 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Master and detail</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Master - detail grids</h1>
+<p>TreeGrid documentation</p>
+
+TreeGrid supports master / detail relationship as showing (master) row's children in different (detail) grid.<br />
+The detail grid can be shown <b>outside</b> the master grid, see <a href="#External">External detail grids</a> or inside the master grid, in some cell, see <a href="#Nested">Nested detail grids</a>.<br /><br />
+
+The <b>master grid</b> contains all data and only master grid can upload changes to server.<br /> 
+Every master row (with <a href="#IDetail">Detail</a> or <a href="#IDetailCol">DetailCol</a> attribute) contains children that will be displayed in detail grid when the master row is chosen.<br /><br />
+
+The <b>detail children</b> in <b>master</b> grid can be also created automatically by defining them as children of default row (&lt;D>).<br />
+It is useful in creating master / detail relation for plain tables, where are the source data defined only once in the master root rows.<br /><br />
+
+The <b>detail grid</b> contains only layout to define columns and fixed rows, but no variable data rows.<br /> 
+It is used to show and edit children of master row from master grid.<br />
+You can define data rows in detail grid to be displayed when it is empty - when does not display any master row's children.<br /><br />
+
+It is possible to have completely different layout in detail grid than in master grid, use <a href="#CellCopyTo">CopyTo</a> attribute to provide correct relation between cells.<br /><br /> 
+
+For classic master-detail relationship without tree you should specify <tt><a href="Tree.htm#CfgMainCol">MainCol</a>=''</tt> and all master rows set <tt><a href="Tree.htm#IExpanded">Expanded</a>='0'</tt>.<br />
+You can also use <a href="#CellCopyTo">CopyTo</a> attribute if you have editable cell in master row linked to cell in detail.<br />
+
+<!-------------------------------------------------------------  External detail grids  ------------------------------------------------->
+<a name="External"></a>
+<h2>External detail grids</h2>
+
+To define master / detail relationship, set <tt>&lt;Cfg <a href="#CfgDetail">Detail</a>='1' <b>id</b>=<i>'DetailGridId'</i>/></tt> in detail grid and <tt>&lt;I <a href="#IDetail">Detail</a>=<i>'DetailGridId'</i>/></tt> in master rows in master grid.<br />
+<i>It is also possible to have a cascade of more related grids (detail grid can also be a master for another grid).</i><br />  
+<i>It is also possible to have one master grid with more detail grids or more master grids with one or more detail grids.</i><br /><br />
+
+<i><b>The way of master/detail relationship</b></i><br />
+The children (as in tree) of master row are displayed after focus/click/double click/expand in detail grid.<br />
+The children are still part of master grid's data and are downloaded / uploaded by master grid.<br />
+For the detail grid you need to specify the layout with empty data or with user row displayed when no data is shown in detail grid.<br />
+The layout of detail grid does not need to be the same as of master grid; you can add or hide other columns, but remember, uploading is done by master grid and only its columns are uploaded.<br />
+The rows can be dragged between master and detail grid.<br />
+One master grid can have more detail grids and one detail grid can have more master grids, but only one at a time.<br />
+The master and also detail grid can show data in tree, you can specify by Detail attribute which rows are shown as detail.<br /><br />
+
+<b>For more information see <a href="../Tutorials/MasterDetail/03-Master_detail_simple.html">Master / detail tutorial</a>.</b><br />
+                                                              
+<!-- Detail -->
+<a name="IDetail"></a>
+<div class="XML">
+   <u><i>upd <b>7.0</b></i></u> <b>&lt;I></b> <i>string[ ]</i>
+   <h4>Detail</h4> <s>Master row attribute</s>
+</div>
+It is the main attribute for master / detail relationship in external grid.<br />
+Set it to <b>id</b> of detail grid where will be displayed the row's children. This means that every master row can be displayed in different detail grid.<br />
+<i>Since 7.0</i> it can contain more ids, comma separated, to display the row's children in more detail grids.<br />
+
+<!-- Detail -->
+<a name="CfgDetail"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Detail</h4> <s>[0]	Detail grid attribute</s>
+</div>
+Set it to true for grid used as detail grid.<br /> 
+It is just support attribute to behave the detail grid slightly different - to not let users to add or drag rows into empty detail grid.<br />
+
+<!-- DetailOn -->
+<a name="CfgDetailOn"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>DetailOn</h4> <s>[1]	Master grid attribute</s>
+</div>
+Master grid attribute. When to show data in detail grid.<br /> 
+<b>0</b> - disabled, <b>1</b> - on focus to row, <b>2</b> - on click to row, <b>3</b> - on double click to row.<br />
+For more options you can attach <a href="#ShowDetail">ShowDetail</a> action to events like OnFocus, OnClickCel or OnDblClickCell.<br />
+
+<!-- DetailExpand -->
+<a name="CfgDetailExpand"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>DetailExpand</h4> <s>[0]	Master grid attribute</s>
+</div>
+What to do when expanding master row.<br /> 
+<b>0</b> - show children in detail grid only<br />
+<b>1</b> - expand the row only - the children will be visible only in master grid. The <a href="#CfgDetailOn">DetailOn</a> should be <b>0</b> or <b>3</b>.<br />
+<b>2</b> - show children in detail grid and also expand the row - the children will be on two places in two copies and changes will be done to both.<br />
+
+<!-- Action ShowDetail -->
+<a name="ActionsShowDetail"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowDetail <i>...F</i></h4>
+   <s>Not attached to any event, <b>master</b> grid action</s>
+</div>
+Shows data in detail grid for actual or focused row. It fails, if details grid already shows data for given row or the row is not master row.<br />
+This action is not attached to any event by default, because showing detail grid is controlled by <a href="#CfgDetailOn">DetailOn</a> attribute.<br />
+
+<!-- Action RefreshDetail -->
+<a name="ActionsRefreshDetail"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>RefreshDetail <i>...F</i></h4>
+   <s>Not attached to any event, <b>master</b> grid action</s>
+</div>
+Shows or refreshes data in detail grid for actual or focused row. It fails, if the row is not master row.<br />
+
+<!-- Action ClearDetail -->
+<a name="ActionsClearDetail"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearDetail <i>...F</i></h4>
+   <s>Not attached to any event, <b>master</b> grid action</s>
+</div>
+Clears detail grid for actual or focused row. It fails, if the row is not master row.<br />
+
+<!-------------------------------------------------------------  Nested detail grids  ------------------------------------------------->
+<a name="Nested"></a>
+<h2>Nested detail grids</h2>
+
+It is possible to show the detail grid inside the master grid, in some cell of master row.<br />
+The master row should have set attribute <b>DetailCol</b> to the column name where to show the detail grid.<br /><br />
+
+It is usually good to define the grid with <tt>&lt;Cfg NoVScroll='1' NoHScroll='1'/></tt> to always show the whole detail grid and avoid to have too many scrollbars.<br />
+To speed up the grid, it is good to define all columns in &lt;Cols> section, to avoid a need of synchronizing row section heights. Define also <tt>&lt;C Name='Panel'/></tt> in the &lt;Cols> to place panel here.<br />
+To correctly print the nested grid set <a href="Print.htm#IPrintHeight">PrintHeight</a> of the detail row to the expected height of the nested grid.<br /><br />
+
+<b>For more information see <a href="../Tutorials/MasterDetail/01-Nested_detail_simple.html">Master / detail tutorial</a>.</b><br />
+
+<!-- DetailCol -->
+<a name="IDetailCol"></a>
+<div class="XML">
+   <u>new <b>8.1</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>DetailCol</h4> <s><b>Master</b> row attribute</s>
+</div>
+Name of column where (cell of the master row) to show the detail grid. All other cells in the master row will be normal cells with data.<br />
+This cell is usually spanned among other cells (see attribute <a href="CellSpan.htm#ISpanned">Spanned</a> and <a href="CellSpan.htm#CellSpan">Span</a>).<br />
+
+<!-- DetailLayout -->
+<a name="IDetailLayout"></a>
+<div class="XML">
+   <u>new <b>8.1</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>DetailLayout</h4> <s><b>Master</b> row attribute</s>
+</div>
+Data source for downloading layout of the detail grid.<br /> 
+The detail grid data will be loaded from the master row children as usual for master / detail relationship.<br />
+It can be XML string, JSON string or URL. The URL cannot contain characters '&lt;' and '&#123;'.<br />
+The detail grid layout has predefined these default settings: <tt>&lt;Cfg SuppressMessage='1' AbsoluteCursors='0' TabStop='0' NoVScroll='1' NestedGrid='1'/></tt><br />
+
+<!-- DetailTreeGrid -->
+<a name="IDetailTreeGrid"></a>
+<div class="XML">
+   <u>new <b>8.1</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>DetailTreeGrid</h4> <s><b>Master</b> row attribute</s>
+</div>
+TreeGrid source tag of the detail grid. It should contain the  &lt;treegrid> / <bdo> tag definition.<br />
+Useful to add some other setting to the detail grid.<br />
+For examples: <tt>DetailTreeGrid="&lt;bdo Export_Url='Export.aspx' Export_Data='TGData' Export_Param_File='Test.xls'>&lt;/bdo>"</tt> adds export settings to the detail grid.<br />
+
+<!-- NestedFocusedActions -->
+<a name="CfgNestedFocusedActions"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>NestedFocusedActions</h4> <s>[1]	Master grid attribute</s>
+</div>
+If set, runs focused row manipulation actions like add, copy, indent, outdent and also expand all, collapse all in detail grid, if the action is called from master grid and detail grid row is focused.<br />
+
+<!-- NestedGrid -->
+<a name="NestedGrid"></a>
+<div class="API">
+   <u>new <b>8.1</b></u> <b>API variable</b> <i>bool</i>
+   <h4>NestedGrid</h4>
+   <s>read only</s>
+</div>
+Every nested detail grid has set this variable to 1.<br />
+
+<!-- RefreshNested -->
+<a name="RefreshNested"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API method</b> <i>void</i>
+   <h4>RefreshNested</h4>
+   <s>(<i>TRow</i> <b>row</b>)</s>
+</div>
+Refreshes nested grid in given row. Use if the source data were changed.<br />
+Refreshes only already created nested grid.<br />
+
+<!-- OnShowNested -->
+<a name="OnShowNested"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnShowNested</h4>
+   <s>(<i>TGrid</i> <b>master</b>, <i>TRow</i> <b>row</b>, <i>object</i> <b>detail</b>, <i>string</i> <b>id</b>)</s>
+</div>
+Called before the detail nested grid is created or rendered.<br />
+If the nested grid already exists, the <b>detail</b> is the TGrid object of the detail grid to be rendered and <b>id</b> is null.<br />
+If the nested grid does not exist yet, the <b>detail</b> is the data <b>Source</b> to create grid from and <b>id</b> is the new grid id to be assigned to.<br />
+<b>cell</b> is the HTML tag of the <b>master</b> cell the detail grid will be rendered to, the <b>cell</b> is used as MainTag of the detail grid.<br />
+Return true to suppress showing the nested grid or for custom creating of the nested grid.<br />
+
+<!-------------------------------------------------------------  Synchronizing grids  ------------------------------------------------->
+<a name="Synchronizing"></a>
+<h2>Synchronizing grids</h2>
+
+Especially nested detail grids can be synchronized, to share the same configuration and / or size.<br />
+
+<!-- Sync -->
+<a name="CfgSync"></a>
+<div class="XML">
+   <u>new <b>8.1</b> <i>upd <b>11.0</b></i></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>Sync</h4> <s><b>Detail</b> grid attribute</s>
+</div>
+What settings to synchronize among selected grids - among all grids with the same <a href="#CfgSyncId">SyncId</a> value.<br />
+Comma separated list of keywords, case insensitive.<br />
+<b>All</b> (substitution for Sort,Filter,Group,Search,Cols,Style), <b>Sort</b>, <b>Filter</b>, <b>Group</b>, <b>Search</b>, <b>Cols</b> (size, visibility and position),<br /> 
+<b>Sec</b> (<i>new 9.3</i>, width of column section, see <a href="GridSize.htm#Widths">more information</a>), <b>Horz</b> (horizontal scroll), <b>Horz0</b>, <b>Horz1</b>, <b>Horz2</b> (<i>new 11.0</i>, horizontal scroll of individual section, 0 left, 1 mid, 2 right), <b>Vert</b> (vertical scroll),<br />
+<b>Style</b> (<i>new 9.0</i>, CSS style, size and scale, can be set also individually by <a href="#CfgSyncStyle">SyncStyle</a>), 
+<b>Zoom</b> (<i>new 9.3</i>, Gantt zoom level and width), 
+<b>Language</b> (<i>new 14.0</i>, Language and UseLanguages, can be set also individually by <a href="Languages.htm#CfgSyncLanguage">SyncLanguage</a>)<br />
+<br />
+All the grids should have the same columns to be synchronized successfully. All the grids should have the same Sync value to be synchronized in both ways.<br />
+For example if you change size of column 'X' in one grid, all the synchronized grids gets their column X resized to the same size.<br />
+<i><b>Sync</b> attribute can be used for <u>not</u> nested grids too.</i><br />
+
+<!-- SyncId -->
+<a name="CfgSyncId"></a>
+<div class="XML">
+   <u>new <b>8.1</b> <i>upd <b>14.0</b></i></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>SyncId</h4> <s><b>Detail</b> grid attribute</s>
+</div>
+Only grids with the same SyncId will be synchronized by <a href="#CfgSync">Sync</a>.<br />
+Also all grids with undefined SyncId will be synchronized together.<br />
+<i>Since 14.0</i> it is not permitted dragging rows between grids with different SyncId except if set <a href="RowMove.htm#CfgDropping">Dropping</a> = 2.<br />
+
+<!-- CfgId -->
+<a name="CfgCfgId"></a>
+<div class="XML">
+   <u>new <b>8.1</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>CfgId</h4> <s><b>Detail</b> grid attribute</s>
+</div>
+Under this name will be stored configuration to cookies.<br />
+Useful to set when more grids on page share the same configuration.<br />
+Set it the same for <tt>Sync='All'</tt>, to let all the synchronized grids to use only one cookie.<br />
+Remember, all the grids should have the same layout to share their configuration.<br />
+
+<!-- SyncStyle -->
+<a name="CfgSyncStyle"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>SyncStyle</h4> <s><b>Detail</b> grid attribute</s>
+</div>
+If set, synchronizes CSS style, size and scale among all grids with same SyncStyle regardless on the Sync / SyncId attributes.
+
+<!-------------------------------------------------------------  Other settings for master / detail grids  ------------------------------------------------->
+<a name="Other"></a>
+<h2>Other settings for master / detail grids</h2>
+
+<!-- MasterDef -->
+<a name="CfgMasterDef"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>MasterDef</h4> <s><b>Detail</b> grid attribute</s>
+</div>
+Comma separated list of default row names that can be displayed in this detail grid.<br />
+Only rows their Def attribute is listed in the MasterDef are displayed in this grid.<br />
+Useful when displaying one master row in more detail grids or displaying master / detail in tree with normal children.<br />
+
+<!-- MasterDefHide -->
+<a name="CfgMasterDefHide"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>MasterDefHide</h4> <s><b>Detail</b> grid attribute</s>
+</div>
+Comma separated list of default row names that will be hidden in this detail grid.<br />
+Useful when displaying detail grid also as master grid, in 3 or more levels of master / detail in tree with normal children.<br />
+
+<!-- DetailRowsVisible -->
+<a name="CfgDetailRowsVisible"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>DetailRowsVisible</h4> <s>[3]	Detail grid attribute</s>
+</div>
+If the rows that are hidden in master grid will be shown in detail grid. Does not affect deleted rows.<br />
+<b>0</b> - never<br />
+<b>1</b> - only rows hidden by filter<br />
+<b>2</b> - all hidden rows<br />
+<b>3</b> - all hidden rows and all the rows will get also <tt>CanFilter=1</tt><br />
+
+<!-- AddDefChildren -->
+<a name="DAddDefChildren"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;D></b> <i>int</i>
+   <h4>AddDefChildren</h4> <s>[1]	Master grid attribute</s>
+</div>
+When the child rows defined in default (the &lt;D> &lt;I/>&lt;I/>... &lt;/D>) will be added to all rows using the given default.<br />
+<b>0</b> - only when adding new rows with the default<br />
+<b>1</b> - also on start to all rows without children<br />
+<b>2</b> - also on start to all rows. If the row has children, the new children will be added <b>before</b> them<br />
+<b>3</b> - also on start to all rows. If the row has children, the new children will be added <b>after</b> them<br />
+
+<!-- CopyTo -->
+<a name="CellCopyTo"></a>
+<div class="XML">
+   <u></u> <b>&lt;cell></b> <i>string[ ]</i>
+   <h4>CopyTo</h4> <s>Master cell attribute</s>
+</div>
+List of cells where to copy this value after it is changed.<br />
+It is comma separated list: row1,col1,row2,col2,... <b>row</b> is row id, <b>col</b> is column name<br />
+<b>row</b> can also be these special words:<br />
+  <div class="L1">
+  <b>Parent</b> - parent row, <b>Next</b> - next sibling, <b>Prev</b> - previous sibling, <b>Children</b> - all children<br />
+	<b>Children</b>_X - All children with specified default as X<br />
+  <b>Child</b>_X - specific child, if X is number, it means child on specified position (from 0),  if X is string it means the first child with specified default (Def attribute).<br />
+	<b>Sibling</b>_X - specific sibling, it is the same as Child_X, but relative to parent row and not to this row.<br />
+  </div> 
+Used usually in master / detail relationship to copy (detail) children cells to master row cells and vice versa.<br />
+Cross references are permitted, because the copying is applied only if value is changed to different value.<br />
+
+<!-- OnShowDetail -->
+<a name="OnShowDetail"></a>
+<div class="API">
+   <u><i>upd <b>8.1</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnShowDetail</h4>
+   <s>(<i>TGrid</i> <b>master</b>, <i>TGrid</i> <b>detail</b>, <i>TRow</i> <b>row</b>, <i>TRow</i> <b>old</b>)</s>
+</div>
+Called before master row's children are displayed in detail grid, can return true to suppress action.<br />
+<i>(Since 8.1)</i> the <b>old</b> is original master row showed in the detail grid, the <b>row</b> is new master row to show in the detail grid.<br />
+
+<!-- OnShowDetailFinish -->
+<a name="OnShowDetailFinish"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnShowDetailFinish</h4>
+   <s>(<i>TGrid</i> <b>master</b>, <i>TGrid</i> <b>detail</b>, <i>TRow</i> <b>row</b>)</s>
+</div>
+Called after master row's children are displayed in detail grid.<br />
+
+<!-- ShowDetail -->
+<a name="ShowDetail"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b>API method</b> <i>bool</i>
+   <h4>ShowDetail</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>detail_grid_id</b>, <i>bool</i> <b>test</b> = 0)</s>
+</div>
+Shows the master row's children in the given detail grid.<br />
+Returns true for success.<br />
+<i>Since 12.0</i> if set <b>test</b> = <b>1</b>, it does <i>not</i> change anything, just tests if it is possible.<br />
+
+<!-- RefreshDetail -->
+<a name="RefreshDetail"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>RefreshDetail</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>bool</i> <b>clear</b>)</s>
+</div>
+Refreshes the given detail grid according to its actual master row's children.<br />
+If <b>grid</b> is null, refreshes all detail grids on page.<br />
+Refreshes only actually loaded detail grids - grids that have actually attached its master row.<br />
+If <b>clear</b> is true, clears the grid and removes the relation to the current master row.<br />
+
+<!-- GetMasterRow -->
+<a name="GetMasterRow"></a>
+<div class="API">
+   <u>new <b>8.1</b></u> <b>API method</b> <i>TRow</i>
+   <h4>GetMasterRow</h4>
+   <s>( )</s>
+</div>
+Detail grid method. Returns row from master grid that is actually shown in the detail grid or null.<br />
+
+<!-- GetDetailGrid -->
+<a name="GetDetailGrid"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API method</b> <i>TGrid</i>
+   <h4>GetDetailGrid</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>int</i> <b>idx</b> = 0)</s>
+</div>
+Master grid method. Returns detail grid or nested grid shown for given master <b>row</b>.<br /> 
+If there are more grids shown for the row, the <b>idx</b> specifies the requested one.<br />
+
+</div>
+</body>	
+</html>

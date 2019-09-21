@@ -1,0 +1,9 @@
+<Grid>
+   <Cfg Sync='All' SyncId='DetailNested' CfgId='DetailNested' Undo='1' Size='Tiny'/>
+   <Cols>
+      <C Name='ADDRESS' Type='Lines' Width='300' VarHeight='2'/>
+      <C Name='NOTE' Type='Lines' Width='110' VarHeight='2'/>
+   </Cols>
+   <MenuCfg ShowPanel='0'/>
+   <Toolbar Help='0' Debug='0'/>
+</Grid>

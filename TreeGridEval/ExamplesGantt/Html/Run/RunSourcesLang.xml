@@ -1,0 +1,95 @@
+﻿<Grid>
+   <!-- Translations to other languages -->
+
+   <!-- German -->
+
+   <TextDE>
+      <Replace Col="SText" Box="Box" box="Box" Solid="Fest" Fixed="Fixiert" left="links" right="rechts"/>
+      <Set Row="Header" S="Boxen zum&lt;br> Chart ziehen"/>
+   </TextDE>
+   <Media>
+      <M Language="DE">
+         <Cols>
+            <C Name="S" GanttWidth="15" GanttLeft="0" GanttRight="0"/>
+         </Cols>
+      </M>
+   </Media>
+
+   <!-- Brazilian Portuguese -->
+
+   <TextBR>
+      <Replace Col="SText" Box="Caixa" box="caixa" Solid="Solido" Fixed="Fixo" left="esquerda" right="direita"/>
+      <Set Row="Header" S="Arraste as caixas&lt;br> para a caixa"/>
+   </TextBR>
+   <Media>
+      <M Language="BR">
+         <Cols>
+            <C Name="S" GanttWidth="16" GanttLeft="0" GanttRight="0"/>
+         </Cols>
+      </M>
+   </Media>
+
+
+   <!-- Czech -->
+
+   <TextCS>
+      <Replace Col="SText" Box="Rámec" box="rámec" Solid="Pevný" Fixed="Fixní" left="levý" right="pravý"/>
+      <Set Row="Header" S="Přetáhněte rámce&lt;br>myší do grafu"/>
+   </TextCS>
+   <Media>
+      <M Language="CS">
+         <Cols>
+            <C Name="S" GanttWidth="16" GanttLeft="0" GanttRight="0"/>
+         </Cols>
+      </M>
+   </Media>
+
+
+   <!-- Russian -->
+
+   <TextRU>
+      <Replace Col="SText" Box="Ящик" box="ящик" Solid="Твёрдый" Fixed="Фиксированный" left="левый" right="правый"/>
+      <Set Row="Header" S="Перетащить&lt;br>ящики в сетку"/>
+   </TextRU>
+   <Media>
+      <M Language="RU">
+         <Cols>
+            <C Name="S" GanttWidth="17" GanttLeft="0" GanttRight="0"/>
+         </Cols>
+      </M>
+   </Media>
+
+
+   <!-- Japanese -->
+
+   <TextJP>
+      <Replace Col="SText" Box="ボックス" box="ボックス" Solid="不変" Fixed="固定" left="(左)" right="(右)"/>
+      <Set Row="Header" S="グリッドへ&lt;br>ボックスをドラッグ"/>
+   </TextJP>
+   <Media>
+      <M Language="JP">
+         <Cols>
+            <C Name="S" GanttWidth="17" GanttLeft="0" GanttRight="0"/>
+         </Cols>
+      </M>
+   </Media>
+
+
+   <!--  Persian -->
+
+   <TextFA>
+      <Replace Col="SText" Box="Box" box="box" Solid="توپر" Fixed="ثابت" left="چپ" right="راست"/>
+      <Set Row="Header" S="كشيدن Box&lt;br>به گريد"/>
+   </TextFA>
+
+
+   <!-- Framework for translations, English to English -->
+   <!-- To use it, rename the XX to your language code and add the language code also to the ...Def.xml to Languages Code and translate the texts !...! -->
+   <!-- Optionally extend Media tag (with Language set to your language code) to change sizes of cells and columns if translated text have different widths -->
+
+   <TextXX>
+      <Replace Col="SText" Box="!Box!" box="!box!" Solid="!Solid!" Fixed="!Fixed!" left="!left!" right="!right!"/>
+      <Set Row="Header" S="!Drag boxes!&lt;br>! to the grid!"/>
+   </TextXX>
+
+</Grid>

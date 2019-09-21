@@ -1,0 +1,1585 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Version compatibility 6</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Changes from 5.9 to 6.0</h1>
+<p>TreeGrid documentation</p>
+
+<!------------------------------------------------------------------ CSS styles -------------------------------------------------------------->
+<a name="RowId"></a>
+<h2>CSS styles</h2>
+
+<!-- Grid.css -->
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b></b> <i></i>
+   <h4>Grid.css</h4> <s>CSS styles changed remarkably</s>
+</div>
+Now all the style definitions are in file Grid.css in appropriate style sub directory in /Grid.<br />
+All grid images are referenced only from Grid.css file and <u>never</u> directly from TreeGrid code.<br />
+The structure in Grid.css has completely changed from 5.9, if you have any custom CSS styles for grid, you must rewrite them.<br />
+
+<!-- Styles -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b></b> <i></i>
+   <h4>&lt;Styles></h4> <s>Tag completely removed and replaced by CSS styles</s>
+</div>
+
+<!-- Style -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b></b> <i></i>
+   <h4>&lt;Style></h4> <s>Tag completely removed and replaced by CSS styles</s>
+</div>
+
+<!-- Img -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b></b> <i></i>
+   <h4>&lt;Img></h4> <s>Tag completely removed and replaced by CSS styles</s>
+</div>
+
+<!-- UsePrefix -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Styles></b> <i>bool</i>
+   <h4>&lt;UsePrefix></h4> <s>[0] &nbsp;	Replaced by <tt>&lt;Cfg <b>UsePrefix</b>/></tt></s>
+</div>
+
+<!-- Style -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Styles></b> <i>string</i>
+   <h4>&lt;Style></h4> <s>[0] &nbsp;	Replaced by <tt>&lt;Cfg <b>Style</b>/></tt></s>
+</div>
+
+<!------------------------------------------------------------------ Data communication -------------------------------------------------------------->
+<h2>Data communication</h2>
+
+<!-- Upload_Format -->
+<a name="Upload_Format"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b style="margin-left:-20px;margin-right:20px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>Upload_Format</h4> <s>["Internal"] &nbsp;	Default value changed</s>
+</div>
+
+<!-- Data_Method -->
+<a name="xxx_Method"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b style="margin-left:-20px;margin-right:20px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>Data_Method</h4> <s>["GET"/"POST"] &nbsp;	Default value changed</s>
+</div>
+Default value is POST when set server paging (<tt>Paging='3'</tt>), otherwise is GET.
+
+<!-- Cache -->
+<a name="Cache"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b style="margin-left:-20px;margin-right:20px;">&lt;treegrid,bdo></b> <i>int</i>
+   <h4>Cache</h4> <s>[0] &nbsp;	Default value changed</s>
+</div>
+Now it is 0 by default also in registered version.
+
+<!------------------------------------------------------------------ Actions and events -------------------------------------------------------------->
+<h2>Actions and events</h2>
+
+<!-- Actions -->
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b></b> <i></i>
+   <h4>&lt;Actions></h4> <s>Tag attributes changed remarkably</s>
+</div>
+Now all attribute names (events) start with prefix <b>On</b>.<br />			
+The mouse event names (targets) changed remarkably, the mouse event targets have different structure, see <a href="Events.htm">Events</a> document.<br />
+
+<!-- CopyMenuEnd…F -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CopyMenuEnd...F</h4> <s>Replaced by &lt;Panel> &lt;Space cell> <b>CopyMenu</b></s>
+</div>
+
+<!-- CopyRowMenu…F -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CopyRowMenu...F</h4> <s>Replaced by &lt;Panel> &lt;Space cell> <b>CopyMenu</b></s>
+</div>
+
+<!-- CopyChildMenu…F -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CopyChildMenu...F</h4> <s>Replaced by &lt;Panel> &lt;Space cell> <b>CopyMenu</b></s>
+</div>
+
+<!-- CopyRowMenuEnd…F -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CopyRowMenuEnd...F</h4> <s>Replaced by &lt;Panel> &lt;Space cell> <b>CopyMenu</b></s>
+</div>
+
+<!-- CopyChildMenuEnd…F -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CopyChildMenuEnd...F</h4> <s>Replaced by &lt;Panel> &lt;Space cell> <b>CopyMenu</b></s>
+</div>
+
+<!-- CCopyRow -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CCopyRow</h4> <s>Replaced by <b>Copy</b></s>
+</div>
+<tt>&lt;Cfg CopySelected='0' CopyFocused='1' CopyCols='1'/> &lt;Actions OnCtrlC='Copy'/></tt><br />
+
+<!-- CCopyCol -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CCopyCol</h4> <s>Replaced by <b>Copy</b></s>
+</div>
+<tt>&lt;Cfg CopySelected='0' CopyFocused='30' CopyCols='0'/> &lt;Actions OnCtrlC='Copy'/></tt><br />
+
+<!-- CCopyColLevel -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CCopyColLevel</h4> <s>Replaced by <b>Copy</b></s>
+</div>
+<tt>&lt;Cfg CopySelected='0' CopyFocused='20' CopyCols='0'/> &lt;Actions OnCtrlC='Copy'/></tt><br />
+
+<!-- CCopyCell -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CCopyCell</h4> <s>Replaced by <b>Copy</b></s>
+</div>
+<tt>&lt;Cfg CopySelected='0' CopyFocused='1' CopyCols='0'/> &lt;Actions OnCtrlC='Copy'/></tt><br />
+
+
+<!-- CCopySelected -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CCopySelected</h4> <s>Replaced by <b>Copy</b></s>
+</div>
+<tt>&lt;Cfg CopySelected='1' CopyFocused='0' CopyCols='1'/> &lt;Actions OnCtrlC='Copy'/></tt><br />
+
+<!-- ExcludeRow -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ExcludeRow</h4> <s>Replaced by <b>Exclude</b></s>
+</div>
+<tt>&lt;Cfg CopySelected='0' CopyFocused='1' CopyCols='1'/> &lt;Actions OnCtrlC='Exclude'/></tt><br />
+
+<!-- ExcludeSelected -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ExcludeSelected</h4> <s>Replaced by <b>Exclude</b></s>
+</div>
+<tt>&lt;Cfg CopySelected='0' CopyFocused='1' CopyCols='1'/> &lt;Actions OnCtrlC='Exclude'/></tt><br />
+
+<!-- PasteToRow -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToRow</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='1' PasteCols='4'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToRowFill -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToRowFill</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='2' PasteCols='4'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToRowAdd -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToRowAdd</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='4' PasteCols='4'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToNewRow -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToNewRow</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='0' PasteCols='4'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToSelected -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToSelected</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='1' PasteFocused='0' PasteCols='0'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToCol -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToCol</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='3' PasteCols='0'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToColLevel -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToColLevel</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='2' PasteCols='0'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToColFill -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToColFill</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='3' PasteCols='3'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToColFillLevel -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToColFillLevel</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='2' PasteCols='3'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToRowFirst -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToRowFirst</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='1' PasteCols='1'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToRowFillFirst -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToRowFillFirst</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='2' PasteCols='1'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToRowAddFirst -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToRowAddFirst</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='4' PasteCols='1'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToNewRowFirst -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToNewRowFirst</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='6' PasteCols='1'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToSelectedFirst -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToSelectedFirst</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='1' PasteFocused='0' PasteCols='1'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToColFirst -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToColFirst</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='30' PasteCols='0'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToColLevelFirst -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToColLevelFirst</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='20' PasteCols='0'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToColFillFirst -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToColFillFirst</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='30' PasteCols='3'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!-- PasteToColFillLevelFirst -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PasteToColFillLevelFirst</h4> <s>Replaced by <b>Paste</b></s>
+</div>
+<tt>&lt;Cfg PasteSelected='0' PasteFocused='20' PasteCols='3'/> &lt;Actions OnCtrlV='Paste'/></tt><br />
+
+<!------------------------------------------------------------------ XML attributes -------------------------------------------------------------->
+<h2>XML attributes</h2>
+
+<!-- SortCols -->
+<a name="CfgSortCols"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>SortCols</h4> <s>[""] &nbsp; Replaced by <b>Sort</b></s>
+</div>
+The Sort is now string and not array also for API.<br />
+
+<!-- SortTypes -->
+<a name="CfgSortTypes"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int[ ]</i>
+   <h4>SortTypes</h4> <s>[""] &nbsp; Replaced by <b>Sort</b></s>
+</div>
+The <b>1</b> is set as minus in front of the column name.<br />
+
+<!-- DefaultSortCol -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>DefaultSortCol</h4> <s>Renamed to <b>DefaultSort</b></s>
+</div>
+
+<!-- MaxSortColumns -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MaxSortColumns</h4> <s>[3] &nbsp; Renamed to <b>MaxSort</b></s>
+</div>
+
+<!-- EmptyChildPages -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>EmptyChildPages</h4> <s>Renamed to <b>MaxChildrenEmpty</b></s>
+</div>
+
+<!-- IdCompare -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>IdCompare</h4> <s>[0] &nbsp; Renamed to <b>CaseSensitiveId</b></s>
+</div>
+<tt>IdCompare = 4 => CaseSensitiveId = 0;   IdCompare = 0 => CaseSensitiveId = 1</tt><br />
+
+<!-- DropFree -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>DropFree</h4> <s>[0] &nbsp; Removed</s>
+</div>
+Now is permitted free drop by default and can be restricted by Def / AcceptDef.<br />
+
+<!-- CopyFree -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>CopyFree</h4> <s>[0] &nbsp; Removed</s>
+</div>
+Now is permitted free drop by default and can be restricted by Def / AcceptDef.<br />
+
+<!-- GroupCols -->
+<a name="CfgGroupCols"></a>
+<div class="DEL">
+   <u></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>GroupCols</h4>
+   <s>Renamed to <b>Group</b></s>
+</div>
+The Group is now string and not array also for API.<br />
+
+<!-- GroupTypes -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int[ ]</i>
+   <h4>GroupTypes</h4> <s>Removed</s>
+</div>
+Now the grouping is controlled by column attributes for grouping and cannot be saved to cookies or sent to server<br />
+<table>
+<tr><td style="width:100px;">bit <b>2</b> (<b>&amp;2</b>)</td><td>&lt;C LocaleCompare></td></tr>
+<tr><td>bit <b>3</b> (<b>&amp;4</b>)</td><td>&lt;C CaseInsensitive></td></tr>
+<tr><td>bit <b>4</b> (<b>&amp;8</b>)</td><td>&lt;C WhiteChars></td></tr>
+<tr><td>bit <b>5</b> (<b>&amp;16</b>)</td><td>&lt;C GroupEmpty></td></tr>
+<tr><td>bit <b>6</b> (<b>&amp;32</b>)</td><td>&lt;C GroupSingle></td></tr>
+<tr><td>bit <b>7</b> (<b>&amp;64</b>)</td><td>&lt;C GroupEmpty></td></tr>
+<tr><td>bit <b>8</b> (<b>&amp;128</b>)</td><td>&lt;C GroupDeleted></td></tr>
+</table>
+
+<!-- GroupFlags -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>GroupFlags</h4> <s>[0] &nbsp;	Replaced by <b>GroupRestoreSort</b> and <b>GroupSortMain</b></s>
+</div>
+<table>
+<tr><td style="width:100px;"><b>1.</b> bit (<b>&amp;1</b>)</td><td>Removed, the action is done always</td></tr>
+<tr><td><b>2.</b> bit (<b>&amp;2</b>)</td><td>&lt;C GroupRestoreSort></td></tr>
+<tr><td><b>3.</b> bit (<b>&amp;4</b>)</td><td>&lt;C GroupSortMain></td></tr>
+<tr><td><b>4.</b> bit (<b>&amp;8</b>)</td><td>&lt;C GroupSortMain></td></tr>
+</table>
+
+<!-- UnGroupAction -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>UnGroupAction</h4> <s>[0] &nbsp;	Replaced by &lt;Actions <b>OnUngroup</b>/></s>
+</div>
+
+<!-- SearchType -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SearchType</h4> <s>[176(16+32+128)] &nbsp;	Replaced by various Search attributes</s>
+</div>
+<table>
+<tr><td style="width:100px;"><b>1.</b> bit (<b>&amp;1</b>)</td><td>&lt;Cfg SearchCells/></td></tr>
+<tr><td><b>2.</b> bit (<b>&amp;2</b>)</td><td>&lt;Cfg SearchHidden></td></tr>
+<tr><td><b>3.</b> bit (<b>&amp;4</b>)</td><td>&lt;Cfg SearchCaseSensitive></td></tr>
+<tr><td><b>4.</b> bit (<b>&amp;8</b>)</td><td>&lt;Cfg SearchExpand></td></tr>
+<tr><td><b>5.</b> bit (<b>&amp;16</b>)</td><td>&lt;Cfg SearchFocused='2'></td></tr>
+<tr><td><b>6.</b> bit (<b>&amp;32</b>)</td><td>&lt;Cfg SearchFocused='3'></td></tr>
+<tr><td><b>7.</b> bit (<b>&amp;64</b>)</td><td>&lt;Cfg SearchFocused='4'></td></tr>
+<tr><td><b>8.</b> bit (<b>&amp;128</b>)</td><td>&lt;Cfg SearchNotFound></td></tr>
+</table>
+
+<!-- Pasting -->
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>Pasting</h4>
+   <s>[1] &nbsp;	Settings >1 replaced by other attributes</s>
+</div>
+<table>
+<tr><td style="width:150px;"><b>1.</b> bit (<b>&amp;1</b>) </td><td>&lt;Cfg PasteSelected></td></tr>
+<tr><td><b>2.</b>, <b>3.</b>, <b>4.</b> bit (<b>&amp;2</b>, <b>4</b>, <b>8</b>)</td><td>&lt;Cfg PasteFocused></td></tr>
+<tr><td><b>5.</b>, <b>6.</b> bit (<b>&amp;16</b>, <b>32</b>)</td><td>&lt;Cfg PasteCols></td></tr>
+</table>
+
+<!-- HidePanel -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>HidePanel</h4> <s>[0] &nbsp;	Replaced by &lt;Panel Visible/></s>
+</div>
+
+<!-- SuppressMessage -->
+<a name="CfgSuppressMessage"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b style="margin-left:-65px;margin-right:65px;">&lt;Cfg>&lt;treegrid/bdo></b> <i>int</i>
+   <h4>SuppressMessage</h4>
+   <s>[0] &nbsp;	Added more options</s>
+</div>
+Which TreeGrid status messages will be suppressed.<br />
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>Messages during loading and updating grid on start and on reload</td></tr>
+<tr><td><b>1</b></td><td><b>0</b> + Informational messages shown when longer task is run</td></tr>
+<tr><td><b>2</b></td><td><b>1</b> + Message inside loading or rendering page</td></tr>
+<tr><td><b>3</b></td><td><b>2</b> + Error message if TreeGrid cannot show</td></tr>
+</table>
+
+<!-- DebugCalc -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>DebugCalc</h4> <s>[1/0] &nbsp;	Replaced by <tt>&lt;treegrid / bdo <b>Debug</b>='problem'></tt></s>
+</div>
+
+<!-- DebugActions -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>DebugActions</h4> <s>[1/0] &nbsp;	Replaced by <tt>&lt;treegrid / bdo <b>Debug</b>='problem'></tt></s>
+</div>
+
+<!-- AlertWidths -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>AlertWidths</h4> <s>[0] &nbsp;	Replaced by <tt>&lt;treegrid / bdo <b>Debug</b>='info'></tt></s>
+</div>
+
+<!-- EmptyNumber -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>EmptyNumber</h4> <s>Replaced by &lt;C <b>CanEmpty</b>/> and &lt;C <b>EmptyValue</b>/></s>
+</div>
+
+<!-- EmptyDate -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>EmptyDate</h4> <s>Replaced by &lt;C <b>CanEmpty</b>/> and &lt;C <b>EmptyValue</b>/></s>
+</div>
+
+<!-- EmptyEnum -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>EmptyEnum</h4> <s>Replaced by &lt;C <b>CanEmpty</b>/> and &lt;C <b>EmptyValue</b>/></s>
+</div>
+
+<!-- ShowVScrollbar -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ShowVScrollbar</h4> <s>Renamed to <b>ShowVScroll</b></s>
+</div>
+
+<!-- PrintType -->
+<a name="CfgPrintExpanded"></a>
+<div class="DEL">
+   <u>del 6.0</u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>PrintType</h4>
+   <s>[0] &nbsp;	Replaced by various printing attributes</s>
+</div>
+<table>
+<tr><td style="width:300px;">2.bit (<b>&amp;2</b>)</td><td>&lt;Cfg PrintExpanded/></td></tr>
+<tr><td>5.,6.,7.,8.,9. bit (<b>&amp;16, &amp;32, &amp;64, &amp;128, &amp;256</b>)</td><td>&lt;I CanPrint/></td></tr>
+<tr><td>10. bit (<b>&amp;512</b>)</td><td>&lt;Cfg PrintPageBreaks/></td></tr>
+</table>
+
+<!-- Top -->
+<a name="CfgTop"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int[ ]</i>
+   <h4>Top</h4> <s>Replaced by CSS classes <b>GxTop</b>, <b>GxTop1</b> - <b>GxTop5</b></s>
+</div>
+
+<!-- Bottom -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int[ ]</i>
+   <h4>Bottom</h4> <s>Replaced by CSS classes <b>GxBottom</b>, <b>GxBottom1</b> - <b>GxBottom5</b></s>
+</div>
+Section displayed bellow the grid, the same structure as <a href="#CfgTop">Top</a> attribute.
+  <div class="L1">
+  Example of rounded corners with five pixels height and one pixel border:
+    <div class="L1">
+    <tt>Bottom='|1,1,#E0E0E0,2,#F0F0E0,1,#E0E0E0,1|2,1,#E0E0E0,1,#F0F0F0,1,#E0E0E0,2|3,2,#E0E0E0,1,#F0F0E0,2,#E0E0E0,3|5,0,,1,#E0E0E0,0,,5'</tt>
+    </div>
+  </div>
+
+<!-- OverflowDialog -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>OverflowDialog</h4> <s>Removed completely</s>
+</div>
+
+<!-- MaxMenuHeight -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MaxMenuHeight</h4> <s>Replaced by TMenu <b>MaxHeight</b></s>
+</div>
+
+<!-- ZIndex -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ZIndex</h4> <s>Replaced by CSS attribute <b>z-index</b> in various classes</s>
+</div>
+  
+<!-- CellSpacing -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>CellSpacing</h4> <s>Removed completely and the functionality is <b style="color:red;">unsupported</b></s>
+</div>
+
+<!-- MovingColBorder -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MovingColBorder</h4> <s>[3] &nbsp; Replaced by CSS classes <b>GxDragCol...</b></s>
+</div>
+
+<!-- ShadowMessage -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int[ ]</i>
+   <h4>ShadowMessage</h4> <s>[3,3,3,3] &nbsp; Replaced by CSS class <b>GxMessageShadow</b></s>
+</div>
+
+<!-- ShadowDialog -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int[ ]</i>
+   <h4>ShadowDialog</h4> <s>[3,3,3,3] &nbsp; Replaced by CSS class <b>GxMenuShadow</b></s>
+</div>
+
+<!-- ShadowEnum -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int[ ]</i>
+   <h4>ShadowEnum</h4> <s>[3,3,3,3] &nbsp; Replaced by CSS class <b>GxMenuShadow</b></s>
+</div>
+
+<!-- ShadowEnumIcon -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int[ ]</i>
+   <h4>ShadowEnumIcon</h4> <s>[3,3,3,3] &nbsp; Replaced by CSS class <b>GxMenuShadow</b></s>
+</div>
+
+<!-- ShadowFilter -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int[ ]</i>
+   <h4>ShadowFilter</h4> <s>[3,3,3,3] &nbsp; Replaced by CSS class <b>GxMenuShadow</b></s>
+</div>
+
+<!-- ShadowFilterIcon -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int[ ]</i>
+   <h4>ShadowFilterIcon</h4> <s>[3,3,3,3] &nbsp; Replaced by CSS class <b>GxMenuShadow</b></s>
+</div>
+
+<!-- ShadowMenu -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int[ ]</i>
+   <h4>ShadowMenu</h4> <s>[9,9,3,3] &nbsp; Replaced by CSS class <b>GxMenuShadow</b></s>
+</div>
+
+<!-- ShadowHint -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int[ ]</i>
+   <h4>ShadowHint</h4> <s>[3,3,3,3] &nbsp; Replaced by CSS class <b>GxHintShadow</b></s>
+</div>
+
+<!-- ShadowTip -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int[ ]</i>
+   <h4>ShadowTip</h4> <s>[3,3,3,3] &nbsp; Replaced by CSS class <b>GxTipShadow</b></s>
+</div>
+
+<!-- TipPos -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int[ ]</i>
+   <h4>TipPos</h4> <s>[0,16] &nbsp; Removed, the functionality is done automatically</s>
+</div>
+
+<!-- DateStrings -->
+<a name="CfgDateStrings"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;Cfg></b> <i>type</i>
+   <h4>DateStrings</h4>
+   <s>[0,1] &nbsp;	Default value changed</s>
+</div>
+By default it is set to <b>0</b>, if some date in input XML is set as number of milliseconds, otherwise is set to <b>1</b>.<br />
+
+<!-- VarHeight -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>type</i>
+   <h4>VarHeight</h4> <s>[0] &nbsp; Removed, the functionality is done automatically</s>
+</div>
+
+<!-- RowHeight -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>type</i>
+   <h4>RowHeight</h4> <s>[0] &nbsp; Renamed to <b>MinRowHeight</b></s>
+</div>
+
+<!-- NoFormatEscape -->
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;Cfg></b> <i>type</i>
+   <h4>NoFormatEscape</h4>
+   <s>[0] &nbsp;	Default value changed</s>
+</div>
+By default is <b>0</b> for text and <b>1</b> for number and date.<br />
+
+<!-- MaxTagHeight  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MaxTagHeight</h4> <s>Renamed to <b>MaxVScroll</b></s>
+</div>
+The attribute in 6.0 exists, but has different functionality, the original functionality is done by MaxVScroll.<br />
+
+<!-- InEditMode -->
+<a name="CfgInEditMode"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>InEditMode</h4>
+   <s>[2] &nbsp;	Default value changed to new option</s>
+</div>
+<table>
+<tr><td style="width:50px;"><b>2</b></td><td>the edit mode is run when user clicks to already focused editable cell or double clicks some editable cell or presses character key or Enter, F2 or Backspace.</td></tr>
+</table>
+<!-- AddRowEnd  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>type</i>
+   <h4>AddRowEnd</h4> <s>[0] &nbsp; Replaced by actions <b>AddRowEndPage</b> and <b>AddRowEndGrid</b></s>
+</div>
+
+<!-- ClassOuter  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;C>&lt;Panel></b> <i>string</i>
+   <h4>ClassOuter</h4> <s>Replaced by <b>Class</b></s>
+</div>
+The <b>Class</b> usage is different, because it is added to the default CSS classes instead of replacing them like in 5.9.<br />
+The <b>Class</b> is applied to &lt;TD> tag and not to &lt;DIV> tag like in 5.9.<br />
+
+<!-- ClassOuterHover  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b style="margin-left:-70px;width:165px;">&lt;Panel>&lt;Header cell></b> <i>string</i>
+   <h4>ClassOuterHover</h4> <s>Removed completely</s>
+</div>
+
+<!-- EnumType  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>EnumType</h4> <s>Removed completely, &lt;SELECT> tag is <b style="color:red;">unsupported</b></s>
+</div>
+
+<!-- EnumKeys  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>EnumKeys</h4> <s>Removed, not required</s>
+</div>
+
+<!-- GanttHeaderOptions  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttHeaderOptions</h4> <s>Renamed to <b>GanttHeaderTrim</b></s>
+</div>
+
+<!-- GanttOptions  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttOptions</h4> <s>Replaced by various Gantt options</s>
+</div>
+<table>
+<tr><td style="width:120px;"><b>1</b>.bit (&amp;1)</td><td>&lt;C GanttHover/></td></tr>
+<tr><td><b>2</b>.bit (&amp;2)</td><td>&lt;C GanttIcons/></td></tr>
+<tr><td><b>4</b>.bit (&amp;8)</td><td>&lt;C GanttEdit/>, Resources item</td></tr>
+<tr><td><b>5</b>.bit (&amp;16)</td><td>&lt;C GanttEdit/>, Main item</td></tr>
+<tr><td><b>6</b>.bit (&amp;32)</td><td>&lt;C GanttEdit/>, Flow item</td></tr>
+<tr><td><b>7</b>.bit (&amp;64)</td><td>&lt;C GanttEdit/>, Flags item</td></tr>
+<tr><td><b>8</b>.bit (&amp;128)</td><td>&lt;C GanttEdit/>, Dependency item</td></tr>
+</table>
+
+<!-- NoFFDrag  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>NoFFDrag</h4> <s>[0] &nbsp;	Removed, not required</s>
+</div>
+
+<!-- SortType  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>SortType</h4> <s>[0] &nbsp;	Replaced by various Sort settings</s>
+</div>
+<table>
+<tr><td style="width:120px;">bit <b>2</b> (<b>&2</b>)</td><td>&lt;C LocaleCompare></td></tr>
+<tr><td>bit <b>3</b> (<b>&4</b>)</td><td>&lt;C CaseInsensitive></td></tr>
+<tr><td>bit <b>4</b> (<b>&8</b>)</td><td>&lt;C WhiteChars></td></tr>
+</table>
+
+<!-- WhiteChars -->
+<a name="CWhiteChars"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>WhiteChars</h4>
+   <s>Now used whenever defined</s>
+</div>
+
+<!-- ToolTip  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>bool</i>
+   <h4>ToolTip</h4> <s>Renamed to Tip</s>
+</div>
+
+<!-- Button -->
+<a name="CButton"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Button</h4>
+   <s>Various changes</s>
+</div>
+<b>None</b> value changed to empty string.<br />
+<b>Img</b> value removed, now the image is shown if the image file is directly assigned to the Button.<br />
+
+<!-- WidthPad  -->
+<a name="CWidthPad"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;cell></b> <i>int</i>
+   <h4>WidthPad</h4> <s>[20]	&nbsp; Removed completely, functionality <b style="color:red;">unsupported</b></s>
+</div>
+Now the WidthPad attribute is supported only for &lt;C> tag, for the whole column.<br />
+
+<!-- MenuIcons  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>MenuIcons</h4> <s>Replaced by <b>Menu</b> attribute, TMenuItem <b>Icon</b></s>
+</div>
+
+<!-- MenuCaption  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>MenuCaption</h4> <s>Replaced by Menu attribute, TDialog Header</s>
+</div>
+
+<!-- AutoWidthChar  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;C></b> <i>char</i>
+   <h4>AutoWidthChar</h4> <s>Removed completely, functionality done by another way</s>
+</div>
+
+<!-- AutoWidthPlus  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>AutoWidthPlus</h4> <s>[0] &nbsp;	Removed completely, functionality done by another way</s>
+</div>
+
+<!-- OverflowEllipsis  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>OverflowEllipsis</h4> <s>[0]	&nbsp; Replaced by CSS attribute <b>text-overflow:ellipsis</b></s>
+</div>
+To show the ellipsis in cell (in IE only), set the <tt>text-overflow:ellipsis</tt> to the class GxCell, GxHeader or to other Cell CSS classes.<br />
+
+<!-- Action  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;cell></b> <i>string</i>
+   <h4>Action</h4> <s>Replaced by <b>OnChange</b> and <b>OnClick</b> XML actions</s>
+</div>
+For Button type use OnClick, for Select or editable cell use OnChange XML event.<br />
+
+<!-- Action  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;D></b> <i>string</i>
+   <h4>Action</h4> <s>Replaced by <b>OnGroup</b> XML event</s>
+</div>
+
+<!-- TreeIconLeftX  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;I></b> <i>int</i>
+   <h4>TreeIconLeftX</h4> <s>[0] &nbsp;	Removed completely, functionality <b style="color:red;">unsupported</b></s>
+</div>
+
+<!-- TreeIconLeftY  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;I></b> <i>int</i>
+   <h4>TreeIconLeftX</h4> <s>[0] &nbsp;	Removed completely, functionality <b style="color:red;">unsupported</b></s>
+</div>
+
+<!-- ClassEdit  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>ClassEdit</h4> <s>Removed completely, functionality <b style="color:red;">unsupported</b></s>
+</div>
+
+<!-- Merge -->
+<a name="CellMerge"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;I cell></b> <i>string[ ]</i>
+   <h4>Merge</h4>
+   <s>[0]	&nbsp; Changed syntax</s>
+</div>
+Now the Merge contains list of columns and not their count.<br />
+
+<!-- MergeStart  -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;I></b> <i>int</i>
+   <h4>MergeStart</h4> <s>[0] &nbsp;	Replaced by <b>Merge</b></s>
+</div>
+
+<!-- MergeEdit -->
+<a name="CellMergeEdit"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;I cell></b> <i>string</i>
+   <h4>MergeEdit</h4>
+   <s>Changed syntax</s>
+</div>
+Now it contains column name and not column position.<br />
+
+<!-- Html -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Space></b> <i>string</i>
+   <h4>Html</h4> <s>Replaced by cell <tt>Type='Html'</tt></s>
+</div>
+
+<!-- ToolTipChecked -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>ToolTipChecked</h4> <s>Removed completely, functionality <b style="color:red;">unsupported</b></s>
+</div>
+
+<!-- LeftVal -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>LeftVal</h4> <s>Replaced by <b>LeftHtml</b></s>
+</div>
+
+<!-- MidVal -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>MidVal</h4> <s>Replaced by <b>MidHtml</b></s>
+</div>
+
+<!-- RightVal -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>RightVal</h4> <s>Replaced by <b>RightHtml</b></s>
+</div>
+
+<!-- FilterType -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Filter></b> <i>int</i>
+   <h4>FilterType</h4> <s>[0] &nbsp;	Replaced by various Filter attributes</s>
+</div>
+<table>
+<tr><td style="width:120px;">bit <b>2</b> (<b>&amp;2</b>)</td><td>&lt;C LocaleCompare></td></tr>
+<tr><td>bit <b>3</b> (<b>&amp;4</b>)</td><td>&lt;C CaseInsensitive></td></tr>
+<tr><td>bit <b>4</b> (<b>&amp;8</b>)</td><td>&lt;C WhiteChars></td></tr>
+</table>
+
+<!-- Types -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Group></b> <i>int[ ][*]</i>
+   <h4>Types</h4> <s>Removed</s>
+</div>
+Now the grouping is controlled by column attributes for grouping and cannot be saved to cookies or sent to server.<br />
+<table>
+<tr><td style="width:120px;">bit <b>2</b> (<b>&amp;2</b>)</td><td>&lt;C LocaleCompare></td></tr>
+<tr><td>bit <b>3</b> (<b>&amp;4</b>)</td><td>&lt;C LocaleCompare></td></tr>
+<tr><td>bit <b>4</b> (<b>&amp;8</b>)</td><td>&lt;C LocaleCompare></td></tr>
+<tr><td>bit <b>5</b> (<b>&amp;16</b>)</td><td>&lt;C LocaleCompare></td></tr>
+<tr><td>bit <b>6</b> (<b>&amp;32</b>)</td><td>&lt;C LocaleCompare></td></tr>
+<tr><td>bit <b>7</b> (<b>&amp;64</b>)</td><td>&lt;C LocaleCompare></td></tr>
+<tr><td>bit <b>8</b> (<b>&amp;128</b>)</td><td>&lt;C LocaleCompare></td></tr>
+</table>
+
+<!-- ColumnsCount -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Toolbar></b> <i>int</i>
+   <h4>ColumnsCount</h4> <s>[1]	&nbsp;	Replaced by &lt;Cfg <b>MenuColumnsCount</b>/></s>
+</div>
+
+<!-- SortSpan -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SortSpan</h4> <s>[0]	&lt;	Removed completely, attribute not required</s>
+</div>
+
+<!-- CalendarButtons -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>CalendarButtons</h4> <s>[0/7]	&lt;	Replaced by &lt;C> &lt;cell> <b>CalendarButtons</b></s>
+</div>
+
+<!-- ShowIcons -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;MenuCfg></b> <i>bool</i>
+   <h4>ShowIcons</h4> <s>Replaced by <b>SortClick</b></s>
+</div>
+
+<!-- Visible -->
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;Panel></b> <i>bool</i>
+   <h4>Visible</h4>
+   <s>&lt;Panel> has all attributes of &lt;C></s>
+</div>
+
+<!-- CanHide -->
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;Panel></b> <i>bool</i>
+   <h4>CanHide</h4>
+   <s>&lt;Panel> has all attributes of &lt;C></s>
+</div>
+
+<!-- ClassEnum -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>ClassEnum</h4> <s>[''] &nbsp; Replaced completely</s>
+</div>
+The Enum look in cell can be controlled by Class and ClassInner.<br />
+The Enum list menu can be controlled by EnumMenu, parameter Class.<br />
+
+<!-- Defaults -->
+<a name="CDefaults"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>Defaults</h4>
+   <s>Changed functionality</s>
+</div>
+The special item *+X (collapsible level) is replaced by TreeGrid menu Level settings.<br />
+The special item *- (separator) is replaced by '-'.<br />
+
+<!-- Menu -->
+<a name="CMenu"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>Menu</h4>
+   <s>Changed functionality</s>
+</div>
+The special item *+X (collapsible level) is replaced by TreeGrid menu Level settings.<br />
+The special item *- (separator) is replaced by '-'.<br />
+
+<!-- Wrap -->
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;Header></b> <i>bool</i>
+   <h4>Wrap</h4>
+   <s>&lt;Header> has all attributes of &lt;I></s>
+</div>
+
+<!-- Visible -->
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;Header></b> <i>bool</i>
+   <h4>Visible</h4>
+   <s>&lt;Header> has all attributes of &lt;I></s>
+</div>
+
+<!-- PanelVisible -->
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;Header></b> <i>bool</i>
+   <h4>PanelVisible</h4>
+   <s>&lt;Header> has all attributes of &lt;I></s>
+</div>
+
+<!-- CanExport -->
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;Header></b> <i>bool</i>
+   <h4>CanExport</h4>
+   <s>&lt;Header> has all attributes of &lt;I></s>
+</div>
+
+<!-- CanDrag -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Header></b> <i>bool</i>
+   <h4>CanDrag</h4> <s>Removed completely, useless</s>
+</div>
+
+<!-- Rows -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Header></b> <i>int</i>
+   <h4>Rows</h4> <s>Replaced by more &lt;Header> tags</s>
+</div>
+In 6.0 there can be more &lt;Header> tags in grid in &lt;Head> and &lt;Foot> section and they replace all multiline attributes from 5.9.<br />
+
+<!-- Main -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Header></b> <i>int</i>
+   <h4>Main</h4> <s>[0]	&nbsp; Replaced by more &lt;Header> tags</s>
+</div>
+
+<!-- LeftRC -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Header></b> <i>string</i>
+   <h4>LeftRC</h4> <s>[""]	&nbsp; Replaced by more &lt;Header> tags</s>
+</div>
+
+<!-- LeftRCSpan -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Header></b> <i>int</i>
+   <h4>LeftRCSpan</h4> <s>[1]	&nbsp; Replaced by more &lt;Header> tags</s>
+</div>
+
+<!-- RightRC -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Header></b> <i>string</i>
+   <h4>RightRC</h4> <s>[""]	&nbsp; Replaced by more &lt;Header> tags</s>
+</div>
+
+<!-- RightRcSpan -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Header></b> <i>int</i>
+   <h4>RightRcSpan</h4> <s>[1]	&nbsp; Replaced by more &lt;Header> tags</s>
+</div>
+
+<!-- MidRC -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Header></b> <i>string</i>
+   <h4>MidRC</h4> <s>[""]	&nbsp; Replaced by more &lt;Header> tags</s>
+</div>
+
+<!-- MidRcSpan -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Header></b> <i>int</i>
+   <h4>MidRcSpan</h4> <s>[1]	&nbsp; Replaced by more &lt;Header> tags</s>
+</div>
+
+<!-- ClassInner -->
+<a name="CClassInner"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>ClassInner</h4>
+   <s>Different usage</s>
+</div>
+ClassInner now adds new &lt;DIV> tags into the cell and sets its class attribute.<br />
+<a href="CellStyle.htm#CWrap">Wrap</a> and <a href="CellStyle.htm#CAlign">Align</a> and type classes are applied to this &lt;DIV> instead of the cell itself.<br />
+Use ClassInner to add some <b>inner border</b> and <b>margin</b> to the cell, for other settings use <a href="CellStyle.htm#CClass">Class</a> attribute instead.<br />
+<i>Remember, setting ClassInner for many cells can <b>slow down</b> the grid rendering and usage!</i><br />
+
+<!-- Formula -->
+<a name="CellFormula"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C>&lt;cell></b> <i>string</i>
+   <h4>Formula</h4>
+   <s>Behavior changed</s>
+</div>
+Now the cell formula is always used instead of column formula, also if row is <u>not</u> calculated.<br />
+Now the column formula is used also in calculated row.<br />
+
+<!-- Class -->
+<div class="XML">
+   <u>del <b>6.0</b></u> <b>&lt;Space></b> <i>string</i>
+   <h4>Class</h4>
+   <s>["GSpace"] &nbsp; Target changed</s>
+</div>
+The row Class attribute is now class for all cells in the row.<br />
+The CSS class for the space row can be set by custom <b>Kind</b> attribute.<br />
+
+<!-- Tab -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>&lt;Space cell></b> <i>int</i>
+   <h4>Tab</h4> <s>Replaced by <b>Radio</b></s>     
+</div>
+
+<!------------------------------------------------------------------ API events -------------------------------------------------------------->
+<h2>API events</h2>
+
+<!-- OnGetClass -->
+<a name="OnGetClass"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetClass</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>cls</b>)</s>
+</div>
+The OnGetClass now replaces only custom cell class set by Class attribute. cls is the Class attribute value.<br />
+
+<!-- OnGetEnum -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetEnum</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>enum</b>)</s>
+</div>
+Now the enum is string, not array. It should return also string and not array.<br />
+
+<!-- OnCanDrag -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API event</b> <i>int</i>
+   <h4>OnCanDrag</h4> <s>(...) &nbsp; Renamed to <b>OnCanDrop</b></s>     
+</div>
+
+<!-- OnPrint -->
+<a name="OnGetClass"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnPrint</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>Window</i> <b>window</b>, <i>string</i> <b>report</b>) &nbsp; Parameters changed</s>
+</div>
+Now it should not return array of strings to change the report, but only one string as the report itself.<br />
+
+<!-- OnShowDialog -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnShowDialog</h4> <s>(...) &nbsp; Removed completely, event <b style="color:red;">unsupported</b></s>     
+</div>
+
+<!-- OnEvent... -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnEvent...</h4> <s>(...) &nbsp; Replaced by <b>On...</b></s>     
+</div>
+
+<!-- OnCanFilter... -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnCanFilter</h4> <s>(...) &nbsp; Renamed to <b>OnFilter</b></s>     
+</div>
+
+<!-- OnGroup -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnGroup</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>group</b>) &nbsp; Parameters changed</s> 
+</div>
+
+<!-- OnPaste -->
+<a name="OnPaste"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnPaste</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string[ ]</i> <b>pastedtext</b>, <i>string[ ]</i> <b>cols</b>) &nbsp; Parameters changed</s> 
+</div>
+
+<!-- OnPasteFinish -->
+<a name="OnPasteFinish"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnPasteFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>) &nbsp; Parameters changed</s> 
+</div>
+
+<!-- OnClick -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnClick</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>x</b>, <i>int</i> <b>y</b>, <i>Event</i> <b>event</b>) &nbsp; Parameters changed</s> 
+</div>
+Removed parameter handled, so the event parameter is now shifted.<br />
+
+<!-- OnContextMenu -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnContextMenu</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>result</b>) &nbsp; Parameters changed</s> 
+</div>
+<b>Index</b> parameter removed and <b>result</b> is shifted.<br />
+
+<!-- OnTabOutside -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnTabOutside</h4> <s>(...) &nbsp; Replaced by &lt;Cfg <b>TabStop</b>/></s>     
+</div>
+
+<!-- OnGetInputValue -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetInputValue</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>val</b>) &nbsp; Parameters changed</s> 
+</div>
+The <b>val</b> is now the value itself and not any object.<br />
+
+<!-- OnEndEdit -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnEndEdit</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>save</b>, <i>string</i> <b>val</b>) &nbsp; Return value changed</s> 
+</div>
+Now can return only 1 or 0 to cancel finish or not. The return value is ignored when save is 0.<br />
+
+<!-- OnDataError -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnDataError</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object</i> <b>source</b>, <i>int</i> <b>result</b>, <i>string</i> <b>message</b>, <i>string</i> <b>data</b>) &nbsp; Parameters changed</s> 
+</div>
+
+<!-- OnDataErrorDebug -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnDataErrorDebug</h4> <s>(...) &nbsp; Replaced by <b>OnDataError</b></s>     
+</div>
+
+<!-- OnDataReceive -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnDataReceive</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object</i> <b>source</b>) &nbsp; Parameters changed</s> 
+</div>
+Now it called with data source and not with the row. The row is accessible by source.Row.<br />
+
+<!-- OnPanelClick -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnPanelClick</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>index</b>) &nbsp; Replaced by XML events <b>OnClickButton...</b></s>     
+</div>
+
+<!-- OnCanShowCfgItem -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnCanShowCfgItem</h4>
+   <s>(...)	&nbsp; Removed completely, event <b style="color:rerd;">unsupported</b></s> 
+</div>
+
+<!-- OnShowCfg -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnShowCfg</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TMenu</i> <b>menu</b>)	&nbsp;	Parameters changed</s> 
+</div>
+
+<!-- OnShowColumns -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnShowColumns</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TMenu</i> <b>menu</b>)	&nbsp;	Parameters changed</s> 
+</div>
+
+<!------------------------------------------------------------------ API methods and properties -------------------------------------------------------------->
+<h2>API methods and properties</h2>
+
+<!-- KeyInt -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>global func.</b> <i>bool</i>
+   <h4>KeyInt</h4> <s>(<i>Event</i> <b>event</b>, <i>string</i> <b>Value</b>) &nbsp; Removed completely</s>     
+</div>
+
+<!-- KeyFloat -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>global func.</b> <i>bool</i>
+   <h4>KeyFloat</h4> <s>(<i>Event</i> <b>event</b>, <i>string</i> <b>Value</b>) &nbsp; Removed completely</s>     
+</div>
+
+<!-- KeyDate -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>global func.</b> <i>bool</i>
+   <h4>KeyDate</h4> <s>(<i>Event</i> <b>event</b>, <i>string</i> <b>Value</b>) &nbsp; Removed completely</s>     
+</div>
+
+<!-- GetKey -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>global func.</b> <i>int</i>
+   <h4>GetKey</h4> <s>(<i>Event</i> <b>event</b>) &nbsp; Removed completely</s>     
+</div>
+
+<!-- CopyObject -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>global func.</b> <i>object</i>
+   <h4>CopyObject</h4> <s>(<i>object</i> <b>o</b>) &nbsp; Removed completely</s>     
+</div>
+
+<!-- ShowHTML -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>global func.</b> <i>void</i>
+   <h4>ShowHTML</h4> <s>(<i>string</i> <b>HTML</b>, <i>string</i> <b>name</b>) &nbsp; Removed completely</s>     
+</div>
+
+<!-- XB -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API variable</b> <i>TRow</i>
+   <h4>XB</h4> <s>Renamed to <b>Body</b></s>     
+</div>
+
+<!-- XH -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API variable</b> <i>TRow</i>
+   <h4>XH</h4> <s>Renamed to <b>Head</b></s>     
+</div>
+
+<!-- XF -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API variable</b> <i>TRow</i>
+   <h4>XF</h4> <s>Renamed to <b>Foot</b></s>     
+</div>
+
+<!-- XS -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API variable</b> <i>TRow</i>
+   <h4>XS</h4> <s>Renamed to <b>Solid</b></s>     
+</div>
+
+<!-- XHeader -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API variable</b> <i>TRow</i>
+   <h4>XHeader</h4> <s>Renamed to <b>Header</b></s>     
+</div>
+
+<!-- SetScrollBars -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>SetScrollBars</h4> <s>( ) &nbsp; Renamed to <b>Update</b></s>     
+</div>
+
+<!-- Dialog -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API variable</b> <i>TMenu</i>
+   <h4>Dialog</h4>
+   <s>Type changed</s> 
+</div>
+Now it points to TMenu object.<br />
+
+<!-- StopCalc -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API variable</b> <i>bool</i>
+   <h4>StopCalc</h4> <s>Replaced by <b>Calculated</b></s>     
+</div>
+
+<!-- Data -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API variable</b> <i>object</i>
+   <h4>Data</h4> <s>Renamed to <b>Source</b></s>     
+</div>
+
+<!-- GetColLeft -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API event</b> <i>type[ ]</i>
+   <h4>GetColLeft</h4> <s>(<i>int left</i>) &nbsp; Removed completely</s>     
+</div>
+In 6.0 version exists function with the same name, but with completely different functionality.<br />
+
+<!-- GetRows -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>TRow[ ]</i>
+   <h4>GetRows</h4> <s>(<i>int</i> <b>sec</b>) &nbsp; Removed completely</s>     
+</div>
+Use such loop: <tt>for(var r=grid.Head.firstChild;r;r=r.nextSibling)&#123; ... }</tt><br />
+
+<!-- ChangeSort -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ChangeSort</h4>
+   <s>(<i>string</i> <b>sortcols</b>) &nbsp;	Parameters changed</s> 
+</div>
+Now it has only one parameter as the sort string.<br />
+
+<!-- UpdateBody -->
+<a name="UpdateBody"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>UpdateBody</h4> <s>( )	&nbsp;	Renamed to <b>RenderBody</b></s>     
+</div>
+
+<!-- DelRow -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>DelRow</h4> <s>(<i>TRow</i> <b>row</b>)	&nbsp;	Renamed to <b>RemoveRow</b></s>     
+</div>
+
+<!-- GetCDef -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>GetCDef</h4> <s>(<i>TRow</i> <b>row</b>)	&nbsp;	Removed completely</s>     
+</div>
+
+<!-- GetRow -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>GetRow</h4> <s>(<i>TRow</i> <b>row</b>, <i>int</i> <b>sec</b>)	&nbsp;	Removed completely, function <b style="color:red;">unsupported</b></s>     
+</div>
+It is strongly recommended to <u>not</u> access the row DOM, only cell content.<br />
+
+<!-- GetRowChildren -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>GetRowChildren</h4> <s>(<i>TRow</i> <b>row</b>, <i>int</i> <b>sec</b>)	&nbsp;	Removed completely, function <b style="color:red;">unsupported</b></s>     
+</div>
+It is strongly recommended to not access the row children DOM, only cell content.<br />
+
+<!-- GetCell -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API method</b> <i>object</i>
+   <h4>GetCell</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>) &nbsp;	Reduced functionality</s> 
+</div>
+Now the GetCell method always returns the cell DOM, tag &lt;TD>.<br />
+
+<!-- ShowDialog -->
+<a name="ShowDialog"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API method</b> <i>TMenu</i>
+   <h4>ShowDialog</h4>
+   <s>(...) &nbsp;	Return value changed</s> 
+</div>
+
+<!-- ShowMenu -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API method</b> <i>object</i>
+   <h4>ShowMenu</h4>
+   <s>(...) &nbsp;	Replaced by global <b>ShowMenu</b> function</s> 
+</div>
+
+<!-- ValueToString -->
+<a name="ValueToString"></a>
+<div class="DEL">
+   <u>chg <b>6.0</b></u> <b>API method</b> <i>string</i>
+   <h4>ValueToString</h4>
+   <s>(...) &nbsp;	Removed completely</s> 
+</div>
+
+<!-- StringToValue -->
+<div class="DEL">
+   <u>chg <b>6.0</b></u> <b>API method</b> <i>string</i>
+   <h4>StringToValue</h4>
+   <s>(...) &nbsp;	Removed completely</s> 
+</div>
+
+<!-- GetEnum -->
+<a name="GetEnum"></a>
+<div class="DEL">
+   <u>chg <b>6.0</b></u> <b>API method</b> <i>string[ ]</i>
+   <h4>GetEnum</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>) &nbsp;	Removed completely</s> 
+</div>
+Enum is now accessible always as plain string.<br />
+
+<!-- GetEnumIndex -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>int</i>
+   <h4>GetEnumIndex</h4> <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>val</b>)	&nbsp;	Removed completely</b></s>     
+</div>
+
+<!-- SetIdentity -->
+<a name="SetIdentity"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>SetIdentity</h4> <s>(<i>string</i> <b>tag</b> = "", <i>string</i> <b>id</b> = "")	&nbsp;	Removed completely</b></s>     
+</div>
+Now the identity should not be changed on fly. You can only add and remove grids.<br />
+
+<!-- DelIdentity -->
+<a name="DelIdentity"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>DelIdentity</h4> <s>( )	&nbsp;	Removed completely</b></s>     
+</div>
+Now the identity should not be changed on fly. You can only add and remove grids.<br />
+
+<!-- Communicate -->
+<a name="Communicate"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>Communicate</h4> <s>(<i>object</i> <b>DataIO</b>, <i>string</i> <b>Data</b>, <i>function</i> <b>Func</b>)	&nbsp;	Replaced by global function <b>AjaxCall</b></b></s>     
+</div>
+
+<!-- Communicate2 -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>Communicate2</h4> <s>(<i>object</i> <b>DataIO</b>, <i>string</i> <b>Data</b>, <i>function</i> <b>Func</b>)	&nbsp;	Replaced by method <b>AjaxCall</b></b></s>     
+</div>
+
+<!-- DownloadData -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>DownloadData</h4> <s>(<i>object</i> <b>DataIO</b>, <i>function</i> <b>Func</b>)	&nbsp;	Replaced by <b>ReadData</b></b></s>     
+</div>
+
+<!-- UpdateRows -->
+<a name="UpdateRows"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>UpdateRows</h4> <s>( )	&nbsp;	Removed completely</s>     
+</div>
+
+<!-- GetCellHtml -->
+<a name="GetCellHtml"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>string</i>
+   <h4>GetCellHtml</h4> <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)	&nbsp;	Removed completely, function <b style="color:red;">unsupported</b></s>     
+</div>
+
+<!-- GetColor -->
+<a name="GetColor"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>int</i>
+   <h4>GetColor</h4> <s>(<i>TRow</i> <b>row</b>)	&nbsp;	Removed completely, function <b style="color:red;">unsupported</b></s>     
+</div>
+
+<!-- GetText -->
+<a name="GetText"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>string</i>
+   <h4>GetText</h4> <s>(<i>string</i> <b>ident</b>)	&nbsp;	Replaced by <b>Lang.Text</b>[ident]</s>     
+</div>
+
+<!-- GetAlert -->
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>string</i>
+   <h4>GetAlert</h4> <s>(<i>string</i> <b>ident</b>)	&nbsp;	Replaced by <b>Lang.Alert</b>[ident]</s>     
+</div>
+
+<!-- TabInside -->
+<a name="TabInside"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>TabInside</h4> <s>(<i>Event</i> <b>event</b>, <i>int</i> <b>move</b>)	&nbsp;	Replaced by &lt;Cfg <b>TabStop</b> /></s>     
+</div>
+
+<!-- DoSort -->
+<a name="DoSort"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>DoSort</h4> <s>(<i>bool</i> <b>show</b>)	&nbsp;	Replaced by <b>SortRows</b></s>     
+</div>
+
+<!-- DoAction -->
+<a name="DoAction"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>DoAction</h4> <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)	&nbsp;	Removed completely</s>     
+</div>
+
+<!-- GetClick -->
+<a name="GetClick"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>TClick</i>
+   <h4>GetClick</h4> <s>(<i>MouseEvent</i> <b>e</b>)	&nbsp;	Removed completely, function <b style="color:red;">unsupported</b></s>     
+</div>
+
+<!-- SetStyle -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>SetStyle</h4>
+   <s>(<i>string</i> <b>Style</b>, <i>string</i> <b>CSS</b>, <i>bool</i> <b>render</b>) &nbsp;	Parameters changed</s> 
+</div>
+
+<!-- GetPrintable -->
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API method</b> <i>string</i>
+   <h4>GetPrintable</h4>
+   <s>(<i>function</i> <b>func</b>) &nbsp;	Parameters changed</s> 
+</div>
+Now it uses options according to grid print settings.<br />
+Usable also when report is generated asynchronously by setting PrintRows.<br />
+
+<!-- UpdatePrintable -->
+<a name="UpdatePrintable"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>UpdatePrintable</h4> <s>(<i>HTMLElement</i> <b>table</b>)	&nbsp;	Removed completely, function not required</s>     
+</div>
+
+<!-- ChangeAction -->
+<a name="ChangeAction"></a>
+<div class="DEL">
+   <u>del <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ChangeAction</h4> <s>(<i>string</i> <b>name</b>, <i>string</i> <b>action</b>)	&nbsp;	Replaced by Actions[name] = action</s>     
+</div>
+
+</div>
+</body>	
+</html>

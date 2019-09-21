@@ -1,0 +1,73 @@
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+      <title>Dynamic cell span in JavaScript tree grid component | TreeGrid</title>
+      <meta name="description" content="Live sample shows TreeGrid features: static and dynamic column and row span, frozen row and column positions, various cell types and formats" />
+   </head>
+   <body class="Example">
+      <style>
+         /* Examples shared styles */
+         .Example h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+         .Example h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+         .Example h3,.Example h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+         .Example h3 { background:#EE9; border:1px solid #DD8; }
+         .Example h4 { background:#BDE; border:1px solid #ACD; }
+         .Example a { text-decoration:underline; }      
+         .Example li { padding-bottom:8px; }
+         .Example ul { margin:6px 0px 0px 20px; font:13px Arial; }
+         .Example .Desc { margin:0px 5px 10px 5px; padding:10px; border:1px solid #dfdfdf; }
+         .Example .Desc > ul { margin-left:0px; padding:0px 0px 0px 15px; clear:both; }
+         .Example .Desc b { color:#0585B9; }
+         .Example .Path { font:normal 12px Arial; color:#0585B9; }
+         .Example .Path b { color:#D73938; }
+         .Example .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+         .Example .Path i { color:black; font-style:normal; font-weight:bold; }
+         .Example .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+         .Example .Border { margin:0px 5px 15px 5px; }
+         .Example .Main { }
+      </style>
+      <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Examples\/|\/ExamplesGantt\/)([^\/]+)\/([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+      <h1>A list of towns</h1>
+      <h2>Positions, static and dynamic spanning, types and formats</h2>
+      <div class="Desc">
+         Demonstration of various layout positions, column and row spanning, cell types and formats.<br />
+         On top there is one row for both <b>grouping</b> and <b>searching</b>. Individual <b>filter</b> row is at bottom. <b>Toolbar</b> is moved between head and body.<br />
+         There are <b>three headers</b>, two on top, one at bottom. Some header show <b>spanned captions</b>. It is still possible to <b>move</b> and <b>resize columns</b>, <b>sort</b> by columns.<br />
+         The rows <b>4</b> and <b>18</b> show (vertical) <b>row spanning</b>, also with combination of <b>column spanning</b>.
+         The rows <b>8</b> and <b>12</b> show <b>html in whole section</b> instead of cells, the row <b>Liberec</b> shows <b>merging spanned</b> cell.<br />
+         There various setting of <b>cell types and formats</b>, for whole column or for individual cell. Also show <b>right button</b> in cell.<br />
+         <br />
+         You can <b>dynamically span and split selected cells</b>.<br /> 
+         Select cells by mouse left button and click to Span icon on toolbar to span the cells or to Split button to split spanned cells, if any. <br />
+         Select the cells by right mouse button to span them automatically. Click to spanned cell by middle mouse button to split cells.<br />
+      </div>
+      <center class="Border">
+         <div class="Main" id="Table" style="width:100%; height:540px;">
+            <script>TreeGrid('<bdo Sync="1" Layout_Url="TableDef.xml" Data_Url="TableData.xml"></bdo>',"Table")</script>
+         </div>
+      </center>
+      <script>
+
+// Shows user dialog on button click
+Grids.OnButtonClick = function(G,row,col){
+G.ShowDialog(row,col,{
+   Body:"<DIV style='background:#ffffaa;padding:10px;white-space:nowrap'> User dialog on<br>row '"+row.B+"'<br>column '"+G.GetCaption(col)+"</div>",
+   Popup:1,CloseClick:1
+   });
+return true;
+}
+      </script>
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGTrialGrid\s*=\s*(\d+)/), TGIndex = 4096;
+          if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunTrialHtmlTable", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGrid="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+   </body>
+</html>

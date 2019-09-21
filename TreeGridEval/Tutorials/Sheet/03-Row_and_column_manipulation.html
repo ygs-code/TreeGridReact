@@ -1,0 +1,204 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>3. Row and column manipulation</h1>
+   <h2>Adding, copying, deleting, moving, hiding individual or groups of columns and rows</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='03-Row_and_column_manipulation.xml' target="_blank">03-Row_and_column_manipulation.xml</a></div>
+      <div class="Main" style='width:770px; height:500px;'>
+         <bdo Debug='check' Data_Url='03-Row_and_column_manipulation.xml'></bdo>
+      </div>
+   </center>
+   <script>
+
+// --- Custom actions to hide / show fixed rows ---
+Grids.ShowHeader = function(G,focused,test){ return ChangeRow(G,G.Header,1,test); }
+Grids.HideHeader = function(G,focused,test){ return ChangeRow(G,G.Header,0,test); }
+Grids.ShowPanelRow = function(G,focused,test){ return ChangeRow(G,G.Rows.Panel,1,test); }
+Grids.HidePanelRow = function(G,focused,test){ return ChangeRow(G,G.Rows.Panel,0,test); }
+Grids.ShowNames = function(G,focused,test){ return ChangeRow(G,G.Rows.ID,1,test); }
+Grids.HideNames = function(G,focused,test){ return ChangeRow(G,G.Rows.ID,0,test); }
+Grids.ShowToolbar = function(G,focused,test){ return ChangeRow(G,G.Toolbar,1,test); }
+Grids.HideToolbar = function(G,focused,test){ return ChangeRow(G,G.Toolbar,0,test); }
+function ChangeRow(G,row,show,test){
+if(!row.Visible==!show) return false;
+if(test) return true;
+if(show) G.ShowRow(row);
+else G.HideRow(row);
+return true;
+}
+
+// --- Custom actions to hide / show fixed columns ---
+Grids.ShowIndex = function(G,focused,test){ return ChangeCol(G,"Index",1,test); }
+Grids.HideIndex = function(G,focused,test){ return ChangeCol(G,"Index",0,test); }
+Grids.ShowPanel = function(G,focused,test){ return ChangeCol(G,"Panel",1,test); }
+Grids.HidePanel = function(G,focused,test){ return ChangeCol(G,"Panel",0,test); }
+Grids.ShowIds = function(G,focused,test){ return ChangeCol(G,"id",1,test); }
+Grids.HideIds = function(G,focused,test){ return ChangeCol(G,"id",0,test); }
+function ChangeCol(G,col,show,test){
+if(!G.Cols[col].Visible==!show) return false;
+if(test) return true;
+if(show) G.ShowCol(col);
+else G.HideCol(col);
+return true;
+}
+   </script>
+   <ul>
+      <li><h4>Rows</h4><br />
+         <ul>
+            <li>
+            Rows can be <b>selected</b> or unselected by clicking to or dragging left Panel Select button or by pressing Space. 
+            It is default behavior set in Defaults.xml by &lt;Cfg <b>Selecting</b>='1'. <br />
+            All rows can be selected or unselected by clicking to Header Panel SelectAll button. It is default behavior.<br /> 
+            Here the SelectAll button is a switch showing if all rows are selected. It is set by &lt;Cfg> <b>SelectAllType</b>='<b>31</b>'.<br />
+            </li>
+            <li>
+            Rows can be <b>resized</b> by mouse dragging its edge in Index column. It is set by &lt;C> <b>Resizing</b>='<b>1</b>' in the Index column definition.<br />
+            </li>
+            <li>
+            Rows can be <b>moved</b> by dragging the Index column. 
+            It is default behavior set in Defaults.xml by &lt;Cfg> <b>Dragging</b>='1' <b>Dropping</b>='1'.<br /> 
+            Dragging by other columns is overridden by focusing cells by FocusRect.<br />
+            If dragged selected row, all selected rows are moved to the destination.<br />
+            </li>
+            <li>
+            Rows can be <b>copied</b> by dragging the Index column with Ctrl. 
+            It is default behavior set in Defaults.xml by &lt;Cfg> <b>Dragging</b>='1' <b>Dropping</b>='1' <b>Adding</b>='1' <b>Copying</b>='1'.<br />
+            If dragged selected row, all selected rows are copied to the destination.<br />
+            </li>
+            <li>
+            Rows can be <b>copied</b> or <b>added</b> by clicking to left Panel Copy button. It is shown by &lt;Panel Copy='1'/>. <br />
+            The Copy menu permits copying or adding one row, all selected or all focused rows.<br />
+            Selected or focused rows can be copied or added also by clicking to toolbar Add button.
+            </li>
+            <li>
+            Rows can be <b>deleted</b> or undeleted by clicking to left Panel Delete button or by pressing <b>Del</b>.<br />
+            Selected rows can be deleted or undeleted by clicking to Index Panel DeleteAll button. <br />
+            </li>
+            <li>
+            In this sample rows can be <b>hidden</b> or shown by clicking to left Panel Delete button, its Menu contains items also for hiding / showing rows.<br />
+            In this sample also any fixed row can be hidden from right click popup menu by custom action, see the Menu below.<br />
+            </li>
+         </ul>
+      </li>
+      <li><h4>Columns</h4><br />
+         <ul>
+            <li>
+            Columns can be <b>selected</b> or unselected by clicking to or dragging top Panel Select button. 
+            It is set by &lt;Cfg> <b>SelectingCols</b>='<b>1</b>'. The top panel is shown by placing &lt;Panel/> tag in &lt;Head> section.<br />
+            All columns can be selected or unselected by clicking to Index Panel SelectAll button. It is set by adding ColSelectAll to  &lt;Panel> row, here as &lt;Panel Index="ColSelectAll,ColDeleteAll,ColCopyAll"/><br /> 
+            Here the SelectAll button is a switch showing if all columns are selected. It is set by &lt;Cfg> <b>SelectAllType</b>='<b>31</b>'.<br />
+            </li>
+            <li>
+            Columns can be <b>resized</b> by mouse dragging its edge in Header row. It is default behavior set in Defaults.xml by &lt;Cfg> <b>ColResizing</b>='1'.<br />
+            </li>
+            <li>
+            Columns can be <b>moved</b> by dragging the Header row. 
+            It is default behavior set in Defaults.xml by &lt;Cfg> <b>ColMoving</b>='1'.<br /> 
+            If dragged selected column, all selected columns are moved to the destination.<br />
+            </li>
+            <li>
+            Columns can be <b>copied</b> by dragging the Header row with Ctrl. It is set by &lt;Cfg> <b>ColAdding</b>='1' <b>ColCopying</b>='1'.<br />
+            If dragged selected column, all selected columns are copied to the destination.<br />
+            </li>
+            <li>
+            Columns can be <b>copied</b> or <b>added</b> by clicking to left Panel Copy button.
+            It is set by &lt;Cfg> <b>ColAdding</b>='<b>1</b>' <b>ColCopying</b>='1'. The top panel is shown by placing &lt;Panel/> tag in &lt;Head> section.<br />
+            The Copy menu permits copying or adding one column, all selected or all focused columns.<br />
+            Selected or focused columns can be copied or added also by clicking to toolbar AddCol button.
+            </li>
+            <li>
+            Columns can be <b>deleted</b> or undeleted by clicking to top Panel Delete button.
+            It is set by &lt;Cfg> <b>ColDeleting</b>='<b>1</b>'. The top panel is shown by placing &lt;Panel/> tag in &lt;Head> section.<br />
+            Selected columns can be deleted or undeleted by clicking to Header Panel DeleteAll button.
+            It is set by adding ColDeleteAll to &lt;Panel> row, here as &lt;Panel Index="ColSelectAll,ColDeleteAll,ColCopyAll"/><br /> 
+            </li>
+            <li>
+            Columns can be <b>hidden</b> or shown from columns menu shown on click to toolbar Columns button.<br />
+            In this sample columns can be hidden or shown also by clicking to top Panel Delete button, its Menu contains items also for hiding / showing columns.<br />
+            In this sample also any fixed column can be hidden from right click popup menu by custom action, see the Menu below.<br />
+            </li>
+         </ul>
+      </li>
+      <li><h4>Menu</h4>
+      <ul>
+         <li>
+            The right click popup menu is defined by &lt;Cfg> / &lt;C> / &lt;I> / cell <h3>Menu</h3> attribute. <br />
+            In this sample the Menu is defined for all grid items in &lt;Cfg Menu='...'/>.<br />
+            The Menu can contain items for grid standard action or any custom API action. The Menu format can be first character separated array or complex JSON.<br />
+            This example uses complex JSON format with submenus to control rows and columns.<br />
+         </li>
+         <li>
+            The menu <b>hides options</b> not available for given row or column by &lt;Cfg> <b>HideMenuUnused</b>='1'.<br />
+         </li>
+         <li>
+            This example defines <b>custom actions</b> for showing and hiding particular fixed rows and columns. <br />
+            These custom actions are defined in JavaScript in HTML file. These custom items are also used in the Menu.<br />
+         </li>
+         <li>
+            This example modifies the row and column <b>Panel Delete</b> and DeleteAll button to show popup menu with delete/undelete and hide/show option.<br /> 
+            It is set by &lt;Panel OnClickPanelDelete="ShowMenu OR ShowNoMenu" PanelDeleteMenu="..." OnClickPanelDeleteAll="ShowMenu OR ShowNoMenu" PanelDeleteAllMenu="..."/>            
+         </li>
+      </ul>
+      </li>
+      <li><h4>Other features</h4><br />
+      <ul>
+         <li>
+            Standard number <b>row index</b> shown in new left column named "Index", for all rows except deleted. It is set by &lt;Cfg RowIndex="Index" RowIndexType="6"/>.<br />
+            Standard character <b>column index</b> shown in main header, for all columns except deleted. It is set by &lt;Cfg ColIndex="Header" ColIndexType="6" ColIndexChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ"/><br />
+         </li>
+         <li>
+            <b>Row ids</b> are shown in the right column. Compare them to row Index when rows are moved, deleted or copied. The row id is generated automatically from 1 and with "R" prefix set by &lt;Cfg AutoIdPrefix="R"/>.<br />
+            <b>Column names</b> are shown in bottom row. Compare them to column Index when columns are moved, deleted or copied. The column name is generated from "A" in the same way as index.<br />
+         </li>
+         <li>
+            <b>Automatic adding new rows</b> on scroll to bottom and clearing them when not shown. Set by 
+            &lt;Cfg Paging="2" AutoPages="1" PageLength="10" MaxPages="3" RemoveUnusedFixed="0" RemoveAutoPages="1"/> &lt;Pager Visible="0"/><br />
+            <b>Automatic adding new columns</b> on scroll to right and clearing them when not shown. Set by &lt;Cfg ColPaging="2" AutoColPages="1" ColPageLength="10" ColPageMin="0" MaxColPages="3" ColPagingFixed="0" RemoveAutoColPages="1"/>
+         </li>
+         <li>
+            Cell range can be focused by mouse dragging. It is set by &lt;Cfg> <b>FocusRect</b>='<b>5</b>'.<br />
+            Enter moves cursor down. It is set by &lt;Cfg> EnterMode='1'.<br />
+            All actions can be undone, including focus and scroll. It is set by &lt;Cfg> Undo='79'.<br />
+         </li>
+      </ul>
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialSheet\s*=\s*(\d+)/), TGIndex = 4;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialSheet3", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialSheet="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

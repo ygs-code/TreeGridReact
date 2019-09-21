@@ -1,0 +1,67 @@
+body { color:#333; font-size:14px; margin:0px; font-family:'Open Sans', Arial, Verdana, Tahoma, sans-serif; min-width:318px; }
+table { color:#333; font-size:14px; font-family:'Open Sans', Arial, Verdana, Tahoma, sans-serif; }
+.Doc { margin:32px 10px 10px 10px; line-height:1.3; }
+.Doc h1 { display:block; text-align:center; font-size:30px; margin:20px 0px 10px 0px; padding:0px; font-weight:normal; }
+.Doc h1+p { display:block; text-align:center; font-size:15px; color:#757575; margin:0px; padding:0px 0px 20px 0px; font-weight:normal; }
+.Doc h2 { display:block; text-align:center; font-size:25px; margin:30px 0px 10px 0px; padding:30px 0px 10px 0px; border-top:3px solid black; }
+.Doc h2+p { display:block; text-align:center; font-size:15px; color:#757575; margin:-20px 0px 10px 0px; padding:0px 0px 10px 0px; }
+.Doc h3 { display:block; text-align:center; font-size:20px; margin:20px 0px 0px 0px; padding:10px 0px 20px 0px; font-weight:normal; border-top:1px solid black; }
+
+.Doc h5 { display:block; font-size:18px; font-weight:bold; font-style:normal; margin:10px 0px 0px 0px; padding:10px 0px 5px 0px; text-align:left; border-top:1px solid #BBB; }
+.Doc h6 { display:block; font-size:15px; font-weight:bold; font-style:italic; margin:0px; padding:15px 0px 0px 0px; text-align:left; }
+
+.Doc i { color:#505; }
+.Doc tt { color:#055; }
+.Doc u { color:#500; }
+
+.Doc .L1 { padding-left:30px; }
+.Doc .L2 { padding-left:60px; }
+.Doc .L3 { padding-left:90px; }
+
+.Doc a { text-decoration:underline; color:blue; }
+.Doc a:visited { text-decoration:underline; color:purple; }
+.Doc a:hover { text-decoration:underline; color:red; }
+.Doc .XML, .Doc .API, .Doc .ACT, .Doc .DEL { 
+   border:2px ridge black; border-top: 1px solid black; border-left:1px solid black; border-radius:8px 0px 0px 0px;
+   font-family:Arial; font-size:13px; padding:2px 5px 2px 5px; margin:25px 0px 5px 0px; 
+   }
+.Doc .XML { background: #F6F250; }
+.Doc .API { background: #87DAE5; }
+.Doc .ACT { background: #B6DF89; }
+.Doc .DEL { background: #A6A6A6; }
+.Doc .Short { width:500px; overflow:hidden; }
+
+.Doc .XML u, .Doc .API u, .Doc .ACT u, .Doc .DEL u { 
+   width:125px; display:inline-block; font-weight:normal; font-style:normal; font-size:13px; color:red; text-align:left; text-decoration:none; white-space:nowrap;
+   }
+.Doc .XML b, .Doc .API b, .Doc .ACT b, .Doc .DEL b { 
+   width:95px; display:inline-block; font-weight:bold; font-style:normal; font-size:15px; color:black; text-align:left; white-space:nowrap;
+   }
+.Doc .XML i, .Doc .API i, .Doc .ACT i, .Doc .DEL i { 
+   width:60px; display:inline-block; font-weight:normal; font-style:italic; font-size:13px; color:black; text-align:left; white-space:nowrap; 
+   }
+.Doc .XML u b, .Doc .API u b, .Doc .ACT u b, .Doc .DEL u b { 
+   width:auto; display:inline; font-weight:bold; font-style:normal; font-size:inherit; color:inherit;
+   }
+.Doc .XML u i, .Doc .API u i, .Doc .ACT u i, .Doc .DEL u i { 
+   width:auto; display:inline; font-weight:normal; font-style:normal; font-size:inherit; color:blue;
+   }
+.Doc .XML h4, .Doc .API h4, .Doc .ACT h4, .Doc .DEL h4 { 
+   display:inline; font-weight:bold; font-style:normal; font-size:20px; margin:0px; padding:0px; border:none; color:blue; text-align:left; 
+   }
+.Doc .XML h4 i, .Doc .API h4 i, .Doc .ACT h4 i, .Doc .DEL h4 i {
+   width:auto; display:inline; font-weight:bold; font-style:normal; font-size:15px; color:inherit;
+   }
+.Doc .XML s, .Doc .API s, .Doc .ACT s, .Doc .DEL s { 
+   display:inline; font-weight:normal; font-style:normal; font-size:13px; padding-left:20px; color:black; text-decoration:none;
+   }
+.Doc .XML s b, .Doc .API s b, .Doc .ACT s b, .Doc .DEL s b { 
+   width:auto; display:inline; font-weight:bold; font-style:normal; font-size:inherit; color:inherit;
+   }
+.Doc .XML s i, .Doc .API s i, .Doc .ACT s i, .Doc .DEL s i { 
+   width:auto; display:inline; font-weight:normal; font-style:italic; font-size:inherit; color:inherit;
+   }
+.Doc strong { font-weight:normal; color:red; font-style:italic; }
+.Doc del, .Doc del i { text-decoration:none; color:gray; }
+.Doc table { border-spacing:0px; }
+.Doc td { padding:0px 5px 0px 0px; vertical-align:top; }

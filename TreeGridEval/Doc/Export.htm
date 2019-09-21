@@ -1,0 +1,657 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Export to Excel</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Export to Excel</h1>
+<p>TreeGrid documentation</p>
+
+Export of grid data to MS Excel in <b>xlsx</b> or <b>xhtml</b> format, to <b>csv</b>, or any other format.<br />
+
+<i>For <b>IE9</b> and older IE versions it requires communication with server.</i><br /> 
+Other browsers can save the exported file directly or can send it also to server.<br />
+<br />
+<i>The xlsx export and direct saving without server access was added in 12.1 version</i>.<br />
+<br />
+
+In TreeGrid export menu it is possible to choose which columns or rows to export and set various export options. <br />
+See <a href="GlobalSettings.htm#CfgMenu">Configuration menu</a> for basic settings or <a href="GlobalSettings.htm#MenuExport">Export menu</a> for special settings.<br /><br />
+
+Changes for client export can be done also by &lt;<a href="Media.htm#Media">Media</a>>&lt;M <a href="Media.htm#MMedia">Media</a>='<b>Export</b>' ... />&lt;Media>.<br /><br />
+
+<h5>Export types</h5><br />
+<b>Client export</b><br /> 
+The exported data are created on client and saved as xlsx or csv file directly to disk. <br />
+Or the data can be sent to server for validation and returned back to client. In IE9 and older it is the only way.<br />
+It is done by TreeGrid and does not need too much to set it up.<br />
+<br />
+<b>Server export</b><br />
+To server is sent only configuration in XML or JSON and server generated the data and sends them back to client. <br />
+It is done by custom server script that must be written by developers using TreeGrid.<br />
+There can be used also TreeGrid.dll/so as support library to generate the exported data on server side.<br />
+Server export is often required for server paging and server child paging to avoid loading all data to client.<br />
+
+<!-----------------------------------------------------------------------  Basic settings  ------------------------------------------------->
+<a name="Basic"></a><a name="XLS"></a>
+<h2>Basic settings</h2>
+
+Basic definition of export to MS Excel XLSX, XLS, CSV or any other custom type.
+It is for both <a href="#Client">client export</a> or <a href="#Server">server export</a>.<br />
+
+<!-- ExportFormat -->
+<a name="CfgExportFormat"></a>
+<div class="XML">
+   <u>new <b>6.0</b> chg <b>12.1</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>ExportFormat</h4> <s>["xlsx"] Saved to cookies, avoid it by &lt;Cfg ExportLap='1'/></s>
+</div>
+If and in which predefined format the export will be done. Case insensitive.<br />
+It is also file extension to save the report by, always lowercase.<br />
+<i>Since 12.1</i> the values completely changed and replaced <a href="#Export_Type">Export_Type</a>.<br />
+Possible values: <b><i>empty</i></b> - no export, <b>xlsx</b> - (original binary Excel xlsx file), <b>csv</b> - comma or semicolon separated values, <b>xls</b> - (old xhtml file).<br />
+It can contain also any other value for custom export into this file format.<br />
+
+<!-- ExportName -->
+<a name="CfgExportName"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>ExportName</h4> <s>["Export"] Saved to cookies, avoid it by &lt;Cfg ExportLap='1'/></s>
+</div>
+File name to save the export by. It is without extension, extension is set by <b>ExportFormat</b>.<br />
+
+<!-- ExportType -->
+<a name="CfgExportType"></a>
+<div class="XML">
+   <u><i>upd <b>14.0</b></i></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>ExportType</h4> <s>["Expanded,Outline"] Saved to cookies, avoid it by &lt;Cfg ExportLap='1'/></s>
+</div>
+The way of client export (or server export via TreeGrid.dll/so) to Excel, comma separated list of keywords, case insensitive.<br />
+Many of these options can be changed in configuration menu, if set <a href="#CfgExportCols">ExportCols</a> = <b>2</b>.<br />
+<i>Since 12.1 the default value changed, Indent was replaced by Outline.</i>
+<table>
+<tr><td style="width:90px;"><b>Filtered</b></td><td>export also filtered rows</td></tr>
+<tr><td><b>Selected</b></td><td><i>(new 12.1, xlsx / csv only)</i> export only selected rows, columns or cells.</i></td></tr>
+<tr><td><b>Expanded</b></td><td>export all rows expanded</td></tr>
+<tr><td>
+<b>Hidden</b></td><td>export all columns, including hidden (Visible='0' CanExport='1').
+<i>(since 12.1, xlsx only)</i> export also manually hidden rows (Visible='0' Hidden='1' CanExport='1').
+</td></tr>
+<tr><td><b>Hide</b></td><td>
+   <i>(new 12.1, xlsx), only with option Hidden</i>
+   Hidden columns (Visible='0') are exported as hidden. 
+   Manually hidden rows (Visible='0' Hidden='1') are exported as hidden.<br />
+</td></tr>
+<tr><td><b>Outline</b></td><td>export tree as Excel outline, for csv adds new column with the outline as characters '#'</td></tr>
+<tr><td><b>Indent</b></td><td>indent levels in main column</td></tr>
+<tr><td><b>FixedRows</b></td><td><i>(new 12.1, xlsx only)</i> freeze (anchor) head rows. <i>Note, Excel does <u>not</u> support freezing foot rows.</i></td></tr>
+<tr><td><b>FixedCols</b></td><td><i>(new 12.1, xlsx only)</i> freeze (anchor) left columns. <i>Note, Excel does <u>not</u> support freezing right columns.</i></td></tr>
+<tr><td><b>Empty</b></td><td><i>(new 12.1, xlsx only)</i> export empty cells as actual cells with empty string - overflowing text of preceding cells will be hidden, but the resulting xlsx file of large grids may be larger</td></tr>
+<tr><td><b>KeepHTML</b></td><td><i>(new 12.1, xlsx / csv only)</i> places HTML tags to export, does not strip them</td></tr>
+<tr><td><b>EnumKeys</b></td><td><i>(new 12.1, xlsx only)</i> for Enum and Radio type exports its keys, not values</td></tr>
+<tr><td><b>TextType</b></td><td><i>(new 12.1, xlsx only)</i> preserves Text type for number values. Otherwise it converts type of number values to number type.</td></tr>
+<tr><td><b>Unsupported</b></td><td><i>(new 12.1, xlsx only)</i> exports also TreeGrid date and number formats that are not fully supported by Excel, the unsupported part is replaced by '?'. Otherwise, if not present, exports such dates as string.</td></tr>
+<tr><td><b>NoColor</b></td><td><i>(new 14.0, xlsx only)</i> does not export row/col/cell Color attribute and does not color selected cells.</td></tr>
+<tr><td><b>Strings</b></td><td>(<i>old xls only</i>) store strings in file twice to preserve their type a spaces, set it if you want to export all strings as strings and not chosen by Excel.</td></tr>
+<tr><td><b>Dates</b></td><td>(<i>old xls only</i>) export dates as strings only (useful for exporting Hirji dates). In this case uses the &lt;C> <a href="#CExportFormat">ExportFormat</a> instead of <a href="#CXlsFormat">XlsFormat</a>.</td></tr>
+
+<tr><td><b>Rtl</b></td><td><i>(new 7.1)</i> The columns will be exported in reversed order when the grid is in Rtl mode</td></tr>
+</table>
+
+<!-- ExportCols -->
+<a name="CfgExportCols"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>6.7</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ExportCols</h4> <s>[2]</s>
+</div>
+If and which menu will be shown before doing export.<br />
+<b>0</b> - no menu<br />
+<b>1</b> - menu with columns and rows to select which columns will be exported. Only columns and rows with <tt><a href="#CCanExport">CanExport</a>='1'</tt> are listed.<br />
+<b>2</b> - <i>(new 6.7)</i> menu with columns, rows and also with all options for export<br />
+See <a href="GlobalSettings.htm#CfgMenu">Configuration menu</a> for basic settings or <a href="GlobalSettings.htm#MenuExport">Export menu</a> for special settings.<br />
+
+<!-- ExportLoad -->
+<a name="CfgExportLoad"></a>
+<div class="XML">
+   <u>new <b>12.1</b> <i>upd <b>13.1</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ExportLoad</h4> <s>[0]</s>
+</div>
+Set to <b>1</b> in server paging or child paging to download all rows to be exported.<br />
+<i>Since 13.1</i> if set to <b>2</b> it downloads all rows also if <a href="#CfgExportType">ExportType</a> contains flag Selected - useful if row selection is saved on server.<br />
+Be careful permitting this option, it will download all pages and optionally child pages, when used <a href="#CfgExportType">ExportType</a> = <b>Expanded</b>.<br />
+
+<!-- ExportFontSize -->
+<a name="CfgExportFontSize"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ExportFontSize</h4> <s>[10]</s>
+</div>
+<i>xlsx only</i>. Default Excel font size in every cell. In px, not in pt.
+
+<!-- ExportFontFace -->
+<a name="CfgExportFontFace"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ExportFontFace</h4> <s>["Calibri"]</s>
+</div>
+<i>xlsx only</i>. Default Excel font name in every cell.
+
+<!-- ExportOptions -->
+<a name="CfgExportOptions"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>ExportOptions</h4> <s></s>
+</div>
+<i>xlsx only</i>. Internal options for export to <b>xlsx</b>. In JSON format.<br />
+<table>
+    <tr>
+        <td><b>HeaderColor</b></th><td class="def">&quot;&quot;</td>
+        <td>Color of header rows</td>
+    </tr>
+    <tr>
+        <td><b>SelectedRowsColor</b></th><td class="def">"#ffff00"</td>
+        <td>Color of selected rows</td>
+    </tr>
+    <tr>
+        <td><b>SelectedColsColor</b></th><td class="def">"#ffff00"</td>
+        <td>Color of selected columns</td>
+    </tr>
+    <tr>
+        <td><b>SelectedCellsColor</b></th><td class="def">"#00ffff"</td>
+        <td>Color of selected cells</td>
+    </tr>
+    <tr>
+        <td><b>DefaultTextShadowColor</b></th><td class="def">"#999999"</td>
+        <td>Default <b>TextShadowColor</b> (RGB value)</td>
+    </tr>
+    <tr>
+        <td><b>DefaultTextShadowPattern</b></th><td class="def">"lightGray"</td>
+        <td>Default <b>TextShadow</b> emulation fill pattern (lightGray = mid-dense dots)</td>
+    </tr>
+    <tr>
+        <td><b>TableBorder</b></th><td class="def">"1,black"</td>
+        <td>Define border around the table and it's sections (head, foot, left and right columns). Set it as "width,color"</td>
+    </tr>
+</table>
+For example: <tt>ExportOptions="{TableBorder:'2,gray'}"</tt>
+
+<!-- CanExport -->
+<a name="CCanExport"></a>
+<div class="XML">
+   <u><i>upd <b>11.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>CanExport</h4> <s>[1/0]</s>
+</div>
+If the column will be exported. <b>0</b> - no, <b>1</b> - yes, if chosen in menu or is visible, <b>2</b> - always<br />
+By default Panel has <b>0</b> and other columns <b>1</b>.<br />
+More changes for client export can be done also by &lt;<a href="Media.htm#Media">Media</a>>&lt;M <a href="Media.htm#MMedia">Media</a>='<b>Export</b>' ... />&lt;Media>.<br />
+
+<!-- CanExport -->
+<a name="ICanExport"></a>
+<div class="XML">
+   <u><i>upd <b>12.1</b></i></u> <b>&lt;I></b> <i>int</i>
+   <h4>CanExport</h4> <s>[1]</s>
+</div>
+If row will be exported to Excel.<br /> 
+<b>0</b> - neither row, nor its children, <b>1</b> - yes, if chosen in menu or is visible, <b>2</b> - <i>(new 11.0)</i> only its children, <b>3</b> <i>(new 12.1)</i> always.<br />
+<i>Space rows are <u>never</u> exported.</i><br />
+
+<!-- MenuCheck -->
+<a name="CMenuCheck"></a>
+<div class="XML">
+   <u>new <b>14.1</b></u> <b>&lt;C> &lt;I></b> <i>bool</i>
+   <h4>MenuCheck</h4> <s></s>
+</div>
+If the column or row is checked in the print and export menu. If not set, the item is checked according to its Visible and CanPrint/CanExport setting.<br />
+
+<!-- ExportVarHeight -->
+<a name="CfgExportVarHeight"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ExportVarHeight</h4> <s>[1]</s>
+</div>
+<b>0</b> - All rows are exported with single line height.<br />
+<b>1</b> - Calculates height of cells in columns with <a href="#CVarHeight">VarHeight</a>>=1, row height is set to the highest cell height. <i>Can slow down the export!</i><br />
+<b>2</b> - Like <b>1</b> and also ignores row <a href="RowHeight.htm#IMaxHeight">MaxHeight</a> attribute to export the whole content of all multiline cells. <i>Can slow down the export!</i><br />
+
+<!-- VarHeight -->
+<a name="CVarHeight"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>VarHeight</h4> <s>[0]</s>
+</div>
+Set it to <b>1</b> (or <b>2</b>) to columns containing multiline cells to let their height to calculate dynamically to export it with the whole visible content. Only with <a href="#CfgExportVarHeight">ExportVarHeight</a>>=1.<br />
+The VarHeight attribute also controls shrinking cell height when column width is increased, see <a href="ColWidth.htm#CVarHeight">VarHeight</a>.<br />
+
+<!-----------------------------------------------------------------------  Server communication  ------------------------------------------------->
+<a name="Communication"></a>
+<h2>Communication with server</h2>
+
+<i>By default (Export_Type="") the server communication is required only for IE9 and older browsers.</i><br />
+
+<!-- Export_Type -->
+<a name="Export_Type"></a>
+<div class="XML">
+   <u>chg <b>12.1</b></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>Export_Type</h4> <s>[""]</s>
+</div>
+   If and what will be sent to server for export, case insensitive.<br />
+   <br />
+
+<b>Client export</b><br /><br />
+
+<b><i>empty</i></b><br />
+Direct client export, default <i>(new 12.1)</i><br />
+In <b>all browsers</b> except IE9 and below will be sent nothing to server; the generated file will be saved directly.<br />
+In <b>IE9</b> and below will be sent to server full report in XLSX/CSV/XLS format (chosen by <a href="#CfgExportFormat">ExportFormat</a>).<br /><br />
+
+<u><b>Export</b></u><br />
+Client export via server <i>(renamed 12.1)</i><br />
+To server will be sent full report in XLSX/CSV/XLS format (chosen by <a href="#CfgExportFormat">ExportFormat</a>).<br />
+<i>Prior 12.1 the client export was always sent to server, using keywords "xls" or "csv"</i><br />
+<br />
+
+<b>Server export</b><br /><br />
+
+<u><b>Settings</b></u><br />
+To server will be sent only configuration (sorting, grouping, filters) and columns (positions, visibility and widths) in XML.<br />
+The server must generate the requested report in <b>XLSX</b>, <b>XLS</b> or <b>CSV</b> according to the settings and stored data and return it to client.<br />
+See <a href="#Server">Server export</a>.<br /><br />
+
+<u><b>Expanded</b></u><br />
+Sends ids of all expanded rows in &lt;Cfg <a href="Tree.htm#CfgExpanded">Expanded</a>/> attribute, comma separated.<br /><br />
+
+<u><b>Changes</b></u><br /> 
+Used usually with Settings for server export.<br />
+Sends modified rows - rows with set attribute <b>Added</b>, <b>Deleted</b>, <b>Moved</b> or <b>Changed</b> (modified values). The rows are sent in &lt;<a href="DataUpload.htm#XML">Changes</a>> tag.<br />
+When set, the export does <u>not</u> save the changes to server before export, but includes them in the export request.<br /><br />
+
+<i>This attribute supports for server export also all other settings like <b>Cookie</b> or <b>Data</b> defined for _Type, see <a href="DataUpload.htm#Upload_Type">Upload_Type</a>. Also <b>Export_Flags</b> are supported if defined, see <a href="DataUpload.htm#Upload_Flags">Upload_Flags</a>.</i><br />
+
+<!-- Export_Url -->
+<a name="Export_Url"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>Export_Url</h4> <s></s>
+</div>
+<i>If set Export_Type="" (default value), it is required only for compatibility with IE9 and older IE browsers.</i><br />
+Destination for page that generates data to export to XLSX, XLS, CSV or any other format.<br />
+This server URL should return the exported data as XLSX / XLS file in HTTP content-type="application/vnd.ms-excel" or CSV as "text/csv".<br />
+This communication is <u>not</u> done by AJAX, but always by hidden form, so it can be used even if no ActiveX is supported.<br />
+Export cannot use Soap or Get communication.<br />
+If you encounter problems with export of international (non-English) characters, add to your page, to &lt;head> section:<br />
+<div class="L1"><tt>&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></tt></div><br />
+
+In <b>client export</b> (<tt>Export_Type='&#39;</tt> or <tt>'Export&#39;</tt>) to this URL is uploaded complete exported data and the server script should just return them back.<br />
+In <b>server export</b> (<tt>Export_Type='Settings'</tt> or other value) to this URL is uploaded actual grid configuration and the server script should create and return the exported data by itself.<br />
+
+<!-- Export_Data -->
+<a name="Export_Data"></a>
+<div class="XML">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;treegrid,bdo></b> <i>string</i>
+   <h4>Export_Data</h4> <s>["Data"]</s>
+</div>
+The name of form input in that will be uploaded exported data or configuration to Export_Url.<br />
+
+
+<!-----------------------------------------------------------------------  Export API  ------------------------------------------------->
+<a name="API"></a>
+<h2>Export API</h2>
+
+<!-- Action Export -->
+<a name="ActionsExport"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>Export</h4>
+   <s>Attached to event <b>OnClickButtonExport</b></s>
+</div>
+Creates report in XLSX, XLS or CSV or a request for the server report and saves it to disk or sends it to server.<br />
+
+<!-- OnExportStart -->
+<a name="OnExportStart"></a>
+<div class="API">
+   <u>new <b>6.0</b> <i>upd <b>7.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnExportStart</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>bool</i> <b>pdf</b>)</s>
+</div>
+Called before the export menu is shown and the export report is generated.<br /> 
+<i>(since 7.0)</i> <b>pdf</b> is true for export to PDF<br />
+Return true to cancel export.<br />
+
+<!-- OnExportInit -->
+<a name="OnExportInit"></a>
+<div class="API">
+   <u>new <b>12.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnExportInit</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string[Name]</i> <b>Cols</b>, <i>string[id]</i> <b>Rows</b>, <i>object</i> <b>source</b>)</s>
+</div>
+Called after the options are chosen by a user in menu and before the export is generated.<br />
+<b>Cols</b> is array of all columns to export, by column name. If the column is not listed, it is <u>not</u> exported.<br />
+<b>Rows</b> is array of rows to export, by row id. If the row is not listed, it is exported according to its <a href="#ICanExport">CanExport</a> value.<br />
+It is possible to modify these arrays.<br />
+Other settings like ExportFormat or ExportType are already read from configuration and can be modified in the grid attributes.<br />
+<b>source</b> is data source used, can be null for direct save or grid.Source.Export for export, or grid.Source.ExportPDF for PDF export.<br />
+<i>Can be used for custom export or export to different formats.</i><br />
+Return true to cancel export.<br />
+
+<!-- OnExport -->
+<a name="OnExport"></a>
+<div class="API">
+   <u><i>chg <b>12.1</b></i></u> <b>API event</b> <i>object</i>
+   <h4>OnExport</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object</i> <b>data</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Called after the export or configuration is created and before it is saved to disk or sent to server.<br /> 
+<b>data</b> is the created export or configuration. It can be string or <i>(since 12.1)</i> Blob object.<br /> 
+<i>(since 12.1)</i> <b>type</b> is <b>data</b> type: <b>0</b> export configuration, <b>1</b> export pdf configuration, <b>2</b> direct data to save, <b>3</b> direct data to send to server.<br />
+Return true to suppress the export.<br />
+Or return new or updated data to send.<br />
+
+<!-- SaveExport -->
+<a name="SaveExport"></a>
+<div class="API">
+   <u>new 12.1</u> <b>API method</b> <i>void</i>
+   <h4>SaveExport</h4>
+   <s>(<i>string</i> <b>data</b>, <i>object</i> <b>source</b> = null)</s>
+</div>
+Saves exported <b>data</b> to file (<b>source</b> = null) or sends it to server to <b>source</b> like grid.Source.Export or grid.Source.ExportPDF.<br />
+
+<!-- SendExport -->
+<a name="SendExport"></a>
+<div class="API">
+   <u>chg 12.1</u> <b>API method</b> <i>void</i>
+   <h4>SendExport</h4>
+   <s>(<i>string</i> <b>data</b>, <i>string</i> <b>url</b>, <i>string</i> <b>name</b>)</s>
+</div>
+Sends the data to server as export or configuration.<br />
+<i>Since 12.1 is does <u>not</u> call <a href="#OnExport">OnExport</a>.</i><br />
+
+<!-----------------------------------------------------------------------  Client export  ------------------------------------------------->
+<a name="Client"></a>
+<h2>Client export</h2>
+<i>By default (Export_Type="") the server communication is required only for IE9 and older browsers.</i><br />
+<br />
+
+To server (to <b>Export_Url</b>) is sent whole prepared report that can just be returned by this page back to Excel.<br />
+The uploaded data can be plain text (for xls and csv) or base64 encoded for binary xlsx.<br />
+In "custom" parameter "<b>ExportFormat</b>" is sent chosen file extension "xlsx", "xls" or "csv".<br />
+In "custom" parameter "<b>ExportName</b>" is sent chosen file name.<br />
+Should be used only for small grids, because to server are send all data back.<br />
+Cannot be used with server paging or server child paging.<br />
+<i>Space rows are <u>not</u> exported.</i><br />
+The server script just returns the data from <a href="DataCommunication.htm#xxx_Data">Data</a> attribute back to client with changed content type.<br />
+For MS <b>Excel</b> use <tt><i><b>ContentType</b></i>="<b>application</b>/<b>vnd.ms-excel</b>"</tt> and <b><i>charset:</i> utf-8</b>.<br />
+<br />
+
+<!--------------------  Examples of server script for client export  ------------------------->
+<a name=""></a>
+<h3>Examples of server script for client export</h3>
+
+Point Export_Url to simple server script that will just return the received data:<br /><br />
+
+<b>ASP.NET</b><br />
+<tt>
+&lt;%@ Page Language="C#" ContentType="application/vnd.ms-excel" %><br />
+&lt;% Response.AppendHeader("Content-Disposition","attachment; filename=\""+Request["ExportName"])+"."+Request["ExportFormat"]+"\"");<br />
+   Response.AppendHeader("Cache-Control","max-age=1, must-revalidate");<br />
+   string data = Request["Data"]; if(data==null) data = "";<br />
+   if (data.IndexOf('>') >= 0 || data.IndexOf("&lt;") >= 0 || data == "") Response.Write(HttpUtility.HtmlDecode(data));<br />
+   else Response.BinaryWrite(Convert.FromBase64String(data)); %><br /><br />
+</tt>
+
+<b>JSP</b><br /> 
+<tt>
+&lt;%@page contentType="application/vnd.ms-excel"%>&lt;%@page pageEncoding="UTF-8"%>&lt;%<br />
+request.setCharacterEncoding("utf-8");<br />
+response.addHeader("Content-Disposition","attachment; filename=\""+request.getParameter("ExportName")+"."+request.getParameter("ExportFormat")+"\"");<br />
+response.addHeader("Cache-Control","max-age=1, must-revalidate");<br />
+String XML = request.getParameter("Data"); if(XML==null) XML = "";<br />
+if(XML.length()>0&&XML.charAt(0)=='&') XML = XML.replaceAll("&lt;","<").replaceAll("&gt;",">").replaceAll("&amp;","&").replaceAll("&quot;","\"").replaceAll("&apos;","'");<br />
+if(XML.indexOf("<")>=0) out.print(XML);<br />
+else {<br />
+   java.io.BufferedOutputStream O = new java.io.BufferedOutputStream(response.getOutputStream());<br />
+   O.write(javax.xml.bind.DatatypeConverter.parseBase64Binary(XML)); O.flush(); O.close();<br />
+   }
+   %><br /><br />
+</tt>
+
+<b>PHP</b><br /> 
+<tt>
+&lt;?php<br /> 
+header("Content-Type: application/vnd.ms-excel; charset=utf-8");<br />
+header("Content-Disposition: attachment; filename=\"" . $_REQUEST["ExportName"] . "." . $_REQUEST["ExportFormat"] . "\"");<br />
+header("Cache-Control: max-age=1; must-revalidate");<br />
+$XML = get_magic_quotes_gpc() ? stripslashes($_REQUEST["Data"]) : $_REQUEST["Data"];<br />
+if(strpos($XML,"<")===false || strpos($XML,"&lt;")===false) echo(base64_decode($XML));<br />
+else echo html_entity_decode($XML); ?><br /><br />
+</tt>
+
+<i>Any other language can generate the export similarly.</i><br />
+<br />
+
+<!--------------------  Client export settings  ------------------------->
+<a name=""></a>
+<h3>Client export settings</h3>
+
+
+<!-- ExportPrefix -->
+<a name="CfgExportPrefix"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>ExportPrefix</h4> <s></s>
+</div>
+For <b>xlsx</b> and <b>csv</b> it is text placed to the first cell.<br />
+For <b>xls</b> it is HTML code added into Excel report between Excel header and TreeGrid table.<br />
+
+<!-- ExportPostfix -->
+<a name="CfgExportPostfix"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>ExportPostfix</h4> <s></s>
+</div>
+For <b>xlsx</b> and <b>csv</b> it is text placed to the last row, first cell.<br />
+For <b>xls</b> it is HTML code added into Excel report between exported TreeGrid table and enclosing &lt;/body> tag<br />
+
+
+<!-- ExportRows -->
+<a name="CfgExportRows"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ExportRows</h4> <s>[500]</s>
+</div>
+For how many rows will be displayed and updated progress bar. Displaying progress bar suppresses also message about slow script.<br /> 
+0 never shows progress bar. The progress bar is shown only if the count of exported rows is higher than the ExportRows value.<br />
+<i>When shown the progress bar in IE there is shown message after finish and a user must click to download button - otherwise IE blocks the file download.</i><br />
+Too small value can slow down the export, reasonable value is about 100.<br />
+
+<!-- ExportValue -->
+<a name="CellExportValue"></a>
+<div class="XML">
+   <u></u> <b>&lt;cell></b> <i>string</i>
+   <h4>ExportValue</h4> <s></s>
+</div>
+Cell value used for export to Excel, see also <a href="#OnGetExportValue">OnGetExportValue</a> event.<br />
+
+<!-- ExportStyle -->
+<a name="CExportStyle"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>ExportStyle</h4> <s></s>
+</div>
+The CSS style added to the cell when exported.<br />
+For example to align the cell vertically to top, set <tt>ExportStyle='vertical-align:top'</tt>.<br /><br />
+
+It can be used also to format the number or date value in Excel, e.g. <tt>ExportStyle='mso-number-format:"$ 0.00";'</tt> or <tt>ExportStyle='mso-number-format:"d.M.yyyy HH:mm";'</tt><br />
+The Excel CSS attribute <b>mso-number-format</b> settings are similar to TreeGrid number and date formats.<br />
+
+<!-- ExportFormat -->
+<a name="CExportFormat"></a>
+<div class="XML">
+   <u>chg <b>12.1</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>ExportFormat</h4> <s></s>
+</div>
+TreeGrid date time or number format to be used instead of the cell <b>Format</b> for export to Excel.<br />
+See <a href="TypNumber.htm#CExportFormat">ExportFormat</a> for number type or <a href="TypeDate.htm#CExportFormat">ExportFormat</a> for date type.<br />
+<i>Since 12.1 it is <u>not</u> used for old <b>Xls</b> export except for <a href="#ExportType">ExportType</a>="Dates", use <a href="#XlsFormat">XlsFormat</a> instead.</i>
+
+<!-- XlsFormat -->
+<a name="CXlsFormat"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>XlsFormat</h4> <s></s>
+</div>
+Excel date time or number format to be used instead of the cell <b>Format</b> for export to Excel.<br />
+It is exact MS Excel format string passed to CSS attribute <b>mso-number-format</b>.<br />
+<i>For old <b>Xls</b> export only</i>.<br />
+
+<!-- OnGetExportValue -->
+<a name="OnGetExportValue"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>string</i>
+   <h4>OnGetExportValue</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>str</b>)</s>
+</div>
+Called to get value for export to Excel<br />
+str is html tag ending character ('>'), so to return just string return str+your_value and to return formatted number return your_format+str+your_value.<br />
+For example: <tt>Grids.OnGetExportValue = function(G,row,col,str)&#123; return " style='mso-number-format:\"$ 0.00\";'"+str+Get(row,col); }</tt><br />
+
+<!-- ExportRound -->
+<a name="CfgExportRound"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ExportRound</h4> <s></s>
+</div>
+If set, the Float number will be rounded to this count of decimal digits.<br />
+
+<!-- CSVValueSeparator -->
+<a name="CfgCSVValueSeparator"></a>
+<div class="XML">
+   <u>new <b>7.1</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>CSVValueSeparator</h4> <s>[";"]</s>
+</div>
+String or character that separates individual values in export to CSV<br />
+
+<!-- CSVRowSeparator -->
+<a name="CfgCSVRowSeparator"></a>
+<div class="XML">
+   <u>new <b>7.1</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>CSVRowSeparator</h4> <s>["&amp;#x0a;"]</s>
+</div>
+String or character that separates individual rows in export to CSV<br />
+
+<!-- CSVQuote -->
+<a name="CfgCSVQuote"></a>
+<div class="XML">
+   <u>new <b>7.1</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>CSVQuote</h4> <s>['"']</s>
+</div>
+Character that quotes value in export to CSV, if it contains one of the ValueSeparator, RowSeparator or Quote.<br />
+The quote characters are doubled in the value.<br />
+
+<!-- CSVLevel -->
+<a name="CfgCSVLevel"></a>
+<div class="XML">
+   <u>new <b>7.1</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>CSVLevel</h4> <s>["#"]</s>
+</div>
+String or character to show level deep, when <tt>ExportType='Outline'</tt><br />
+
+<!-- CSVDateFormat -->
+<a name="CfgCSVDateFormat"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>type</i>
+   <h4>CSVDateFormat</h4> <s>[0]</s>
+</div>
+Format for all dates exported CSV.<br />
+<b>0</b> (default) - Dates are exported as Excel numbers (count of days since 1/1/1900).<br />
+<b>1</b> - Dates are exported as they are shown in grid.<br />
+<b>2</b> - Dates are exported in editable format.<br />
+<i>string</i> - Dates are exported in given date format.<br />
+
+<!-- JSZip -->
+<a name="CfgJSZip"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>JSZip</h4> <s>[1]</s>
+</div>
+If third party library JSZip will be loaded and used by TreeGrid.<br />
+<br />
+JSZip is library for LZ compression.
+It is independent on TreeGrid. It is distributed under MIT or GPLv3 license.<br />
+It can be downloaded or its licensing read at <a href="https://stuk.github.io/jszip/">https://stuk.github.io/jszip/</a><br />
+<br />
+It is loaded by TreeGrid only for client export to <b>xlsx</b> and import of <b>xlsx</b>.<br />
+To not use it at all, set &lt;Cfg JSZip='0'/>, in this case the export will produce longer uncompressed xlsx files, but xlsx import will be unavailable at all.<br />
+
+
+<!-----------------------------------------------------------------------  Server export  ------------------------------------------------->
+<a name="Server"></a>
+<h2>Server export</h2>
+
+To server is sent just actual grid configuration – sorting, grouping, filters, search and column width, positions and visibility.<br /> 
+In "custom" parameter "<b>ExportFormat</b>" is sent chosen file extension "xlsx", "xls" or "csv".<br />
+In "custom" parameter "<b>ExportName</b>" is sent chosen file name.<br />
+In "custom" parameter "<b>ExportType</b>" is sent chosen <a href="#CfgExportType">ExportType</a> flags.<br />
+For Export_Type="Settings", "Cols" or "Hidden", the rows and column are marked as visible if they were checked in export menu.<br />
+<br />
+It is possible to upload also other data from client like changes, set <tt>Export_Type="Settings,Changes"</tt>.<br />
+The configuration is sent as standard TreeGrid XML in <a href="DataCommunication.htm#xxx_Data">Data</a> attribute.<br />
+Server must generate the report from data on server by itself and return report to client.<br />
+Use this way for larger grid and/or for grids with server paging or server child paging.<br />
+Use it also if you want to generate different then standard report or you want to generate report for another program then MS Excel.<br />
+<br />
+
+<!--------------------  XML structure of request for server export  ------------------------->
+<a name=""></a>
+<h3>XML structure of request for server export</h3>
+
+Used as <b>request sent</b> to data source <b>Export</b> to get the exported grid when set <b>server side export</b> (<b><tt>Export_Type</b>="<b>Settings</b>"</tt>).<br />
+It contains session identification and grid configuration to sort, group, filter and search exported data on server.<br /> 
+It contains also columns settings - width, position and visibility.<br /><br />
+
+<tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Grid</b>></tt><br />
+  <div class="L1">
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">IO</b></tt> <i>... attributes with request settings ...</i> <tt style="font-size:150%;color:red;">/></tt> (<a href="DataCommunication.htm#IOSession">Session</a> attribute) <br />
+  <span style="float:left;">
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Cfg</b></tt> <i>... attributes with grid settings read from cookies ...</i> <tt style="font-size:150%;color:red;">/></tt>
+  </span>
+    <div style="float:left;">
+    (HiddenRows, Sort, Group, ReSort, ReCalc, TimeZone attributes)<br />
+    (SearchAction, SearchExpression, SearchType, SearchMethod, SearchDefs, SearchCols attributes)<br />
+  	(Focused, FocusedCol, FocusedPos attributes)<br />
+    (PrintPageBreaks, PrintRows, PrintExpanded, PrintFiltered)<br />
+    </div>
+  <div style="clear:both;"><tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Filter</b>></tt> (list of filters)</div>
+    <div class="L1">
+    <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">I</b></tt> <i>... row and cell attributes ...</i> <tt style="font-size:150%;color:red;">/></tt> (<b>id</b> attribute, cell <b>values</b> and cell <b>Filter</b> attributes)<br />
+    <i>... More tags &lt;I> if more filters are in grid ...</i><br />
+    </div>
+  <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Filter</b>></tt><br /><br />
+
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">LeftCols</b>></tt><br />
+    <div class="L1">
+    <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">C</b></tt> <tt><b style="color:green;">Name</b>='<i>column name</i>' Width='...' Visible='0/1'</tt> <tt style="font-size:150%;color:red;">/></tt><br />
+    <i>... more tags &lt;C> for other columns ...</i><br />
+    </div>
+  <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">LeftCols</b>></tt><br />
+  
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">Cols</b>></tt><br />
+    <div class="L1">
+    <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">C</b></tt> <tt><b style="color:green;">Name</b>='<i>column name</i>' Width='...' Visible='0/1'</tt> <tt style="font-size:150%;color:red;">/></tt><br />
+    <i>... more tags &lt;C> for other columns ...</i><br />
+    </div>
+  <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Cols</b>></tt><br />
+
+  <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">RightCols</b>></tt><br />
+    <div class="L1">
+    <tt style="font-size:150%;color:red;">&lt;<b style="color:blue;">C</b></tt> <tt><b style="color:green;">Name</b>='<i>column name</i>' Width='...' Visible='0/1'</tt> <tt style="font-size:150%;color:red;">/></tt><br />
+    <i>... more tags &lt;C> for other columns ...</i><br />
+    </div>
+  <tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">RightCols</b>></tt><br />
+  </div><br />
+  
+<tt style="font-size:150%;color:red;">&lt;/<b style="color:blue;">Grid</b>></tt>  
+
+</div>
+</body>	
+</html> 

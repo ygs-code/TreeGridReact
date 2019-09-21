@@ -1,0 +1,114 @@
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+   </head>
+   <body>
+      <script>
+// ------------------------------------------------------------------------------------------------------------
+Grids.OnUpdated = function(G){
+
+// --- Initialization special for PDF Export ---
+var v = G.GetRowById("Controls").Chart;                                                 // Resource charts
+G.Def.Resource.GANTTGanttAvailability = (v.indexOf("Available")>=0?",id#3#R":"") + (v.indexOf("Used")>=0?",id#1#R":"") 
+               + (v.indexOf("Available")>=0&&v.indexOf("Used")>=0?",id#8#R":"") 
+               + (v.indexOf("Free")>=0?",id#5#R":"") + (v.indexOf("Errors")>=0?",id#6#R":"");
+if(!v) { var F = G.GetRows(G.Foot); for(var i=0;i<F.length;i++) F[i].Visible = 0; }
+
+var r = G.GetRowById("Group"), C = G.Cols.GANTT;
+if(r.Bar=="0") { C.GanttHeight = ""; C.GanttTop1 = 4; }                                 // Low bars off
+if(r.Cal=="0") { C.GanttCalendar = ""; G.Cols.CALENDAR.Visible = 0; }                   // Custom calendars off
+for(var r=G.GetFirst();r;r=G.GetNext(r)){
+   if(r.CLASS!=null) { r.GANTTGanttClass = r.CLASS; r.GANTTGanttRunClass = r.CLASS; }   // CLASS (Color) column changes mirrors to the first plan class name and also to the Run class name
+   if(r.CLASS1!=null) r.GANTTGanttClass1 = r.CLASS1;                                    // CLASS1 (Color 1) column changes mirrors to the second plan class name
+   }
+if(G.GetRowById("Project").Crit) G.RefreshGantt(2+32);                                  // Calculates SLACK to filter by it if set critical path only
+
+SwitchView(G.GetRowById("Tabber").Gantt?0:1,1); // Starts with actually selected view in XML for PDF export
+}
+// ------------------------------------------------------------------------------------------------------------
+// Switches view between Gantt chart (view = 0) and Network diagram (view = 1)
+function SwitchView(view,noshow){
+var G = Grids.Gantt;
+if(!noshow && !G.Def.Diagram.Group==!view) return;
+G.GanttUpdate = 1;                                          // Temporary disables the Gantt to not be refreshed during grouping
+var group = G.Group; if(view && (!group||group=="COMPLETE,TASK")) group = "TASK";     // For the Network diagram in this example the grid must be grouped and only in one level
+var F = Grids.OnGroup; Grids.OnGroup = null;                // Temporary disables the event handler OnGroup
+if(!noshow) G.DoGrouping("");                               // Ungroups grid
+G.Def.Diagram.Group = view; G.Def.DiagramTask.Group = view; // Sets 1 for Network diagram
+G.Def.Sum.Group = !view; G.Def.SumTask.Group = !view;       // Sets 1 for Gantt chart
+G.Cols.GANTT.GanttBottom = view ? 6 : 2;                    // Sets the space under bars
+var b1 = view ? "" : "Box", b2 = view ? "Box" : "";         // Replaces From/FromBox and To/ToBox in dependency tip, because Network diagram uses Box id na Gantt chart row id
+G.Cols.GANTT.GanttDependencyTip = G.Cols.GANTT.GanttDependencyTip.replace("*From"+b1+"*","*From"+b2+"*").replace("*To"+b1+"*","*To"+b2+"*");
+G.Cols.GANTT.GanttRunSelect = view?5:0;                     // Permits selecting Run boxes in the Network diagram view
+var r = G.GetRowById("Summary"); if(noshow) r.Visible = !view; else if(view) G.HideRow(r); else G.ShowRow(r); // Hides bottom summary for Network diagram
+var r = G.GetRowById("Group"); r.BarCanEdit = !view; if(!noshow) G.RefreshCell(r,"Bar"); // Low bars has sense only for Gantt chart bars, not Network diagram
+if(!noshow) G.DoGrouping(group);                            // Regroups grid 
+G.GanttUpdate = 0;                                          // Enables the disabled Gantt, refresh is needed    
+if(!noshow) G.RefreshGantt();                               // Refreshes Gantt, especially for dependencies
+var r = G.GetRowById("Tabber");
+r.Gantt = view==0?1:0; r.Diagram = view==1?1:0;             // Changes the selected tab. It does it here, because standard ButtonClick action is not called
+r.Changed = view==1; r.GanttChanged = view==1; r.DiagramChanged = view==1;  // Sets the tabs changed for view = 1, to be used when exporting to PDF
+if(!noshow) { G.RefreshCell(r,"Gantt"); G.RefreshCell(r,"Diagram"); }
+r.Info = G.Lang.Text[["Gantt","Run","GanttT","RunT"][Grids.Tablet ? view+2 : view]]; if(!noshow) G.RefreshCell(r,"Info"); // Changes the Mouse controls cell in Tabber according to the view
+Grids.OnGroup = F;                                          // Restores the OnGroup event handler
+return true;                                                // Suppresses default ButtonClick action for the cell
+}
+// ------------------------------------------------------------------------------------------------------------
+// Generates the run box text for Network diagram
+Grids.OnGetGanttRunText = function(G,row,col,run,idx,text,width,left,maxw){
+var B = G.GetGanttRunBox(row,col,idx); // Gets the run box
+if(!B.Id) return "";                   // It can be empty during creating new run box by dragging
+var src = G.GetRowById(B.Id.slice(1)); // Gets the source row for the box
+if(!src) return "";                    // src is empty during creating new run box by dragging
+var s = "<div class='Box'>"
+   + "<div class='BoxTop'>"+B.id+". "+G.Translate(row,"SECTION",(Get(row,"SECTION"))+" - "+G.Translate(src,"SECTION",Get(src,"SECTION")))+"</div>"
+   + "<div class='BoxInner'>"
+   + "<div>"+DateToString(B.Start,"M/dd/yyyy HH:mm")+"</div>"
+   + "<div>"+DateToString(B.End,"M/dd/yyyy HH:mm")+"</div>"
+   + "<div>"+(B.Duration ? DateToString(B.Duration,"hhh*") : "<span style='color:blue;font-size:10px;'>Milestone</span>")+"<span style='padding-left:6px;color:blue;'>$"+NumberToString(G.GetGanttPrice(row,col,B.id),",0")+"</span></div>"
+   + "</div>"
+   + "<div class='BoxBottom'>"
+      +"<span style='color:"+(B.Complete==100?"#B2FA70":(B.Complete==0?"#FC8":"#88C8FF"))+";'>"+B.Complete+"%</span> "
+      +(B.Resources?B.Resources.replace(/\#/g,"; ").replace("Support","Sup").replace("Sales","Sal").replace("Management","Mgm").replace("Development","Dev").replace("Material","Mat"):"")
+   +"</div>"
+   + "</div>";
+var bw = G.GetBodyWidth(2)-100; // Width of the right section
+if(!bw) bw = 400;               // bw is null before the grid is rendered
+if(width<bw) return "<div>"+s+"</div>"; // OK, the box is visible whole
+
+// --- Repeats the content more times for too wide boxes ---
+var q = "";
+if(left<0)  { q += "<td style='width:"+(-left)+"px;'>&nbsp;</td>"; width += left; } // Subtracts the left invisible part
+if(width>maxw) width = maxw;                                                        // Subtracts the right invisible part
+for(;width>0;width-=bw) q += "<td style='width:"+bw+"px;'>"+s+"</td>";              
+return "<div style='padding:1px;'><table cellspacing='0' cellpadding='0'><tr>"+q+"</tr></table></div>";
+}
+// ------------------------------------------------------------------------------------------------------------
+// Modifies dependency thickness for Network diagram
+Grids.OnGetDependency = function(G,row,col,dep,start,end,dur){
+dep[6] = row.Def.Name=="Diagram" || row.Def.Name=="DiagramTask" ? 20 : 0;
+}
+// ------------------------------------------------------------------------------------------------------------
+// To specify grouping by Complete, differs only 100%, 0% and others
+Grids.OnGetSortValue = function(G,row,col,val,desc,group){
+if(group && col=="COMPLETE") {
+   if(val=="100%") return 100;
+   if(val=="0%") return 0;
+   return "50";
+   }
+return val;
+}
+// ------------------------------------------------------------------------------------------------------------
+      </script>
+      <div class="Main" style="width:100%;height:90%;" id='GRID'>   
+         <script>
+
+// Url parameters: ?cfg_file&dpi&page_width_mm&page_height_mm&horizontal_margin_mm&vertical_margin_mm
+var param = location.search.slice(1).split("&");
+var bonus = param[0] ? AjaxCall(param[0]) : null; // Reads grid configuration and changes from temporary file
+PrintTreeGrid({Layout:{Url:"GanttDef.xml",Bonus:bonus}, Data:{Url:"GanttData.xml",Bonus:"<Grid><RightCols><C Name='GANTT' VarHeight='1'/></RightCols><Cfg PrintVarHeight='1'/></Grid>"}},"GRID",null,{Dpi:param[1],Width:param[2],Height:param[3],MarginWidth:param[4],MarginHeight:param[5]});
+
+         </script>
+      </div>
+   </body>
+</html>

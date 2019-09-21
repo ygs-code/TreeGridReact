@@ -1,0 +1,127 @@
+/* ----------------------------------------------------------------------------------------------------------- 
+                            Customized TreeGrid CSS style sheet to look like MS Excel sheet
+                                   Customization uses TreeGrid White style
+ ----------------------------------------------------------------------------------------------------------- */
+
+/* --- Redefined the table and sections --- */
+.TWHeadLeft,.TWHeadMid,.TWHeadRight,.TWBodyLeft,.TWBodyMid,.TWBodyRight { border: 0px none; }       /* Removes border around the grid sections set in White style by default */
+.TWBodyLeft {                            /* Left body, contains here only the ID column */ 
+   border-bottom:1px solid transparent;  /* Adds bottom invisible border to synchronize its size with GMBodyMid section */
+   margin-bottom:3px;                    /* Adds margin between body section and horizontal scrollbar */
+   } 
+.TWHeadMid {                             /* Middle head, contains the header row */
+   border-right:1px solid transparent;   /* Adds right invisible border to synchronize its size with GMBodyMid section */
+   margin-right:3px;                     /* Adds margin between middle section and vertical scrollbar */
+   }
+.TWBodyMid {                             /* Middle body, contains all data cells */
+   border:1px solid #ABABAB; border-left:0px none; border-top:0px none; /* Sets right and bottom border and clears the left and top border set in White style by default */
+   margin-right:3px; margin-bottom:3px;  /* Adds margins between middle body section and horizontal and vertical scrollbars */
+   }
+.TWRtl .TWHeadMid,.TWRtl .TWBodyMid { margin-right:0px; margin-left:3px; } /* Mirror change for RTL mode */
+@media print { .TWBodyMid { border-color:transparent; } } /* Removes the borders for printing, because there are always the cell borders visible */
+.TWVScroll {                             /* Vertical scrollbar */
+   border:0px none; padding-top:1px; padding-bottom:1px; /* Defines border around the scrollbar and small padding */
+   margin-bottom:3px;                    /* Adds margin between body section and horizontal scrollbar */
+   } 
+.TWHScrollMid {                          /* Horizontal scrollbar for the middle section */
+   border:0px none;                      /* Defines border around the scrollbar */
+   margin-right:3px;                     /* Adds margin between middle section and vertical scrollbar */
+   }
+.TWHScrollLeft { border:0px none; }
+.TWHScrollHidden { background:white; }   /* Hides the horizontal scrollbar below left section */
+.TWXScroll { background:white; }         /* Hides the space between horizontal and vertical scrollbar */
+
+/* --- Redefines the cells --- */
+.TWMain .TWCell {                                  /* Every data cell except header */
+   border-bottom:1px solid #D4D4D4; border-right:1px solid #D4D4D4;               /* Defines default cell border bottom and right */
+   } 
+.TWMain .TWCellNoBorder { border-color:transparent; }
+.TWMain .TWText,.TWMain .TWLines,.TWMain .TWFloat,.TWMain .TWDate { padding-top:0px; padding-left:1px; } /* Every cell types; redefines default padding for White style */
+.TWMain .TWCellHeader {                    /* Every cell in top header row; Sets bottom border by border and right border by gradient background */
+   color:#555;                             /* Slightly lighter black text */
+   padding-bottom:3px;                     /* Moves the header text up */
+   border-right:0px none; background:none; /* Clears the default header cell border and background */
+   border-bottom:1px solid #ABABAB;        /* Sets bottom border */
+   background-image:linear-gradient(#F8F8F8, #D5D5D5); background-size:1px 100%; background-position:100% 0px; background-repeat:no-repeat; /* Sets right border by background gradient */
+   }
+.TWHeaderFont { font-weight:normal; }
+.TWCellIndex {                             /* Every cell in left index column except header */ 
+   color:#555;                             /* Slightly lighter black text */
+   border:0px none;                        /* Clears the default cell border */
+   border-right:1px solid #ABABAB;         /* Sets right border */
+   background:none;
+   vertical-align:bottom;
+   font-family:"Microsoft Sans Serif", Tahoma, "Trebuchet MS", sans-serif;
+   background-image:linear-gradient(to right, #F8F8F8, #D5D5D5); background-size:100% 1px; background-position:0px 100%; background-repeat:no-repeat; /* Sets bottom border by background gradient */
+   }
+.TWMain .TWTree { border-color:transparent; } /* Outline in Index column */
+.TWMain .HEADERINDEX { border:0px none; background:none; }     /* Custom CSS class assigned (in layout XML) to one header cell in left Index column; Clears the default cell border */
+.TWHeaderButton.HEADERINDEX {                 /* Sets bottom and right borders by background gradients and the custom icon to select all cells*/
+   background-image: linear-gradient(to right, #F8F8F8, #D5D5D5), linear-gradient(#F8F8F8, #D5D5D5), url(SelectAll.gif); background-size:100% 1px, 1px 100%, 13px 13px; background-position:0px 100%, 100% 0px, right 6px top 5px; background-repeat:no-repeat, no-repeat, no-repeat;
+   }
+.TWLastCell { border-right:0px solid; border-bottom:0px solid; } /* Does NOT hide the right and bottom border of the edge cells in section (head/body/foot and left/mid/right) */
+
+/* Redefines attribute Indent, because it is overridden by previous settings */
+.TWMain .TWIndentLeft1 { padding-left:10px; } .TWMain .TWIndentRight1 { padding-right:10px; }
+.TWMain .TWIndentLeft2 { padding-left:20px; } .TWMain .TWIndentRight2 { padding-right:20px; }
+.TWMain .TWIndentLeft3 { padding-left:30px; } .TWMain .TWIndentRight3 { padding-right:30px; }
+.TWMain .TWIndentLeft4 { padding-left:40px; } .TWMain .TWIndentRight4 { padding-right:40px; }
+.TWMain .TWIndentLeft5 { padding-left:50px; } .TWMain .TWIndentRight5 { padding-right:50px; }
+.TWMain .TWIndentLeft6 { padding-left:60px; } .TWMain .TWIndentRight6 { padding-right:60px; }
+.TWMain .TWIndentLeft7 { padding-left:70px; } .TWMain .TWIndentRight7 { padding-right:70px; }
+.TWMain .TWIndentLeft8 { padding-left:80px; } .TWMain .TWIndentRight8 { padding-right:80px; }
+.TWMain .TWIndentLeft9 { padding-left:90px; } .TWMain .TWIndentRight9 { padding-right:90px; }
+.TWMain .TWIndentLeft10 { padding-left:100px; } .TWMain .TWIndentRight10 { padding-right:100px; }
+.TWMain .TWIndentLeft15 { padding-left:150px; } .TWMain .TWIndentRight15 { padding-right:150px; }
+.TWMain .TWIndentLeft20 { padding-left:200px; } .TWMain .TWIndentRight20 { padding-right:200px; }
+.TWMain .TWIndentLeft25 { padding-left:250px; } .TWMain .TWIndentRight25 { padding-right:250px; }
+.TWMain .TWIndentLeft30 { padding-left:300px; } .TWMain .TWIndentRight30 { padding-right:300px; }
+.TWMain .TWIndentLeft35 { padding-left:350px; } .TWMain .TWIndentRight30 { padding-right:350px; }
+.TWMain .TWIndentLeft40 { padding-left:400px; } .TWMain .TWIndentRight40 { padding-right:400px; }
+.TWMain .TWIndentLeft45 { padding-left:450px; } .TWMain .TWIndentRight40 { padding-right:450px; }
+.TWMain .TWIndentLeft50 { padding-left:500px; } .TWMain .TWIndentRight50 { padding-right:500px; }
+
+/* --- Redefines focus cursor --- */
+.TWFocusCellBorder,.TWEditCellBorder { border-width:2px; border-color:#217346; padding:0px; }
+.TWFocusCellBorderTouch,.TWEditCellBorderTouch { border-width:5px; }
+.TWFocusCellCorner,.TWEditCellCorner { background:#217346; }
+.TWFocusCellCornerTouch,.TWEditCellCornerTouch { width:10px; height:10px; margin-left:0px; }
+
+/* --- Redefines cell state colors --- */
+.TWColorFill { background-color:#C6C6C6; }
+.TWColorSelectedCell { background-color:#C6C6C6; }
+.TWClassSelected { border-color:#A5A5A5; color:black; }
+.TWColorNoFocus { background-color:#FFFFFF; }
+
+/* --- Redefines top toolbars --- */
+.TWMain .TWSpaceEditInner { border-radius:0px; padding:4px 6px 4px 6px; }
+.TWTopbarRow { background:white; padding:10px 5px 8px 5px; }
+.TWToolbarRow { padding-bottom:5px; }
+.TWLow .TWToolLanguages,.TWLow .TWMenuItemLanguage { background-size:20px 20px,16px 16px; }
+.TWTiny .TWToolLanguages,.TWTiny .TWMenuItemLanguage { background-size:16px 16px,16px 16px; }
+.TWLow .TWToolMenuFlags { margin-left:-2px; }
+.TWTiny .TWToolMenuFlags { margin-left:1px; }
+
+/* --- Redefines bottom sheets list --- */
+.TWTabberRow { background:#F6F6F6; }
+.TWTabHtmlBase { background-color:#F6F6F6; border-bottom:2px solid #F6F6F6; border-left:1px solid #ABABAB; border-radius:0px; }
+.TWTabHtml1 { background-color:white; color:#217346; font-weight:bold; border-right:0px none; border-top:0px none; border-bottom:2px solid #217346; }
+.TWButtonClose.TWTabHtml1 { background-image:url(SideClose.svg?v130); }
+.TWMain .TWTabSep { display:none; }
+.TWTabSepRight { border-left:1px solid #ABABAB!important; height:16px; }
+.TWEditTab { color:black; }
+
+/* --- Others --- */
+.TWTipOuter { background:white; border-radius:0px; color:#333; border:1px solid #BEBEBE; opacity:1; }  /* Tag with the tip text */
+.TWColorHoveredCellButton,.TWColorHoveredCellButton1 { background-color:#D3F0E0; }
+.TWMenuMain { border-radius:0px; } 
+.TWTipMain b,.TWTipMain i,.TWTipMain .GridBold,.TWTipMain .GridBlue { color:#3D7FC2;}
+.TWTipMain em b,.TWTipMain .GridRed .GridBold,.TWTipMain em,.TWTipMain .GridRed { color:#EA4647; }
+
+/* --- Mini style size ratio reset to 100% --- */
+.TWMain .TWWidth { width:100%; }
+.TWMain .TWSpaceWidth { width:100%; }
+
+/* --- Special CSS classes assigned in XML --- */
+.TabNewSheet { font-size:22px; }
+.TWMain .TabNewSheet { border:1px solid #787878; border-radius:20px!important; padding:1px 0px 0px 0px!important; height:15px; line-height:16px; width:16px;  }

@@ -1,0 +1,617 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Search and advanced filter</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Search and advanced filter</h1>
+<p>TreeGrid documentation</p>
+
+Search provides advanced searching and filtering in grid cells and rows.<br />
+It can provide <b>Search like Google</b> or <b>Search by JavaScript expression</b>, see &lt;Cfg <a href="#CfgSearchMethod">SearchMethod</a>/><br />
+The found results can be filtered, selected, colored or focused, see &lt;Cfg <a href="#CfgSearchAction">SearchAction</a>/><br />
+The search can be case sensitive or insensitive, see &lt;Cfg <a href="#CfgSearchCaseSensitive">SearchCaseSenstive</a>/>.<br />
+The search can be run according to individual cells or whole rows, see &lt;Cfg <a href="#CfgSearchCells">SearchCells</a>/>.<br /><br />
+
+Search criteria can be changed by a user in special <a href="#Search">Search</a> row.<br />
+Search criteria can be preset in XML by &lt;Cfg <a href="#CfgSearchExpression">SearchExpression</a> <a href="#CfgSearchAction">SearchAction</a>/><br />
+Search can be run by API method <a href="#SearchRows">SearchRows</a.<br />
+
+<!-- Searching -->
+<a name="CfgSearching"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Searching</h4> <s>[1]</s>
+</div>
+If searching in grid is permitted.<br />
+
+<!-- Searched -->
+<a name="CfgSearched"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Searched</h4> <s>[1] Saved to cookies, to not load it, set <tt><b>SearchedLap</b>='1'</tt></s>
+</div>
+If searching is enabled by user.<br />
+A user can enable / disable searching by click to <a href="#Search">Search</a> row left panel.<br />
+
+<!-- SearchExpression -->
+<a name="CfgSearchExpression"></a>
+<div class="XML">
+   <u><i>upd <b>7.0</b></i></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>SearchExpression</h4> <s>Saved to cookies, to not load it, set <tt><b>SearchLap</b>='1'</tt></s>
+</div>
+Expression to search or advanced filter expression.<br />
+The expression syntax depends on <a href="#CfgSearchMethod">SearchMethod</a> used. By default is the method chosen automatically according to expression syntax, see <a href="">SearchMethod</a>.<br />
+
+<b>1</b> - <i><b>Search like Google</b></i> - expression has similar syntax to searching at <a href="http://www.google.com/">www.google.com</a>.<br />
+<table>
+<tr><td>word word</td><td>words separated by space - finds all cells or rows containing all the words</td></tr>
+<tr><td>"Phrase with spaces in double quotes"</td><td>quoted words are searched together as whole phrase</td></tr>
+<tr><td>-word</td><td>word or phrase with hyphen prefix - finds all cells or rows <b>without</b> this word or sentence</td></tr>
+<tr><td>word OR word</td><td>words or phrases joined by OR (uppercase only) - finds all cells or rows containing at least one of them</td></tr>
+<tr><td>#</td><td>finds all empty cells</td></tr>
+</table>
+Example: London Paris OR Nice "above sea level"<br /><br />
+
+<b>2</b> - <i><b>Search by expression</b></i> – expression has similar syntax to TreeGrid formulas and JavaScript code, but it is <u>not</u> in TCalc content, so it cannot use TreeGrid calculation functions like sum().<br />
+The expression has the JavaScript syntax, operators (==, !=, <, <=, >, >=, &amp;&amp;, ||, !, parenthesis, function calls), if fact it can contain nearly every JavaScript code.<br />
+<i>(Since 7.0) Due security reasons it is not possible to do function calls except methods of Math object and functions parseInt, parseFloat, escape, unescape, isFinite, isNaN.</i><br /> 
+Cell values from the row are referenced by column <b>captions</b> (<i>not names!</i>);<br /> 
+  <div class="L1">
+  these names can be predefined by column <a href="#CSearchNames">SearchNames</a> attribute, especially if the column caption contains spaces.<br />
+	The column captions are referenced case insensitive.<br />
+  </div>
+String constants can be in double or single quotes or can be without quotes at all.<br /> 
+  <div class="L1">Not quoted strings must not interfere with column captions and other reserved words</div>
+To input dates in special format set it in <a href="#CfgSearchDateFormat">SearchDateFormat</a>.<br />
+For comparing equality can be used both '==' and '=' operators. For comparing inequality can be used both operators "!=" and "<>"<br />
+For operators "&amp;&amp;", "||" and "!" can be used word (case insensitive) equivalents, defined in <a href="Files.htm#TextXml">Text.xml</a>, in <tt>&lt;Lang>&lt;Text And='' Or='' Not=''/>&lt;/Lang></tt><br />
+  <div class="L1">By default can be used instead of "&amp;&amp;" => "<b>and</b>", "||" => "<b>or</b>",  "!" => "<b>not</b>"</div>
+<i>Remember, the operator &amp;&amp; / <b>and</b> have higher priority then || / or</i><br />
+Here can be used special string operators to check if one string contains another string, starts with the string, ends with the string.<br />
+<div class="L1">
+  The operator names are defined in <a href="Files.htm#TextXml">Text.xml</a>, in <tt>&lt;Lang>&lt;Text Starts='' Ends='' Contains=''/>&lt;/Lang></tt><br />
+  By default is <tt>Contains="contains,has" Starts="starts,starts with,starts by,begins,begins with,begins by"  Ends="ends,ends by, ends with"</tt><br />
+</div>
+Example: <tt>(Name starts James or Name = John) and Age >20 and Age &lt;40</tt><br /><br />
+
+<b>3</b> - <i><b>Exact string search</b></i> - <i>(new 6.3)</i> expression has no special syntax, the string is searched for as is without any parsing.<br />
+The search is done also in number types as string search.<br />
+
+<!-- SearchAction -->
+<a name="CfgSearchAction"></a>
+<div class="XML">
+   <u><i>upd <b>12.0</b></i></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>SearchAction</h4> <s>Saved to cookies, to not load it, set <tt><b>SearchLap</b>='1'</tt></s>
+</div>
+Name of search action predefined or currently applied in grid, can be one of <i><b>Filter</b>, <b>Select</b>, <b>Mark</b>, <b>Find</b>, <b>FindPrev</b></i> or empty.
+<i>(Since 7.0)</i> It can contain also more actions separated by comma or semicolon to do all these action in this order, e.g. "Filter,Mark" to show only found rows and mark the found cells.<br /><br />
+
+<table>
+<tr><td style="width:50px;"><i><b>Filter</b></i></td><td>Hides all rows that <u>don't</u> match the <a href="#CfgSearchExpression">SearchExpression</a> in method and other search options set.</td></tr>
+<tr><td></td><td>The filter works in the same way as filter by &lt;<a href="Filter.htm#Filter">Filter</a>>.</td></tr>
+<tr><td></td><td>You can control the filter also by filter attribute like &lt;Cfg <a href="Filter.htm#CfgStandardFilter">StandardFilter</a> /> and &lt;I <a href="Filter.htm#ICanFilter">CanFilter</a> />.</td></tr>
+<tr><td></td><td>If row cannot be searched through or filtered by its settings, it is <u>not</u> hidden.</td></tr>
+
+<tr><td>&nbsp;</td><td></td></tr>
+
+<tr><td><i><b>Select</b></i></td><td>Selects all rows that match the <a href="#CfgSearchExpression">SearchExpression</a> in method and other search options set.</td></tr>
+<tr><td></td><td>Selects only whole rows, cannot select only cells.</td></tr>
+<tr><td></td><td>If row cannot be searched through it is <u>not</u> selected.</td></tr>
+<tr><td></td><td>Which rows will be iterated is affected also by <a href="RowSelect.htm#CfgClearSelected">ClearSelected</a>.</td></tr>
+
+
+<tr><td>&nbsp;</td><td></td></tr>
+
+<tr><td><i><b>Mark</b></i></td><td>Colors all rows or cells (see <a href="#CfgSearchCells">SearchCells</a>) that match the <a href="#CfgSearchExpression">SearchExpression</a> in method and other search options set.</td></tr>
+<tr><td></td><td>The rows or cells are colored by the CSS <b>Found</b> colors.</td></tr>
+<tr><td></td><td>After change some search setting like SearchExpression and do Mark action again, new color for coloring is used (Found1->Found2->...)</td></tr>
+<tr><td></td><td>The color is restored to Found1 after any other search action is done (Filter,Select,Find,FindPrev,Clear)</td></tr>
+<tr><td></td><td>If row or cell cannot be searched through it is not colored.</td></tr>
+
+<tr><td>&nbsp;</td><td></td></tr>
+
+<tr><td><i><b>Find</b></i></td><td>Focuses the first row or cell that matches the <a href="#CfgSearchExpression">SearchExpression</a> in method and other search options set.</td></tr>
+<tr><td></td><td>By default searches from the next row / cell from actually focused (like Find next), for other possibilities see <a href="#CfgSearchFocused">SearchFocused</a>.</td></tr>
+<tr><td></td><td>If row or cell cannot be searched through, it is not focused.</td></tr>
+
+<tr><td>&nbsp;</td><td></td></tr>
+
+<tr><td><i><b>FindPrev</b></i></td><td><i>(new 12.0)</i> Focuses the last row or cell that matches the <a href="#CfgSearchExpression">SearchExpression</a> in method and other search options set.</td></tr>
+<tr><td></td><td>By default searches from the previous row / cell from actually focused (like Find previous), for other possibilities see <a href="#CfgSearchFocused">SearchFocused</a>.</td></tr>
+<tr><td></td><td>If row or cell cannot be searched through, it is not focused.</td></tr>
+
+</table>
+
+<!-- SearchMethod -->
+<a name="CfgSearchMethod"></a>
+<div class="XML">
+   <u><i>upd <b>7.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SearchMethod</h4> <s>[0] Saved to cookies, to not load it, set <tt><b>SearchLap</b>='1'</tt></s>
+</div>
+Method of the search<br />
+<b>0</b> - Automatic method selection - automatically chooses <b>1</b> or <b>2</b> method according to used expression
+<div class="L1">
+  <b>2</b> (expression search) is chosen if the expression contains one of these characters ( ) = ! < ><br />
+	or if the expression contains at least two column names or one column name and one keyword of these: contains, ends, starts<br />
+	otherwise is chosen <b>1</b> (Search like Google)<br />
+</div>
+<b>1</b> - Search like Google<br />	
+<b>2</b> - Search by expression (<i>since 7.0</i> it removes all function calls to be safe)<br />
+<b>3</b> - Exact string search <i>(new 6.3)</i>. It is not automatically chosen by <tt>Method=0</tt>.<br />
+<b>4</b> - Search by expression unsafe <i>(new 7.0)</i>. Like 2, but does not remove function calls and doesn't add quotes for strings.<br />
+
+<!-- SearchCells -->
+<a name="CfgSearchCells"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SearchCells</h4> <s>[0] Saved to cookies, to not load it, set <tt><b>SearchLap</b>='1'</tt></s>
+</div>
+Used only for <tt><a href="#CfgSearchMethod">SearchMethod</a> = <b>1</tt> (Search like Google) and 3 (Exact search)</b>.<br /><br />
+
+<table><tr><td style="width:50px;"><b>0</b></td><td>searches in rows, thus all the cells in one row together must fulfill the <a href="#CfgSearchExpression">SearchExpression</a>.</td></tr></table>
+For example if you search "London 1000" at least one cell in row must contain "London" and other (or the same) the "1000".<br />
+For <i><b>Filter</b></i> or <i><b>Select</b></i> action the row is filtered (visible) or selected if it fulfills the <a href="#CfgSearchExpression">SearchExpression</a>.<br />
+For <i><b>Mark</b></i> action the whole row is colored.<br />
+For <i><b>Find</b></i> or <i><b>FindPrev</b></i> action the whole found row is focused (does not change focused column), for next match it continues in next row.<br /><br />
+
+<table><tr><td style="width:50px;"><b>1</b></td><td>searches in cells, thus every cell to find must fulfill the <a href="#CfgSearchExpression">SearchExpression</a>.</td></tr></table>
+For example if you search "London 1000" the found cell must contain both "London" and "1000".<br />
+For <i><b>Filter</b></i> or <i><b>Select</b></i> action the row is filtered (visible) or selected if at least one cell is found.<br />
+For <i><b>Mark</b></i> action only the found cell is colored.<br />
+For <i><b>Find</b></i> or <i><b>FindPrev</b></i> action focuses the first cell found, for next match continues in the same row in next cell.<br />
+
+<!-- SearchCaseSensitive -->
+<a name="CfgSearchCaseSensitive"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SearchCaseSensitive</h4> <s>[0] Saved to cookies, to not load it, set <tt><b>SearchLap</b>='1'</tt></s>
+</div>
+If strings are compared case sensitive.<br />
+
+<!-- SearchWhiteChars -->
+<a name="CfgSearchWhiteChars"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>SearchWhiteChars</h4> <s></s>
+</div>
+List of characters to ignore when searching.<br /> 
+It can be set for example to " " (space) to ignore spaces (it means that for example "a b   c" and "abc" strings are the same.<br />
+
+<!-- SearchCharCodes -->
+<a name="CfgSearchCharCodes"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>string[*]</i>
+   <h4>SearchCharCodes</h4> <s></s>
+</div>
+It changes characters in comparing strings for searching.<br />
+It is first character separated array of pair of characters to replace the first character by the second when comparing strings.<br />
+For example <tt>"|y|i|Y|I|.|,"</tt> - replaces 'y' by 'i', 'Y' by 'I' and '.' by ','<br /> 
+  <div class="L1">- it means that when comparing strings does not differ between letter 'y' and 'i', both cases and also does not differ between comma and point.</div>
+The first character must be one letter, but the second in fact can be any letter or string or even empty string, like <tt>"|a|xxx|b||c|ff"</tt><br />
+
+<!-- SearchNumbers -->
+<a name="CfgSearchNumbers"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SearchNumbers</h4> <s>[1/0]</s>
+</div>
+How numbers are compared (cell types <b>Int</b> and <b>Float</b>). Used only for <tt><a href="#CfgSearchMethod">SearchMethod</a> = <b>1</b></tt> <b>(<i>Search like Google</i>)</b> and <b>3 (<i>Exact search</i>)</b>.<br />
+Default value is <b>1</b> for <tt>SearchMethod = 1</tt> and <b>0</b> for <tt>SearchMethod = 3</tt>.<br />
+<b>0</b> - as strings, e.g. -1.7 is found by -1.7 or 1.7 or -1 or 1or 7 and so on, similar to <tt>SearchMethod=3</tt><br />
+<b>1</b> - exactly, e.g. -1.7 is found only by -1.7<br />
+<b>2</b> - rounded, e.g. -1.7 is found by -1.7 or -2<br />
+<b>3</b> - floor, e.g. -1.7 is found by -1.7 or -1 or 1 (but 1.7 is not found by -1 or 1.6)<br />
+
+<!-- SearchDefs -->
+<a name="CfgSearchDefs"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>SearchDefs</h4> <s>Saved to cookies, to not load it, set <tt><b>SearchLap</b>='1'</tt></s>
+</div>
+Comma or semicolon separated list of <a href="RowDefaults.htm#DName">default row names</a>. Only row with the <a href="RowDefaults.htm#IDef">Def</a> attribute that is listed will be searched through.<br />
+The row with not listed <a href="RowDefaults.htm#IDef">Def</a> will be: a) for Filter action never hidden, b) for other actions never found / colored / selected<br />
+If SearchDefs is empty, all rows will be searched through.<br />
+
+<!-- SearchCols -->
+<a name="CfgSearchCols"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>SearchCols</h4> <s>Saved to cookies, to not load it, set <tt><b>SearchLap</b>='1'</tt></s>
+</div>
+Columns names (<i>not captions!</i>), comma or semicolon separated.<br /> 
+Only cells in given columns will be searched through. Used only for <tt><a href="#CfgSearchMethod">SearchMethod</a> = <b>1</b></tt> <b>(<i>Search like Google</i>)</b> and <b>3 (<i>Exact search</i>)</b>.<br />
+If SearchCols is empty, all cells will be searched through.<br /> 
+Result depends also on <a href="#CfgSearchHidden">SearchHidden</a>. If column has <tt><a href="#CCanSearch">CanSearch</a>='0'</tt>, it cannot be searched through at all.<br />
+
+<!-- SearchHidden -->
+<a name="CfgSearchHidden"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SearchHidden</h4> <s>[0]</s>
+</div>
+For <b>1</b> and any action it searches also in hidden columns. Used only for <tt><a href="#CfgSearchMethod">SearchMethod</a> = <b>1</b></tt> <b>(<i>Search like Google</i>)</b> and <b>3 (<i>Exact search</i>)</b>.
+
+<!-- SearchExpand -->
+<a name="CfgSearchExpand"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SearchExpand</h4> <s>[1]</s>
+</div>
+For <b>1</b> and action <i><b>Select</b></i> or <i><b>Mark</b></i> it expands parents of the found row to be visible in tree.<br />
+
+<!-- SearchFocused -->
+<a name="CfgSearchFocused"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SearchFocused</h4> <s>[3]</s>
+</div>
+Only for <i><b>Find</i></b> and <i><b>FindPrev</b></i> actions
+<b>0</b> - Searches from beginning<br />
+<b>1</b> - Searches from focused cell, when reaches end, ends<br />
+<b>2</b> - Searches from focused cell, when reaches end, continues from beginning<br /> 
+<b>3</b> - Searches from focused cell, when reaches end, it asks user to continue from beginning<br />
+
+<!-- SearchNotFound -->
+<a name="CfgSearchNotFound"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b> <i>upd <b>7.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SearchNotFound</h4> <s>[500]</s>
+</div>
+If set and action is <i><b>Find</b></i> or <i><b>FindPrev</b></i>, alerts message "Not found" if no result is found.<br />
+If set to <b>1</b>, it alerts the message by standard alert.<br />
+If set to <b>2</b>, it alerts the message by HTML dialog with ok button<br />
+If set to >=<b>10</b>, it alerts the message by HTML dialog for given count of milliseconds.<br />
+
+<!-- SearchAlertFound -->
+<a name="CfgSearchAlertFound"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SearchAlertFound</h4> <s></s>
+</div>
+If set and action is <i><b>Filter</b></i>, <i><b>Select</b></i> or <i><b>Mark</b></i>, alerts message with count of row / cells found.<br />
+If set to <b>1</b>, it alerts the message by standard alert.<br />
+If set to <b>2</b>, it alerts the message by HTML dialog with ok button.<br />
+If set to >=<b>10</b>, it alerts the message by HTML dialog for given count of milliseconds.<br />
+You can use also <a href="#SearchCount">SearchCount</a> variable to display the found count in some cell formula.<br />
+
+<!-- SearchClass -->
+<a name="CfgSearchClass"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SearchClass</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, found cells (<b>Mark</b> action) can be highlighted also by CSS class attributes like color or font, defined in <b>GxColorFoundX</b> CSS class in Grid.css.<br />
+If set to <b>0</b>, found cells are highlighted only by background color.<br />
+<i>The value <b>1</b> can slow down selecting cells.</i><br />
+
+<!-- SearchMaxMark -->
+<a name="CfgSearchMaxMark"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SearchMaxMark</h4> <s>[3]</s>
+</div>
+How many different <b>Mark</b> colors are permitted in grid.<br />
+Set it to <b>1</b> to clear mark for every new search.<br />
+
+<!-- SearchDateFormat -->
+<a name="CfgSearchDateFormat"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>SearchDateFormat</h4> <s></s>
+</div>
+Format to convert strings to date when used in advanced filtering (<tt><a href="#CfgSearchMethod">SearchMethod</a>=2</tt>).<br />
+
+<!-- SearchNames -->
+<a name="CSearchNames"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>string[ ]</i>
+   <h4>SearchNames</h4> <s></s>
+</div>
+Comma separated strings as possible names of the column<br />
+Used in <a href="#CfgSearchExpression">SearchExpression</a> to reference this column instead of its caption, one column can have more names to be referenced by.<br />
+Used only for <tt><a href="#CfgSearchMethod">SearchMethod</a> = <b>2</b></tt> <b>(<i>Search by expression</i>)</b>.<br />
+
+<!-- CanSearch -->
+<a name="CCanSearch"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>bool</i>
+   <h4>CanSearch</h4> <s>[1]</s>
+</div>
+If values are searched within this column. Used only for <tt><a href="#CfgSearchMethod">SearchMethod</a> = 1</tt> <b>(<i>Search like Google</i>)</b> and <b>3 (<i>Exact search</i>)</b>.<br />
+The columns can be also restricted by <a href="#CfgSearchCols">SearchCols</a> and <a href="#CfgSearchHidden">SearchHidden</a>.<br />
+
+<!-- SearchText -->
+<a name="CSearchText"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>SearchText</h4> <s>[0]</s>
+</div>
+Used only for <tt><a href="#CfgSearchMethod">SearchMethod</a> = <b>2</b></tt> <b>(<i>Search by Expression</i>)</b>.<br />
+For <b>0</b> compares the cell raw value, for <b>1</b> compares the cell formatted string (for Enum compares with values from Enum array).<br />
+
+<!-- FilterValue -->
+<a name="CellFilterValue"></a>
+<div class="XML">
+   <u>chg <b>7.0</b></u> <b>&lt;cell></b> <i>string</i>
+   <h4>FilterValue</h4> <s></s>
+</div>
+Cell value used for <b>filtering</b> and <b>searching</b>, useful for special non editable cells like Html, Icon, Abs, Gantt, ..., see also <a href="#OnGetFilterValue">OnGetFilterValue</a> event.<br />
+<del><i>(Deleted in 7.0)</i> For searching it is <u>not</u> used for Int and Float types and also <u>not</u> for <tt><a href="Search.htm#CfgSearchMethod">SearchMethod</a> = <b>2</b></tt>.</del><br />
+It is also used by <a href="Filter.htm#FilterTextRange">FilterTextRange</a> and <a href="Filter.htm#FilterDateRange">FilterDateRange</a> methods, but <u>not</u> by <a href="Filter.htm#SetFilter">SetFilter</a> method.<br />
+
+<!-- OnGetFilterValue -->
+<a name="OnGetFilterValue"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>type</i>
+   <h4>OnGetFilterValue</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>val</b>)</s>
+</div>
+Called to get cell value for <b>filtering</b> and <b>searching</b>.<br /> 
+<b>val</b> is predefined value, returns <b>val</b> or new value.<br />
+
+<!-- SearchCount -->
+<a name="SearchCount"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API variable</b> <i>int</i>
+   <h4>SearchCount</h4>
+   <s></s>
+</div>
+Count of found rows for action <i><b>Select</b></i>.<br />
+Count of marked cells or rows for action <i><b>Mark</b></i>.<br />
+For action <i><b>Filter</b></i> it is empty string, to get the result use <b>FilterCount</b> variable.<br />
+For no action or actions <i><b>Find</b></i> / <i><b>FindPrev</b></i> it is null.<br />
+
+<!-----------------------------------------------------------------------  User interface to choose search  ------------------------------------------------->
+<a name="Search"></a>
+<h2>User interface to choose search</h2>
+
+User interface for search is shown by <b>solid space</b> &lt;<b style="color:red;">Search</b>> row. <tt>&lt;Solid>&lt;Search ... />&lt;/Solid></tt><br />
+This row is not divided to any section and is never scrolled. It can contain any cells like <a href="RowSpace.htm">Space</a> row, but the cells named as listed below have special functions.<br />
+To more customize searching and advanced filters in grid you can define all the user interface by <a href="RowSpace.htm">Space</a> row cells instead of Search. See <a href="03-Search_and_advanced_filters.html">this tutorial</a>.<br />
+It can be placed in <span style="color:red;">&lt;<b style="color:blue;">Solid</b>></span> tag. The position in grid is set by its <a href="#SearchSpace">Space</a> attribute.<br /> 
+
+<!-- Cells -->
+<a name="SearchCells"></a>
+<div class="XML">
+   <u><i>upd <b>7.0</b></i></u> <b>&lt;Search></b> <i>string[ ]</i>
+   <h4>Cells</h4> <s>["Expression"]</s>
+</div>
+The Search row can have these predefined cells, the cells can have standard cell and space row cell attributes, like Width or Tip.<br /> 
+<b style="color:blue;font-size:120%;">Expression</b> 	The expression to search for or advanced filter formula, standard input cell type Text. Its <a href="#SearchExpressionAction">Action</a> attribute can have special values.<br />
+<b style="color:blue;font-size:120%;">Filter</b>, 
+<b style="color:blue;font-size:120%;">Select</b>, 
+<b style="color:blue;font-size:120%;">Mark</b>, 
+<b style="color:blue;font-size:120%;">Find</b>, 
+<b style="color:blue;font-size:120%;">FindPrev</b> (<i>new 12.0)</i>,
+<b style="color:blue;font-size:120%;">Clear</b>, 
+<b style="font-size:120%;">Help</b> 	Buttons to do standard <a href="#CfgSearchAction">search action</a>. Clear restores original state, Help shows help message.<br />
+<table>
+<tr><td style="width:90px;"><b style="font-size:120%;">Actions</b></td><td>Select box with standard search actions to select one that will be run by <b>Search</b> button or after <b>Expression</b> changes and its action is set to Actions.</td></tr>
+<tr><td><b></b></td><td>Its <a href="#SearchExpressionAction">Action</a> attribute can have special value "Refresh" to repeat search in grid after another value is selected.</td></tr>
+<tr><td><b style="font-size:120%;">Search</b></td><td>Button to do <a href="#CfgSearchAction">search action</a> selected by <b>Actions</b> combo, if not defined the cell <b>Actions</b>, just by <b>Actions</b> attribute.</td></tr>
+<tr><td><b></b></td><td><i>Since 7.0</i> it can be used also to define more actions for Actions at once, like <tt>Actions="Filter,Mark"</tt> to filter the rows and mark the found cells.</td></tr>
+<tr><td><b style="color:blue;font-size:120%;">List</b></td><td>Select box with predefined values for <a href="#CfgSearchExpression">SearchExpression</a>. To let user just select predefined filter or search instead of building his own. </td></tr>
+<tr><td><b></b></td><td>You have to set the cell <b>Expressions</b> and <b>Defaults</b> attributes.</td></tr>
+<tr><td><b style="font-size:120%;">Cols</b></td><td>Select box to select which columns will be searched through. If not present, all columns are searched.</td></tr>
+<tr><td><b></b></td><td>You have to set <a href="#SearchColsCols">Cols</a> and <a href="#SearchColsDefaults">Defaults</a> attributes and optionally <a href="#SearchCellLabel">Label</a> attribute.</td></tr>
+<tr><td><b style="font-size:120%;">Defs</b></td><td>Select box to select which rows (according to their <b>Def</b> attribute) will be searched through. If not present, all rows are searched.</td></tr>
+<tr><td><b></b></td><td>You have to set <a href="#SearchColsCols">Cols</a> and <a href="#SearchColsDefaults">Defaults</a> attributes and optionally <a href="#SearchCellLabel">Label</a> attribute.</td></tr>
+<tr><td><b style="font-size:120%;">Case</b></td><td>Check box to choose case sensitive (1) or case insensitive (0) search. Sets <a href="#CfgSearchCaseSensitive">SearchCaseSensitive</a>. Has optional attribute <a href="#SearchCellLabel">Label</a>.</td></tr>
+<tr><td><b style="font-size:120%;">Type</b></td><td>Check box to choose to search in rows (0) or in individual cells. Sets <a href="#CfgSearchCells">SearchCells</a>. Has optional attribute <a href="#SearchCellLabel">Label</a>.</td></tr>
+</table>
+
+<!-- ExpressionAction -->
+<a name="SearchExpressionAction"></a>
+<div class="XML">
+   <u></u> <b>&lt;Search></b> <i>string</i>
+   <h4>ExpressionAction</h4> <s>["Filter"/...]</s>
+</div>
+Search action done after the Expression cell value changed, can be <b>Filter</b>, <b>Select</b>, <b>Mark</b>, <b>Find</b>, <b>FindPrev</b>, <b>Actions</b>, <b>Refresh</b> or <b>Last</b>.<br /> 
+Use <b>Actions</b> value if cell <b>Actions</b> is included in <a href="#SearchCells">Cells</a>. Use <b>Last</b> to run the last action previously done. Use <b>Refresh</b> to redo the actual action.<br />
+Use empty string to not do any action.<br />
+Default value is Filter if no button and Actions cell is defined or Actions or the first button's action.<br />
+
+<!-- ActionsAction -->
+<a name="SearchActionsAction"></a>
+<div class="XML">
+   <u></u> <b>&lt;Search></b> <i>string</i>
+   <h4>ActionsAction</h4> <s>["Refresh" / ""]</s>
+</div>
+Search action done after the Actions select box is changed, can be <b>Refresh</b> or empty string.<br />
+Use <b>Refresh</b> - repeats search with the selected action.<br />
+The default value is <b>Refresh</b> if no <b>Search</b> cell is defined, otherwise empty string.<br />
+
+<!-- ListDefaults -->
+<a name="SearchListDefaults"></a>
+<div class="XML">
+   <u></u> <b>&lt;Search></b> <i>string[*]</i>
+   <h4>ListDefaults</h4> <s></s>
+</div>
+First character separated array of item names to display in List cell. The same as button type <b>Defaults</b> list.<br />
+
+<!-- ListExpressions -->
+<a name="SearchListExpressions"></a>
+<div class="XML">
+   <u></u> <b>&lt;Search></b> <i>string[*]</i>
+   <h4>ListExpressions</h4> <s></s>
+</div>
+First character separated array of predefined expressions that will be assigned to <a href="#CfgSearchExpression">SearchExpression</a> after specific item in <a href="#SearchListDefaults">ListDefaults</a> will be selected.<br />
+
+<!-- ListAction -->
+<a name="SearchListAction"></a>
+<div class="XML">
+   <u></u> <b>&lt;Search></b> <i>string</i>
+   <h4>ListAction</h4> <s></s>
+</div>
+Search action done after the list item is chosen, can be <b>Filter</b>, <b>Select</b>, <b>Mark</b>, <b>Find</b>, <b>FindPrev</b>, <b>Actions</b>, <b>Refresh</b> or <b>Last</b>.<br /> 
+Use <b>Actions</b> value if cell <b>Actions</b> is included in <a href="#SearchCells">Cells</a>. Use <b>Last</b> to run the last action previously done. Use <b>Refresh</b> to redo the actual action.<br />
+Use empty string to not do any action.<br />
+
+<!-- ColsDefaults -->
+<a name="SearchColsDefaults"></a>
+<div class="XML">
+   <u></u> <b>&lt;Search></b> <i>string[*]</i>
+   <h4>ColsDefaults</h4> <s></s>
+</div>
+First character separated array of item names to display in <b>Cols</b> cell.<br />
+
+<!-- ColsCols -->
+<a name="SearchColsCols"></a>
+<div class="XML">
+   <u></u> <b>&lt;Search></b> <i>string[*]</i>
+   <h4>ColsCols</h4> <s></s>
+</div>
+First character separated array of column names that will be assigned to <a href="#CfgSearchCols">SearchCols</a> after specific item in <a href="#SearchColsDefaults">ColsDefaults</a> will be selected.<br />
+It should contain actual <a href="#CfgSearchCols">SearchCols</a> value to provide correct formula.<br />
+
+<!-- DefsDefaults -->
+<a name="SearchDefsDefaults"></a>
+<div class="XML">
+   <u></u> <b>&lt;Search></b> <i>string[*]</i>
+   <h4>DefsDefaults</h4> <s></s>
+</div>
+First character separated array of item names to display in <b>Defs</b> cell.<br />
+
+<!-- DefsDefs -->
+<a name="SearchDefsDefs"></a>
+<div class="XML">
+   <u></u> <b>&lt;Search></b> <i>string[*]</i>
+   <h4>DefsDefs</h4> <s></s>
+</div>
+First character separated array of <a href="RowDefaults.htm#DName">default</a> row names that will be assigned to <a href="#CfgSearchDefs">SearchDefs</a> after specific item in <a href="#SearchDefsDefaults">DefsDefaults</a> will be selected.<br />
+
+<!-- Space -->
+<a name="SearchSpace"></a>
+<div class="XML">
+   <u></u> <b>&lt;Search></b> <i>int</i>
+   <h4>Space</h4> <s>[1]</s>
+</div>
+Position of the row in grid, specifies horizontal section of the grid.<br />
+If more solid rows has the same Space value, are placed in the order they are in data<br />
+-<b>1</b> - above grid, <b>0</b> - above header, <b>1</b> - under head rows, <b>2</b> - above foot rows, <b>3</b> - under foot rows, <b>4</b> - under vertical scrollbar, <b>5</b> - under grid<br />
+-1, 0, 4, 5 are spanned for whole grid, including vertical scrollbar and pager, 1, 2, 3  are spanned only for columns.<br />
+
+<!-- Panel -->
+<a name="SearchPanel"></a>
+<div class="XML">
+   <u></u> <b>&lt;Search></b> <i>int</i>
+   <h4>Panel</h4> <s>[1]</s>
+</div>
+If the row displays left side panel, to show icon for enabling / disabling searching.<br /> 
+If set to <b>1</b>, the panel is displayed only if the grid left side panel is displayed.<br />
+If set to <b>2</b>, the panel is displayed always.<br />
+
+<!-- Label -->
+<a name="SearchCellLabel"></a>
+<div class="XML">
+   <u></u> <b style="width:120px;margin-left:-25px;">&lt;Search cell></b> <i>string</i>
+   <h4>Label</h4> <s></s>
+</div>
+HTML label displayed in front of the cell. For example <tt>ColsLabel='Select columns:'</tt> adds the label in front of the cell Cols.<br />
+
+<!-- Left -->
+<a name="SearchCellLeft"></a>
+<div class="XML">
+   <u></u> <b style="width:120px;margin-left:-25px;">&lt;Search cell></b> <i>int</i>
+   <h4>Left</h4> <s></s>
+</div>
+Left indent of any cell, in pixels.<br />
+
+<!-----------------------------------------------------------------------  Search actions and API  ------------------------------------------------->
+<a name="Actions"></a>
+<h2>Search actions and API</h2>
+
+<!-- Action SearchOn -->
+<a name="ActionsSearchOn"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SearchOn</h4>
+   <s>Attached to event <b>OnClickPanelSearched</b></s>
+</div>
+Enables searching in grid and re-searches it according to actual settings. It fails if searching already enabled.<br />
+
+<!-- Action SearchOff -->
+<a name="ActionsSearchOff"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SearchOff</h4>
+   <s>Attached to event <b>OnClickPanelSearched</b></s>
+</div>
+Disables searching in grid and clear search. It does not clear actual search settings. It fails if searching already disabled.<br />
+
+<!-- OnSearch -->
+<a name="OnSearch"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnSearch</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>Action</b>, <i>bool</i> <b>Show</b>)</s>
+</div>
+Called when searching in grid starts after user action. Return true to suppress default searching.<br /> 
+Action can be Filter, Select, Mark, Find, FindPrev, Clear, Help, Refresh.<br />
+
+<!-- OnSearchFinish -->
+<a name="OnSearchFinish"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnSearchFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>Action</b>, <i>bool</i> <b>Show</b>)</s>
+</div>
+Called after search in grid finished, all changes are already visible.<br />
+
+<!-- OnRowSearch -->
+<a name="OnRowSearch"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>int</i>
+   <h4>OnRowSearch</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>found</b>, <i>function</i> <b>func</b>, <i>type</i> <b>userdata</b>)</s>
+</div>
+Called when searching in <b>row</b>.<br /> 
+<b>col</b> is column cell when is searching if set searching in cells - <a href="#CfgSearchCells">SearchCells</a> = <b>1</b>, otherwise it is null<br />
+<b>found</b> is the search result.<br /> 
+It must return new <b>found</b> value. <b>1</b> - found, <b>0</b> - not found, -<b>1</b> not applicable (it will not be selected but also not be hidden by filter)<br />
+If set <b>col</b> (searching in cells), the OnRowSearch can also return column name as the cell found.<br /><br />
+
+<b>func</b> is caller function for searching row that resulted <b>found</b>. it has prototype func (<i>TRow</i> row, string col,  <i>type</i> userdata)<br />
+<b>func</b> returns -<b>1</b> if cannot search, <b>0</b> if not found or <b>1</b> if found when searching in row or <i>column name</i> if found when searching in cells<br />
+The <b>func</b> and <b>userdata</b> parameters can be used for searching in other rows than the actual. Remember from the <b>func</b> is called the OnRowSearch event<br />
+<b>userdata</b> is null in default call, use it to mark custom calling to avoid recursion cycle.<br /> 
+Example using <b>func</b> and <b>userdata</b>:<br />
+<table>
+<tr><td style="width:630px;"><tt>Grids.OnRowSearch = function (G,row,col,found,F,type)&#123;</tt></td><td>// This function searches in children to mark/unmark parent row</td></tr>
+</table>
+  <div class="L1">
+  <table>
+  <tr><td style="width:600px;"><tt>if(type) return found;</tt></td><td>// to avoid recursion cycle</td></tr>
+  <tr><td><tt>if(!row.firstChild) return -1;</tt></td><td>// not applicable for children</td></tr>
+  <tr><td><tt>for (var r=row.firstChild;r;r=r.nextSibling) if(F(r,col,1)>0) return 1;</tt></td><td>// Searches in children, if at least one found, parent is marked as found</td></tr>
+  <tr><td><tt>return 0; }</tt></td><td></td></tr>
+  </table>
+  </div>
+
+<!-- SearchRows -->
+<a name="SearchRows"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>SearchRows</h4>
+   <s>(<i>string</i> <b>action</b>, <i>bool</i> <b>noshow</b>)</s>
+</div>
+Calls <a href="#DoSearch">DoSearch</a> asynchronously, for server paging it reloads grid.<br />
+
+<!-- DoSearch -->
+<a name="DoSearch"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>DoSearch</h4>
+   <s>(<i>string</i> <b>action</b>, <i>bool</i> <b>noshow</b>)</s>
+</div>
+Runs specified searching action in grid.<br /> 
+<b>action</b> can be standard search action "<b>Filter</b>", "<b>Select</b>", "<b>Mark</b>", "<b>Find</b>", "<b>FindPrev</b>" or can be<br /> 
+"<b>Refresh</b>" - runs actual action (<a href="#CfgSearchAction">SearchAction</a>) again. "<b>Clear</b>" - clears actual action and restores original state. "<b>Help</b>" - shows help<br />
+
+</div>
+</body>	
+</html>

@@ -1,0 +1,534 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Rows tree</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Tree</h1>
+<p>TreeGrid documentation</p>
+
+Rows in TreeGrid can be placed into tree.<br />
+TreeGrid supports <b>unlimited levels</b> of tree.<br />
+In XML can be rows placed in tree of &lt;I> tags like <tt>&lt;I A='1'> &lt;I A='1-1'> &lt;I A='1-1-1'/> &lt;I A='1-1-2'/> &lt;/I> &lt;I A='1-2-1'> &lt;I A='1-2-2'/> &lt;I/> &lt;/I> &lt;I A='1-2'/> &lt;I A='1-3'/> &lt;/I> &lt;I A='2'/></tt><br />
+The tree lines and expand/collapse buttons are placed into <a href="#CfgMainCol">MainCol</a>.<br />
+The row's children can be expanded, collapsed or not expandable / not collapsible, see <a href="#IExpanded">Expanded</a> and <a href="#ICanExpand">CanExpand</a>.<br />
+The width of icons and indent in tree is defined in styles in Grid.css.<br /><br />
+
+The rows can be also placed into tree automatically by <a href="Group.htm">Grouping</a> feature.<br />
+
+<!-- MainCol -->
+<a name="CfgMainCol"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>MainCol</h4> <s></s>
+</div>
+Set this attribute to show TreeGrid instead of plain table. Let it empty to show only plain table.<br />
+It is name of main column with tree. The column must exist in the grid, but can be also hidden.<br />
+In this column will be displayed the tree with expand / collapse icons.<br /> 
+<i>Only one main column is possible to be in grid.</i> See also <tt><a href="#CButton">Button</a>='Expand'</tt> to show the tree in more columns.<br />
+If set, the column should exist and be visible, otherwise a user cannot see the rows parent / children relationship.<br />
+
+<!-- ChangeMainCol -->
+<a name="ChangeMainCol"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API method</b> <i>void</i>
+   <h4>ChangeMainCol</h4> <s>(<i>string</i> <b>col</b>, <i>bool</i> <b>noshow</b> = 0)</s>
+</div>
+Changes <a href="#CfgMainCol">MainCol</a> to given column.<br />
+If set <b>noshow</b>, does <u>not</u> call RenderBody to display changes.<br />
+
+<!-- ReversedTree -->
+<a name="CfgReversedTree"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ReversedTree</h4> <s>[0] <i>Saved to cookies, avoid it by <b><tt>&lt;Cfg ReversedTreeLap='1'/></tt></b></i></s>
+</div>
+<b>0</b> - it shows standard tree from top, children are below their parent<br />
+<b>1</b> - it shows MS Excel summary outline tree, from bottom, children are above their parent<br />
+<div class="L1">It changes also row order in functions for iterating rows: GetFirst, GetLast, GetNext, GetPrev, GetFirstVisible, GetLastVisible, GetNextVisible, GetPrevVisible, GetNextShift, GetPrevShift.</div>
+
+<!-- SetReversedTree -->
+<a name="SetReversedTree"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>void</i>
+   <h4>SetReversedTree</h4>
+   <s>(<i>bool</i> <b>value</b>, <i>bool</i> <b>noshow</b> = 0)</s>
+</div>
+Sets value of <a href="#CfgReversedTree">ReversedTree</a> and renders body.<br /> 
+For <b>noshow</b> = 1 does not render body and requires rerender.<br />
+
+<!-- CanExpand -->
+<a name="ICanExpand"></a>
+<div class="XML">
+   <u><i>upd <b>14.0</b></i></u> <b>&lt;I></b> <i>int</i>
+   <h4>CanExpand</h4> <s>[1]</s>
+</div>
+If row shows icon to expand / collapse and the row can be expanded or collapsed.<br />
+<b>0</b> - Row cannot be expanded or collapsed. The Expand/collapse button is <u>not</u> shown. Row's children are always shown or hidden, depending on <a href="#IExpanded">Expanded</a>.<br />
+<b>1</b> - Row can be expanded and collapsed to show and hide its children. The Expand/collapse button is shown. Expanding sets <a href="#IExpanded">Expanded</a> to <b>1</b>.<br />
+<b>2</b> - <i>Since 7.0</i> row can be expanded or collapsed, but the Expand/collapse button is <u>not</u> shown. Use to expand / collapse the row by another way.<br />
+<b>3</b> - <i>Since 14.0</i> row can be expanded or collapsed and the Expand/collapse button is shown. The children are expanded to the same level as the parent. Expanding sets <a href="#IExpanded">Expanded</a> to <b>3</b>.<br />
+
+<!-- Expanded -->
+<a name="IExpanded"></a>
+<div class="XML">
+   <u><i>upd <b>14.0</b></i></u> <b>&lt;I></b> <i>int</i>
+   <h4>Expanded</h4> <s>[1]</s>
+</div>
+If row is expanded and how displays its children.<br /> 
+If <a href="PagingServer.htm#ChildPaging">ChildPaging</a> is set to <b>3</b>, only rows with <tt>Expanded='<b>0</b>'</tt> will take effect of the server ChildPaging and can download its children on expand.<br />
+<b>0</b> - Row is collapsed and the children are not displayed.<br />
+<b>1</b> - Row is expanded and the children are displayed on next tree level. The children are hidden if the row is not visible. <br />
+<b>2</b> - <i>reserved</i><br />
+<b>3</b> - <i>new 14.0</i> Row is expanded and the children are displayed on the same level. The children are displayed also if the row is not visible.<br />
+
+
+<!-- TreeIconX -->
+<a name="ITreeIconX"></a>
+<div class="XML">
+   <u><i>upd <b>12.0</b></i></u> <b>&lt;I></b> <i>string</i>
+   <h4>TreeIconX</h4> <s></s>
+</div>
+Custom tree icons for specified row state (icons for expand/collapse).<br />
+<b><i>X</i></b> = <b>0</b> - not expandable, <b>1</b> - last not expandable, 
+<b>2</b> - expand (+), <b>3</b> - last expand (+), 
+<b>4</b> - collapse (-), <b>5</b> - last collapse (-).<br />
+<i>(Since 12.0)</i> <b><i>X</i></b> = 
+<b>6</b> line through, used only with custom icons 0 - 5, 
+<b>7</b> no line through, used only if defined also 6,
+<b>8</b> - wait expand (+), <b>9</b> - last wait expand (+).<br />
+<i>(Since 12.0)</i> <b><i>X</i></b> = 
+<b>10</b> - drag above, <b>11</b> - last drag above,
+<b>12</b> - drag into, <b>13</b> - last drag into,
+<b>14</b> - drag below, <b>15</b> - last drag below,
+<b>16</b> - no drag, <b>17</b> - last no drag.
+<br />
+If set <a href="#CfgNoTreeLines">NoTreeLines</a>, only values <b>0</b>, <b>2</b>, <b>4</b>, <b>8</b>, <b>10</b>, <b>12</b> and <b>14</b> are used.<br />
+The last is the last row inside its parent's children - its line does not continue.<br />
+For example: <tt>&lt;I TreeIcon2='SpecialExpand.gif' TreeIcon4='SpecialCollapse.gif'/></tt><br />
+The height of the icon is always set to height of the row, the width is set to standard Tree icon or to <a href="#ITreeWidthX">TreeWidthX</a>.<br />
+
+<!-- TreeWidthX -->
+<a name="ITreeWidthX"></a>
+<div class="XML">
+   <u>new <b>11.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;I></b> <i>int</i>
+   <h4>TreeWidthX</h4> <s></s>
+</div>
+Custom widths of tree icons and indent. Are used only if set <tt><a href="#CfgSpannedTree">SpannedTree</a>='1'</tt>.<br />
+X = <b>0</b> - tree level indent. <b>1</b> - width of leaf or not expandable button, <b>2</b> - width of expand / collapse button.<br />
+<i>Since 12.0</i> it can be used with any value of <a href="#CfgNoTreeLines">NoTreeLines</a>, but for tree lines only with custom <a href="#ITreeIconX">TreeIconX</a>.<br />
+
+<!-- Button -->
+<a name="CButton"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Button</h4> <s><tt>Button = "<h4>Expand</h4>"</tt></s>
+</div>
+To show <b>right</b> side Expand button set <tt><a href="CellSideButton.htm#CButton">Button</a>="Expand"</tt>.<br />
+It can be used to show the tree button in different column than in the main column.<br />
+To hide expand icon in the main column, you can set row attribute <tt><a href="#ICanExpand">CanExpand</a>='2'</tt>.<br />
+
+<!-- Icon -->
+<a name="CIcon"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Icon</h4> <s><tt>Icon = "<h4>Expand</h4>"</tt></s>
+</div>
+To show <b>left</b> side Expand button set <tt><a href="CellSideButton.htm#CIcon">Icon</a>="Expand"</tt>.<br />
+It can be used to show the tree button in different column than in the main column.<br />
+To hide expand icon in the main column, you can set row attribute <tt><a href="#ICanExpand">CanExpand</a>='2'</tt>.<br />
+
+<!-- Levels -->
+<a name="HeaderCellLevels"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b style="margin-left:-20px;width:115px;">&lt;Header cell></b> <i>int</i>
+   <h4>Levels</h4> <s>[0]</s>
+</div>
+It can be set only in Header row in MainCol column.<br />
+If set, it displays buttons for tree levels, like in MS Excel outline. After click to the button, it expands / collapses the rows to show up to the selected level.<br />
+If set to 1, the button count is equal to the maximal tree level in grid (= max <a href="#ILevel">Level</a> + 1).<br />
+If set to >1, it displays maximally given button count.<br />
+The count of level buttons is updated after grouping changes. It is also increased, but not decreased, after moving or adding rows.<br />
+
+<!-- MinLevels -->
+<a name="HeaderCellMinLevels"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b style="margin-left:-20px;width:115px;">&lt;Header cell></b> <i>int</i>
+   <h4>MinLevels</h4> <s>[0]</s>
+</div>
+If set, shows minimally this count of <a href="#HeaderCellLevels">Levels</a> buttons. Useful in server paging, when the tree depth is unknown.<br />
+
+<!-- HideRootTree -->
+<a name="CfgHideRootTree"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>HideRootTree</h4> <s>[0]</s>
+</div>
+Hides the first line in tree (root items are without any line).<br /> 
+Root rows become not expandable, so they should be all <a href="#IExpanded">Expanded</a>.<br />
+
+<!-- SpannedTree -->
+<a name="CfgSpannedTree"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SpannedTree</h4> <s>[0]</s>
+</div>
+Set it to <b>1</b> if some <b>MainCol</b> cell is spanned between columns (has set <b>Span</b> attribute).<br />
+Set it to <b>1</b> along with <a href="#CfgNoTreeLines">NoTreeLines</a> to control widths of the tree icons and indent by <a href="#ITreeWidthX">TreeWidthX</a>.<br />
+If set to <b>1</b>, it shows tree icons in included &lt;table> tag and slows down rendering.<br />
+Cannot be used when the main column cells have set <a href="CellSpan.htm#CellRowSpan">RowSpan</a>.<br />
+
+<!-- NoTreeLines -->
+<a name="CfgNoTreeLines"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>NoTreeLines</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, it does not show connecting lines in tree, shows only expand / collapse buttons.<br />
+Use especially for custom icons or tree indent widths.<br />
+
+<!-- NoPrintTreeLines -->
+<a name="CfgNoPrintTreeLines"></a>
+<div class="XML">
+   <u>new <b>9.0</b> <i>upd <b>13.3</b></i></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>NoPrintTreeLines</h4> <s>[ ]</s>
+</div>
+If set to <b>1</b>, it does not show connecting lines in tree when printing, shows only expand / collapse buttons.<br />
+If set to <b>2</b>, it is set to 1 in Chrome/Safari and to 0 in other browsers, as the WebKit has problems with printing tree lines.<br />
+If empty, uses value of <a href="#CfgNoTreeLines">NoTreeLines</a>.<br />
+
+<!-- SetNoTreeLines -->
+<a name="SetNoTreeLines"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>void</i>
+   <h4>SetNoTreeLines</h4> <s>(<i>int</i> <b>Value</b>)</s>
+</div>
+Sets value of the NoTreeLines and re-renders grid.<br />
+
+<!-- Level -->
+<a name="ILevel"></a>
+<div class="API">
+   <u></u> <b style="margin-left:-20px;width:115px;">API TRow var.</b> <i>int</i>
+   <h4>Level</h4> <s style="color:red;">read only</s>
+</div>
+Row's level in tree. Only for variable rows.<br />
+-<b>1</b> = page, <b>0</b> root row, <b>1</b> first level children, <b>2</b> second level children, ...<br />
+
+<!-- HasChildren -->
+<a name="HasChildren"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>bool</i>
+   <h4>HasChildren</h4> <s><i>TRow</i> <b>row</b></s>
+</div>
+Returns true if row has some <u>visible</u> children (shows icon expand/collapse).<br />
+
+<!-- GetPos -->
+<a name="GetPos"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>int</i>
+   <h4>GetPos</h4> <s><i>TRow</i> <b>row</b></s>
+</div>
+Returns row's position in its parent. It counts only visible rows.<br />
+
+<!-- SaveExpanded -->
+<a name="CfgSaveExpanded"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SaveExpanded</h4> <s>[0] Saves information to cookies</s>
+</div>
+If set to <b>1</b>, saves expanding / collapsing state of all rows to cookies. All rows must have set <a href="RowId.htm#Iid">id</a> attribute.<br />
+If set to <b>2</b>, saves the state of only rows that differs from their default row's Expanded state.<br />
+Remember, cookies are limited to 4096 bytes for the whole page, so use this setting only for very small tables or use <a href="Cookie.htm#CfgPersistentCfg">PersistentCfg</a>.<br />
+Also use the smallest ids as possible (the amount of space is used: id+1 bytes per row).<br />
+<i>Cannot be used with server side child paging. Cannot be used for automatically created group rows.</i><br />
+
+<!-- Expanded -->
+<a name="CfgExpanded"></a>
+<div class="XML">
+   <u>new <b>6.7</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>Expanded</h4> <s></s>
+</div>
+All rows (comma separated ids) that will be expanded, all other rows will be collapsed if the attribute is present.<br />
+It is done on start and also after every page / child page load in server paging.<br />
+If defined both <b>Expanded</b> and <b>Collapsed</b> attributes, even empty, the row expanded state is changed only if the row is present in one of the lists.<br />
+It overrides the states saved by <a href="#CfgSaveExpanded">SaveExpanded</a>.<br />
+
+<!-- Collapsed -->
+<a name="CfgCollapsed"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>Collapsed</h4> <s></s>
+</div>
+All rows (comma separated ids) that will be collapsed, all other rows will be expanded if the attribute is present.<br />
+It is done on start and also after every page / child page load in server paging.<br />
+If defined both <b>Expanded</b> and <b>Collapsed</b> attributes, even empty, the row expanded state is changed only if the row is present in one of the lists.<br />
+It overrides the states saved by <a href="#CfgSaveExpanded">SaveExpanded</a>.<br />
+
+<!-- NoScrollAfterExpand -->
+<a name="CfgNoScrollAfterExpand"></a>
+<div class="XML">
+   <u>chg <b>7.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>NoScrollAfterExpand</h4> <s>[1]</s>
+</div>
+If set to <b>0</b>, TreeGrid scrolls down if the children are not shown all.<br />
+If set to <b>1</b>, when expanding row, does <u>not</u> scroll into view the row's children - the icon always stays under mouse cursor.<br />
+<i>Since 7.0</i> the default value is <b>1</b>.<br />
+
+<!-----------------------------------------------------------------------  Actions and API for expand / collapse  ------------------------------------------------->
+<a name="API"></a>
+<h2>Actions and API for expand / collapse</h2>
+
+The row can be expanded or collapsed by a user by clicking to row's <b>expand</b> / <b>collapse</b> icon in tree. And also by pressing Ctrl+Enter by default.<br />
+<b>Collapsing</b> rows is immediate, but <b>expanding</b> rows can be slows and asynchronous, depending on how many children will be loaded / render, see various <a href="TreePaging.htm">paging</a> types.<br /><br />
+
+All rows can be expanded or collapsed by clicking to toolbar buttons <b>ExpandAll</b> or <b>CollapseAll</b>.<br />
+The <b>CollapseAll</b> always collapses all rows in grid, but <b>ExpandAll</b> can expand only some rows to avoid dead lock when too many children are present, see <a href="#CfgExpandAllLevels">ExpandAll</a>... settings.<br />
+
+<!-- Action Expand -->
+<a name="ActionsExpand"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>Expand <i>...F</i></h4>
+   <s>Attached to events <b>OnClickExpand</b> and <b>OnCtrlEnter</b></s>
+</div>
+Expands actual or focused row, fails if row is already expanded or cannot be expanded or does not have children.<br />
+<i>The expanding can be asynchronous and can finish after the action returned.</i><br />
+
+<!-- Action Collapse -->
+<a name="ActionsCollapse"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>Collapse <i>...F</i></h4>
+   <s>Attached to events <b>OnClickExpand</b> and <b>OnCtrlEnter</b></s>
+</div>
+Collapses actual or focused row, fails if row is not expanded or cannot be expanded or does not have children.<br /> 
+Use "Expand OR Collapse" to invert expand state.<br />
+
+<!-- Action ExpandAll -->
+<a name="ActionsExpandAll"></a>
+<div class="ACT">
+   <u><i>upd <b>14.0</b></i></u> <b>&lt;Actions></b> <i></i>
+   <h4>ExpandAll <i>...F</i></h4>
+   <s>Attached to event <b>OnClickButtonExpandAll</b></s>
+</div>
+Tries to expand all rows.<br /> 
+<i>The ExpandAll can be asynchronous and can finish after the action returned.</i><br />
+The ExpandAll action can be stopped by a user during the process.<br />
+<i>Since 14.0</i> it can have also <b>F</b> suffix to expand all rows in focused nested grid.<br />
+
+<!-- ExpandAllLoaded -->
+<a name="CfgExpandAllLoaded"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ExpandAllLoaded</h4> <s>[0]</s>
+</div>
+If set to <b>1</b> in server child paging (<tt><a href="PagingServer.htm#ChildPaging">ChildPaging</a>=3</tt>) the <a href="#ExpandAll">ExpandAll</a> expands only rows with already downloaded children.<br />
+
+<!-- ExpandAllLevels -->
+<a name="CfgExpandAllLevels"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ExpandAllLevels</h4> <s>[3]</s>
+</div>
+Which levels will be expanded on <a href="#ExpandAll">ExpandAll</a>.<br />
+<b>0</b> - only one level, no sub nodes of actually expanding rows will be expanded.<br />
+<b>1</b> - all already rendered children, the rest only one level<br />
+<b>2</b> - all already downloaded children, the rest only one level<br />
+<b>3</b> - all levels, the expanding can be done in more passing, because it waits for children to download.<br />
+
+<!-- ExpandAllRender -->
+<a name="CfgExpandAllRender"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ExpandAllRender</h4> <s>[""]</s>
+</div>
+If expand all will render the whole grid body instead of expanding the rows one by one.<br />
+"" / nothing - auto - the render body will be chosen automatically if there more rows to render than rendered rows.<br />
+<b>0</b> - no - standard expanding, <b>1</b> - yes - render body, <b>2</b> - render body except when expanding one level.<br />
+
+<!-- Action CollapseAll -->
+<a name="ActionsCollapseAll"></a>
+<div class="ACT">
+   <u><i>upd <b>14.0</b></i></u> <b>&lt;Actions></b> <i></i>
+   <h4>CollapseAll <i>...F</i></h4>
+   <s>Attached to event <b>OnClickButtonCollapseAll</b></s>
+</div>
+Collapses all rows.<br />
+<i>Since 14.0</i> it can have also <b>F</b> suffix to expand all rows in focused nested grid.<br />
+<i>The CollapseAll can be asynchronous and can finish after the action returned.</i><br />
+
+<!-- Action CollapseAllRoot -->
+<a name="ActionsCollapseAllRoot"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CollapseAllRoot</h4>
+   <s>Not attached to any event</s>
+</div>
+Collapses all rows in the first expanded collapsible level. All rows in grid will look collapsed, but they could contain expanded children.<br /> 
+<i>The CollapseAll can be asynchronous and can finish after the action returned.</i><br />
+
+<!-- Action Indent -->
+<a name="ActionsIndent"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>Indent <i>...F</i></h4>
+   <s>Attached to event <b>OnClickButtonIndent</b></s>
+</div>
+Increases level of actual or focused row.<br /> 
+Moves the row as the last child of previous row.<br />
+
+<!-- Action IndentSelected -->
+<a name="ActionsIndentSelected"></a>
+<div class="ACT">
+   <u>new <b>10.0</b> chg <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>IndentSelected <i>...F</i></h4>
+   <s>Attached to event <b>OnClickButtonIndent</b></s>
+</div>
+Increases level of all selected rows.<br /> 
+Moves every selected row as the last child of previous row. 
+It never moves selected row as child of another selected row.<br />
+<i>Since 12.0</i> version without ...F fails if the actual row is not selected.<br />
+
+<!-- Action IndentRows -->
+<a name="ActionsIndentRows"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>IndentRows <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Increases level of focused rows on the same level as the first focused row.<br /> 
+Moves every focused row as the last child of previous row.<br />
+Version without ...F fails if the actual cell is not focused.<br />
+
+<!-- Action Outdent -->
+<a name="ActionsOutdent"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>Outdent <i>...F</i></h4>
+   <s>Attached to event <b>OnClickButtonOutdent</b></s>
+</div>
+Decreases level of actual or focused row.<br /> 
+Moves the row below its parent row.<br />
+
+<!-- Action OutdentSelected -->
+<a name="ActionsOutdentSelected"></a>
+<div class="ACT">
+   <u>new <b>10.0</b> chg <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>OutdentSelected <i>...F</i></h4>
+   <s>Attached to event <b>OnClickButtonOutdent</b></s>
+</div>
+Decreases level of all selected rows.<br /> 
+Moves every selected row below its parent row. It never move the row if its parent is also selected.<br />
+<i>Since 12.0</i> version without ...F fails if the actual row is not selected.<br />
+
+<!-- Action OutdentRows -->
+<a name="ActionsOutdentRows"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>OutdentRows <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Decreases level of focused rows on the same level as the first focused row.<br /> 
+Moves every focused row below its parent row.<br />
+Version without ...F fails if the actual cell is not focused.<br />
+
+<!-- Action ShowTreeLevel -->
+<a name="ActionsShowTreeLevel"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowTreeLevel</h4>
+   <s>Attached to event <b>OnClickLevels</b>, cannot be attached elsewhere</s>
+</div>
+Expands / collapses grid after click to <a href="#HeaderCellLevels">Levels</a> button.<br />
+
+<!-- OnExpand -->
+<a name="OnExpand"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnExpand</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>)</s>
+</div>
+Called before the row is expanded or collapsed. Return true to suppress action.<br /> 
+Test the actual state by <b>row.Expanded</b>.<br />
+Return true to cancel the action.<br />
+
+<!-- Expand -->
+<a name="Expand"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>Expand</h4>
+   <s>(<i>TRow</i> <b>row</b>)</s>
+</div>
+Expands row, <i>for child paging is asynchronous</i>.<br />
+
+<!-- ExpandParents -->
+<a name="ExpandParents"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>ExpandParents</h4>
+   <s>(<i>TRow</i> <b>row</b>)</s>
+</div>
+Expands all parents to show the row. The row must <u>not</u> be hidden (must have <tt>Visible=1</tt>). <i>For child paging is asynchronous.</i><br />
+
+<!-- ExpandAll -->
+<a name="ExpandAll"></a>
+<div class="API">
+   <u><i>upd <b>14.0</b></i></u> <b>API method</b> <i>int</i>
+   <h4>ExpandAll</h4>
+   <s>(<i>TRow</i> <b>parent</b>, <i>int</i> <b>loaded</b> = 0, <i>int</i> <b>levels</b> = 3, <i>int</i> <b>max</b> = 100000, <i>bool</i> <b>test</b> = 0, <i>int</i> <b>render</b> = null)</s>
+</div>
+Expands all rows in parent and shows their children.<br /> 
+If parent is null, expands all rows in grid.<br />
+<b>loaded</b> is <a href="#CfgExpandAllLoaded">ExpandAllLoaded</a>, <b>levels</b> is <a href="#CfgExpandAllLevels">ExpandAllLevels</a>, <b>render</b> <i>(since 14.0)</i> is <a href="#CfgExpandAllRender">ExpandAllRender</a>.<br />
+<b>max</b> <i>(since 12.0)</i> is maximal level to expand, 0 expands only root rows, 1 expands root rows and their immediate children, etc.<br />
+<i>(since 12.0)</i> if set <b>test</b> = <b>1</b>, it does <u>not</u> do anything, just returns count of affected rows.<br />
+<i>Remember, in grid with <a href="PagingServer.htm#ChildPaging">ChildPaging</a> is not often possible to expand all rows, because rendering of thousands of rows is very slow.</i><br />
+
+<!-- OnExpandAllFinish -->
+<a name="OnExpandAllFinish"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnExpandAllFinish</h4>
+   <s>(<i>Grid</i> <b>grid</b>, <i>int</i> <b>cancelled</b>)</s>
+</div>
+Called after expanding all rows finished (<tt><b>cancelled</b> = 0</tt>) or was interrupted (<tt><b>cancelled</b> = 1</tt>).<br />
+<b>cancelled</b> is -1 if there were no rows to expand.<br />
+Note, in child parts it is called before the child parts are rendered.<br />
+
+<!-- Collapse -->
+<a name="Collapse"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>Collapse</h4>
+   <s>(<i>TRow</i> <b>row</b>)</s>
+</div>
+Collapses row.<br />
+
+<!-- CollapseAll -->
+<a name="CollapseAll"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>CollapseAll</h4>
+   <s>(<i>int</i> <b>root</b> = 0, <i>bool</i> <b>test</b> = 0)</s>
+</div>
+Collapses all rows.<br />
+<i>Since 12.0</i> for <b>root</b> = <b>1</b> collapses only first expanded level.<br />
+<i>Since 12.0</i> for <b>text</b> = <b>1</b> does <u>not</u> do any change, just returns count of the collapsible rows.<br />
+<i>Since 12.0</i> returns count of collapsed rows.<br />
+
+<!-- ShowTreeLevel -->
+<a name="ShowTreeLevel"></a>
+<div class="API">
+   <u><i>new <b>12.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>ShowTreeLevel</h4>
+   <s>(<i>int</i> <b>level</b>)</s>
+</div>
+Collapses / expands rows to show exactly given tree <b>level</b>. 
+<b>level</b> is <b>1</b> for root level (collapses all), <b>2</b> for second level (expands the root rows), etc.<br />
+
+</div>
+</body>	
+</html>

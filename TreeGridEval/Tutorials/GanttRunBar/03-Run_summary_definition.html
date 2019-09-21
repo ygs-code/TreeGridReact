@@ -1,0 +1,127 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+
+      .Xml b { color:#0585B9; }
+   </style>
+
+   <script>
+
+var LastDataId = 12; // It is the last id in the Run_summary_tree.xml
+Grids.OnGenerateId = function(G,row,nid){
+if(G.id=="RunTree" && row.Def.Name=="Data") return "D"+(++LastDataId); // Generates new ids for the hidden data rows in RunTree grid, generates them as "D" + auto incremental integer
+}
+
+   </script>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>3. Run summary definition</h1>
+   <h2>Grouping main bars to one row with Run boxes</h2>
+
+   <div class="Border" id="Border">
+      <div class="Xml">Source: <a href='03-Run_summary_group.xml'>03-Run_summary_group.xml</a> <i>Creates Run from plain grid with main bars by grouping. Uses Run <b>Box</b> as Gantt task.</i></div>
+      <div class="Main" style='width:100%; height:493px;'>
+         <bdo Debug='check' Data_Url='03-Run_summary_group.xml' Upload_Tag="debug"></bdo>
+      </div>
+      <br />
+      <div class="Xml">Source: <a href='03-Run_summary_data.xml'>03-Run_summary_data.xml</a> <i>Creates Run from child main bars. Uses whole Run <b>Bar</b> as Gantt task.</i></div>
+      <div class="Main" style='width:100%; height:193px;'>
+         <bdo Debug='check' Data_Url='03-Run_summary_data.xml' Upload_Tag="debug"></bdo>
+      </div>
+      <br />
+      <div class="Xml">Source: <a href='03-Run_summary_tree.xml'>03-Run_summary_tree.xml</a> <i>Creates Run from data in (hidden) child rows. Shows tree of the Runs. Uses whole Run <b>Bar</b> as Gantt task.</i></div>
+      <div class="Main" style='width:100%; height:266px;'>
+         <bdo Debug='check' Data_Url='03-Run_summary_tree.xml' Upload_Tag="debug"></bdo>
+      </div>
+   </div>
+
+   <ul>
+      <li>
+         See documentation for <b><a href="../../Doc/GanttSummary.htm#RunMain">Editable Run bar as summary of child Main bars</a></b>.<br />
+         See also documentation for <a href="../../Doc/GanttRun.htm">Run bar</a> and <a href="../../Doc/GanttMain.htm">Main bar</a>.
+      </li>
+
+     <li> 
+      Normally the Run is defined by one long string with all boxes for one row. 
+      These examples shows alternate definition - creates Run from child rows, where every child row defines one Run box.<br />
+      Every change in Run boxes is done also in the child data and these changes can be uploaded to server.
+     <ul>
+      <li>
+      The first <b>Run Group</b> example defines only the child main bars in plain grid and creates the parent Run rows by grouping.<br />
+      </li>
+      <li>
+      The second <b>Run Data</b> example defines both the child main bars and parent Run bars in tree in the input data.<br />
+      </li>
+      <li>
+      The third <b>Run Tree</b> example does not define the main bars, but calculates the Run just from data in child rows. It also shows tree of the runs - how to mix the child Run data with child Runs.
+      </li>
+      </ul>
+     </li>
+
+     <li>
+      Set it up by
+      <ul>
+      <li>
+      Create new column Type='Text' and Visible='0' and assign is to <b>GanttRun</b> attribute.<br />
+      </li>
+      <li>
+      Set Formula='<h3>ganttrunsum()</h3>' to the parent rows to the new column cells to calculate the Run from data in children.<br />
+      </li>
+      <li>
+      Set <h3>GanttRunSummary</h3><b>='X'</b> to the parent rows Gantt cells to mirror the changes done in the Run to the child data. The <b>X</b> is the child main bar plan, "0" for the first one.<br />
+      </li>
+      <li>
+      Optionally define other Run columns like GanttRunStart, GanttRunEnd, GanttRunDuration, GanttRunComplete and calculate them by formulas: ganttrunstart, ganttrunend, ganttrunduration, ganttpercent(). Define right CalcOrder for the rows to be first calculated the Run by ganttrunsum.<br />
+      These columns will be used for the parent rows with Run.
+      </li>
+      <li>
+      Optionally define new columns with data in child rows for individual boxes. They can define all the Run box attributes: Start,End,Width,Type,Text,Class,Tip,Id,Group,State,Top,Height,Manual,Complete,Resources,HtmlLeft,HtmlRight.<br />
+      Set their names to <h3>GanttSummaryCols</h3> attribute of the Gantt cell in parent row to link them with the child data. 
+      </li>
+      <li>
+      Optionally define <b>GanttSummarySeparators</b> attribute to use different separators in Run definition. If some of the data can contain the default separators (comma and semicolon).
+      </li>
+      <li>
+      Optionally define <b>GanttSummaryCDef</b> attribute to distinguish child rows used as data for parent Run and other child rows.
+      </li>
+      <li>
+      Optionally define the main bars to show them in child rows, by standard attributes GanttStart, GanttEnd, GanttDuration.
+      </li>
+      </ul>
+     </li>
+     
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialRun\s*=\s*(\d+)/), TGIndex = 4;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridRun3", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialRun="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

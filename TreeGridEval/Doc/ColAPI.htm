@@ -1,0 +1,108 @@
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Columns API</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Column API</h1>
+<p>TreeGrid documentation</p>
+
+In TreeGrid is column referenced always by its <u>name</u> as string.<br />
+By API there are accessible all grid columns set in XML and all their attributes and some runtime attributes. The columns are accessible by <tt>grid.<a href="#Cols">Cols</a></tt> array as array of TCol objects.<br /> 
+Every column object contains its input XML attributes set by &lt;C> tag, like Name, Width, Format etc.<br />
+
+<!-- Cols -->
+<a name="Cols"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>TCol[ ]</i>
+   <h4>Cols</h4>
+   <s><span style="color:red;">read only</span> JavaScript named array of column objects</s>
+</div>
+All column objects accessible by their names, like grid.Cols[col].<br />
+All grid column <u>objects</u> can be iterated by <tt>for(var col in grid.Cols){ var C = grid.Cols[col]; ... }</tt> - it iterates randomly not by their positions.<br />
+
+<!-- ColNames -->
+<a name="ColNames"></a>
+<div class="API">
+   <u>chg <b>7.0</b></u> <b>API variable</b> <i>string[ ][ ]</i>
+   <h4>ColNames</h4>
+   <s><span style="color:red;">read only</span> three (or more) JavaScript index arrays of column names</s>
+</div>
+Three arrays for the column sections ColNames[0] - left, [1] - mid, [2] - right. The array exists even if the section was not defined in XML.<br />
+Every array contains the column names sorted according to the position inside the section.<br />
+To iterate all column use such loops: <tt>for(var s=0;s&lt;3;s++) for(var c=0;c&lt;grid.ColNames[s].length;c++){ var col = grid.ColNames[s][c]; ... }</tt><br />
+To iterate all visible columns you can use such loop <tt>for(var col = grid.<a href="#GetFirstCol">GetFirstCol</a>();col;col = grid.<a href="#GetNextCol">GetNextCol</a>(col)) { ... }</tt><br />
+<i>(New 7.0)</i> When set <b>ColPaging</b>, it contains column pages, can be more than 3, in this structure: 0 Left, 1 - (N-2) Mid, (N-1) Right, where N is the <tt>ColNames.length</tt><br />
+
+<!-- GetCols -->
+<a name="GetCols"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API method</b> <i>string[ ]</i>
+   <h4>GetCols</h4>
+   <s>(<i>string</i> <b>attr1</b>, <i>string</i> <b>attr2</b>)</s>
+</div>
+Returns all columns (their names) in grid, in correct order in table.<br />
+If set <b>attr1</b> and/or <b>attr2</b>, returns only columns that have set these attributes.<br /> 
+For example call <tt>grid.GetCols ("Visible","CanExport")</tt> to get all exportable columns.<br />
+
+<!-- GetSections -->
+<a name="GetSections"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>int[ ]</i>
+   <h4>GetSections</h4>
+   <s>( )</s>
+</div>
+Returns first and last actually visible section in grid [<b>c1</b>,<b>c2</b>]. <b>c1</b> is <b>0</b> if left cols are visible, <b>1</b> otherwise, <b>c2</b> is <b>3</b> if right cols are visible otherwise <b>2</b>.<br />
+
+<!-- GetFirstCol -->
+<a name="GetFirstCol"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>string</i>
+   <h4>GetFirstCol</h4>
+   <s>(<i>int</i> <b>sec</b> = null)</s>
+</div>
+Returns first visible column in grid or null.<br />
+If set <b>sec</b> to column section index (0 - left, 1 - mid, 2 - right), it returns first visible column in given section or null.<br />
+
+<!-- GetLastCol -->
+<a name="GetLastCol"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>string</i>
+   <h4>GetLastCol</h4>
+   <s>(<i>int</i> <b>sec</b> = null)</s>
+</div>
+Returns last visible column in grid or null.<br />
+If set <b>sec</b> to column section index (0 - left, 1 - mid, 2 - right), it returns last visible column in given section or null.<br />
+
+<!-- GetNextCol -->
+<a name="GetNextCol"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>string</i>
+   <h4>GetNextCol</h4>
+   <s>(<i>string</i> <b>col</b>)</s>
+</div>
+Returns next visible column according to its position.<br />
+To iterate all visible columns you can use such loop <tt>for(var col = grid.<a href="#GetFirstCol">GetFirstCol</a>();col;col = grid.<a href="#GetNextCol">GetNextCol</a>(col)) { ... }</tt><br />
+
+<!-- GetPrevCol -->
+<a name="GetPrevCol"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>string</i>
+   <h4>GetPrevCol</h4>
+   <s>(<i>string</i> <b>col</b>)</s>
+</div>
+Returns previous visible column according to its position.<br />
+
+<!-- GetCaption -->
+<a name="GetCaption"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>string</i>
+   <h4>GetCaption</h4>
+   <s>(<i>string</i> <b>col</b>)</s>
+</div>
+Returns column caption displayed in the first header - Header.<br />
+
+</div>
+</body>	
+</html>

@@ -1,0 +1,345 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Gantt calendars</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Gantt calendars - excluded dates / holidays</h1>
+<p>TreeGrid documentation</p>
+
+The calendar specifies the dates that are <u>not</u> used in Gantt calculation, they are named "<b>excluded dates</b>". These dates behave like they don't exist at all.<br />
+There are two calendars, global (<b>GanttExclude</b>) and local per row (<b>GanttCalendar</b>).<br />
+You can exclude from dependency calculations and task duration any dates or date range like <b>weekends</b>, <b>working hours</b> or any exact <b>custom dates</b>.<br />
+The excluded dates can be shown in chart with different background or can be completely hidden (only global calendar).<br />
+
+<!-----------------------------------------------------------------------  Global calendar ------------------------------------------------->
+<a name="Global"></a>
+<h2>Global calendar</h2>
+<p class="H2"><b>Ignores or hides non workdays, non working hours or any other dates in the whole chart</b></p>
+
+<!-- GanttExclude -->
+<a name="CGanttExclude"></a>
+<div class="XML">
+   <u>new <b>6.3</b> <i> upd <b>10.0</b></i></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttExclude</h4> <s>Can be uploaded to server</s>
+</div>
+Global calendar. It is used for all rows that don't have set custom calendar by <a href="#CGanttCalendar">GanttCalendar</a>.<br />
+Date ranges hidden from Gantt chart. The ranges are separated by semicolon, the values by tilde and the repeater by '#'.<br /> 
+The format is: <tt>repeater1#date1a~date1b#type1;repeater2#date2a~date2b#type2;...</tt><br />
+The <b>repeater</b> can be one of <a href="GanttCompute.htm#CGanttDataUnits">GanttDataUnits</a>. If it is missing, the <b>date</b> is not repeated. The <b>date</b> is repeated also before it.<br />
+<i>(Since 7.0)</i> The type value is by default empty to standard exclude.<br />
+<div class="L1">
+   If the <b>type</b> value is set to <b>0</b>, the defined dates are <strong><b>included</b></strong> instead of excluded, to return some dates to previously excluded ranges.<br />
+   The items are processed one by one, so if some date is more times excluded and included, the last result is used.<br />
+   Other <b>type</b> values represent given <a href="GanttDisplay.htm#CGanttBackground">GanttBackground</a> classes defined by GxGanttBackXXX, where Gx is the style prefix like "GW" for White and XXX is the <b>type</b> value.<br />
+   <i>(Since 10.0)</i> There are 11 predefined gray classes from <b>0</b> (white) to <b>10</b> (black)<br />
+   <i>(Since 10.0)</i> There are 17 predefined color classes, case <u>sensitive</u> - <b>Aqua</b>, <b>Black</b>, <b>Blue</b>, <b>Fuchsia</b>, <b>Gray</b>, <b>Green</b>, <b>Lime</b>, <b>Maroon</b>, <b>Navy</b>, <b>Olive</b>, <b>Orange</b>, <b>Purple</b>, <b>Red</b>, <b>Silver</b>, <b>Teal</b>, <b>White</b>, <b>Yellow</b><br />
+</div>
+For example: <tt>GanttExclude = '<b>w</b><strong>#</strong>1/5/2008<strong>~</strong>1/7/2008<strong>;</strong> <b>d</b><strong>#</strong>00:00<strong>~</strong>9:00<strong>;</strong> <b>d</b><strong>#</strong>13:00<strong>~</strong>14:00<strong>;</strong> <b>d</b><strong>#</strong>18:00<strong>~</strong>24:00'</tt> shows only hours 8:00 - 13:00 and 14:00 - 18:00 and only workdays.<br />
+<i>(Since 7.0)</i> It is possible to limit the repeating, when the <b>date</b> range is wider than the <b>repeater</b>, the range is rounded to the <b>repeater</b> range and repeated only between the <b>dates</b>.<br />
+<div class="L1">For example <tt>'w<strong>#</strong>1/5/2008<strong>~</strong>12/29/2008'</tt> excludes all weekends, but only in year 2008.</div>
+<i>(Since 7.0)</i> It is possible to set the second date before the first one, it will be updated to correctly fill the repeat range.<br />
+<div class="L1">For example <tt><strong>#</strong>18:00<strong>~</strong>8:00'</tt> excludes all times from 18:00 to 8:00.</div>
+<i>(Since 8.0)</i> It can be also Calendar name, defined in Calendars array.<br />
+<i><strong>Remember, excluding too small units (e.g. minutes when chart shows years) can remarkably slow down the Gantt and Exclude calculation.</strong> For example <tt>GanttExclude='12:00~13:00'</tt> will exclude hours, but for <tt>'11:55~12:55'</tt> will exclude 5 minutes.</i><br />
+Due internal implementation <strong>the chart start date should be rounded to exclude units, check especially <a href="GanttZoom.htm#CGanttChartMinStart">GanttChartMaxStart</a> / <a href="GanttZoom.htm#CGanttChartMaxStart">GanttChartMinStart</a></strong>.<br />
+
+<!-- GanttInclude -->
+<a name="CGanttInclude"></a>
+<div class="DEL">
+   <u>deleted <b>7.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttInclude</h4> <s>Can be uploaded to server</s>
+</div>
+Replaced by <a href="#CGanttExclude">GanttExclude</a> with the third parameter <tt><b>type</b> = 0</tt><br />
+
+<!-- GanttHideExclude -->
+<a name="CGanttHideExclude"></a>
+<div class="XML">
+   <u>new <b>6.3</b> <i> upd <b>9.1</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttHideExclude</h4> <s>[0] Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='<b>1</b>'/></tt></s>
+</div>
+Type of displaying excluded dates:<br />
+<b>0</b> - displayed - all the dates are displayed, the Exclude is used only to specify correct / incorrect dependencies and when moving bars.<br />
+<b>1</b> - hidden - all ranges from exclude are hidden from chart <i>(the custom calendars in rows can be displayed incorrectly)</i><br />
+<b>2</b> - displayed like <b>0</b>, but without background <i>(new 9.0)</i><br />
+<b>3</b> - hidden like <b>1</b>, but without background <i>(new 9.0)</i><br />
+<b>4</b> - displayed like <b>0</b>, but without background for ranges smaller than GanttUnits <i>(new 9.1)</i><br />
+<b>5</b> - hidden like <b>1</b>, but without background for ranges smaller than GanttUnits <i>(new 9.1)</i><br />
+<br />
+
+It is possible to set different zoom settings for case the Exclude is hidden by items with suffix <b>Ex</b>, like ... GanttWidth:18,GanttWidth<b>Ex</b>:22 ...<br />
+<i>It affects only global calendar defined by <a href="#CGanttExclude">GanttExclude</a>, <u>not</u> the custom calendars defined by GanttCalendar.</i><br />
+
+<!-- SetHideExclude -->
+<a name="SetHideExclude"></a>
+<div class="API">
+   <u>new <b>6.3</b></u> <b>API method</b> <i>void</i>
+   <h4>SetHideExclude</h4>
+   <s>(<i>bool</i> <b>hide</b>)</s>
+</div>
+Changes <a href="#CGanttHideExclude">GanttHideExclude</a> and refreshes Gantt and zoom.<br />
+If hide is null changes the value 0/1<br />
+
+<!-- GanttMaxExclude -->
+<a name="CGanttMaxExclude"></a>
+<div class="XML">
+   <u>new <b>6.3</b> chg <b>8.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttMaxExclude</h4> <s>[10000000]</s>
+</div>
+Maximal count of units in chart to compute exclude.<br /> 
+The count is computed as (<i>maxdate-mindate</i>) * <i>excludeunits</i>.<br /> 
+The <i>maxdate</i> and <i>mindate</i> depend on the chart content and also on chart round and minimal column width to display.<br />
+The <i>excludeunits</i> is the smallest unit used in dates in GanttExclude / GanttCalendar. For example <tt>GanttExclude='12:00~13:00'</tt> will be hours, but for <tt>'11:55~12:55'</tt> will be 5 minutes.<br />
+<i>Since 8.0 the default value has been increased to 10 million. And excludes containing more units are ignored and can lead to errors in calculations.</i><br />
+The default 10 million is about 3.8 months for excluded seconds, 19 years for excluded minutes and 1100 years for excluded hours, so it should be enough for all normal excludes.<br />
+
+<!-----------------------------------------------------------------------  Local calendar ------------------------------------------------->
+<a name="Local"></a>
+<h2>Local calendar</h2>
+<p class="H2"><b>Ignores non workdays, non working hours or any other dates in particular row</b></p>
+
+<!-- GanttCalendar -->
+<a name="CGanttCalendar"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttCalendar</h4> <s></s>
+</div>
+If set to something, grid supports more calendars (excludes) per grid (one calendar per row). <i>It will slightly slow down the grid.</i><br />
+<table>
+<tr><td style="width:120px;">Can be set to:</td><td>a) column name to be the calendar name or exclude string read from</td></tr>
+<tr><td></td><td>b) calendar name to be the exclude string read from</td></tr>
+<tr><td></td><td>c) direct exclude string</td></tr>
+<tr><td></td><td>d) "1" just to support the custom calendars and read the calendar value from attributes <b>GanttCalendar</b> in individual cells, see below</td></tr>
+</table>
+<i>Remember, defining many different calendars can remarkably slow down the chart.</i><br />
+<i>The exclude string is described at <a href="#CGanttExclude">GanttExclude</a>.</i><br />
+Don't set it, if you want to have only one calendar in grid, set <a href="#CGanttExclude">GanttExclude</a> instead, it will be faster.<br />
+
+<!-- GanttCalendar -->
+<a name="CGanttCalendar"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;cell></b> <i>string</i>
+   <h4>GanttCalendar</h4> <s></s>
+</div>
+Custom calendar for given row. Used only when set column <b>GanttCalendar</b>, see above.<br />
+<table>
+<tr><td style="width:120px;">Can be set to:</td><td>a) column name to be the calendar name or exclude string read from</td></tr>
+<tr><td></td><td>b) calendar name to be the exclude string read from</td></tr>
+<tr><td></td><td>c) direct exclude string</td></tr>
+</table>
+These excluded dates are <u>not</u> affected by <a href="#CGanttHideExclude">GanttHideExclude</a>.<br />
+If the calendar for the row is set empty, it used global calendar from <a href="#CGanttExclude">GanttExclude</a>.<br />
+<i>The exclude string is described at <a href="#CGanttExclude">GanttExclude</a>.</i><br />
+
+<!-----------------------------------------------------------------------  Calendar list ------------------------------------------------->
+<a name="List"></a>
+<h2>Calendar list</h2>
+<p class="H2"><b>Defining individual calendars to assign</b></p>
+
+<!-- E -->
+<a name="gantthasexclude"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;Calendars></b> <i></i>
+   <h4>&lt;E></h4> <s></s>
+</div>
+One calendar definition. It can be placed only in root &lt;Calendars> tag.<br />
+For example simple definition can be:<br />
+<tt>
+&lt;Grid>
+<div class="L1">...</div>
+<div class="L1">&lt;Calendars></div>
+<div class="L1">
+   &lt;E Name='Workdays' Exclude='w#1/5/2008~1/7/2008'/><br />
+   &lt;E Name='Workhours' Exclude='d#18:00~9:00; d#13:00~14:00#1; w#1/5/2008~1/7/2008#2;'/><br />
+   &lt;E Name='All' Exclude=''/><br />
+</div>
+<div class="L1">&lt;/Calendars></div>
+&lt;Grid>
+</tt>
+
+<!-- Name -->
+<a name="EName"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;E></b> <i>string</i>
+   <h4>Name</h4> <s></s>
+</div>
+Unique name of the calendar.<br />
+This name can be assigned into <a href="#CGanttExclude">GanttExclude</a> and <a href="#CGanttCalendar">GanttCalendar</a> attributes.<br />
+
+<!-- Exclude -->
+<a name="EExclude"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;E></b> <i>string</i>
+   <h4>Exclude</h4> <s></s>
+</div>
+Dates excluded in this calendar.<br />
+Format is the same as in <a href="#CGanttExclude">GanttExclude</a>.<br />
+
+<!-- Calendars -->
+<a name="Calendars"></a>
+<div class="API">
+   <u>new <b>6.4</b></u> <b>API variable</b> <i>object[ ]</i>
+   <h4>Calendars</h4>
+   <s></s>
+</div>
+The array of all calendars in grid, accessible by its name.<br /> 
+The calendar objects contain all the XML attributes like Exclude or Name.<br />
+Example: <tt>Grid.Calendars.Standard.Exclude = 'w#1/5/2008~1/7/2008';</tt><br />
+<i>Use <a href="#ChangeExclude">ChangeExclude</a> method for modifications instead of direct changes.</i><br />
+
+<!-----------------------------------------------------------------------  Calendars dialog ------------------------------------------------->
+<a name="Dialog"></a>
+<h2>Calendars dialog</h2>
+<p class="H2"><b>Showing dialog to choose calendar</b></p>
+
+<!-- ShowGanttCalendars -->
+<a name="ShowGanttCalendars"></a>
+<div class="API">
+   <u>new <b>8.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ShowGanttCalendars</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>sort</b> = 0)</s>
+</div>
+Sets Defaults attribute of the cell to the list of calendars.<br />
+Call it from XML event OnClickSideDefaults to show actual list of calendars. <tt>OnClickSideDefaults = "Grid.ShowGanttCalendars(Row,Col)"</tt><br />
+If set <tt><b>sort</b> = 1</tt>, it sorts the items according to the alphabet, for 0 it shows them in defined order.<br />
+It adds also two predefined options, "None" or "Default" and "Edit".<br /> 
+The "None" is displayed in space row for global calendar and sets the calendar empty. Hide it by <tt>&lt;Lang>&lt;Text CalendarNone=""/>&lt;/Lang></tt>.<br />
+The "Default" is displayed in data row for custom calendar and sets the custom calendar to global calendar. Hide it by <tt>&lt;Lang>&lt;Text CalendarDefault=""/>&lt;/Lang></tt>.<br />
+The "Edit" is displayed in both locations and shows modal dialog to edit, add and delete all the calendars defined in grid. Hide it by <tt>&lt;Lang>&lt;Text CalendarEdit=""/>&lt;/Lang></tt>.<br />
+
+<!-- EditGanttCalendars -->
+<a name="EditGanttCalendars"></a>
+<div class="API">
+   <u>new <b>8.0</b></u> <b>API method</b> <i>void</i>
+   <h4>EditGanttCalendars</h4>
+   <s>( )</s>
+</div>
+Shows modal dialog to edit, add or delete individual calendars defined in grid.<br />
+This dialog is shown also in "Edit..." option in ShowGanttCalendars.<br />
+
+<!-- CalendarsXXX -->
+<a name="CfgCalendarsXXX"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;Cfg></b> <i>type</i>
+   <h4>CalendarsXXX</h4> <s></s>
+</div>
+Settings for the edit calendars dialog, individual attributes like CalendarsRepeatType. They are the same as <a href="TypeDate.htm#Dates">Dates dialog</a>.<br />
+Usual definition of the dialog is:<br />
+<tt>&lt;Cfg CalendarsRepeatType="Enum" CalendarsRepeatEnum="||Weekly|Daily" CalendarsRepeatEnumKeys="||w|d" CalendarsValueType="Float" CalendarsValueFormat="0.00" CalendarsValueCaption="Count" /></tt><br />
+
+<!-- CalendarsNameXXX -->
+<a name="CfgCalendarsNameXXX"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;Cfg></b> <i>type</i>
+   <h4>CalendarsNameXXX</h4> <s></s>
+</div>
+Sets attribute XXX of column <b>Name</b> in the Calendars Dates grid.<br />
+The column <b>Name</b> is used to show the calendar names in parent rows.<br />
+For example: <tt>&lt;Cfg CalendarsNameType="Enum" CalendarsNameEnum="|Standard|Special" CalendarsNameButton="Enum"/></tt><br />
+
+<!-- CalendarsTitle -->
+<a name="CfgCalendarsTitle"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>CalendarsTitle</h4> <s></s>
+</div>
+Title of the Calendars Dates grid, shown it top Space row.<br />
+
+<!-- OnDatesClose -->
+<a name="OnDatesClose"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnDatesClose</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TGrid</i> <b>dates</b>, <i>bool</i> <b>saved</b>)</s>
+</div>
+Called when the Dates dialog with calendars is closed.<br />
+<b>grid</b> is the source grid that opened the Dates dialog.<br />
+<b>dates</b> is the grid showing dates dialog.<br /> 
+<b>saved</b> is <b>false</b> if no changes were done in the <a href="#Calendars">Calendars</a>, <b>true</b> is when something changed in <a href="#Calendars">Calendars</a>.<br />
+
+<!-----------------------------------------------------------------------  Other settings ------------------------------------------------->
+<a name="Other"></a>
+<h2>Other settings</h2>
+
+<!-- GanttCheckExclude -->
+<a name="CGanttCheckExclude"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttCheckExclude</h4> <s>[1] Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='<b>1</b>'/></tt></s>
+</div>
+If and how will be checked placing start of main bar, milestone, point on holidays. It does <u>not</u> affect run and flag.<br />
+<b>0</b> - place to holiday, <b>1</b> - place to the first workday after, <b>2</b> - ask user<br />
+
+<!-- GanttCheckExcludeEdit -->
+<a name="CGanttCheckExcludeEdit"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttCheckExcludeEdit</h4> <s>[]</s>
+</div>
+If set, overrides the <a href="#CGanttCheckExclude">GanttCheckExclude</a> for editing (source cells) only. Possible values are the same.<br />
+
+<!-- GanttChangeExclude -->
+<a name="CGanttChangeExclude"></a>
+<div class="XML">
+   <u>new <b>8.0</b> <i>upd <b>10.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttChangeExclude</h4> <s>[0]</s>
+</div>
+How will be the main bars updated after the change of excluded dates, bit array. Permitted values are 0, 1, 4, 5<br />
+<b>0</b> - The main bar duration will be updated according to the end date<br />
+<b>1</b> - The main bar end date will be updated according to the duration<br />
+<br />
+
+<b>4</b> - If set, it changes dates of all objects to be outside the actually excluded ranges.<br />
+<br />
+
+The Run is always changed according to its definition - if the bars are defined by end date or by duration.<br />
+
+<!-- GanttExcludeComplete -->
+<a name="CGanttExcludeComplete"></a>
+<div class="XML">
+   <u>new <b>9.1</b> <i>upd <b>10.0</b></i></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttExcludeComplete</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, the percentage complete in main bar (<i>since 10.0</i> also Run) is shown exactly according to the excluded dates - it shows the date where the actually completion finished.<br />
+<i>For example if the main bar is 10th - 16th (six days) and 11th - 13th (2 days) are excluded, the completion finishes at 13th for <tt>GanttExcludeComplete=0</tt> as half of the six days, but for GanttExcludeComplete it finishes at 14th, as half of 4 working days plus the two excluded days before.</i><br />
+
+<!-- ChangeExclude -->
+<a name="ChangeExclude"></a>
+<div class="API">
+   <u>new <b>7.0</b> chg <b>8.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ChangeExclude</h4>
+   <s>(<i>string</i> <b>exclude</b>, <i>string</i> <b>name</b>, <i>int</i> <b>type</b> = <a href="#CGanttChangeExclude">GanttChangeExclude</a>)</s>
+</div>
+Changes given calendar and recalculates Gantt chart.<br />
+<b>exclude</b> is exclude string as in <a href="#CGanttExclude">GanttExclude</a>.<br />
+If <b>name</b> is not set, changes value of <a href="#CGanttExclude">GanttExclude</a>, otherwise changes the calendar <b>name</b> in Calendars array.<br />
+If the <b>name</b> is "GanttCalendar" it sets column <a href="#CGanttCalendar">GanttCalendar</a> value to the <b>exclude</b> value, use it to disable / enable the custom calendars and recalculate Gantt.<br />
+The <b>type</b> can override <a href="#CGanttChangeExclude">GanttChangeExclude</a> settings.<br />
+
+<!-- CorrectExclude -->
+<a name="CorrectExclude"></a>
+<div class="API">
+   <u>new <b>8.0</b></u> <b>API method</b> <i>void</i>
+   <h4>CorrectExclude</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>show</b> = 1, <i>string</i> <b>objects</b> = null)</s>
+</div>
+Corrects given Gantt cell to current calendar. All object dates are updated to not be in excluded dates.<br />
+If <b>row</b> is null, it corrects all tasks in grid. <b>col</b> is Gantt column name.<br />
+If <b>show</b> is 0, it does not changes in the chart and the grid must be rerendered.<br />
+<b>objects</b> is comma separated list of objects to update. For null it updates all objects. It can be <i>main, run, flags, points, constraints</i>.<br />
+
+<!-- Action gantthasexclude -->
+<a name="gantthasexclude"></a>
+<div class="ACT">
+   <u>new <b>6.3</b></u> <b>formula</b> <i>int</i>
+   <h4>gantthasexclude</h4>
+   <s>(<i>string</i> <b>ganttcol</b>)</s>
+</div>
+Returns <b>0</b> if exclude is not defined, returns <b>1</b> if Exclude is shown, returns <b>2</b> if Exclude is hidden.<br />
+
+</div>
+</body>
+</html>

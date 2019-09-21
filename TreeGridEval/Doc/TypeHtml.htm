@@ -1,0 +1,701 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Type Html</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>HTML and special types</h1>
+<p>TreeGrid documentation</p>
+
+<!-----------------------------------------------------------------------  Html type  ------------------------------------------------->
+<a name="Html"></a>
+<h2>Html type</h2>
+
+Basic Html type without any special feature. It shows its value as is in html without any change.<br />
+It can also contain a link, use <a href="CellBasics.htm#CLink">Link</a> attribute.<br /><br />
+
+Remember, to put HTML code into XML, you need to escape the '&lt;' and '&amp;' entities by <b>&amp;lt;</b> and <b>&amp;amp;</b><br />
+If you include the XML directly into HTML page, you have to escape the entities twice: '&lt;' by <b>&amp;amp;lt;</b> and '&amp;'&nbsp;by <b>&amp;amp;amp;</b><br />
+
+The Html type is <u>not</u> editable by default.<br />
+If set <tt>CanEdit="1"</tt> for Html type, the cell value is edited as the HTML code without any validation.<br />
+
+<!-- Type -->
+<a name="CTypeHtml"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"] <tt>Type = "Html"</tt></s>
+</div>
+To define Html type, set column or cell attribute Type to "<b>Html</b>".<br />
+
+<!-- EmptyValue -->
+<a name="CEmptyValue"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EmptyValue</h4> <s>[""]</s>
+</div>
+The HTML string displayed when the value is empty.<br />
+Usable especially for <b>Select</b> type or if used <tt>Button='Defaults'</tt> with <tt>Range='1'</tt>.<br />
+
+<!-- Format -->
+<a name="CFormat"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Format</h4> <s></s>
+</div>
+JSON named array of display values for particular cell values. All other cell values are displayed unchanged.<br />
+The items can contain HTML code. The names are case sensitive.<br />
+For example if <tt>&lt;C Type="Html" Format = '{One:"Red", Two:"Green", Three:"&lt;b>blue&lt;/b>"}'/></tt> and the cell value is Two, it displays Green, if the cell value is Four, it displays Four.<br />
+
+<!-- EditFormat -->
+<a name="CEditFormat"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EditFormat</h4> <s></s>
+</div>
+Specifies format for editing - how the text will be modified for edit and the edited value back to data. For Html type is used especially for Defaults dialog to have name/key pairs.<br />
+JSON named array of input values for particular cell values. Format must start by '{'. All other cell values are edited unchanged. The items must not contain HTML code. The names are case sensitive.<br />
+For example if <tt>&lt;C Type="Text" EditFormat = '{1:"one", 2:"two", 3:"three"}'/></tt> and cell has value 2, the value for input will be two. If entered 'three', the cell value will be 3, if entered 'four', the cell value will be 'four'.<br />
+
+<!-- EditHtml -->
+<a name="CfgEditHtml"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>EditHtml</h4> <s>[0]</s>     
+</div>
+If and how the Html Type cell will be edited.<br />
+<b>0</b> - As Html and only if the cell has explicitly set <a href="CellEdit.htm#CCanEdit">CanEdit</a>='1'.<br />
+<b>1</b> - As Html always except if the <a href="CellEdit.htm#CCanEdit">CanEdit</a> attribute is set to '0'.<br />
+<b>2</b> - As Text always except if the <a href="CellEdit.htm#CCanEdit">CanEdit</a> attribute is set to '0'.<br />
+<b>3</b> - Like <b>2</b>, but it asks before saving the value if the original value contained some Html code.<br />
+
+
+<!-----------------------------------------------------------------------  Icon type  ------------------------------------------------->
+<a name="TIcon"></a>
+<h2>Icon type</h2>
+
+Shows one clickable image inside cell. <i>To show more complex image button use <a href="TypeButton.htm#Button">Button</a> Type.</i><br />
+It can also contain a link, use <a href="CellBasics.htm#CLink">Link</a> attribute.<br />
+It shows the image as background cell image to speed up rendering. <i>To show &lt;IMG> tag, place the &lt;IMG> into <a href="TypeHtml.htm#Html">Html</a> type cell instead.</i><br />
+The <b>Icon</b> type cell <u>cannot</u> show left side <a href="CellSideButton.htm#CIcon">Icon</a>, because it uses the same logic.<br />
+The <b>Icon</b> type is <u>not</u> editable by default.<br />
+
+<!-- Type -->
+<a name="CTypeIcon"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"] <tt>Type = "Icon"</tt></s>
+</div>
+To define Icon type, set column or cell attribute Type to "<b>Icon</b>".<br />
+
+<!-- value -->
+<a name="CellvalueIcon"></a>
+<div class="XML">
+   <u></u> <b>&lt;cell></b> <i>string</i>
+   <h4>value</h4> <s></s>
+</div>
+<b>Cell value</b> contains the image source URL.<br />
+The URL can be set also by &lt;C <a href="CellSideButton.htm#CIcon">Icon</a> /> for the whole column.<br />
+<i>The URL is relative to actual page URL, <u>not</u> to Grid.css, <u>not</u> to XML data!</i><br />
+
+<!-- Align -->
+<a name="CAlign"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Align</h4> <s>["Center"]</s>
+</div>
+How the image will be aligned. Case insensitive keyword: "<b>Left</b>", "<b>Right</b>", "<b>Center</b>".<br />
+
+<!-- OnIconClick -->
+<a name="OnIconClick"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnIconClick</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>x</b>, <i>int</i> <b>y</b>)</s>
+</div>
+Called on click to custom Icon type <b>Icon</b>.<br />
+<b>x</b>, <b>y</b> is click position inside the icon.<br />
+Return true to suppress the default action.<br />
+
+<!-----------------------------------------------------------------------  Abs type  ------------------------------------------------->
+<a name="TAbs"></a>
+<h2>Abs type</h2>
+
+Abs type shows one or more HTML elements absolutely positioned inside the cell in layers.<br />
+It does not affect row height, it is always overflowed.<br /><br />
+
+The count of displayed tags is unlimited.<br />
+The tags are displayed in given order, the next tags overlays the previous.<br />
+
+<!-- Type -->
+<a name="CTypeAbs"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"] <tt>Type = "Abs"</tt></s>
+</div>
+To define Abs type, set column or cell attribute Type to "<b>Abs</b>".<br />
+
+<!-- value -->
+<a name="CellvalueAbs"></a>
+<div class="XML">
+   <u>chg <b>6.0</b> <i>upd <b>7.0</b></i></u> <b>&lt;cell></b> <i>string</i>
+   <h4>value</h4> <s></s>
+</div>
+Cell value is first character separated array: |x|y|width|height|html|cls|style|borderheight|x|y|width|height|html|cls|style|borderheight|x|...<br />
+<table>
+<tr><td style="width:120px;"><b>x</b>, <b>y</b></td><td>position relative to left top cell edge.</td></tr>
+<tr><td><b>width</b>, <b>height</b></td><td>ize of the tag. They can be void to not overflow the <b>html</b> tag, but the <b>html</b> tag is still overflowed by the final cell size (column width, row height).</td></tr>
+<tr><td><b>html</b></td><td>any HTML code displayed on the position</td></tr>
+<tr><td><b>cls</b></td><td>CSS class for the tag</td></tr>
+<tr><td><b>style</b></td><td>inline style added for the part, e.g. background image</td></tr>
+<tr><td><b>borderheight</b></td><td><i>(new 7.0)</i> if set CSS class or style with border or padding, here must be set the height of the padding+border</td></tr>
+</table>
+
+Example: <tt>"|0|0|||&lt;div style='background:red;height:100px;'>&lt;/div>||||20|3|50|20|The text"</tt><br />
+
+<!-----------------------------------------------------------------------  List type  ------------------------------------------------->
+<a name="TList"></a>
+<h2>List type</h2>
+
+List is HTML type to show more values with the same repeated parts for many rows.<br />
+It is intended to shorten the input XML, otherwise it can be always replaced by basic <a href="TypeHtml.htm#Html">Html</a> type.<br /><br />
+
+The List type is <u>not</u> editable by default.<br />
+If set <tt>CanEdit="1"</tt> for List type, the cell value is edited as it is without any validation.<br />
+
+<!-- Type -->
+<a name="CTypeList"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"] <tt>Type = "List"</tt></s>
+</div>
+To define List type, set column or cell attribute Type to "<b>List</b>".<br />
+
+<!-- value -->
+<a name="CellvalueList"></a>
+<div class="XML">
+   <u></u> <b>&lt;cell></b> <i>string</i>
+   <h4>value</h4> <s></s>
+</div>
+The value contains the array of items, separated by the first character.<br />
+The values are merged together using <a href="TypeHtml.htm#CFormatList">Format</a>. The result can be any HTML code.<br />
+
+<!-- Format -->
+<a name="CFormatList"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Format</h4> <s></s>
+</div>
+Syntax: <tt>|BaseFlags|BasePrefix|BasePostfix|Reserved|ItemPrefix|ItemPostfix|Search|Flags|Replace|Reserved|... |ItemNPrefix|ItemNPostfix|NSearch|NFlags|NReplace|NReserved</tt><br />
+'|' is any character not contained in any section to separate section values.<br />
+<table>
+<tr><td style="width:120px;"><i><b>'BaseFlags'</b></i></td><td>is bit array of main flags</td></tr>
+<tr><td><i><b>1</b></i></td><td>does not insert ItemPrefix before the first item and ItemNPostfix after the last item</td></tr>
+<tr><td><i><b>2</b></i></td><td>escape HTML code in item value</td></tr>
+<tr><td><i><b>'BasePrefix'</b></i></td><td>is HTML code added to the beginning</td></tr>
+<tr><td><i><b>'BasePostfix'</b></i></td><td>is HTML code added to the end</td></tr>
+<tr><td><i><b>'Reserved'</b></i></td><td>is not used yet</td></tr>
+<tr><td><i><b>'ItemPrefix'</b></i></td><td>is HTML code added in front of every item</td></tr>
+<tr><td><i><b>'ItemPostfix'</b></i></td><td>is HTML code added after every item</td></tr>
+<tr><td><i><b>'Search'</b></i></td><td>is RegExp string to replace it for <i><b>'Replace'</b></i> string, for every item. <i><b>'Flags'</b></i> are flags for RegExp, any of 'g', 'i', 'm'.</td></tr>
+<tr><td><i><b>'Reserved'</b></i></td><td>is not used yet</td></tr>
+</table><br />
+
+If there are more sequences of ItemPrefix, ItemPostfix, ..., the values are used for items in order. For example if there are three sequences, the first sequence will be used for the first, the fourth and the seventh item, the second sequence for the second, the fifth, ...<br />
+Examples:<br />
+<div class="L1">
+<tt>
+<i>Value</i>='|A|B|C|D|E' <i>Format</i>='|0|&lt;|>||[|]' <i>Result</i>='<[A][B][C][D][E]>'<br />
+<i>Value</i>='|A|B|C|D|E' <i>Format</i>='|0|xxx|yyy||(|)|[ACE]||*' <i>Result</i>='xxx(*)(B)(*)(D)(*)yyy'<br />
+<i>Value=</i>'|A|B|C|D|E' <i>Format</i>='|1|[|]|||,' <i>Result</i>='[A,B,C,D,E]'<br />
+<i>Value=</i>'|A|B|C|D|E' <i>Format</i>='|0||||&lt;b style="color:red;">|&lt;/b>|||||&lt;b style="color:green;">|&lt;/b>|||||&lt;b style="color:blue;">|&lt;/b>' <i>Result</i>='<b>ABCDE</b>'<br />
+</tt>
+</div>
+
+<!-----------------------------------------------------------------------  Editable Link type  ------------------------------------------------->
+<a name="TLink"></a>
+<h2>Editable Link type</h2>
+
+For normal <u>not</u> editable links is better to use <a href="CellBasics.htm#CLink">Link</a> attribute.<br /><br />
+
+The Link type represents editable link as HTML attribute &lt;A HREF>.<br />
+<i>It supports editing of the url and text, unlike the simple <a href="CellBasics.htm#CLink">Link</a> attribute.</i><br />
+
+<!-- Type -->
+<a name="CTypeLink"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"] <tt>Type = "Link"</tt></s>
+</div>
+To define Link type, set column or cell attribute Type to "<b>Link</b>".<br />
+
+<!-- value -->
+<a name="CellvalueLink"></a>
+<div class="XML">
+   <u></u> <b>&lt;cell></b> <i>string</i>
+   <h4>value</h4> <s></s>
+</div>
+<b>Cell value</b> contains array of values, first character is separator: |Url|Text|Window<br />
+<b><u>Url</u></b> is the link url<br />
+<b><u>Text</u></b> is a text to display, if is empty the Url is displayed instead<br />
+<b><u>Window</u></b> is browser window name where the link will be opened, for new window set "_blank"<br />
+
+<!-- Format -->
+<a name="CFormatLink"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Format</h4> <s></s>
+</div>
+Syntax: |UrlPrefix|UrlPostfix|HtmlPrefix|HtmlPostfix|BaseUrlType<br />
+'|' is any character not contained in any section to separate section values.<br />
+<i><b>'UrlPrefix'</b></i> is string added before link url<br />
+<i><b>'UrlPostfix'</b></i> is string added after link url<br />
+<i><b>'HtmlPrefix'</b></i> is html code added before link text<br />
+<i><b>'HtmlPostfix'</b></i> is html code added after link text<br />
+<i><b>'BaseUrlType'</b></i> is integer type, if <b>BaseUrl</b> (from &lt;Cfg> tag) is added before url, <b>0</b> - no, <b>1</b> - yes<br />
+
+<!-- EditFormat -->
+<a name="CEditFormatLink"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EditFormat</h4> <s>[|0|1]</s>
+</div>
+Syntax: |line|url|link<br />
+'|' is any character not contained in any section to separate section values.<br />
+<b><i>'line'</i></b> = <b>0</b> to edit all at one line, <b>1</b> to edit at more lines if needed, <b>2</b> to edit every value (url,text) at one line<br />
+<b><i>'url'</i></b> = <b>1</b> to display and edit link url<br />
+<b><i>'text'</i></b> = <b>1</b> to display and edit link text<br />
+
+<!-- BaseUrl -->
+<a name="CfgBaseUrl"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>BaseUrl</h4> <s></s>
+</div>
+String added before urls in types <b>Img</b> and <b>Link</b>, if their format specifies it.<br />
+
+<!-- OnLinkClick -->
+<a name="OnLinkClick"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnLinkClick</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>url</b>, <i>string</i> <b>target</b>)</s>
+</div>
+Called after user clicks link at cell of type <a href="TypeHtml.htm#TLink">Link</a> or <a href="TypeHtml.htm#TImg">Img</a>.<br />
+It is <u>not</u> called for normal link defined by <a href="CellBasics.htm#CLink">Link</a> attribute.<br />
+Returns true to suppress default action. <i>url</i> is url opened in browser, <i>target</i> is target browser's window.<br />
+
+<!-- Action OnClickLink -->
+<a name="ActionsOnClickLink"></a>
+<div class="ACT">
+   <u></u> <b>&lt;XML event></b> <i>bool</i>
+   <h4>OnClickLink</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>TRow</i> <b>Row</b>, <i>string</i> <b>Col</b>, <i>TEvent</i> <b>Event</b>)</s>
+</div>
+Called as &lt;Actions> or cell event when the link is clicked.<br />
+Attach the action or any JavaScript code to the cell to be run on the click, like <tt>&lt;I ... Col1OnClick='alert("changed!")' ... /></tt><br />
+Return true to follow the link, false to cancel<br />
+<i>If you display alert or confirm message in this dialog, you must set <tt><b>Grids.Alert = 1</b>; alert("...."); <b>Grids.Alert = 0</b>;</tt> otherwise the link will not be followed.</i><br />
+
+<!-- Action ShowLink -->
+<a name=""></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowLink <i>...F</i></h4>
+   <s>Attached to events <b>OnClickLink</b>, <b>OnEnter</b></s>
+</div>
+Navigates to URL in Link or Img type in actual or focused cell.<br />
+
+<!-----------------------------------------------------------------------  Editable Img type  ------------------------------------------------->
+<a name="TImg"></a>
+<h2>Editable Img type</h2>
+
+For normal <u>not</u> editable images is better to use <a href="TypeHtml.htm#TIcon">Icon</a> type.<br /><br />
+
+The Img type represents editable image with optional link as HTML attribute <tt>&lt;A HREF>&lt;IMG SRC>&lt;/A></tt>.<br />
+<i>It supports editing of the url, size and link, unlike the simple <a href="TypeHtml.htm#TIcon">Icon</a> type.</i><br />
+
+<!-- Type -->
+<a name="CTypeImg"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"] <tt>Type = "Img"</tt></s>
+</div>
+To define Img type, set column or cell attribute Type to "<b>Img</b>".<br />
+
+<!-- value -->
+<a name="CellvalueImg"></a>
+<div class="XML">
+   <u></u> <b>&lt;cell></b> <i>string</i>
+   <h4>value</h4> <s></s>
+</div>
+Cell value contains array of values, first character is separator: <tt>"|image_URL|width|height|left|top|link_URL|link_window"</tt>,<br />
+<table>
+<tr><td style="width:120px;"><b>image_URL</b></td><td>URL with picture to display,</td></tr>
+<tr><td><b>width</b>, <b>height</b>,</td><td>Size of the image</td></tr>
+<tr><td><b>left</b>, <b>top</b></td><td>Position of the image inside its source image, to display only part of the image, must be set with <b>width</b> and <b>height</b>.</td></tr>
+<tr><td><b>link_URL</b></td><td>link to page displayed after click to image</td></tr>
+<tr><td><b>link_window</b></td><td>browser window name (target) where the link will be opened, for new window set "_blank"</td></tr>
+</table>
+Example: <tt>"|/img/test.gif|100|100|0|200|/test/test.html" or "|/img/test2.gif" or "|/img/test.gif|||||/test/test.html"</tt><br />
+
+<!-- Format -->
+<a name="CFormatImg"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Format</h4> <s></s>
+</div>
+Syntax: |UrlPrefix|UrlPostfix|HtmlPrefix|HtmlPostfix|LinkPrefix|LinkPostfix|BaseUrlType<br />
+'|' is any character not contained in any section to separate section values.<br />
+<i><b>'UrlPrefix'</b></i> is string added before source url<br />
+<i><b>'UrlPostfix'</b></i> is string added after source url<br />
+<i><b>'HtmlPrefix'</b></i> is html code added before image<br />
+<i><b>'HtmlPostfix'</b></i> is html code added after image<br />
+<i><b>'LinkPrefix'</b></i> is string added before link url<br />
+<i><b>'LinkPostfix'</b></i> is string added after link url<br />
+<i><b>'BaseUrlType'</b></i> is integer type, if <b>BaseUrl</b> (from &lt;Cfg> tag) is added before urls, <b>0</b> - no, <b>1</b> - before source, <b>2</b> - before link, <b>3</b> - before both<br />
+
+<!-- EditFormat -->
+<a name="CEditFormatImg"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EditFormat</h4> <s>[|0|1]</s>
+</div>
+Syntax: |line|src|extents|link<br />
+ '|' is any character not contained in any section to separate section values.<br />
+<i><b>'line'</b></i> = <b>0</b> to edit all at one line, <b>1</b> to edit at more lines if needed, <b>2</b> to edit every value (src,extents,link) at one line<br />
+<i><b>'src'</b></i> = <b>1</b> to display and edit source<br />
+<i><b>'extents'</b></i> = <b>1</b> to display and edit extents (left, top, width, height)<br />
+<i><b>'link'</b></i> = <b>1</b> to display and edit link<br />
+
+<!-- BaseUrl -->
+<a name="CfgBaseUrlImg"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>BaseUrl</h4> <s></s>
+</div>
+String added before urls in types <b>Img</b> and <b>Link</b>, if their format specifies it.<br /> 
+
+<!-- OnLinkClick -->
+<a name="OnLinkClickImg"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>bool</i>
+   <h4>OnLinkClick</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>url</b>, <i>string</i> <b>target</b>)</s>
+</div>
+Called after user clicks link at cell of type <a href="TypeHtml.htm#TLink">Link</a> or <a href="TypeHtml.htm#TImg">Img</a>.<br />
+It is not called for normal link defined by <a href="CellBasics.htm#CLink">Link</a> attribute.<br />
+Returns true to suppress default action. <i>url</i> is url opened in browser, <i>target</i> is target browser's window.<br />
+
+<!-- Action ShowLink -->
+<a name="ActionsShowLink"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowLink <i>...F</i></h4>
+   <s>Attached to events <b>OnClickLink</b>, <b>OnEnter</b></s>
+</div>
+Navigates to URL in Link or Img type in actual or focused cell.<br />
+
+<!-----------------------------------------------------------------------  DropCols type  ------------------------------------------------->
+<a name="TDropCols"></a>
+<h2>DropCols type</h2>
+
+Special interactive cell to drag column captions or other such values here.<br />
+It is used for custom grouping, but it can be used for any other action.<br />
+<i>Only for cell in <a href="RowSpace.htm">Space</a> rows.</i><br />
+
+<!-- Type -->
+<a name="CTypeDropCols"></a>
+<div class="XML">
+   <u></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s><tt>Type = "DropCols"</tt></s>
+</div>
+To define DropCols type, set column or cell attribute Type to "<b>DropCols</b>".<br />
+
+<!-- value -->
+<a name="CellvalueDropCols"></a>
+<div class="XML">
+   <u><i>upd <b>9.2</b></i></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>string</i>
+   <h4>value</h4> <s></s>
+</div>
+Cell value contains comma separated array of names.<br />
+<i>Since 9.2</i> it can contain any strings, not only column names.<br />
+
+<!-- Format -->
+<a name="SpaceCellFormat"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>string</i>
+   <h4>Format</h4> <s></s>
+</div>
+JSON named array of display values for particular cell values. All other cell values are displayed unchanged.<br />
+The items can contain HTML code. The names are case sensitive.<br />
+For example if <tt>XXXType="DropCols" XXXFormat = '{One:"Red", Two:"Green", Three:"&lt;b>blue&lt;/b>"}' XXX='Two,Four'/></tt> it displays 'Green Four'.<br />
+
+<!-- MinItemWidth -->
+<a name="SpaceCellMinItemWidth"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>int</i>
+   <h4>MinItemWidth</h4> <s></s>
+</div>
+Minimal width (in pixels) of every cell tab.<br />
+If the cell tab is column name, it uses the column width, but between MinCellWidth / MaxCellWidth<br />
+
+<!-- MaxItemWidth -->
+<a name="SpaceCellMaxItemWidth"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>int</i>
+   <h4>MaxItemWidth</h4> <s></s>
+</div>
+Maximal width (in pixels) of every cell tab.<br />
+If the cell tab is column name, it uses the column width, but between MinCellWidth / MaxCellWidth<br />
+
+<!-- AutoWidth -->
+<a name="SpaceCellAutoWidth"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>int</i>
+   <h4>AutoWidth</h4> <s>[1]</s>
+</div>
+If and how the item widths will be updated, bit array.
+<table>
+<tr><td style="width:50px;">&1</td><td>The width will be shrunk if the sum is wider than the cell width.</td></tr>
+<tr><td>&2</td><td>The width will be extended if the sum is more narrow than the cell width.</td></tr>
+<tr><td>&4</td><td>If the item is column name, the column width will be ignored.</td></tr>
+</table>
+
+<!-- CanAdd -->
+<a name="SpaceCellCanAdd"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>bool</i>
+   <h4>CanAdd</h4> <s>[1]</s>
+</div>
+If it is possible to drop to this row an item dragged from outside (from another row or columns header).<br />
+
+<!-- CanDelete -->
+<a name="SpaceCellCanDelete"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>int</i>
+   <h4>CanDelete</h4> <s>[1]</s>
+</div>
+<b>0</b> The item cannot be deleted (does <u>not</u> affect moving to another row, see CanMove).<br />
+<b>1</b> Item is deleted if moved outside any row.<br />
+<b>2</b> Item is deleted if moved outside any row or to place where it is not accepted.<br /> 
+
+<!-- CanMove -->
+<a name="SpaceCellCanMove"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>int</i>
+   <h4>CanMove</h4> <s>[3]</s>
+</div>
+<b>0</b> No moving items inside and outside the row (only deleting or copying or adding, if permitted by other attributes)<br />
+<b>1</b> It is possible to move the items inside the same row. After such move the item is just placed to another position in the same row. Ignored for <tt>CanCopy=1/3</tt><br />
+<div class="L1">If <u>not</u> set in destination row (when moving between rows), it is possible to only add items to the end of the item list.</div>
+<b>2</b> It is possible to move the items outside the row (to another row). After such move the item is removed from this source row. Ignored for <tt>CanCopy=2/3</tt><br />
+<b>3</b> Both moving inside and outside is permitted.<br />
+
+<!-- CanCopy -->
+<a name="SpaceCellCanCopy"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>int</i>
+   <h4>CanCopy</h4> <s>[0]</s>
+</div>
+<b>0</b> No copying items inside and outside the row (only deleting or moving or adding, if permitted by other attributes)<br />
+<b>1</b> It is possible to copy the items inside the same row. After such copy the item is duplicated to another position in the same row. Only if also Duplicates is permitted.<br />
+<b>2</b> It is possible to copy the items outside the row (to another row). After such copy the item remains also in the source row.<br />
+<b>3</b> Both copying inside and outside is permitted.<br />
+
+<!-- Duplicates -->
+<a name="SpaceCellDuplicates"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>int</i>
+   <h4>Duplicates</h4> <s>[ ]</s>
+</div>
+If items with the same names are permitted in this row.<br />
+<i>Empty</i> - It permits duplicated column name like <b>1</b>, if the column has set GroupMore; for other items (not column names) it permits duplicates like <b>2</b>.<br />
+<b>0</b> - Never.<br />
+<b>1</b> - Yes, but not next to the same item.<br />
+<b>2</b> - Yes, everywhere.<br />
+
+<!-- Accept -->
+<a name="SpaceCellAccept"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>string[ ]</i>
+   <h4>Accept</h4> <s></s>
+</div>
+Comma separated list of item names that can be dropped to this row.<br />
+If not set, all items can be dropped here.<br />
+
+<!-- Single -->
+<a name="SpaceCellSingle"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>string[ ]</i>
+   <h4>Single</h4> <s></s>
+</div>
+Comma separated list of DropCols cells in format: rowid1,col1,rowid2,col2,rowid3,...<br />
+If set it checks these cells for presence of the dragged value according to the <a href="TypeHtml.htm#SpaceCellSingleType">SingleType</a>.<br />
+The Single must <u>not</u> contain actual cell.<br />
+
+<!-- SingleType -->
+<a name="SpaceCellSingleType"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>int</i>
+   <h4>SingleType</h4> <s>[2]</s>
+</div>
+<b>0</b> - Single ignored<br />
+<b>1</b> - A value must be present maximally once in the cells (can be deleted).<br />
+<b>2</b> - A value must be present exactly once in the cells.<br />
+<b>3</b> - A value must be present minimally once in the cells (can be added).<br />
+
+<!-- Text -->
+<a name="SpaceCellText"></a>
+<div class="XML">
+   <u></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>string</i>
+   <h4>Text</h4> <s>["To group by drag columns here"]</s>
+</div>
+A text displayed on empty area inside cell<br />
+
+<!-- MinTextWidth -->
+<a name="SpaceCellMinTextWidth"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>int</i>
+   <h4>MinTextWidth</h4> <s>[40]</s>
+</div>
+Minimal width of the Text item part. In pixels<br />
+
+<!-- RelWidth -->
+<a name="SpaceCellRelWidth"></a>
+<div class="XML">
+   <u></u> <b style="width:125px;">&lt;Space> &lt;cell></b> <i>bool</i>
+   <h4>RelWidth</h4> <s>[0]</s>
+</div>
+Set it to 1 to resize the cell to whole rest of the space row<br />
+
+<!-- OnChange -->
+<a name="OnChange"></a>
+<div class="ACT">
+   <u></u> <b>&lt;XML event></b> <i>void</i>
+   <h4>OnChange</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>TRow</i> <b>Row</b>, <i>string</i> <b>Col</b>, <i>TEvent</i> <b>Event</b>)</s>
+</div>
+Called as &lt;Actions> or cell event when cell value is changed.<br />
+Attach the action or any JavaScript code to the cell to be run on cell value change, like <tt>&lt;I ... Col1OnChange='alert("changed!")' ... /></tt><br />
+The new value can be got by <tt>Get(Row,Col)</tt>.<br />
+
+<!-- OnDropCols -->
+<a name="OnDropCols"></a>
+<div class="API">
+   <u>new <b>9.2</b></u> <b>API event</b> <i>int</i>
+   <h4>OnDropCols</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>value</b>, <i>TGrid</i> <b>togrid</b>, <i>TRow</i> <b>torow</b>, <i>string</i> <b>tocol</b>, <i>int</i> <b>topos</b>, <i>bool</i> <b>drop</b>)</s>
+</div>
+Called while dragging some item from DropCols and also on drop this item to some place.<br />
+<b>grid</b>, <b>row</b>, <b>col</b> is the source grid and cell.<br />
+<b>value</b> is the DropCols item name being dragged.<br />
+<b>togrid</b>, <b>torow</b>, <b>tocol</b> is cell under mouse cursor. Now it is not possible to drag to another grid, so the <b>togrid = grid</b>.<br />
+<b>topos</b> is actual position where the item will be dropped. Or <b>-1</b> means delete item, <b>-2</b> ignore action.<br />
+<b>drop</b> is true when the item is being dropped. The event is called once on the end with <tt>drop = 1</tt>.<br />
+Return null to not change anything or new <b>topos</b> value.<br />
+
+<!-----------------------------------------------------------------------  File type  ------------------------------------------------->
+<a name="TFile"></a>
+<h2>Upload File type</h2>
+
+Type to select file(s) from local disk to upload them to server and / or display them in the cell.<br />
+<strong>Not available in Internet Explorer <b>9</b> and older!</strong><br />
+<br />
+The <b>File</b> Type cell by default shows right side Button="File". If the cell value is not empty, it automatically shows also left side Icon="Clear".<br />
+To not show the side button / icon, set the Button/Icon to different button or empty string.<br />
+<br />
+The files are uploaded to server as standard &lt;input type="file"> value under name "<b>rowid$columnname</b>".<br />
+If more files are uploaded for one cell, the next files have names "rowid$colname$index", with index starting 1. Note, the first file is without the index.<br />
+On server they are accessible: In ASP.NET in <b>Request.Files</b> collection, in PHP in <b>$_FILES</b>, in JSP by <b>request.getPart()</b> method.<br /> 
+
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"] <tt>Type = "File"</tt></s>
+</div>
+To define File type, set column or cell attribute Type to "<b>File</b>".<br />
+
+<!-- value -->
+<a name="CellvalueFile"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;cell></b> <i>string</i>
+   <h4>value</h4> <s></s>
+</div>
+<b>Cell value</b> contains the &lt;input type='file'> DOM object. <i>It is the only cell value in TreeGrid assigned by reference and not by value.</i><br />
+To access the actual files for upload by API use row[col].files as the file list array like in the standard &lt;input type='file'>.<br />
+This cell value is uploaded to server separatelly as files under name.<br />
+
+<!-- Format -->
+<a name="CFormatFile"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Format</h4> <s></s>
+</div>
+Used to display the selected files in the cell.<br />
+It can contain any html code with some specific keywords to be replaced by the files attribute.<br />
+<table>
+<tr><td style="width:60px;"><b>*Name*</b></td><td>File name with extension, but without the full path.</td></tr>
+<tr><td><b>*Type*</b></td><td>File type, e.g. "image/gif".</td></tr>
+<tr><td><b>*Size*</b></td><td>File size in bytes.</td></tr>
+<tr><td><b>*Url*</b></td><td>Url of image or video file to display e.g. in &lt;img> tag or in some tag background. <i>Not available in IE9 and older browsers!</i></td></tr>
+<tr><td><b>*Height*</b></td><td>Height of the cell in pixels.</td></tr>
+<tr><td><b>*Width*</b></td><td>Width of the cell in pixels.</td></tr>
+</table>
+For example: <tt>Format="*Name* &amp;lt;img src='*Url*' height='*Height*' width='*Height*'>"</tt><br />
+
+<!-- Separator -->
+<a name="CSeparator"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Separator</h4> <s></s>
+</div>
+HTML code that separates individual files defined by <a href="#CFormatFile">Format</a> attribute.<br />
+Default value is ValueSeparatorHtml defined in &lt;Lang>&lt;Format> in Text.xml.<br />
+
+<!-- Range -->
+<a name="CRange"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>Range</h4> <s></s>
+</div>
+If set to <b>1</b>, it permits selecting more files, otherwise only one file.<br />
+
+<!-- Accept -->
+<a name="CAccept"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Accept</h4> <s></s>
+</div>
+File types that can be selected. The value is the same as &lt;input type='file' <b>accept</b>> attribute.<br />
+It can be "audio/*" or "video/*" or "image/*" or any <a href="http://www.iana.org/assignments/media-types/media-types.xhtml" target="_blank">MIME type</a>.<br />
+
+<!-- OnSetFile -->
+<a name="OnSetFile"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnSetFile</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>object</i> <b>input</b>)</s>
+</div>
+Called after the file dialog was closed.<br />
+<b>input</b> is actual &lt;input type='file'> tag for the cell. <i>Do not modify it.</i><br />
+Return <b>true</b> to clear the cell, false to continue.<br />
+Here you can restrict choosing some files, e.g. too long files:<br />
+<tt>Grids.OnSetFile = function(G,row,col,input){</tt><br />
+<tt>for(var i=0;i&lt;input.files.length;i++) if(input.files[i].size>100000){ alert("too large file"); return true; }</tt><br />
+<tt>}</tt><br />
+
+<!-- Action ShowFile -->
+<a name="ActionsShowFile"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ShowFile <i>...F</i></h4>
+   <s>Attached to events <b>OnClickSideFile</b>, <b>OnEnter</b>, <b>OnCtrlDown</b></s>
+</div>
+Shows the system dialog to select one or more files for the cell.<br />
+
+</div>
+</body>
+</html>

@@ -1,0 +1,797 @@
+﻿<Grid>
+   <!-- Translations to other languages -->
+
+   <!-- British English -->
+
+   <Media>
+      <M Language='GB'>
+         <Cols>
+            <C Name='P' Format='*cur*$*spn*,0.00;[red]-*ncur*$*spn*,0.00'/>
+         </Cols>
+         <Rows>
+            <I id='Fix3' C='0.785' D='GBP'/>
+         </Rows>
+      </M>
+   </Media>
+
+
+   <!-- German -->
+
+   <TextDE>
+      <Set Row='Tabber' All='Alle'/>
+      <Replace Row='Tabber' Rows='Zeilen' shown='Angezeigt' selected='Ausgewählt' added='Neu' deleted='Gelöscht' changed='Geändert'/>
+      <Set Kind='Header' Pos="Pos" X="Verwendet" O="Bezeichnung Produkt/Auftrag" C="Kunde" D="Datum" K="Art" A="Menge" U="Einzelpreis" L="Listenpreis" R="Rabatt" S="Versand" I="Information"/>
+      <Replace Kind="Header" Col="P" N="Price in" V="Preis in"/>
+      <Set Row='Header' MenuName='Überschrift'/>
+      <Change Col='O' Order='Auftrag' Refund='Ersatz' Gift='Geschenk' Product='Produkt' N='Special order' V='Sonderauftrag'/>
+      <Change Col='O' N='Additional description' V='Zusätzliche Beschreibung'/>
+      <Regex Col='OEdit'>
+         <U N='Auftrag' V='Order'/>
+         <U N='Ersatz' V='Refund'/>
+         <U N='Geschenk' V='Gift'/>
+         <U N='Produkt' V='Product'/>
+         <U N='Sonderauftrag' V='Special order'/>
+         <U N='Zusätzliche\s+Beschreibung' V='Additional description'/>
+      </Regex>
+      <Replace Col='CMenu' N='All customers' V='Alle Kunden'/>
+      <Change Col='K' Phone="Smartphone" Tablet="Tablet" Camera="Kamera" Laptop="Laptop" Desktop="Desktop" Hardware="Hardware" Monitor="Monitor" Printer="Drucker" Television="Fernseher" Projector="Projektor" Console="Konsole" Accessory="Zubehör" Software="Software" Game="Spiel">
+         <U N="-Mobile-" V="-Mobil-"/>
+         <U N="-Computer-" V="-Computer-"/>
+         <U N="-Display-" V="-Anzeige-"/>
+         <U N="-Accessories-" V="-Zubehör-"/>
+      </Change>
+      <Replace Col='A' Def='Node' empty='leer' items='Positionen' item='Position'/>
+      <Replace Col='A' Def='Group' N='no order' V='Kein Auftrag' orders='Aufträge' order='Auftrag'/>
+      <Replace Row='Group' Col='List' N='Group by' V='Gruppieren nach' Customer='Kunde' Date='Datum' none='keine'/>
+      <Replace Row='Group' Col='List' N='Custom grouping' V='Benutzerdefinierte Gruppierung'/>
+      <Replace Row='Group' Col='Month' N='all months' V='Alle Monate'
+         January='Januar' February='Februar' March='März' April='April' May='Mai' June='Juni' July='Juli' August='August' September='September' October='Oktober' November='November' December='Dezember'/>
+      <Replace Row='Group' Col='Cust'>
+         <U N='all customers' V='alle Kunden'/>
+         <U N='personal cust.' V='Privatkunden'/>
+         <U N='limited cust.' V='GmbHs'/>
+         <U N='corporate cust.' V='Firmenkunden'/>
+      </Replace>
+      <Set Row='Group' MonthLabel='Aufträge filtern' RevLabelRight='Umgekehrter Baum' RevTip="Untergeordnete Zeilen oberhalb anzeigen, wie in MS Excel" WinLabelRight='Fenster scrollen' WinTip='Scrollbalken des Grids deaktivieren und die der Webseite verwenden' MenuName='Gruppierung'/>
+      <Replace Row='Search' Col='Expression' N='Enter keywords to search for' V='Geben Sie Schlüsselwörter für die Suche ein'/>
+      <Replace Row='Search' Col='Defs' orders='Aufträge' products='Produkte' N='orders with product' V='Aufträge mit Produkt'
+         TypeTip="Gesetzt: Die gefundene Zelle muss den kompletten Suchausdruck erfüllen&lt;br>Nicht gesetzt: Die Zellen der gefundenen Zeilen müssen zusammen den Suchausdruck erfüllen"
+         />
+      <Set Row='Search' DefsLabel='Suche in' CaseLabelRight='Groß-/Kleinschreibung' TypeLabelRight='Zellen einzeln' MenuName='Suche'/>
+      <Set Row='Fix1' O='Summe / Umsatz' MenuName='Summe/Umsatz'/>
+      <Replace Row='Fix1' Col='A' N='no order' V='kein Auftrag' orders='Aufträge' order='Auftrag'/>
+      <Replace Row='Fix1' Col='U' N='no item' V='keine Pos.' items='Positionen' item='Position'/>
+      <Replace Row='Fix1' Col='C' N='no customer' V='kein Kunde' customers='Kunden' customer='Kunde'/>
+      <Set Row='Fix2' O='Steuern' MenuName='Steuern'/>
+      <Set Row='Fix3' O='Gewinn' MenuName='Gewinn' CTip='Fester Wechselkurs für 1 USD in diesem Beispiel vom 01.01.2019' DTip='Währung auswählen, in der Preise angezeigt werden; Umrechnung gemäß Wechselkurs'/>
+      <Replace Row='Fix3' Col='D' Krone='Kronen'/>
+      <Replace Row='Fix3' Col='D' Europe='Europe' America='Amerika' Asia='Asien' Oceania='Ozeanien' Africa='Afrika'
+         British='Britische' Bulgarian='Bulgarische' Croatian='Kroatische' Czech='Tschechische' Danish='Dänische' Hungarian='Ungarische' Icelandic='Isländische' Norwegian='Norwegische' Polish='Polnische' 
+         Romanian='Rumänische' Russian='Russische' Swedish='Schwedische' Swiss='Schweizer'
+         Australian='Australische' Argentine='Argentinische' Brazilian='Brasilianische' Canadian='Kanadische' Chilean='Chilenische' Mexican='Mexikanische'
+         Chinese='Chinesische' Emirati='VAE-' Indian='Indische' Indonesian='Indonesische' Iranian='Iransche' Israeli='Israelische' Japanese='Japanische' Korean='Koreanische' Kuwaiti='Kuwait-'
+         Malaysian='Malaiische' Omani='Omani' Pakistani='Pakistanische' Philippine='Philippinische' Qatari='Katar-' Singapore='Singapur-' Taiwan='Taiwanesische' Thai='Thailändischer' Turkish='Türkische'
+         Dollar='Dollar' Euro='Euro' Franc='Franken' Forint='Forint' Koruna='Kronen' Krona='Kronen' Kuna='Kuna' Leu='Leu' Lev='Lew' New='neue' Pound='Pfund' Rand='Rand' Ruble='Rubel' Zloty='Zloty'
+         Baht='Baht' Dinar='Dinar' Dirham='Dirham' Lira='Lira' Peso='Peso' Real='Real' Rial='Rial' Riyal='Riyal' Ringgit='Ringgit' Rupee='Rupie' Rupiah='Rupiah' Shekel='Schekel' Yen='Yen' Yuan='Yuan' Won='Won'
+         >
+         <U N='New Zealand' V='Neuseeland'/>
+         <U N='US ' V='USA '/>
+         <U N='Hong Kong' V='Hong Kong'/>
+         <U N='Saudi Arabian' V='Saudi-Arabien'/>
+         <U N='South African' V='Südafrika'/>
+      </Replace>
+      <Replace Row='Toolbar' Col='Formula' orders='Aufträge'/>
+      <Set Row='Toolbar' MenuName='Toolbar'/>
+      <!-- <Replace Col='Menu' order='Auftrag' product='Produkt' Delete='Löschen' Undelete='Wiederherstellen' Select='Auswählen' Copy='Kopieren' Expand='Aufklappen' Collapse='Einklappen'/> -->
+      <Change Col='Menu'>
+         <U N='Delete product' V='Produkt löschen'/>
+         <U N='Select product' V='Produkt auswählen'/>
+         <U N='Copy product' V='Produkt kopieren'/>
+         <U N='Expand product' V='Produkt aufklappen'/>
+         <U N='Collapse product' V='Produkt einklappen'/>
+		   <U N='Deselect product' V='Produkt nicht auswählen'/>
+         <U N='Delete order' V='Auftrag löschen'/>
+         <U N='Select order' V='Auftrag auswählen'/>
+         <U N='Copy order' V='Auftrag kopieren'/>
+         <U N='Expand order' V='Auftrag aufklappen'/>
+         <U N='Collapse order' V='Auftrag einklappen'/>
+         <U N='Deselect order' V='Auftrag nicht auswählen'/>
+         <U N='Copy order with products' V='Auftrag inkl. Produkte kopieren'/>
+         <U N='Copy product with items' V='Produkt inkl. Elemente kopieren'/>
+         <U N='Add new order' V='Neuen Auftrag hinzufügen'/>
+         <U N='Add new product' V='Neues Produkt hinzufügen'/>
+         <U N='Check Used' V='"Verwendet" aktivieren'/>
+         <U N='Uncheck Used' V='"Verwendet" deaktivieren'/>
+      </Change>
+      <Change Row='Filter' Col='O' N='Filter by product name' V='Nach Produktname filtern'/>
+      <Change Row='Filter' Col='OFilterMenu,AFilterMenu,UFilterMenu,LFilterMenu,RFilterMenu,SFilterMenu,PFilterMenu' Orders='Aufträge' Products='Produkte' />
+      <Replace Row='Filter' Col='K' N='All kinds' V='Alle Arten'/>
+      <Set Row='Filter' MenuName='Filter'/>
+      <Set Row='MenuName' O='Bezeichnung Produkt/Auftrag' U='Einzelpreis' L='Listenpreis'/>
+      <Set Row='SearchNames' O='Produktname,Produkt,Auftragsbezeichnung,Auftrag'/>
+   </TextDE>
+   <Media>
+      <M Language='DE'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Beispiel 'First', Seite %3 von %6&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='width:%7px'>Horizontal: Seite %1 von %4 ,Vertikal: Seite %2 von %5&lt;/center>"/>
+         <Cols>
+            <C Name='A' Width='90'/>
+            <C Name='U' Width='95'/>
+            <C Name='L' Width='95'/>
+            <C Name='P' Format=',0.00*cur*$*spn*;[red],-0.00*ncur*$*spn*'/>
+         </Cols>
+         <Rows>
+            <I id='Fix3' C='0.876' D='EUR'/>
+         </Rows>
+      </M>
+   </Media>
+
+
+   <!-- French -->
+
+   <Media>
+      <M Language='FR'>
+         <Cols>
+            <C Name='P' Format=',0.00*cur*$*spn*;[red]-,0.00*ncur*$*spn*'/>
+         </Cols>
+         <Rows>
+            <I id='Fix3' C='0.876' D='EUR'/>
+         </Rows>
+      </M>
+   </Media>
+
+
+   <!-- Canadian French -->
+
+   <Media>
+      <M Language='CA'>
+         <Cols>
+            <C Name='P' Format='*cur*$*spn*,0.00;[red](*ncur*$*spn*,0.00)'/>
+         </Cols>
+         <Rows>
+            <I id='Fix3' C='1.34' D='CAD'/>
+         </Rows>
+      </M>
+   </Media>
+
+
+   <!-- Italian -->
+
+   <Media>
+      <M Language='IT'>
+         <Cols>
+            <C Name='P' Format='*cur*$*spn*,0.00;[red]- *ncur*$*spn*,0.00'/>
+         </Cols>
+         <Rows>
+            <I id='Fix3' C='0.876' D='EUR'/>
+         </Rows>
+      </M>
+   </Media>
+
+
+   <!-- Spanish -->
+
+   <Media>
+      <M Language='ES'>
+         <Cols>
+            <C Name='P' Format=',0.00*cur*$*spn*;[red]-,0.00*ncur*$*spn*'/>
+         </Cols>
+         <Rows>
+            <I id='Fix3' C='0.876' D='EUR'/>
+         </Rows>
+      </M>
+   </Media>
+
+
+   <!-- Portuguese -->
+
+   <Media>
+      <M Language='PT'>
+         <Cols>
+            <C Name='P' Format=',0.00*cur*$*spn*;[red]-,0.00*ncur*$*spn*'/>
+         </Cols>
+         <Rows>
+            <I id='Fix3' C='0.876' D='EUR'/>
+         </Rows>
+      </M>
+   </Media>
+
+
+   <!-- Brazilian Portuguese -->
+
+   <TextBR>
+      <Set Row='Tabber' All='Todos'/>
+      <Replace Row='Tabber' Rows='Linhas' shown='mostrado' selected='selecionado' added='adicionado' deleted='apagado' changed='alterado'/>
+      <Set Kind='Header' Pos="Pos" X="Usado" O="Produto / Nome do pedido" C="Cliente" D="Data" K="Tipo" A="Quantidade" U="Preço por Unidade" L="Preço da lista" R="Desconto" S="Remessa" I="Informação"/>
+      <Replace Kind="Header" Col="P" N="Price in" V="Preço em"/>
+      <Set Row='Header' MenuName='Cabeçalho'/>
+      <Change Col='O' Order='Pedido' Refund='Reembolso' Gift='Presente' Product='Produ' N='Special order' V='Pedido especial'/>
+      <Change Col='O' N='Additional description' V='Descrição adicional'/>
+      <Regex Col='OEdit'>
+         <U N='Pedido' V='Order'/>
+         <U N='Reembolso' V='Refund'/>
+         <U N='Presente' V='Gift'/>
+         <U N='Produto' V='Product'/>
+         <U N='Pedido\s+especial' V='Special order'/>
+         <U N='Descrição+adicional' V='Additional description'/>
+      </Regex>
+      <Replace Col='CMenu' N='All customers' V='Todos clientes'/>
+      <Change Col='K' Phone="Telefone" Tablet="Tablet" Camera="Câmera" Laptop="Laptop" Desktop="Desktop" Hardware="Hardware" Monitor="Monitor" Printer="Impressora" Television="Televisão" Projector="Projetor" Console="Console" Accessory="Accessórios" Software="Software" Game="Jogo">
+         <U N="-Mobile-" V="-Dispositivo Móvel-"/>
+         <U N="-Computer-" V="-Computador-"/>
+         <U N="-Display-" V="-Tela-"/>
+         <U N="-Accessories-" V="-Accessórios-"/>
+      </Change>
+      <Replace Col='A' Def='Node' empty='vazio' items='items' item='item'/>
+      <Replace Col='A' Def='Group' N='no order' V='sem ordenação' orders='orders' order='ordenação'/>
+      <Replace Row='Group' Col='List' N='Group by' V='Agrupar por' Customer='Cliente' Date='Data' none='nenhum'/>
+      <Replace Row='Group' Col='List' N='Custom grouping' V='Agrupamento customizado'/>
+      <Replace Row='Group' Col='Month' N='all months' V='todos os meses'
+         January='Janeiro' February='Fevereiro' March='Março' April='Abril' May='Maio' June='Junho' July='Julho' August='Agosto' September='Setembro' October='Outubro' November='Novembro' December='Dezembro'/>
+      <Replace Row='Group' Col='Cust'>
+         <U N='all customers' V='todos clientes'/>
+         <U N='personal cust.' V='custo pessoal.'/>
+         <U N='limited cust.' V='custo limitado.'/>
+         <U N='corporate cust.' V='custo corporativo.'/>
+      </Replace>
+      <Set Row='Group' MonthLabel='Filtrar pedidos de' RevLabelRight='Árvore invertida' RevTip="Mostrar linhas dos filhos abaixo dos pais, como no MS Excel" WinLabelRight='Rolagem da janela' WinTip='Desativar barras de rolagem da grade e usar barras de rolagem da página' MenuName='Grupos'/>
+      <Replace Row='Search' Col='Expression' N='Enter keywords to search for' V='Digite palavras-chave para pesquisar'/>
+      <Replace Row='Search' Col='Defs' orders='pedidos' products='produtos' N='pedidos com produtos' V='pedidos com produtos'
+         TypeTip="Se definido: a célula encontrada deve preencher toda a expressão pesquisada&lt;br>Se não definido: as células na linha encontrada devem preencher juntas toda a expressão pesquisada"
+         />
+      <Set Row='Search' DefsLabel='Pesquisar em' CaseLabelRight='Maiúsculas e minúsculas' TypeLabelRight='Células individuais' MenuName='Pesquisa'/>
+      <Set Row='Fix1' O='Rendimento total' MenuName='Rendimento total'/>
+      <Replace Row='Fix1' Col='A' N='no order' V='nenhum pedido' orders='pedidos' order='pedido'/>
+      <Replace Row='Fix1' Col='U' N='no item' V='nenhum item' items='items' item='item'/>
+      <Replace Row='Fix1' Col='C' N='no customer' V='nenhum cliente' customers='clientes' customer='cliente'/>
+      <Set Row='Fix2' O='Taxas' MenuName='Taxas'/>
+      <Set Row='Fix3' O='Lucro' MenuName='Lucros' CTip='Taxa de câmbio para 1 USD. Neste exemplo é fixo no dia 1/1/2019.' DTip='Selecione a moeda para exibir os preços, convertidos pela taxa de câmbio'/>
+      <Replace Row='Fix3' Col='D' Europe='Europa' America='América' Asia='Ásia' Oceania='Oceania' Africa='África'
+         British='Britânico' Bulgarian='Búlgaro' Croatian='Croáta' Czech='Tcheco' Danish='Dinamarquês' Hungarian='Húngaro' Icelandic='Islandês' Norwegian='Norueguês' Polish='Polonês'
+         Romanian='Romeno' Russian='RusRussosian' Swedish='Sueco' Swiss='Suíço'
+         Australian='Australiano' Argentine='Argentino' Brazilian='Brasileiro' Canadian='Canadense' Chilean='Chileno' Mexican='Mexicano'
+         Chinese='Chinês' Emirati='Emirati' Indian='Indiano' Indonesian='Indonésio' Iranian='Iraniano' Israeli='Israelense' Japanese='Japonês' Korean='Coreano' Kuwaiti='Kuwaitiano'
+         Malaysian='Malaio' Omani='Omanense' Pakistani='Paquistanês' Philippine='Filipino' Qatari='Qatari' Singapore='Cingapura' Taiwan='Taiwanês' Thai='Thai' Turkish='Turco'
+         Dollar='Dólar' Euro='Euro' Franc='Franco' Forint='Forint' Koruna='Koruna' Krona='Krona' Krone='Krone' Kuna='Kuna' Leu='Leu' Lev='Lev' New='New' Pound='Pound' Rand='Rand' Ruble='Ruble' Zloty='Zloty'
+         Baht='Baht' Dinar='Dinar' Dirham='Dirham' Lira='Lira' Peso='Peso' Real='Real' Rial='Rial' Riyal='Riyal' Ringgit='Ringgit' Rupee='Rupee' Rupiah='Rupiah' Shekel='Shekel' Yen='Yen' Yuan='Yuan' Won='Won'
+         >
+         <U N='New Zealand' V='Nova Zelandia'/>
+         <U N='US ' V='US '/>
+         <U N='Hong Kong' V='Hong Kong'/>
+         <U N='Saudi Arabian' V='Arábia Saudita'/>
+         <U N='South African' V='África do Sul'/>
+      </Replace>
+      <Replace Row='Toolbar' Col='Formula' orders='pedidos'/>
+      <Set Row='Toolbar' MenuName='Barra de ferramentas'/>
+      <Replace Col='Menu' order='pedido' product='produto' Delete='Apagar' Undelete='Refazer' Select='Selecionar' Copy='Copiar' Expand='Expandir' Collapse='Colapsar'/>
+      <Change Col='Menu'>
+         <U N='Deselect order' V='Desmarcar pedido'/>
+         <U N='Deselect product' V='Desmarcar produto'/>
+         <U N='Copy order with products' V='Copiar pedido com produtos'/>
+         <U N='Copy product with items' V='Copiar produto com itens'/>
+         <U N='Add new order' V='Adicionar novo pedido'/>
+         <U N='Add new product' V='Adicionar novo produto'/>
+         <U N='Check Used' V='Marcar usado'/>
+         <U N='Uncheck Used' V='Desmarcar usado'/>
+      </Change>
+      <Change Row='Filter' Col='O' N='Filter by product name' V='Filtrar por nome do produto'/>
+      <Change Row='Filter' Col='OFilterMenu,AFilterMenu,UFilterMenu,LFilterMenu,RFilterMenu,SFilterMenu,PFilterMenu' Orders='Pedidos' Products='Produtos' />
+      <Replace Row='Filter' Col='K' N='All kinds' V='Todos os tipos'/>
+      <Set Row='Filter' MenuName='Filtro'/>
+      <Set Row='MenuName' O='Produto / Nome do pedido' U='Preço por unidade' L='Lista de preços'/>
+      <Set Row='SearchNames' O='Nome do produto, produto, nome do pedido, ordem'/>
+   </TextBR>
+   <Media>
+      <M Language='BR'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Primeiro exemplo da página %3 até %6&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='width:%7px'>Página %1 horizontal de %4 , página %2 vertical de %5&lt;/center>"/>
+         <Cols>
+            <C Name="L" Width="110"/>
+            <C Name="U" Width="110"/>
+            <C Name="K" Width="105"/>
+            <C Name='P' Format='*cur*$*spn*,0.00;[red],-*ncur*$*spn*0.00' Width='115'/>
+         </Cols>
+         <Rows>
+            <I id='Group' MonthWidth='70'/>
+            <I id='Fix3' C='3.715' D='BRL'/>
+         </Rows>
+      </M>
+   </Media>
+
+
+   <!-- Czech -->
+
+   <TextCS>
+      <Set Row='Tabber' All='Vše'/>
+      <Replace Row='Tabber' Rows='Řádky' shown='zobrazené' selected='označené' added='nové' deleted='smazané' changed='změněné'/>
+      <Set Kind='Header' Pos='Číslo' X='Aktivní' O='Název produktu / objednávky' C='Odběratel' D='Datum' K='Druh' A='Množství' U='Jedn cena' L='Celk cena' R='Sleva' S='Přeprava' I="Informace"/>
+      <Replace Kind="Header" Col="P" N="Price in" V="Cena v"/>
+      <Set Row='Header' MenuName='Hlavička'/>
+      <Change Col='O' Order='Objednávka' Refund='Reklamace' Gift='Dárek' Product='Produkt' N='Special order' V='Speciální objednávka'/>
+      <Change Col='O' N='Additional description' V='Doplňující informace'/>
+      <Regex Col='OEdit'>
+         <U N='Objedn[aá]vka' V='Order'/>
+         <U N='Reklamace' V='Refund'/>
+         <U N='D[aá]rek' V='Gift'/>
+         <U N='Produkt' V='Product'/>
+         <U N='Speci[aá]ln[ií]\s+objedn[aá]vka' V='Special order'/>
+         <U N='Dopl[nň]uj[ií]c[ií]\s+(popis|informace)' V='Additional description'/>
+      </Regex>
+      <Replace Col='CMenu' N='All customers' V='Všichni odběratelé'/>
+      <Change Col='K' Phone="Telefon" Tablet="Tablet" Camera="Fotoaparát" Laptop="Notebook" Desktop="Stolní PC" Hardware="Komponenta" Monitor="Monitor" Printer="Tiskárna" Television="Televize" Projector="Projektor" Console="Konzola" Accessory="Příslušenství" Software="Program" Game="Hra">
+         <U N="-Mobile-" V="-Mobil-"/>
+         <U N="-Computer-" V="-Počítač-"/>
+         <U N="-Display-" V="-Zobrazení-"/>
+         <U N="-Accessories-" V="-Příslušenství-"/>
+      </Change>
+      <Replace Col='A' Def='Node' empty='žádný kus' items='kusů' item='kus'> <U N='2 items' V='2 kusy'/> <U N='3 items' V='3 kusy'/> <U N='4 items' V='4 kusy'/> </Replace>
+      <Replace Col='A' Def='Group' N='no order' V='žádná objednávka' orders='objednávek' order='objednávka'> <U N='2 orders' V='2 objednávky'/> <U N='3 orders' V='3 objednávky'/> <U N='4 orders' V='4 objednávky'/> </Replace>
+      <Replace Row='Group' Col='List' N='Group by' V='Seskupit' Customer='Odběratel' Date='Datum' none=''/>
+      <Replace Row='Group' Col='List' N='Custom grouping' V='Jiné seskupení'/>
+      <Replace Row='Group' Col='Month' N='all months' V='měsíce' 
+         January='leden' February='únor' March='březen' April='duben' May='květen' June='červen' July='červenec' August='srpen' September='září' October='říjen' November='listopad' December='prosinec'/>
+      <Replace Row='Group' Col='Cust'>
+         <U N='all customers' V='všichni zákazníci'/>
+         <U N='personal cust.' V='fyzické osoby'/>
+         <U N='limited cust.' V='s.r.o.'/>
+         <U N='corporate cust.' V='a.s.'/>
+      </Replace>
+      <Set Row='Group' MonthLabel='Filtrovat objednávky' RevLabelRight='obrácený strom' RevTip="Zobrazit produkty nad objednávkami, jako v MS Excel" WinLabelRight='posun okna' WinTip='Neposunovat tabulku, ale celé okno' MenuName='Seskupit'/>
+      <Replace Row='Search' Col='Expression' N='Enter keywords to search for' V='Napište hledaná klíčová slova'/>
+      <Replace Row='Search' Col='Defs' orders='objednávky' products='produkty' N='orders with product' V='objednávky s produkty'/>
+      <Set Row='Search' DefsLabel='Vyhledat v' CaseLabelRight='rozlišovat velikost písmen' TypeLabelRight='jednotlivé buňky' MenuName='Hledání' 
+         TypeTip="Je-li nastaveno: Nalezená buňka musí splňovat celý hledaný výraz&lt;br>Není-li nastaveno: Buňky v nalezené řádce musi dohromady splňovat celý hledaný výraz"/>
+      <Set Row='Fix1' O='Celkem' MenuName='Celkem'/>
+      <Replace Row='Fix1' Col='A' N='no order' V='žádná objednávka' orders='objednávek' order='objednávka'> <U N='2 orders' V='2 objednávky'/> <U N='3 orders' V='3 objednávky'/> <U N='4 orders' V='4 objednávky'/> </Replace>
+      <Replace Row='Fix1' Col='U' N='no item' V='žádný kus' items='kusů' item='kus'> <U N='2 items' V='2 kusy'/> <U N='3 items' V='3 kusy'/> <U N='4 items' V='4 kusy'/> </Replace>
+      <Replace Row='Fix1' Col='C' N='no customer' V='žádný zákazník' customers='zákazníků' customer='zákazník'> <U N='2 customers' V='2 zákazníci'/> <U N='3 customers' V='3 zákazníci'/> <U N='4 customers' V='4 zákazníci'/> </Replace>
+      <Set Row='Fix2' O='DPH' MenuName='DPH'/>
+      <Set Row='Fix3' O='Zisk' MenuName='Zisk' CTip='Kurz měny za 1 USD. V tomto příkladu je kurz statický ze dne 1.1.2019.' DTip='Vyberte měnu ve které se zobrazí ceny, přepočtené v kurzu'/>
+      <Replace Row='Fix3' Col='D' Europe='Evropa' America='Amerika' Asia='Asie' Oceania='Oceánie' Africa='Afrika'
+         British='britská' Bulgarian='bulharský' Croatian='chorvatská' Czech='česká' Danish='dánská' Hungarian='maďarský' Icelandic='islandská' Norwegian='norská' Polish='polský' 
+         Romanian='rumunský' Russian='ruský' Swedish='švédská' Swiss='švýcarský'
+         Australian='australský' Argentine='argentiské' Brazilian='brazilský' Canadian='kanadský' Chilean='chilské' Mexican='mexické'
+         Chinese='čínský' Emirati='emirátský' Indian='indická' Indonesian='indonéská' Iranian='iránský' Israeli='izraelský' Japanese='japonský' Korean='korejský' Kuwaiti='kuvajtský'
+         Malaysian='malajský' Omani='ománský' Pakistani='pákistánská' Philippine='filipínské' Qatari='katarský' Singapore='singapurský' Taiwan='taiwanský' Thai='thajský' Turkish='turecká'
+         Dollar='dolar' Euro='euro' Franc='frank' Forint='forint' Koruna='koruna' Krona='koruna' Krone='koruna' Kuna='kuna' Leu='lei' Lev='lev' New='nový' Pound='libra' Rand='rand' Ruble='rubl' Zloty='zlotý'
+         Baht='baht' Dinar='dinár' Dirham='dirham' Lira='lira' Peso='peso' Real='real' Rial='rial' Riyal='rial' Ringgit='ringgit' Rupee='rupie' Rupiah='rupie' Shekel='šekel' Yen='jen' Yuan='juan' Won='won'
+         >
+         <U N='New Zealand' V='novozelandský'/>
+         <U N='US ' V='americký '/>
+         <U N='Hong Kong' V='honkogský'/>
+         <U N='Saudi Arabian' V='saudskoarabský'/>
+         <U N='South African' V='jihoafrický'/>
+      </Replace>
+      <Replace Row='Toolbar' Col='Formula' orders='objednávek'/>
+      <Set Row='Toolbar' MenuName='Tlačítková lišta'/>
+      <Replace Col='Menu' order='objednávku' product='produkt' Delete='Vymazat' Undelete='Obnovit' Select='Označit' Copy='Kopírovat' Expand='Rozbalit' Collapse='Sbalit'/>
+      <Change Col='Menu'>
+         <U N='Deselect order' V='Zrušit označení objednávky'/>
+         <U N='Deselect product' V='Zrušit označení produktu'/>
+         <U N='Copy order with products' V='Kopírovat objednávku s produkty'/>
+         <U N='Copy product with items' V='Kopírovat produkt s položkami'/>
+         <U N='Add new order' V='Přidat novou objednávku'/>
+         <U N='Add new product' V='Přidat nový produkt'/>
+         <U N='Check Used' V='Aktivovat objednávku'/>
+         <U N='Uncheck Used' V='Deaktivovat objednávku'/>
+      </Change>
+      <Change Row='Filter' Col='O' N='Filter by product name' V='Filtrovat podle jména produktu'/>
+      <Change Row='Filter' Col='OFilterMenu,AFilterMenu,UFilterMenu,LFilterMenu,RFilterMenu,SFilterMenu,PFilterMenu' Orders='Objednávky' Products='Produkty' />
+      <Replace Row='Filter' Col='K' N='All kinds' V='Všechny druhy'/>
+      <Set Row='Filter' MenuName='Filtr'/>
+      <Set Row='MenuName' O='Produkt / objednávka' U='Jednotková cena' L='Celková cena'/>
+      <Set Row='SearchNames' O='produkt,název produktu,objednávka,název objednávky'/>
+   </TextCS>
+   <Media>
+      <M Language='CS'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Příklad 'First', stránka %3 z %6&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='width:%7px'>Stránka %1 vodorovně z %4 , stránka %2 svisle z %5&lt;/center>"/>
+         <Cols>
+            <C Name='P' Format=',0.00*cur*$*spn*;[red],-0.00*ncur*$*spn*'/>
+            <C Name='X' Width='60'/>
+            <C Name='K' Width='105'/>
+            <C Name='A' Width='95'/>
+            <C Name='U' Width='95'/>
+            <C Name='R' Width='70'/>
+         </Cols>
+         <Rows>
+            <I id='Search' DefsWidth='60'/>
+            <I id='Group' MonthWidth='80' CustWidth='90'/>
+            <I id='Fix3' C='22.4' D='CZK'/>
+         </Rows>
+      </M>
+   </Media>
+
+
+   <!-- Russian -->
+
+   <TextRU>
+      <Set Row='Tabber' All='Всё'/>
+      <Replace Row='Tabber' Rows='Строки' shown='Показанные' selected='Выбранные' added='Добавленные' deleted='Удалённые' changed='Изменённые'/>
+      <Set Kind='Header' Pos="Номер" X="Активный" O="Название продуктa / заказа" C="Клиент" D="Дата" K="Сорт" A="Количество" U="Цена/един." L="Список цен" R="Дисконт" S="Перевозка" I="Информация"/>
+      <Replace Kind="Header" Col="P" N="Price in" V="Цена в"/>
+      <Set Row='Header' MenuName='Колонтитул'/>
+      <Change Col='O' Order='Заказ' Refund='Возврат' Gift='Подарок' Product='Продукт' N='Special order' V='Специальный заказ'/>
+      <Change Col='O' N='Additional description' V='Дополнительное описание'/>
+      <Regex Col='OEdit'>
+         <U N='Заказ' V='Order'/>
+         <U N='Возврат' V='Refund'/>
+         <U N='Подарок' V='Gift'/>
+         <U N='Продукт' V='Product'/>
+         <U N='Специальный+заказ' V='Special order'/>
+         <U N='Дополнительное+описание' V='Additional description'/>
+      </Regex>
+      <Replace Col='CMenu' N='All customers' V='Все клиенты'/>
+      <Change Col='K' Phone="Телефон" Tablet="Планшет" Camera="Камера" Laptop="Лаптоп" Desktop="Настольный компьютер" Hardware="Оборудование" Monitor="Монитор" Printer="Принтер" Television="Телевизор" Projector="Проектор" Console="Консоль" Accessory="Аксессуар" Software="Программа" Game="Игра">
+         <U N="-Mobile-" V="-Телефон-"/>
+         <U N="-Computer-" V="-Компьютер-"/>
+         <U N="-Display-" V="-Дисплей-"/>
+         <U N="-Accessories-" V="-Аксессуары-"/>
+      </Change>
+      <Replace Col='A' Def='Node' empty='никакой' items='штук' item='штука'/>
+      <Replace Col='A' Def='Group' N='no order' V='нет заказа' orders='заказов' order='заказ'/>
+      <Replace Row='Group' Col='List' N='Group by' V='Соединить' Customer='Клиент' Date='Дата' none=''/>
+      <Replace Row='Group' Col='List' N='Custom grouping' V='Пользовательская группировка'/>
+      <Replace Row='Group' Col='Month' N='all months' V='все месяцы'
+         January='январь' February='февраль' March='март' April='апрель' May='май' June='июнь' July='июль' August='август' September='сентябрь' October='октябрь' November='ноябрь' December='декабрь'/>
+      <Replace Row='Group' Col='Cust'>
+         <U N='all customers' V='все клиенты'/>
+         <U N='personal cust.' V='физическиэ лица'/>
+         <U N='limited cust.' V='ООО'/>
+         <U N='corporate cust.' V='АО'/>
+      </Replace>
+      <Set Row='Group' MonthLabel='Отфильтровать заказы от' RevLabelRight='Перевернутое дерево' RevTip="Показывать дочерние строки над родителями, как в MS Excel" WinLabelRight='Окно прокрутки' WinTip='Отключить полосы прокрутки сетки и использовать полосы прокрутки страницы' MenuName='Соединить'/>
+      <Replace Row='Search' Col='Expression' N='Enter keywords to search for' V='Ввести ключевые слова для поиска '/>
+      <Replace Row='Search' Col='Defs' orders='заказы' products='продукты' N='заказы с продуктом' V='заказы с продуктом'
+         TypeTip="Если установлено: найденная ячейка должна соответствовать всему искомому выражению&lt;br>Если не установлено: ячейки в найденной строке должны выполнять все искомое выражение"
+         />
+      <Set Row='Search' DefsLabel='Искать в' CaseLabelRight='с учетом регистра' TypeLabelRight='отдельные клетки' MenuName='Поиск'/>
+      <Set Row='Fix1' O='Общая прибыль' MenuName='Общая прибыль'/>
+      <Replace Row='Fix1' Col='A' N='no order' V='нет заказа' orders='заказов' order='заказ'/>
+      <Replace Row='Fix1' Col='U' N='no item' V='никакой' items='штук' item='штука'/>
+      <Replace Row='Fix1' Col='C' N='no customer' V='нет клиента' customers='клиентов' customer='клиент'/>
+      <Set Row='Fix2' O='Налоги' MenuName='Налоги'/>
+      <Set Row='Fix3' O='Прибыль' MenuName='Прибыль' CTip='Обменный курс за 1 грн. В этом примере зафиксирован день 01.01.2009.' DTip='Выберите валюту для отображения цен, конвертированных по курсу'/>
+      <Replace Row='Fix3' Col='D' Europe='Европа' America='Америка' Asia='Азия' Oceania='Океания' Africa='Африка'
+         British='британская' Bulgarian='болгарский' Croatian='хорватская' Czech='чешская' Danish='датская' Hungarian='венгерский' Icelandic='исландская' Norwegian='норвежская' Polish='польский'
+         Romanian='румынский' Russian='русский' Swedish='шведская' Swiss='швейцарский'
+         Australian='австралийский' Argentine='аргентинское' Brazilian='бразильский' Canadian='канадский' Chilean='чилийское' Mexican='мексиканское'
+         Chinese='китайский' Emirati='эмиратский' Indian='индийская' Indonesian='индонезийская' Iranian='иранский' Israeli='израильский' Japanese='японский' Korean='корейский' Kuwaiti='кувейтский'
+         Malaysian='малазийский' Omani='оманский' Pakistani='пакистанская' Philippine='филиппинское' Qatari='катарский' Singapore='сингапурский' Taiwan='тайваньский' Thai='тайский' Turkish='турецкая'
+         Dollar='доллар' Euro='евро' Franc='франк' Forint='форинт' Koruna='коруна' Krona='крона' Krone='корона' Kuna='куна' Leu='лея' Lev='лев' New='новый' Pound='фунт' Rand='рант' Ruble='рубль' Zloty='злотый'
+         Baht='бата' Dinar='динар' Dirham='дирхам' Lira='лира' Peso='песо' Real='реал' Rial='риал' Riyal='риал' Ringgit='ринггит' Rupee='рупия' Rupiah='рупия' Shekel='шекель' Yen='иена' Yuan='юань' Won='вон'
+         >
+         <U N='New Zealand' V='новозеландский'/>
+         <U N='US ' V='американский'/>
+         <U N='Hong Kong' V='гонконгский'/>
+         <U N='Saudi Arabian' V='саудовскоаравский'/>
+         <U N='South African' V='южноафриканский'/>
+      </Replace>
+      <Replace Row='Toolbar' Col='Formula' orders='заказов'/>
+      <Set Row='Toolbar' MenuName='Панель инструментов'/>
+      <Replace Col='Menu' order='заказ' product='продукт' Delete='Удалить' Undelete='Восстановить' Select='Выбрать' Copy='Копировать' Expand='Развернуть' Collapse='Свернуть'/>
+      <Change Col='Menu'>
+         <U N='Deselect order' V='Отменить выбор заказа'/>
+         <U N='Deselect product' V='Отменить выбор продукта'/>
+         <U N='Copy order with products' V='Копировать заказ с продуктами'/>
+         <U N='Copy product with items' V='Копировать продукт с предметы'/>
+         <U N='Add new order' V='Добавить новый заказ'/>
+         <U N='Add new product' V='Добавить новый продукт'/>
+         <U N='Check Used' V='Активизировать заказ'/>
+         <U N='Uncheck Used' V='Деактивировать заказ'/>
+      </Change>
+      <Change Row='Filter' Col='O' N='Filter by product name' V='Фильтровать по названию продукта'/>
+      <Change Row='Filter' Col='OFilterMenu,AFilterMenu,UFilterMenu,LFilterMenu,RFilterMenu,SFilterMenu,PFilterMenu' Orders='Заказы' Products='Продукты' />
+      <Replace Row='Filter' Col='K' N='All kinds' V='Все сорты'/>
+      <Set Row='Filter' MenuName='Фильтр'/>
+      <Set Row='MenuName' O='Название продуктa / заказа' U='Цена за единицу' L='Список цен'/>
+      <Set Row='SearchNames' O='Название продукта, продукт, название заказа, заказ'/>
+   </TextRU>
+   <Media>
+      <M Language='RU'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Первый пример печатной страницы %3 из %6&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='width:%7px'>Страница %1 по горизонтали от %4, страница %2 по вертикали от %5&lt;/center>"/>
+         <Cols>
+            <C Name='U' Width='100'/>
+            <C Name='L' Width='100'/>
+            <C Name='S' Width='100'/>
+            <C Name='P' Format=',0.00*cur*$*spn*;[red],-0.00*ncur*$*spn*'/>
+         </Cols>
+         <Rows>
+            <I id='Fix3' C='67.46' D='RUB'/>
+         </Rows>
+      </M>
+   </Media>
+
+
+   <!-- Japanese -->
+
+   <TextJP>
+      <Set Row='Tabber' All='すべて'/>
+      <Replace Row='Tabber' Rows='行数' shown='表示' selected='選択' added='追加' deleted='削除' changed='変更'/>
+      <Set Kind='Header' Pos="索引" X="使用" O="製品/注文名" C="顧客" D="日付" K="種類" A="金額" U="単価" L="定価" R="割引" S="送料" I="情報"/>
+      <Replace Kind="Header" Col="P" N="Price in" V="価格"/>
+      <Set Row='Header' MenuName='ヘッダー'/>
+      <Change Col='O' Order='注文' Refund='返金' Gift='ギフト' Product='製品' N='Special order' V='特別注文'/>
+      <Change Col='O' N='Additional description' V='追加説明'/>
+      <Regex Col='OEdit'>
+         <U N='注文' V='Order'/>
+         <U N='返金' V='Refund'/>
+         <U N='ギフト' V='Gift'/>
+         <U N='製品' V='Product'/>
+         <U N='特別\s+注文' V='Special order'/>
+         <U N='追加\s+説明' V='Additional description'/>
+      </Regex>
+      <Replace Col='CMenu' N='All customers' V='すべての顧客'/>
+      <Change Col='K' Phone="電話" Tablet="タブレット" Camera="カメラ" Laptop="ラップトップ" Desktop="デスクトップ" Hardware="ハードウェア" Monitor="モニター" Printer="プリンター" Television="テレビ" Projector="プロジェクター" Console="コンソール" Accessory="アクセサリ" Software="ソフトウェア" Game="ゲーム">
+         <U N="-Mobile-" V="-モバイル-"/>
+         <U N="-Computer-" V="-コンピューター-"/>
+         <U N="-Display-" V="-ディスプレイ-"/>
+         <U N="-Accessories-" V="-アクセサリ-"/>
+      </Change>
+      <Replace Col='A' Def='Node' empty='空' items='項目' item='項目'/>
+      <Replace Col='A' Def='Group' N='no order' V='注文なし' orders='orders' order='注文'/>
+      <Replace Row='Group' Col='List' N='Group by' V='グループ化:' Customer='顧客' Date='日付' none='なし'/>
+      <Replace Row='Group' Col='List' N='Custom grouping' V='カスタム グループ'/>
+      <Replace Row='Group' Col='Month' N='all months' V='すべての月'
+         January='1 月' February='2 月' March='3 月' April='4 月' May='5 月' June='6 月' July='7 月' August='8 月' September='9 月' October='10 月' November='11 月' December='12 月'/>
+      <Replace Row='Group' Col='Cust'>
+         <U N='all customers' V='すべての顧客'/>
+         <U N='personal cust.' V='個人顧客'/>
+         <U N='limited cust.' V='限定顧客'/>
+         <U N='corporate cust.' V='法人顧客'/>
+      </Replace>
+      <Set Row='Group' MonthLabel='注文のフィルター条件' RevLabelRight='逆ツリー' RevTip="Excel と同様に親の上に子の行を表示します。" WinLabelRight='ウィンドウ スクロール' WinTip='グリッドのスクロール バーを無効にしてページのスクロール バーを使用します。' MenuName='グループ'/>
+      <Replace Row='Search' Col='Expression' N='Enter keywords to search for' V='検索するキーワードを入力'/>
+      <Replace Row='Search' Col='Defs' orders='注文' products='製品' N='orders with product' V='注文と製品'
+         TypeTip="設定された場合: 見つかったセルは検索式全体を満たす必要があります。&lt;br>設定されていない場合: 見つかった行内のセルの組み合わせが検索式全体を満たす必要があります。"
+         />
+      <Set Row='Search' DefsLabel='検索対象:' CaseLabelRight='大文字と小文字を区別' TypeLabelRight='個々のセル' MenuName='検索'/>
+      <Set Row='Fix1' O='合計' MenuName='合計'/>
+      <Replace Row='Fix1' Col='A' N='no order' V='注文なし' orders='注文' order='注文'/>
+      <Replace Row='Fix1' Col='U' N='no item' V='項目なし' items='項目' item='項目'/>
+      <Replace Row='Fix1' Col='C' N='no customer' V='顧客なし' customers='顧客' customer='顧客'/>
+      <Set Row='Fix2' O='税金' MenuName='税金'/>
+      <Set Row='Fix3' O='利益' MenuName='利益' CTip='1 USD の為替レート。この例では 1/1/2019 のレートで固定。' DTip='為替レートで換算した価格を表示する通貨を選択します。'/>
+      <Replace Row='Fix3' Col='D' Europe='ヨーロッパ' America='アメリカ' Asia='アジア' Oceania='オセアニア' Africa='アフリカ'
+         British='イギリス' Bulgarian='ブルガリア' Croatian='クロアチア' Czech='チェコ' Danish='デンマーク' Hungarian='ハンガリー' Icelandic='アイスランド' Norwegian='ノルウェー' Polish='ポーランド'
+         Romanian='ルーマニア' Russian='ロシア' Swedish='スウェーデン' Swiss='スイス'
+         Australian='オーストラリア' Argentine='アルゼンチン' Brazilian='ブラジル' Canadian='カナダ' Chilean='チリ' Mexican='メキシコ'
+         Chinese='中国' Emirati='アラブ首長国連邦' Indian='インド' Indonesian='インドネシア' Iranian='イラン' Israeli='イスラエル' Japanese='日本' Korean='韓国' Kuwaiti='クエート'
+         Malaysian='マレーシア' Omani='オマーン' Pakistani='パキスタン' Philippine='フィリピン' Qatari='カタール' Singapore='シンガポール' Taiwan='台湾' Thai='タイ' Turkish='トルコ'
+         Dollar='ドル' Euro='ユーロ' Franc='フラン' Forint='フォリント' Koruna='コルナ' Krona='クローナ' Krone='クローネ' Kuna='クーナ' Leu='レイ' Lev='レフ' New='新' Pound='ポンド' Rand='ランド' Ruble='ルーブル' Zloty='ズロティ'
+         Baht='バーツ' Dinar='ディナール' Dirham='ディルハム' Lira='リラ' Peso='ペソ' Real='レアル' Rial='リアール' Riyal='リヤル' Ringgit='リンギット' Rupee='ルピー' Rupiah='ルピア' Shekel='シケル' Yen='円' Yuan='元' Won='ウオン'
+         >
+         <U N='New Zealand' V='ニュージーランド'/>
+         <U N='US ' V='アメリカ'/>
+         <U N='Hong Kong' V='香港'/>
+         <U N='Saudi Arabian' V='サウジアラビア'/>
+         <U N='South African' V='南アフリカ'/>
+      </Replace>
+      <Replace Row='Toolbar' Col='Formula' orders='注文'/>
+      <Set Row='Toolbar' MenuName='ツール バー'/>
+      <Replace Col='Menu' order='注文' product='製品' Delete='削除' Undelete='元に戻す' Select='選択' Copy='コピー' Expand='展開' Collapse='折りたたむ'/>
+      <Change Col='Menu'>
+         <U N='Deselect order' V='注文を選択解除'/>
+         <U N='Deselect product' V='製品を選択解除'/>
+         <U N='Copy order with products' V='注文と製品をコピー'/>
+         <U N='Copy product with items' V='のアイテムと製品をコピー'/>
+         <U N='Add new order' V='新規注文を追加'/>
+         <U N='Add new product' V='新規製品を追加'/>
+         <U N='Check Used' V='使用済みを選択'/>
+         <U N='Uncheck Used' V='使用済みを選択解除'/>
+      </Change>
+      <Change Row='Filter' Col='O' N='Filter by product name' V='製品名でフィルター'/>
+      <Change Row='Filter' Col='OFilterMenu,AFilterMenu,UFilterMenu,LFilterMenu,RFilterMenu,SFilterMenu,PFilterMenu' Orders='注文' Products='製品' />
+      <Replace Row='Filter' Col='K' N='All kinds' V='すべての種類'/>
+      <Set Row='Filter' MenuName='フィルター'/>
+      <Set Row='MenuName' O='製品/注文名' U='単価' L='定価'/>
+      <Set Row='SearchNames' O='製品名,製品,注文名,注文'/>
+   </TextJP>
+   <Media>
+      <M Language='JP'>
+         <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>%6 からの最初のサンプル印刷ページ %3&lt;/center>" PrintPagePostfix="&lt;center class='%9' style='width:%7px'>%4 から水平方向にページ %1、%5 から垂直方向にページ %2&lt;/center>"/>
+         <Cols>
+            <C Name='P' Format='*cur*$*spn*,0.00;[red],-*ncur*$*spn*0.00'/>
+            <C Name='D' Width='125'/>
+            <C Name='K' Width='100'/>
+         </Cols>
+         <Rows>
+            <I id='Fix1' DFormat='yy年M月'/>
+            <I id='Fix3' C='108.3' D='JPY'/>
+         </Rows>
+      </M>
+   </Media>
+
+
+   <!-- Persian -->
+
+   <TextFA>
+      <Set Row='Tabber' All='همه'/>
+      <Replace Row='Tabber' Rows='رديف' shown='نمايش داده' selected='انتخاب شده' added='اضافه شده' deleted='حذف شده' changed='تغيير يافته'/>
+      <Set Kind='Header' Pos="رديف" X="استفاده شده" O="محصول / سفارش" C="مشتري" D="تاريخ" K="نوع" A="تعداد" U="في" L="قيمت" R="تخفيف" S="حمل" I="توضيحات"/>
+      <Replace Kind="Header" Col="P" N="Price in" V="قيمت كل"/>
+      <Set Row='Header' MenuName='سرفصل'/>
+      <Replace Col='O' Order='سفارش' Refund='مرجوعي' Gift='هديه' Product='محصول' N='Special order' V='سفارش خاص'/>
+      <Regex Col='OEdit'>
+         <U N='سفارش' V='Order'/>
+         <U N='مرجوعي' V='Refund'/>
+         <U N='هديه' V='Gift'/>
+         <U N='محصول' V='Product'/>
+         <U N='سفارش خاص' V='Special order'/>
+      </Regex>
+      <Replace Col='CMenu' N='All customers' V='همه مشتريان'/>
+      <Change Col='K' Phone="تلفن" Tablet="تبلت" Camera="دوربين" Laptop="لپ تاپ" Desktop="دسكتاپ" Hardware="سخت افزار" Monitor="نمايشگر" Printer="چاپگر" Television="تلويزيون" Projector="پروژكتور" Console="كنسول" Accessory="لوازم جانبي" Software="نرم افزار" Game="بازي">
+         <U N="-Mobile-" V="-موبايل-"/>
+         <U N="-Computer-" V="-كامپيوتر-"/>
+         <U N="-Display-" V="-نمايشگر-"/>
+         <U N="-Accessories-" V="-لوازم جانبي-"/>
+      </Change>
+      <Replace Col='A' Def='Node' empty='خالي' items='آيتم' item='آيتم'/>
+      <Replace Col='A' Def='Group' N='no order' V='بدون سفارش' orders='orders' order='سفارش'/>
+      <Replace Row='Group' Col='List' N='Group by' V='گروه بر اساس' Customer='مشتري' Date='تاريخ' none='هيچكدام'/>
+      <Replace Row='Group' Col='List' N='Custom grouping' V='گروه بندي خاص'/>
+      <Replace Row='Group' Col='Month' N='all months' V='همه مقادير'
+         January='ژانويه' February='فوريه' March='مارس' April='آوريل' May='مي' June='ژوئن' July='جولاي' August='آگوست' September='سپتامبر' October='اكتبر' November='نوامير' December='دسامبر'/>
+      <Replace Row='Group' Col='Cust'>
+         <U N='all customers' V='همه مشتريان'/>
+         <U N='personal cust.' V='مشتري حقيقي'/>
+         <U N='limited cust.' V='مشتري حقوقي'/>
+         <U N='corporate cust.' V='مشتري شركتي'/>
+      </Replace>
+      <Set Row='Group' MonthLabel='فيلتر سفارشات از' RevLabelRight='درخت معكوس' RevTip="نمايش فرزندان بالاي والد مانند اكسل" WinLabelRight='اسكرول' WinTip='غير فعال سازي اسكرول و فعال سازي اسكرول صفحه&lt;br>در این حالت غیر فعال میشود چون راست به چپ نیازمند راست به چپ شدن کل صفحه میباشد' MenuName='گروه'/>
+      <Replace Row='Search' Col='Expression' N='Enter keywords to search for' V='عبارت جهت جستجو'/>
+      <Replace Row='Search' Col='Defs' orders='سفارش' products='محصولات' N='orders with product' V='سفارشات با محصول'
+         />
+      <Set Row='Search' DefsLabel='جستجو در' CaseLabelRight='حساس به كوچك و بزرگ بودن حروف' TypeLabelRight='سلولها' MenuName='جستجو'/>
+      <Set Row='Fix1' O='مجموع' MenuName='مجموع'/>
+      <Replace Row='Fix1' Col='A' N='no order' V='بدون سفارش' orders='سفارش' order='سفارش'/>
+      <Replace Row='Fix1' Col='U' N='no item' V='بدون آيتم' items='آيتم' item='آيتم'/>
+      <Replace Row='Fix1' Col='C' N='no customer' V='بدون مشتري' customers='مشتري' customer='مشتري'/>
+      <Set Row='Fix2' O='ماليات' MenuName='ماليات'/>
+      <Set Row='Fix3' O='مبلغ فاكتور' MenuName='مبلغ فاكتور' CTip='نرخ برابري ارز معادل 1 دلار.در اين مثال ثابت است و معيار تاريخ 1/1/2019 ميباشد' DTip='نوع ارز را جهت محاسبه لحظه اي قيمت انتخاب نماييد'/>
+      <Replace Row='Fix3' Col='D' Europe='اروپا' America='آمريكا' Asia='آسيا' Oceania='اقيانوسيه' Africa='آفريقا'
+         British='انگلليس' Bulgarian='بلغارستان' Croatian='كرواسي' Czech='چك' Danish='دانمارك' Hungarian='مجارستان' Icelandic='ايسلند' Norwegian='نروژ' Polish='لهستان'  
+         Romanian='روماني' Russian='روسيه' Swedish='سوئد' Swiss='سوييس'
+         Australian='استراليا' Argentine='آرژانتين' Brazilian='برزيل' Canadian='كانادا' Chilean='شيلي' Mexican='مكزيك'
+         Chinese='چين' Emirati='امارات' Indian='هند' Indonesian='اندونزي' Iranian='ايران' Israeli='اسراييل' Japanese='ژاپن' Korean='كره' Kuwaiti='كويت'
+         Malaysian='مالزي' Omani='عمان' Pakistani='پاكستان' Philippine='فيليپين' Qatari='قطر' Singapore='سنگاپور' Taiwan='تايوان' Thai='تايلند' Turkish='تركيه'
+         Dollar='دلار' Euro='يورو' Franc='فرانك' Forint='فورينت' Koruna='كورونا' Krona='كرنا' Krone='كرون' Kuna='كونا' Lev='لو'  Pound='پوند' Rand='رند' Ruble='روبل' Zloty='زلوتي'
+         Baht='بات' Dinar='دينار' Dirham='درهم' Lira='لير' Peso='پزو' Real='رئال' Rial='ريال' Riyal='ريال' Ringgit='رينگيت' Rupee='روپيه' Rupiah='روپيه' Shekel='شكل' Yen='ين' Yuan='يوان' Won='وون'
+         >
+     	   <U N='New Leu' V='لئو جديد'/>
+     	   <U N='New Dollar' V='دلار جديد'/>
+    	   <U N='New Zealand' V='نيوزيلند'/>
+         <U N='US ' V='آمريكا '/>
+         <U N='Hong Kong' V='هنگ كنگ'/>
+         <U N='Saudi Arabian' V='عربستان سعودي'/>
+         <U N='South African' V='آفريقاي جنوبي'/>
+      </Replace>
+      <Replace Row='Toolbar' Col='Formula' orders='سفارش'/>
+      <Set Row='Toolbar' MenuName='نوار ابزار'/>
+      <Replace Col='Menu' order='سفارش' product='محصول' Delete='حذف' Undelete='برگشت از حذف' Select='انتخاب' Copy='كپي' Expand='گسترش' Collapse='بستن'/>
+      <Change Col='Menu'>
+         <U N='Deselect order' V='عدم انتخاب سفارش'/>
+         <U N='Deselect product' V='عدم انتخاب محصول'/>
+         <U N='Copy order with products' V='كپي سفارش با محصول'/>
+         <U N='Copy product with items' V='کپی محصول با اقلام'/>
+         <U N='Add new order' V='سفارش جديد'/>
+         <U N='Add new product' V='محصول جديد'/>
+         <U N='Check Used' V='دست دوم'/>
+         <U N='Uncheck Used' V='دست اول'/>
+      </Change>
+      <Change Row='Filter' Col='O' N='Filter by product name' V='فيلتر نام محصول'/>
+      <Change Row='Filter' Col='OFilterMenu,AFilterMenu,UFilterMenu,LFilterMenu,RFilterMenu,SFilterMenu,PFilterMenu' Orders='سفارش' Products='محصول' />
+      <Replace Row='Filter' Col='K' N='All kinds' V='همه'/>
+      <Set Row='Filter' MenuName='فيلتر'/>
+      <Set Row='MenuName' O='محصول / نام سفارش' U='في' L='قيمت'/>
+      <Set Row='SearchNames' O='نام محصول,محصول,نام سفارش,سفارش'/>
+   </TextFA>
+   <Media>
+      <M Language='FA'>
+         <Cfg PrintPagePostfix="&lt;center style='width:%7px'>صفحه %1 افقي از %4 , صفحه %2 عمودي  از %5&lt;/center>" PrintPagePrefix="&lt;center style='width:%7px'>صفحه %3 از %6&lt;/center>"/>
+         <Cols>
+            <C Name='P' Format=',0.00*cur*$*spn*;[red],-0.00*ncur*$*spn*' Width='120'/>
+         </Cols>
+         <Rows>
+            <I id='Fix3' C='41982' D='IRR'/>
+            <I id='Group' WinCanEdit='0'/>
+         </Rows>
+      </M>
+   </Media>
+
+
+   <!-- Framework for translations, English to English -->
+   <!-- To use it, rename the XX to your language code and add the language code also to the ...Def.xml to Languages Code and translate the texts !...! -->
+   <!-- Optionally extend Media tag (with Language set to your language code) to change sizes of cells and columns if translated text have different widths -->
+
+   <TextXX>
+      <Set Row='Tabber' All='!All!'/>
+      <Replace Row='Tabber' Rows='!Rows!' shown='!shown!' selected='!selected!' added='!added!' deleted='!deleted!' changed='!changed!'/>
+      <Set Kind='Header' Pos="!Pos!" X="!Used!" O="!Product / Order Name!" C="!Customer!" D="!Date!" K="!Kind!" A="!Amount!" U="!Unit Price!" L="!List Price!" R="!Discount!" S="!Shipping!" I="!Information!"/>
+      <Replace Kind="Header" Col="P" N="Price in" V="!Price in!"/>
+      <Set Row='Header' MenuName='!Header!'/>
+      <Change Col='O' Order='!Order!' Refund='!Refund!' Gift='!Gift!' Product='!Product!' N='Special order' V='!Special order!'/>
+      <Change Col='O' N='Additional description' V='!Additional description!'/>
+      <Regex Col='OEdit'>
+         <U N='!Order!' V='Order'/>
+         <U N='!Refund!' V='Refund'/>
+         <U N='!Gift!' V='Gift'/>
+         <U N='!Product!' V='Product'/>
+         <U N='!Special\s+order!' V='Special order'/>
+         <U N='!Additional\s+description!' V='Additional description'/>
+      </Regex>
+      <Replace Col='CMenu' N='All customers' V='!All customers!'/>
+      <Change Col='K' Phone="!Phone!" Tablet="!Tablet!" Camera="!Camera!" Laptop="!Laptop!" Desktop="!Desktop!" Hardware="!Hardware!" Monitor="!Monitor!" Printer="!Printer!" Television="!Television!" Projector="!Projector!" Console="!Console!" Accessory="!Accessory!" Software="!Software!" Game="!Game!">
+         <U N="-Mobile-" V="-!Mobile!-"/>
+         <U N="-Computer-" V="-!Computer!-"/>
+         <U N="-Display-" V="-!Display!-"/>
+         <U N="-Accessories-" V="-!Accessories!-"/>
+      </Change>
+      <Replace Col='A' Def='Node' empty='!empty!' items='!items!' item='!item!'/>
+      <Replace Col='A' Def='Group' N='no order' V='!no order!' orders='orders' order='!order!'/>
+      <Replace Row='Group' Col='List' N='Group by' V='!Group by!' Customer='!Customer!' Date='!Date!' none='!none!'/>
+      <Replace Row='Group' Col='List' N='Custom grouping' V='!Custom grouping!'/>
+      <Replace Row='Group' Col='Month' N='all months' V='!all months!'
+         January='!January!' February='!February!' March='!March!' April='!April!' May='!May!' June='!June!' July='!July!' August='!August!' September='!September!' October='!October!' November='!November!' December='!December!'/>
+      <Replace Row='Group' Col='Cust'>
+         <U N='all customers' V='!all customers!'/>
+         <U N='personal cust.' V='!personal cust.!'/>
+         <U N='limited cust.' V='!limited cust.!'/>
+         <U N='corporate cust.' V='!corporate cust.!'/>
+      </Replace>
+      <Set Row='Group' MonthLabel='!Filter orders from!' RevLabelRight='!Reversed tree!' RevTip="!Show child rows above parents, like in MS Excel!" WinLabelRight='!Window scroll!' WinTip='!Disable grid scrollbars and use page scrollbars!' MenuName='!Group!'/>
+      <Replace Row='Search' Col='Expression' N='Enter keywords to search for' V='!Enter keywords to search for!'/>
+      <Replace Row='Search' Col='Defs' orders='!orders!' products='!products!' N='!orders with product!' V='!orders with product!'
+         TypeTip="!If set: The found cell must fulfill the whole searched expression!&lt;br>!If not set: The cells in found row must fulfill together the whole searched expression!"
+         />
+      <Set Row='Search' DefsLabel='!Search in!' CaseLabelRight='!case sensitive!' TypeLabelRight='!individual cells!' MenuName='!Search!'/>
+      <Set Row='Fix1' O='!Total income!' MenuName='!Total income!'/>
+      <Replace Row='Fix1' Col='A' N='no order' V='!no order!' orders='!orders!' order='!order!'/>
+      <Replace Row='Fix1' Col='U' N='no item' V='!no item!' items='!items!' item='!item!'/>
+      <Replace Row='Fix1' Col='C' N='no customer' V='!no customer!' customers='!customers!' customer='!customer!'/>
+      <Set Row='Fix2' O='!Taxes!' MenuName='!Taxes!'/>
+      <Set Row='Fix3' O='!Profit!' MenuName='!Profit!' CTip='!Exchange rate for 1 USD. In this example is fixed on day 1/1/2019.!' DTip='!Select currency to display the prices in, converted by exchange rate!'/>
+      <Replace Row='Fix3' Col='D' Europe='!Europe!' America='!America!' Asia='!Asia!' Oceania='!Oceania!' Africa='!Africa!'
+         British='!British!' Bulgarian='!Bulgarian!' Croatian='!Croatian!' Czech='!Czech!' Danish='!Danish!' Hungarian='!Hungarian!' Icelandic='!Icelandic!' Norwegian='!Norwegian!' Polish='!Polish!' 
+         Romanian='!Romanian!' Russian='!Russian!' Swedish='!Swedish!' Swiss='!Swiss!'
+         Australian='!Australian!' Argentine='!Argentine!' Brazilian='!Brazilian!' Canadian='!Canadian!' Chilean='!Chilean!' Mexican='!Mexican!'
+         Chinese='!Chinese!' Emirati='!Emirati!' Indian='!Indian!' Indonesian='!Indonesian!' Iranian='!Iranian!' Israeli='!Israeli!' Japanese='!Japanese!' Korean='!Korean!' Kuwaiti='!Kuwaiti!'
+         Malaysian='!Malaysian!' Omani='!Omani!' Pakistani='!Pakistani!' Philippine='!Philippine!' Qatari='!Qatari!' Singapore='!Singapore!' Taiwan='!Taiwan!' Thai='!Thai!' Turkish='!Turkish!'
+         Dollar='!Dollar!' Euro='!Euro!' Franc='!Franc!' Forint='!Forint!' Koruna='!Koruna!' Krona='!Krona!' Krone='!Krone!' Kuna='!Kuna!' Leu='!Leu!' Lev='!Lev!' New='!New!' Pound='!Pound!' Rand='!Rand!' Ruble='!Ruble!' Zloty='!Zloty!'
+         Baht='!Baht!' Dinar='!Dinar!' Dirham='!Dirham!' Lira='!Lira!' Peso='!Peso!' Real='!Real!' Rial='!Rial!' Riyal='!Riyal!' Ringgit='!Ringgit!' Rupee='!Rupee!' Rupiah='!Rupiah!' Shekel='!Shekel!' Yen='!Yen!' Yuan='!Yuan!' Won='!Won!'
+         >
+         <U N='New Zealand' V='!New Zealand!'/>
+         <U N='US ' V='!US !'/>
+         <U N='Hong Kong' V='!Hong Kong!'/>
+         <U N='Saudi Arabian' V='!Saudi Arabian!'/>
+         <U N='South African' V='!South African!'/>
+      </Replace>
+      <Replace Row='Toolbar' Col='Formula' orders='!orders!'/>
+      <Set Row='Toolbar' MenuName='!Toolbar!'/>
+      <Replace Col='Menu' order='!order!' product='!product!' Delete='!Delete!' Undelete='!Undelete!' Select='!Select!' Copy='!Copy!' Expand='!Expand!' Collapse='!Collapse!'/>
+      <Change Col='Menu'>
+         <U N='Deselect order' V='!Deselect order!'/>
+         <U N='Deselect product' V='!Deselect product!'/>
+         <U N='Copy order with products' V='!Copy order with products!'/>
+         <U N='Copy product with items' V='!Copy product with items!'/>
+         <U N='Add new order' V='!Add new order!'/>
+         <U N='Add new product' V='!Add new product!'/>
+         <U N='Check Used' V='!Check Used!'/>
+         <U N='Uncheck Used' V='!Uncheck Used!'/>
+      </Change>
+      <Change Row='Filter' Col='O' N='Filter by product name' V='!Filter by product name!'/>
+      <Change Row='Filter' Col='OFilterMenu,AFilterMenu,UFilterMenu,LFilterMenu,RFilterMenu,SFilterMenu,PFilterMenu' Orders='!Orders!' Products='!Products!' />
+      <Replace Row='Filter' Col='K' N='All kinds' V='!All kinds!'/>
+      <Set Row='Filter' MenuName='!Filter!'/>
+      <Set Row='MenuName' O='!Product / Order Name!' U='!Unit Price!' L='!List Price!'/>
+      <Set Row='SearchNames' O='!Product name,Product,Order name,Order!'/>
+   </TextXX>
+   <Media>
+      <M Language='XX'>
+         <Cfg PrintPagePrefix="!&lt;center class='%9' style='width:%7px'>First example printed page %3 from %6&lt;/center>!" PrintPagePostfix="!&lt;center class='%9' style='width:%7px'>Page %1 horizontally from %4 , page %2 vertically from %5&lt;/center>!"/>
+         <Cols>
+            <C Name='P' Format='!,0.00*cur*$*spn*!;![red],-0.00*ncur*$*spn*!'/>
+         </Cols>
+         <Rows>
+            <I id='Fix3' C='1' D='USD'/> <!-- Replace USD by usual currency for given language -->
+         </Rows>
+      </M>
+   </Media>
+</Grid>

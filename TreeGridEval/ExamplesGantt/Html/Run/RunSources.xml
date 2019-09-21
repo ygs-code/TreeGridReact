@@ -1,0 +1,41 @@
+<Grid>
+   <Cfg id="RunSources" SuppressCfg="1" SuppressMessage="1" NoVScroll="1" StyleDependencyModifier="0"/>
+   <Panel Visible="0"/>
+   <Toolbar Visible="0"/>
+   <Cfg Language='EN'/>
+   <Def>
+      <D Name="R" CanFocus="0"/>
+   </Def>
+   <Cols>
+      <!-- Sources column -->
+      <C Name="S" Type="Gantt"
+         GanttLeft="1" GanttRight="1"
+         GanttRunStart="1/1/2000" GanttWidth="12.5"
+         GanttUnits="d" GanttDataUnits="d" GanttEdit="All"
+         GanttRunMove="copy,all" GanttRunResize=""
+         />
+   </Cols>
+   <Header SType="Html" S="Drag boxes&lt;br> to the grid" SAlign="center"/>
+   <Body>
+      <B>
+         <I/>
+         <I SGanttRun="6,Box,Box"/>
+         <I SGanttRun="6,Box,Box 1,Fuchsia"/>
+         <I SGanttRun="6,Box,Box 2,Aqua"/>
+         <I SGanttRun="6,Box,Box 3,Lime"/>
+         <I SGanttRun="6,Box,Box 4,Orange"/>
+         <I SGanttRun="6,Solid,Solid box"/>
+         <I SGanttRun="6,Solid,Solid box 1,Gray"/>
+         <I SGanttRun="6,Solid,Solid box 2,Black"/>
+         <I SGanttRun="6,Left,Fixed left"/>
+         <I SGanttRun="6,Right,Fixed right"/>
+         <I SGanttRun="6,Fixed,Fixed box"/>
+         <I/>
+      </B>
+   </Body>
+
+   <!-- Translations of example control texts to other languages -->
+   <Languages>
+      <L Code='-EN' Layout_Url='RunSourcesLang.xml'/>
+   </Languages>
+</Grid>

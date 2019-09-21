@@ -1,0 +1,700 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Type Button</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Action button - Button</h1>
+<p>TreeGrid documentation</p>
+
+<!-----------------------------------------------------------------------  Introduction ------------------------------------------------->
+<a name=""></a>
+<h2>Introduction</h2>
+
+Button type can display various action button types:<br />
+<table>
+<tr><td style="width:200px"><b><a href="TypeButton.htm#Button">clickable button</a></b></td><td>Clickable button, after click there is called predefined action.</td></tr>
+<tr><td><b><a href="TypeButton.htm#Switch">switch button</a></b></td><td>Button with two states on / off. After click it switches to the other state and is called predefined action.</td></tr>
+<tr><td><b><a href="TypeButton.htm#Radio">radio / tab button</a></b></td><td>Group of switch buttons - after click to one button in group the other buttons are automatically switched off.</td></tr>
+<tr><td><b><a href="TypeButton.htm#Menu">menu button</a></b></td><td>After click to button is displayed popup menu and user selects one action from the list.</td></tr>
+<tr><td><b><a href="TypeButton.htm#ComboSwitch">combo switch button</a></b></td><td>A user selects button state from its popup menu, for the selected state is called assigned action.</td></tr>
+<tr><td><b><a href="TypeButton.htm#ComboRadio">combo radio / tab button</a></b></td><td>A group of combo switch buttons, after change some button state, the other buttons are reset to its predefined empty value.</td></tr>
+</table><br />
+
+<i>Button type is intended to use especially in Space rows as control or tool buttons or tabs.</i><br />
+<i>In normal non space rows is often better to use Panel type to show one or more clickable buttons in one cell.</i><br />
+
+<!----------------------------------------------------------------------- Basic clickable action button ------------------------------------------------->
+<a name="Button"></a>
+<h2>Basic clickable action button</h2>
+
+<!-- Type -->
+<a name="CType"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"] <tt>Type = "Button"</tt></s>
+</div>
+To define Button type, set column or cell attribute Type to "<b>Button</b>".<br />
+The <b>Button</b> Type is default type in <a href="TypeButton.htm#KButton">Toolbar</a> and <a href="TypeButton.htm#KTabber">Tabber</a> rows.<br />
+
+<!-- value -->
+<a name="Cellvalue"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;cell></b> <i>string</i>
+   <h4>value</h4> <s></s>
+</div>
+Button content / text, can be:<br />
+<table>
+<tr><td style="width:50px"><b>0</b> or ""</td><td>The content will be read from <a href="TypeButton.htm#CButtonText">ButtonText</a>. To display "0" use value as "0 "</td></tr>
+<tr><td><b>1</b></td><td>The content will be read from <a href="TypeButton.htm#CButtonTextChecked">ButtonTextChecked</a> or if not set, from <a href="TypeButton.htm#CButtonText">ButtonText</a>. To display "1" use value as "1 "</td></tr>
+<tr><td><b>string</b></td><td>HTML code for <a href="TypeButton.htm#Button">Button</a> type <b>Html</b>.</td></tr>
+<tr><td></td><td>HTML caption for TreeGrid <a href="TypeButton.htm#Button">Button</a> type <b>Button</b>, if set <tt><a href="TypeButton.htm#CfgUseButton">UseButton</a> = 0</tt>.</td></tr>
+<tr><td></td><td>&lt;BUTTON> caption for <a href="TypeButton.htm#Button">Button</a> type <b>Button</b>, if set <tt><a href="TypeButton.htm#CfgUseButton">UseButton</a> = 1</tt>.</td></tr>
+<tr><td></td><td>HTML code for <a href="TypeButton.htm#Button">Button</a> type <b>Class</b>, <strong>used</strong> only if set <a href="TypeButton.htm#CfgShowButtons">ShowButtons</a>!</td></tr>
+</table>
+
+<!-- Button -->
+<a name="CButton"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>11.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Button</h4> <s>["Html" / "Tab"]</s>
+</div>
+Type of button display. Default is "Html" except for <a href="TypeButton.htm#KTabber">Tabber</a> row that is "Tab".<br />
+<table>
+<tr><td style="width:70px;"><b>Button</b></td><td>Shows TreeGrid styled button with HTML text and / or side icon if set <tt><a href="TypeButton.htm#CfgUseButton">UseButton</a> = 0</tt>.</td></tr>
+<tr><td></td><td>Or shows HTML &lt;BUTTON> tag with HTML text if set <tt><a href="TypeButton.htm#CfgUseButton">UseButton</a> = 1</tt>.</td></tr>
+
+<tr><td><b>Html</b></td><td>Shows HTML text displayed as is and / or side icon.</td></tr>
+<tr><td></td><td>It can be also &lt;button>, &lt;img>, &lt;a> tag or any other HTML code.</td></tr>
+<tr><td></td><td>It can contain also any predefined JavaScript onclick code.</td></tr>
+
+<tr><td><b>Class</b></td><td><i>(new 11.0)</i> Similar to <b>Html</b>, but the button icon is usually shown by CSS class.</td></tr>
+<tr><td></td><td>To the button div tag is assigned CSS class TxToolXXX, where Tx is the style prefix like TS for Standard style and XXX is the cell (column) name or <a href="#CButtonClass">ButtonClass</a> .</td></tr>
+<tr><td></td><td>If set <a href="TypeButton.htm#CIconAlign">IconAlign</a>, to the button div tag is added also CSS class TxToolXXXAAA, where AAA is the IconAlign value like "Top" or "Right".</td></tr>
+
+<tr><td><b>Tab</b></td><td>Similar to <b>Html</b>, but with different look - visually separated tab page. Can be used only on Space row.</td></tr>
+
+<tr><td><b>TabSep</b></td><td>No button, tab separator only. Set the space cell <b>Width</b> attribute to the separator size <i>(since 7.0)</i>.</td></tr>
+<tr><td></td><td>If the TabSep cell has not set its Width, it has automatically set <tt><b>RelWidth</b>='1'</tt> and aligns the next cells right side.</td></tr>
+</table>
+
+<!-- ButtonWidth -->
+<a name="CButtonWidth"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>int</i>
+   <h4>ButtonWidth</h4> <s>[-1]</s>
+</div>
+Width of &lt; BUTTON > tag for <tt><a href="TypeButton.htm#CButton">Button</a>="Button"</tt>, in pixels. Set -1 for auto width according to the content.<br />
+
+<!-- Icon -->
+<a name="CIcon"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Icon</h4> <s></s>
+</div>
+Icon file to show the icon inside the button on given side.<br />
+It can be also standard left / right side icon, see <a href="CellSideButton.htm#Icon">Left side icon</a>.<br />
+It is used only for <tt><a href="TypeButton.htm#CButton">Button</a>="<b>Html</b>"</tt>, "<b>Tab</b>", "<b>Class</b>" and <tt><a href="TypeButton.htm#CButton">Button</a>="<b>Button</b>"</tt> if set <tt><a href="TypeButton.htm#CfgUseButton">UseButton</a> = 0</tt>.<br />
+
+<!-- IconAlign -->
+<a name="CIconAlign"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>11.0</b></i></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>IconAlign</h4> <s>["Left"]</s>
+</div>
+Position of the button side <a href="TypeButton.htm#CIcon">Icon</a>. By default the <a href="TypeButton.htm#CIcon">Icon</a> is placed left side of the button text.<br />
+Supported values are "<b>Left</b>", "<b>Right</b>" and <i>since 11.0</i> also  "<b>Top</b>", "<b>Bottom</b>".<br />
+It is used also for <a href="TypeButton.htm#CButton">Button</a>="<b>Class</b>" to more specify the CSS class, usually also for the icon side.<br />
+It can be overwritten globally by <a href="TypeButton.htm#CfgShowButtons">ShowButtons</a> value, <i>set <tt>&lt;Cfg <a href="TypeButton.htm#CfgShowButtons">ShowButtons</a>='3'/></tt> to use <b>IconAlign</b> for all <a href="TypeButton.htm#CButton">Button</a> values.</i>
+
+<!-- IconWidth -->
+<a name="CIconWidth"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>IconWidth</h4> <s>[20]</s>
+</div>
+Width in pixels of the <a href="TypeButton.htm#CIcon">Icon</a>. Used only for <tt><a href="TypeButton.htm#CIconAlign">IconAlign</a>="Left"</tt> or "Right"<br />
+The icon should <u>not</u> be wider than the IconWidth, otherwise it is overwritten by the cell text.<br />
+The IconWidth can be also set to <b>0</b> to use the Icon as background image of the cell.<br />
+
+<!-- ShowButtons -->
+<a name="CfgShowButtons"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ShowButtons</h4> <s>[0]  Saved to cookies; to not load it, set <tt><b>ShowButtonLap</b>='1'</tt></s>
+</div>
+What will be shown in buttons with both text and side icon. Affects also <tt><a href="TypeButton.htm#CButton">Button</a>="<b>Class</b>"</tt>.<br />
+To cookies are saved only values <b>1</b>, <b>2</b> and <b>3</b>. Changing the value via configuration menu refreshes only Space rows.<br />
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>For backward compatibility, for <tt><a href="TypeButton.htm#CButton">Button</a>="<b>Html</b>"</tt> and <tt><a href="TypeButton.htm#CButton">Button</a>="<b>Tab</b>"</tt> shows both, but for <tt><a href="TypeButton.htm#CButton">Button</a>="<b>Class</b>"</tt> shows only the icon (=class).</td></tr>
+<tr><td><b>1</b></td><td>Shows only icons</td></tr>
+<tr><td><b>2</b></td><td>Shows only texts</td></tr>
+<tr><td><b>3</b></td><td>Shows both text and icons</td></tr>
+<tr><td><b>4</b></td><td>Shows both text and icons, icon always on left</td></tr>
+<tr><td><b>5</b></td><td>Shows both text and icons, icon always on right</td></tr>
+<tr><td><b>6</b></td><td>Shows both text and icons, icon always on top</td></tr>
+<tr><td><b>7</b></td><td>Shows both text and icons, icon always on bottom</td></tr>
+</table >
+
+<!-- Height -->
+<a name="SpaceCellHeight"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Space cell></b> <i>int</i>
+   <h4>Height</h4> <s></s>
+</div>
+Height of the cell in pixels.<br />
+Set it when the <a href="TypeButton.htm#CIcon">Icon</a> in Space cell is not visible whole.<br />
+
+<!-- Disabled -->
+<a name="CDisabled"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>Disabled</h4> <s>[0]</s>
+</div>
+If the button is disabled.<br />
+Disabled button is inactive and is displayed with 30% opacity.<br />
+Disabled button does <u>not</u> call <a href="TypeButton.htm#OnClickButton">OnClickButton</a> event, but still calls <a href="TypeButton.htm#OnClick">OnClick</a> event.<br />
+
+<!-- Underline -->
+<a name="CUnderline"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Underline</h4> <s></s>
+</div>
+Line in given color shown under the button. It can be any CSS color.<br />
+
+<!-- UnderlineStyle -->
+<a name="CUnderlineStyle"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>UnderlineStyle</h4> <s></s>
+</div>
+Style of the Underline line. If not set, it is 4px solid.<br />
+0 - none, 1 - 1px solid, 2 - 2px solid, 3 - 3px solid, 4 - 1px dotted, 5 - 2px dotted, 6 - 1px dashed, 7 - 2px dashed.<br />
+
+<!-- ButtonClass -->
+<a name="CButtonClass"></a>
+<div class="XML">
+   <u>new <b>12.0</b> <i>upd <b>13.1</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>ButtonClass</h4> <s></s>
+</div>
+CSS class name part to be used instead of the column name for <a href="CButton">Button</a>="Class".<br />
+Useful to display different icon based on some value, because the ButtonClass can be calculated by Formula.<br />
+<i>Since 13.1</i> it can contain more class name parts separated by comma (not by space).<br />
+
+<!-- OnClickButton -->
+<a name="OnClickButton"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;XML event></b> <i>void</i>
+   <h4>OnClickButton</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>TRow</i> <b>Row</b>, <i>string</i> <b>Col</b>, <i>TEvent</i> <b>Event</b>)</s>
+</div>
+Standard column, row, cell or Actions attribute containing JavaScript code.<br />
+It is called on click to the cell of <tt>Type="Button"</tt>.<br />
+<i>It is standard TreeGrid mouse event, here is just mentioned to not forget its possibility when handling Button clicks.</i><br />
+Example: <tt>&lt;I Col1OnClickButton='alert("clicked column "+Col);'/></tt><br />
+<i>The difference between OnClick and OnClickButton is that OnClickButton is not called for disabled button, but OnClick is called always.</i><br />
+
+<!-- OnClick -->
+<a name="OnClick"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;XML event></b> <i>void</i>
+   <h4>OnClick</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>TRow</i> <b>Row</b>, <i>string</i> <b>Col</b>, <i>TEvent</i> <b>Event</b>)</s>
+</div>
+Standard column, row, cell or Actions attribute containing JavaScript code.<br />
+It is called on click to the cell.<br />
+<i>It is standard TreeGrid mouse event, here is just mentioned to not forget its possibility when handling Button clicks.</i><br />
+Example: <tt>&lt;I Col1OnClick='alert("clicked column "+Col);'/></tt><br />
+<i>The difference between OnClick and OnClickButton is that OnClickButton is not called for disabled button, but OnClick is called always.</i><br />
+
+<!-- Action Button -->
+<a name="ActionsButton"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>Button <i>...F</i></h4>
+   <s>Attached to event <b>OnClickButton</b></s>
+</div>
+Provides action for the button<br />
+
+<!-- ButtonClick -->
+<a name="ButtonClick"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API method</b> <i>void</i>
+   <h4>ButtonClick</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Simulates click to the given button, similarly to action Button.<br />
+
+<!-- ReloadData -->
+<a name="CReloadData"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>ReloadData</h4> <s></s>
+</div>
+Url or data to reload body from here when button is clicked.<br />
+It can be direct XML (starting with &lt;) or tag id of existing tag (input) to use its value or URL.<br />
+It replaces Data_Url / Data_Tag / Data_Data and reloads body of TreeGrid.<br />
+The data must contain only &lt;Body> tag and not layout definition.<br />
+<i>If defined <a href="TypeButton.htm#CList">List</a>, it contains first character separated list of the data to reload on the specific item click.</i><br />
+
+<!-- UseButton -->
+<a name="CfgUseButton"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>UseButton</h4> <s>[0]</s>
+</div>
+How the TreeGrid buttons are rendered.<br />
+Bit array: <b>1</b>.bit for type Button with <tt><a href="TypeButton.htm#CButton">Button</a>="Button"</tt>, <b>2</b>. bit for right side button with <tt><a href="TypeButton.htm#CButton">Button</a>="Button"</tt>, <b>3</b>. bit for type Panel <a href="TypePanel.htm#CButtons">custom button</a>.<br />
+<b>0</b> - It renders the buttons as TreeGrid styled button done by &lt;u> tag.<br />
+<b>1</b> - It renders the buttons as HTML &lt;button> tag. Set <tt>UseButton='<b>7</b>'</tt> for all three type buttons. <i>Default behavior before version 11.0.</i><br />
+
+<!-- Action ButtonDown -->
+<a name="ActionsButtonDown"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ButtonDown</h4>
+   <s>Attached to event <b>OnMouseDownButton</b></s>
+</div>
+Simulates visual effect of clicking button with <tt><a href="TypeButton.htm#CButton">Button</a>="Button"</tt> and <tt><a href="TypeButton.htm#CfgUseButton">UseButton</a>='0'</tt>. Returns always 0.<br />
+
+<!-- Action ButtonUp -->
+<a name="ActionsButtonUp"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ButtonUp</h4>
+   <s>Attached to event <b>OnMouseUpButton</b></s>
+</div>
+Clears visual effect set by ButtonDown. Returns always 0.<br />
+
+<!----------------------------------------------------------------------- Switch on / off button ------------------------------------------------->
+<a name="Switch"></a>
+<h2>Switch on / off button</h2>
+
+<!-- Switch -->
+<a name="CSwitch"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>Switch</h4> <s>[0]</s>
+</div>
+If set, the button will have two states 0 / 1 and can be switched by click.<br />
+
+<!-- value -->
+<a name="CellvalueSwitch"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;cell></b> <i>bool</i>
+   <h4>value</h4> <s>[0]</s>
+</div>
+Button value is <b>0</b> or "" as <u>off</u> and <b>1</b> as <u>on</u><br />
+
+<!-- ButtonText -->
+<a name="CButtonText"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>ButtonText</h4> <s></s>
+</div>
+HTML code for <a href="TypeButton.htm#CButton">Button</a> type <b>Html</b>.<br />
+&lt;;BUTTON> caption for <a href="TypeButton.htm#CButton">Button</a> type <b>Button</b>.<br />
+
+<!-- ButtonTextChecked -->
+<a name="CButtonTextChecked"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>ButtonTextChecked</h4> <s></s>
+</div>
+If set, it replaces <a href="TypeButton.htm#CButtonText">ButtonText</a> for checked <b>Switch</b> button (button with value > 0)<br />
+
+<!-- Icon -->
+<a name="CIconSwitch"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Icon</h4> <s></s>
+</div>
+Standard left / right side button, see <a href="CellSideButton.htm#Icon">Left side icon</a>.<br />
+
+<!-- IconChecked -->
+<a name="CIconChecked"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>IconChecked</h4> <s></s>
+</div>
+If set, it replaces <a href="TypeButton.htm#CIcon">Icon</a> for checked Switch button (button with value > 0)<br />
+
+<!-- Formula -->
+<a name="CFormula"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Formula</h4> <s></s>
+</div>
+<i>Standard Formula attribute for Calculated row, here is stated just not forget its advantage for <a href="TypeButton.htm#CSwitch">Switch</a> buttons.</i><br />
+The <a href="TypeButton.htm#CSwitch">Switch</a> button can have set its Formula to calculate its state.<br />
+The formula must return 0 or 1 as button state.<br />
+
+<!-- OnChange -->
+<a name="OnChange"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;XML event></b> <i>void</i>
+   <h4>OnChange</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>TRow</i> <b>Row</b>, <i>string</i> <b>Col</b>, <i>TEvent</i> <b>Event</b>)</s>
+</div>
+Standard column, row, cell or Actions attribute containing JavaScript code.<br />
+It is called when the <a href="TypeButton.htm#CSwitch">Switch</a> or <a href="TypeButton.htm#CRadio">Radio</a> Button value is changed. For <a href="TypeButton.htm#CRadio">Radio</a> is called also for automatically unchecked buttons.<br />
+Attach the action or any JavaScript code to the cell to be run on cell value change, like <tt>&lt;I ... Col1OnChange='alert("changed!")' ... /></tt><br />
+The new state can be got by <tt>Get(Row,Col)</tt>.<br />
+
+<!-- OnCheck -->
+<a name="OnCheck"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;XML event></b> <i>void</i>
+   <h4>OnCheck</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>TRow</i> <b>Row</b>, <i>string</i> <b>Col</b>, <i>TEvent</i> <b>Event</b>)</s>
+</div>
+Special column, row, cell or Actions attribute containing JavaScript code.<br />
+It is called when the <a href="TypeButton.htm#CSwitch">Switch</a> or <a href="TypeButton.htm#CRadio">Radio</a> Button value is checked.<br />
+Example: <tt>&lt;I Col1OnCheck='alert("checked cell "+Col);'/></tt><br />
+
+<!-- OnUncheck -->
+<a name="OnUncheck"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;XML event></b> <i>void</i>
+   <h4>OnUncheck</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>TRow</i> <b>Row</b>, <i>string</i> <b>Col</b>, <i>TEvent</i> <b>Event</b>)</s>
+</div>
+Special column, row, cell or Actions attribute containing JavaScript code.<br />
+It is called when the <a href="TypeButton.htm#CSwitch">Switch</a> or <a href="TypeButton.htm#CRadio">Radio</a> Button value is unchecked. For <a href="TypeButton.htm#CRadio">Radio</a> is not called for automatically unchecked buttons.<br />
+Example: <tt>&lt;I Col1OnCheck='alert("unchecked cell "+Col);'/></tt><br />
+
+<!----------------------------------------------------------------------- Radio / tab button ------------------------------------------------->
+<a name="Radio"></a>
+<h2>Radio / tab button</h2>
+
+A group of <a href="TypeButton.htm#CSwitch">Switch buttons</a>, a user switches among them - chooses only one.<br />
+It is possible also to add, delete, move or copy the tabs / radios if permitted by appropriate attributes.<br />
+<i><b>All other attributes are the same as in <a href="TypeButton.htm#CSwitch">Switch button</a>, except the <a href="TypeButton.htm#CSwitch">Switch</a> attribute itself.</b></i><br />
+
+<!-- Radio -->
+<a name="CRadio"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>Radio</h4> <s>[0]</s>
+</div>
+If set, all the Button cells (in the same <u>row</u>) with the same <b>Radio</b> value will be in one radio group.<br />
+It is an index of radio group of Button cells in row.<br />
+Only one cell in the group of cells (with the same <b>Radio</b>) can be checked.<br />
+When a user checks some Radio button, the previously checked button in the group is automatically unchecked.<br />
+
+<!-- Uncheck -->
+<a name="CUncheck"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>Uncheck</h4> <s>[0/1]</s>
+</div>
+If all the buttons with the same <a href="TypeButton.htm#CRadio">Radio</a> can be empty - a user can uncheck the checked button.<br />
+
+<!-- DragTab -->
+<a name="IDragTab"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;I></b> <i>string[]</i>
+   <h4>DragTab</h4> <s></s>
+</div>
+Defines section, where the buttons can be dragged (moved and copied). By default the buttons cannot be dragged.<br />
+Comma separated of pairs of cell names as outside bounds where the inside buttons can be moved. If the item is empty, it is the last left or right bound.<br />
+<i>For example &lt;I Cells='A,B,C,D,E,F,G,H,I,J,K,L' DragTab=',D,F,K'/> - The buttons A,B,C can be moved among themselves (inside left and D) and buttons G,H,I,J can be moved among themselves (inside F and K).</i><br />
+
+<!-- CanMove -->
+<a name="CCanMove"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>CanMove</h4> <s>[1]</s>
+</div>
+If the button can be moved according to the <a href="#IDragTab">DragTab</a> settings.<br />
+
+<!-- CanCopy -->
+<a name="CCanCopy"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>CanCopy</h4> <s>[0]</s>
+</div>
+If the button can be copied according to the <a href="#IDragTab">DragTab</a> settings.<br />
+If set to <b>2</b>, the button copy gets <a href="#CCanDelete">CanDelete</a>='1'.<br />
+
+<!-- CanDelete -->
+<a name="CCanDelete"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>CanDelete</h4> <s>[0]</s>
+</div>
+If the button can be deleted.<br />
+If set to <b>2</b>, it shows also close icon in top right corner.<br />
+
+<!-- CanEdit -->
+<a name="CCanEdit"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>CanEdit</h4> <s>[0]</s>
+</div>
+If the button ButtonText can be edited.<br />
+
+<!-- OnTabDrop -->
+<a name="OnTabDrop"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>type</i>
+   <h4>OnTabDrop</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>tocol</b>, <i>bool</i> <b>copy</b>)</s>
+</div>
+Called before the button is dropped left to the <b>tocol</b>. <b>tocol</b> is empty string to drop as the last cell.<br />
+<b>copy</b> is set if the button will be copied instead of moved.<br />
+Return true to not drop it. Return new <b>tocol</b> to drop it somewhere else. Return null for default behavior.<br />
+
+<!-- OnTabDelete -->
+<a name="OnTabDelete"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnTabDelete</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Called before the button is deleted, return true to not delete it.<br />
+
+<!-- Action TabMove -->
+<a name="ActionsTabMove"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>TabMove</h4>
+   <s>Attached to event <b>OnDragButton</b>, can be attached only to OnDrag... events</s>
+</div>
+Starts dragging the button by mouse.<br />
+
+<!-- Action TabCopy -->
+<a name="ActionsTabCopy"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>TabCopy</h4>
+   <s>Attached to event <b>OnRightDragButton</b>, can be attached only to OnDrag... events</s>
+</div>
+Starts dragging the button by mouse, the button will be copied.<br />
+
+<!-- Action DeleteTab -->
+<a name="ActionsDeleteTab"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteTab</h4>
+   <s>Attached to event <b>OnDblClickButton</b></s>
+</div>
+Deletes the button.<br />
+
+
+<!----------------------------------------------------------------------- Menu button ------------------------------------------------->
+<a name="Menu"></a>
+<h2>Menu button</h2>
+
+On click to button is displayed popup menu and user uses one action to be done.<br />
+Default icon setting is <tt><b>Icon="Popup" IconAlign="Right"</b></tt>. You can hide the icon by setting <tt><a href="TypeButton.htm#CIcon">Icon</a>=""</tt><br />
+
+<!-- List -->
+<a name="CList"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>List</h4> <s></s>
+</div>
+A first character separated list of values to select to the button value. A user can choose one value from combo.<br /><br />
+
+Or it can be in standard <a href="Menu.htm">TreeGrid menu</a>  format as complex menu with <b>sub levels</b>, <b>sub menus</b>, <b>columns</b> and so on.<br />
+The individual menu items can have set attributes <b>Icon</b>, <b>Action</b> and <b>ReloadData</b> to be used instead of <a href="TypeButton.htm#CIcons">Icons</a> / <a href="TypeButton.htm#CActions">Actions</a> / <a href="TypeButton.htm#CReloadData">ReloadData</a> lists.<br /> 
+
+<!-- Icons -->
+<a name="CIcons"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>Icons</h4> <s></s>
+</div>
+A first character separated list of icons displayed for individual menu items in <a href="TypeButton.htm#CList">List</a>.<br />
+For combo button is the chosen menu item icon also set to the button <a href="TypeButton.htm#CIcon">Icon</a> attribute.<br />
+
+<!-- IconHeight -->
+<a name="CIconHeight"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>IconHeight</h4> <s></s>
+</div>
+Height in pixels of the icons in Icons.<br />
+
+<!-- Actions -->
+<a name="CActions"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>Actions</h4>
+   <s></s>
+</div>
+A first character separated list of <a href="TypeButton.htm#OnClick">OnClick</a> actions called after specific item in menu <a href="TypeButton.htm#CList">List</a> is clicked.<br />
+The action can contain any JavaScript or TreeGrid action like standard XML event, see <a href="TypeButton.htm#OnClick">OnClick</a>.<br />
+
+<!-- ReloadData -->
+<a name="CReloadDataPopup"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>ReloadData</h4> <s></s>
+</div>
+A first character separated list of <a href="TypeButton.htm#CReloadData">ReloadData</a> urls.<br />
+
+<!-- OnButtonListClick -->
+<a name="OnButtonListClick"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnButtonListClick</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>item</b>, <i>int</i> <b>index</b>)</s>
+</div>
+Called after some event in Button <a href="TypeButton.htm#CList">List</a> menu is clicked.
+item is item name from <a href="TypeButton.htm#CList">List</a>, index is item position in <a href="TypeButton.htm#CList">List</a> or menu item Value if set.
+
+<!-- OnGetButtonList -->
+<a name="OnGetButtonList"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetButtonList</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>list</b>)</s>
+</div>
+Called before displaying menu <a href="TypeButton.htm#CList">List</a> to get the list dynamically.<br />
+Returns original or modified button list.<br />
+Or return <b>null</b> to not show the list.<br />
+
+<!-- OnShowButtonList -->
+<a name="OnShowButtonList"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnShowButtonList</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>TMenu</i> <b>Menu</b>, <i>TPosition</i> <b>Pos</b>)</s>
+</div>
+Called before displaying menu <a href="TypeButton.htm#CList">List</a> to update the menu dynamically.<br />
+It can be used to do any modification in Menu, for example to sort or change position in Menu.Items array. See <a href="Menu.htm">Menu</a> documentation.<br />
+
+<!----------------------------------------------------------------------- Combo switch button ------------------------------------------------->
+<a name="ComboSwitch"></a>
+<h2>Combo switch button</h2>
+
+If you set both <a href="TypeButton.htm#CSwitch">Switch</a> and <a href="TypeButton.htm#CList">List</a>, the button behaves as combo box - a user chooses one button value from the popup menu.<br />
+
+<i><b>All other attributes are the same as in <a href="TypeButton.htm#Menu">Popup menu button</a>.</b></i><br />
+
+<!-- Switch -->
+<a name="CSwitchCombo"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>Switch</h4> <s>[0]</s>
+</div>
+If set, the button will get the value chosen in <a href="TypeButton.htm#CList">List</a>.<br />
+
+<!-- value -->
+<a name="CellValueCombo"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;cell></b> <i>string</i>
+   <h4>value</h4> <s></s>
+</div>
+Initial Button value or value chosen from <a href="TypeButton.htm#CList">List</a>.<br />
+
+<!-- Formula -->
+<a name="CFormulaCombo"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Formula</h4> <s></s>
+</div>
+<i>Standard Formula attribute for Calculated row, here is stated just not forget its advantage for <a href="TypeButton.htm#CSwitch">Switch</a> buttons.</i><br />
+The <b>Switch</b> button can have set its Formula to calculate its state.<br />
+The formula must return the button text to display.<br />
+
+<!-- OnChange -->
+<a name="OnChangeCombo"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;XML event></b> <i>void</i>
+   <h4>OnChange</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>TRow</i> <b>Row</b>, <i>string</i> <b>Col</b>, <i>TEvent</i> <b>Event</b>)</s>
+</div>
+Standard column, row, cell or Actions attribute containing JavaScript code.<br />
+It is called when the <a href="TypeButton.htm#CSwitch">Switch</a> or <a href="TypeButton.htm#CRadio">Radio</a> Button value is changed. For <a href="TypeButton.htm#CRadio">Radio</a> is called also for automatically unchecked buttons.<br />
+Attach the action or any JavaScript code to the cell to be run on cell value change, like <tt>&lt;I ... Col1OnChange='alert("changed!")' ... /></tt><br />
+The new state can be got by <tt>Get(Row,Col)</tt>.<br />
+
+<!----------------------------------------------------------------------- Combo radio / tab button ------------------------------------------------->
+<a name="ComboRadio"></a>
+<h2>Combo radio / tab button</h2>
+
+If you set both <a href="TypeButton.htm#CRadio">Radio</a> and <a href="TypeButton.htm#CList">List</a>, the button behaves as radio combo box - a user chooses one button value from the popup menu.<br />
+A group of <a href="#CSwitch">Switch buttons</a>, a user switches among them - chooses only one.<br />
+In the group can be combined the combo and normal Switch buttons.<br /><br />
+
+<i><b>All other attributes are the same as in <a href="TypeButton.htm#ComboSwitch">Combo switch button</a> and <a href="TypeButton.htm#Radio">Radio tab button</a>, except the <a href="TypeButton.htm#CSwitch">Switch</a> attribute itself.</b></i><br />
+
+<!-- EmptyValue -->
+<a name="CEmptyValue"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EmptyValue</h4> <s></s>
+</div>
+The value set to the button text when the button is automatically unchecked, because of checking another button in the radio group.<br />
+<i>Remember, its functionality differs from EmptyValue attribute for other cell types.</i><br />
+
+<!-- EmptyIcon -->
+<a name="CEmptyIcon"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>EmptyIcon</h4> <s></s>
+</div>
+The icon set to the button Icon attribute when the button is automatically unchecked, because of checking another button in the radio group.<br />
+
+<!-- PopupIcon -->
+<a name="CPopupIcon"></a>
+<div class="XML">
+   <u>new <b>7.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>PopupIcon</h4> <s>[1]</s>
+</div>
+If the right side popup icon will be displayed.<br />
+<b>0</b> - never, <b>1</b> - only for EmptyValue, <b>2</b> - always. 
+<b>3</b> - <i>new 12.0</i> always and show the menu only on click to the icon, not to the button itself. <br />
+
+<!----------------------------------------------------------------------- Special Space rows with buttons ------------------------------------------------->
+<a name="Special"></a>
+<h2>Special Space rows with buttons</h2>
+
+<!-- Kind -->
+<a name="KButton"></a>
+<div class="XML">
+   <u>chg <b>6.0</b> <i>upd <b>11.0</b></i></u> <b>&lt;I></b> <i>string</i>
+   <h4>Kind</h4> <s><tt>Kind="<b>Toolbar</b>"</tt> (also <b>Toolbar1</b>, <b>Toolbar2</b> and <b>Toolbar3</b>)</s>
+</div>
+Special Space row to use especially with <b>Button</b> type cells.<br />
+It has predefined some different default settings:<br />
+<tt><b>Space</b>="<b>4</b>" <b>NoUpload</b>="<b>1</b>"</tt><br />
+<i>cell</i><b>Type</b>="<b>Button</b>"<br />
+<i>(since 7.0)</i> The <b>Toolbar1</b> and <b>Toolbar2</b> kinds can be used when there are defined two bottom toolbars, just to better style them. <i>(Since 11.0)</i> the <b>Toolbar3</b> to place between them for third and more toolbars.<br /><br />
+
+Every grid has defined one default Toolbar in Defaults.xml. See <a href="GlobalSettings.htm#DefaultToolbar">Default Toolbar</a>.<br />
+
+<!-- Kind -->
+<a name="KTopbar"></a>
+<div class="XML">
+   <u>new <b>7.0</b> <i>upd <b>11.0</b></i></u> <b>&lt;I></b> <i>string</i>
+   <h4>Kind</h4> <s><tt>Kind="<b>Topbar</b>"</tt> (also <b>Topbar1</b>, <b>Topbar2</b> and <b>Topbar3</b>)</s>
+</div>
+Special Space row to use especially with <b>Button</b> type cells.<br />
+It has predefined some different default settings:<br />
+<tt><b>Space</b>="<b>0</b>" <b>NoUpload</b>="<b>1</b>"</tt><br />
+<i>cell</i><b>Type</b>="<b>Button</b>"<br />
+The <b>Topbar1</b>, <b>Topbar2</b> kinds can be used when there are defined two top toolbars, just to better style them. <i>(Since 11.0)</i> The <b>Topbar3</b> to place between them for third and more toolbars.<br />
+
+<!-- Kind -->
+<a name="KTabber"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>10.0</b></i></u> <b>&lt;I></b> <i>string</i>
+   <h4>Kind</h4> <s><tt>Kind="<b>Tabber</b>"</tt> (also <b>Tabber2</b> <i>since 10.0</i>)</s>
+</div>
+Special Space row to use especially with <b>Button Tab</b> type cells.<br />
+It has predefined some different default settings:<br />
+<tt><b>Space</b>="<b>-1</b>" <b>NoUpload</b>="<b>1</b>"</tt><br />
+<i>cell</i><b>Type</b>="<b>Button</b>" <i>cell</i><b>Button</b>="<b>Tab</b>" <i>cell</i><b>Radio</b>="<b>1</b>"<br />
+<i>(Since 10.0)</i> The <b>Tabber2</b> does <u>not</u> show background for other cells than tabs.<br />
+
+</div>
+</body>
+</html>

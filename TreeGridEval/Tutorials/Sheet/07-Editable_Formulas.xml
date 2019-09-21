@@ -1,0 +1,114 @@
+<Grid>
+   <Cfg id="EditFormulas" SuppressCfg="1" Sorting="0"/> <!-- Suppresses configuration and sorting -->
+   <Cfg SuppressMessage="3"/> <!-- Suppresses all messages, including page messages -->
+   <Cfg AutoIdPrefix=""/> <!-- Prefix for automatically generated row id, here set empty instead of AR -->
+
+   <!-- Automatic column and row pages -->   
+   <Cfg Paging="2" AutoPages="1" PageLength="10" MaxPages="3" RemoveUnusedFixed="0" RemoveAutoPages="1"/> <!-- Defines automatic row pages -->
+   <Pager Visible="0"/> <!-- Hides the side pager that is shown for paging by default -->
+   <Cfg ColPaging="2" AutoColPages="1" ColPageLength="10" ColPageMin="0" MaxColPages="3" ColPagingFixed="0" RemoveAutoColPages="1"/> <!-- Defines automatic column pages -->
+
+   <!-- Defines row and column indexes -->
+   <Cfg RowIndex="Index" RowIndexType="6"/> <!-- Creates number RowIndex with all variable rows except deleted -->
+   <Cfg ColIndex="Header" ColIndexType="6" ColIndexChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ"/> <!-- Creates letter ColIndex with all variable columns except deleted  -->
+
+   <!-- Permits manipulation -->
+   <Cfg ColAdding="1"/> <!-- Permits adding new columns. Adding and copying rows and copying columns is permitted by default -->
+   <Cfg ColDeleting="1"/> <!-- Permits deleting columns. Deleting rows is permitted by default -->
+   <Cfg SelectingCols="1"/> <!-- Permits selecting the whole columns. Selecting rows is permitted by default -->
+   <Cfg SelectAllType="31"/> <!-- Makes the SelectAll button on panels a switch; it is changed also when the row/column is selected/unselected; the added rows/columns are automatically selected if it is on -->
+
+   <!--- Formula editing -->
+   <Cfg FormulaEditing="1"/> <!-- Permits formula editing; Uploads the formula in the cell value, not in EFormula attribute -->
+   <Cfg FormulaChanges="0"/> <!-- Does not mark values calculated by formula as Changed -->
+   <Cfg FormulaType="0"/> <!-- Does not calculate deleted, filtered and hidden rows and columns -->
+   <Cfg DragEdit="2" /> <!-- Permits dragging during editing to choose cell ranges in formula -->
+   <Cfg FormulaRelative="1"/> <!-- Cell references can be absolute or relative. Cell references in formulas in data xml in/out are in standard notation -->
+   <Cfg FormulaLocal="0"/> <!-- Formula names in xml in/out are not localized English format -->
+   <Cfg FormulaResults="31"/> <!-- Cells with error formulas are marked red and error message is shown; the formula results are checked against cell restrictions; the null and NaN results are not permitted  -->
+   <Cfg FormulaCircular="6"/> <!-- Circular cell references in formulas are restricted with error message -->
+   <Cfg EditErrorsMessageTime="1000"/> <!-- How long the formula and edit error message will be shown -->
+   <Cfg FormulaAddParenthesis="1"/> <!-- Tries to adds ')' to the end of formula when editing resulted to incorrect formula -->
+   <DefCols> <D Name="Auto" FormulaSuggest="6"/> </DefCols>  <!-- For every column generates suggest list of all available formula functions to use in formula editing -->
+   <Actions OnDragHeader="ChooseColsReplaceAll OR ColMoveSelected OR ColMove" OnCtrlDragHeader="ChooseColsInsert OR ColCopySelected OR ColCopy"/> <!-- Dragging header during formula edit will choose the columns to the range -->
+
+   <!-- Cell popup menu to manipulate rows and columns -->
+   <Cfg Menu="{Head:'Actions',Items:[
+         {Name:'Rows',Caption:1},
+         {Name:'Select',Menu:1,Items:'|SelectRow|DeselectRow|SelectFocusedRows@2|DeselectFocusedRows@2|-|SelectAll|DeselectAll|InvertAll'},
+         {Name:'Show',Menu:1,Items:'|ShowRowAbove|ShowRowBelow|ShowRows|ShowAllRows'},
+         {Name:'Hide',Menu:1,Items:'|HideRow|HideRows@2|HideSelectedRows@2'},
+         {Name:'Add',Menu:1,Items:'|AddRow|AddRows@2|AddSelected@2'},
+         {Name:'Copy',Menu:1,Items:'|CopyRow|CopyRows|CopySelected'},
+         {Name:'Delete',Menu:1,Items:'|DeleteRow|UndeleteRow|DeleteRows|UndeleteRows|DeleteSelected|UndeleteSelected|-|RemoveRow|RemoveRows|RemoveSelected'},
+         {Name:'-'},
+         {Name:'Columns',Caption:1},
+         {Name:'Select',Menu:1,Items:'|SelectCol|DeselectCol|SelectFocusedCols@2|DeselectFocusedCols@2|-|SelectAllCols|DeselectAllCols'},
+         {Name:'Show',Menu:1,Items:'|ShowColLeft|ShowColRight|ShowCols|ShowAllCols'},
+         {Name:'Hide',Menu:1,Items:'|HideCol|HideCols@2|HideSelectedCols@2'},
+         {Name:'Add',Menu:1,Items:'|AddCol|AddCols@2|AddSelectedCols@2'},
+         {Name:'Copy',Menu:1,Items:'|CopyCol|CopyCols|CopySelectedCols'},
+         {Name:'Delete',Menu:1,Items:'|DeleteCol|UndeleteCol|DeleteCols|UndeleteCols|DeleteSelectedCols|UndeleteSelectedCols|-|RemoveCol|RemoveCols|RemoveSelectedCols'}
+      ]}"/>
+   <Cfg ShowMenuSingle="1"/> <!-- shows menu also with single option instead of doing it immediately -->
+   <Cfg HideMenuUnused="1"/> <!-- Hide unused child items, disable parent items with no child items -->
+   <Actions OnRightClick="ShowPopupMenu OR ShowNoMenu"/> <!-- Shows the popup menu for any right click to the grid -->
+
+   <!-- Other settings often set in the sheets -->
+   <Cfg Undo="79"/> <!-- Permits undoing all actions, including scroll -->
+   <Cfg EnterMode="1"/> <!-- Enter moves cursor down -->
+   <Cfg FocusRect="31"/> <!-- Permits focusing cell range, shows the corner, hides focused cursor for the whole row, shows relative color for focused cell, permits move and copy the focused range by dragging. -->
+   <Cfg SelectingCells="3"/> <!-- Permits selecting cells and row/columns independently -->
+   <Cfg SelectingFocus="1"/> <!-- Automatically selects the focused cells and clears all other selected cells on focus change -->
+   <Cfg AutoFillType="31"/>  <!-- Permits auto filling numbers and strings, also from one cell, shrinking range clears the rest -->
+   <Actions OnDel="ClearSelectedCellsF OR ClearCellF"/> <!-- Clears the selected cells -->
+   <DefCols> <D Name="Auto" Width="70"/> </DefCols> <!-- Predefined width all variable columns -->
+
+   <!-- Settings for copying and pasting cells via clipboard -->
+   <Cfg CopyCols="0"/> <!-- Copy only focused cells -->
+   <Cfg ExcludeClear="1"/> <!-- CtrlX clears the copied cells -->
+   <Cfg PasteCols="5"/> <!-- Pastes to focused cell range or to focused and next columns-->
+   <Cfg PasteFocused="11"/> <!-- Pastes to focused cell range or to focused and next rows -->
+
+   <!-- The fixed rows and column - panels, indexes and ids -->
+   <Head>
+      <Header id="Header" Index="Index" Align="Center" idVisible="0"/> <!-- Centers all cells in header -->
+      <Panel id="Panel" Panel="Panel" PanelType="Text" idVisible="0"/> <!-- Adds panel for columns -->
+      <Panel id="Panel" Index="ColSelectAll,ColDeleteAll,ColCopyAll"/> <!-- Defines group column actions for the left index panel -->
+      <Panel id="Panel" OnClickPanelColDelete="ShowMenu OR ShowNoMenu" PanelColDeleteMenu="|ShowColLeft|ShowColRight|HideCol|-|DeleteCol|UndeleteCol|-|RemoveCol"/> <!-- Defines menu for the column delete button -->
+      <Panel id="Panel" OnClickPanelColDeleteAll="ShowMenu OR ShowNoMenu" PanelColDeleteAllMenu="|ShowColsF|ShowAllCols|HideColsF|HideSelectedColsF|-|DeleteColsF|UndeleteColsF|DeleteSelectedColsF|UndeleteSelectedColsF|-|RemoveColsF|RemoveSelectedColsF"/> <!-- Defines menu for the column delete all button -->
+   </Head>
+   <Foot>
+      <I id="ID" Index=" " PanelType="Text" Panel="Name" ShowColNames="1" CanFocus="0" FormulaCanUse="0"/> <!-- Informational bottom row with column names -->
+   </Foot>
+   <LeftCols>
+      <C Name="Index" Def="Index" Width="60" Resizing="1"/> <!-- Defines with of the Index column and lets resizing rows by it -->
+      <C Name="Index" OnDrag="ChooseRowsReplaceAll OR DragSelected OR DragRow" OnCtrlDrag="ChooseRowsInsert OR DragSelectedCopy OR DragCopy"/> <!-- Dragging index during formula edit will choose the rows to the range -->
+      <Panel Name="Panel" Copy="1"/> <!-- Places the panel right side to Index and shows add/copy button on it -->
+      <Panel Name="Panel" OnClickPanelDelete="ShowMenu OR ShowNoMenu" PanelDeleteMenu="|ShowRowAbove|ShowRowBelow|HideRow|-|DeleteRow|UndeleteRow|-|RemoveRow"/> <!-- Defines menu for the row delete button -->
+      <Panel Name="Panel" OnClickPanelDeleteAll="ShowMenu OR ShowNoMenu" PanelDeleteAllMenu="|ShowRowsF|ShowAllRows|HideRowsF|HideSelectedRowsF|-|DeleteRowsF|UndeleteRowsF|DeleteSelectedF|UndeleteSelectedF|-|RemoveRowsF|RemoveSelectedF"/> <!-- Defines menu for the row delete all button -->
+   </LeftCols>
+   <RightCols>
+      <C Name="id" Width="40" CanFocus="0" CanSelect="0" CanDelete="0" MenuName="ids" FormulaCanUse="0" Align="Center"/> <!-- Informational right column with row ids -->
+   </RightCols>
+
+   <!-- Sample data -->
+   <Cfg AutoRows="2"/> <!-- Adds two empty rows to the end of grid -->
+   <Cfg AutoCols="13"/> <!-- Generates 13 variable columns according to ColIndex, from A to M -->
+   <Cfg FocusedRect="2,C,8,E"/> <!-- Actually focused area in grid on start -->
+   <Cfg Focused="5" FocusedCol="D"/> <!-- Actually editable cell inside focused area -->
+   <Body>
+      <B>
+         <I A='=sum(2:8,B:H)'/>
+         <I B='Relative' C='=sum(C3:C7)' D='=sum(D3:D7)' E='=sum(E3:E7)'/>
+         <I B='=sum(C3:G3)' C='1' D='6' E='11' F='16' G='21' H='=sum($C$3:$G$3)'/>
+         <I B='=sum(C4:G4)' C='2' D='7' E='12' F='17' G='22' H='=sum($C$4:$G$4)'/>
+         <I B='=sum(C5:G5)' C='3' D='8' E='13' F='18' G='23' H='=sum($C$5:$G$5)'/>
+         <I C='4' D='9' E='14' F='19' G='24'/>
+         <I C='5' D='10' E='15' F='20' G='25'/>
+         <I C='=sum($C$3:$C$7)' D='=sum($D$3:$D$7)' E='=sum($E$3:$E$7)' H='Absolute'/>
+         <I I='=sum($2:$8,$B:$H)'/>
+         <I C='=1/0' D='=xxx+yyy+10' E='=10-"""'/>
+      </B>
+   </Body>
+</Grid>

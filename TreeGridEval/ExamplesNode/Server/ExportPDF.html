@@ -1,0 +1,40 @@
+<!-- Support file for export to PDF feature -->
+<!-- Shows TreeGrid according to the data in url parameters -->
+<!-- It is run on server side in NodeJS, in Chrome headless -->
+<html>
+   <head>
+      <script src="Grid/GridE.js"> </script>
+   </head>
+   <body>
+      <div style="width:100%;height:90%;" id='GRID'>   
+         <script>
+
+// Url parameters: ?layout_url&data_url&cfg_file&layout_file&data_file&dpi&page_width_mm&page_height_mm&horizontal_margin_mm&vertical_margin_mm
+var param = location.search.slice(1).split("&");
+for(var i=0;i<param.length;i++){ // parameters in []
+   if(param[i].charAt(0)=='['){
+      while(param[i].slice(-1)!=']') { param[i] += "&"+param[i+1]; param.splice(i+1,1); }
+      param[i] = param[i].slice(1,-1);
+      }
+   }
+PrintTreeGrid(
+   {
+      Base:param[0]?{Url:param[0]}:null, 
+      Layout:param[1]?{Url:param[1]}:null, 
+      Data:param[2]?{Url:param[2]}:null
+   },
+   "GRID",
+   null,
+   {
+      Dpi:param[3],
+      Width:param[4],
+      Height:param[5],
+      MarginWidth:param[6],
+      MarginHeight:param[7],
+      Update:0
+   }
+   );
+         </script>
+      </div>
+   </body>
+</html>

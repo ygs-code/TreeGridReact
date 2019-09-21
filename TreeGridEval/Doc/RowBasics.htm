@@ -1,0 +1,273 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Row basics</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Row basics</h1>
+<p>TreeGrid documentation</p>
+
+Rows in TreeGrid contain cells, including their values - call values are defined only in rows, not in columns.<br /><br />
+
+TreeGrid can contain <b>variable data rows</b>, <b>fixed data rows</b>, <b>fixed special rows</b>, <b>solid space rows and solid special rows</b>.<br />
+
+<!------------------------------------------------------------------ Rows by functionality -------------------------------------------------------------->
+<a name="RowKind"></a>
+<h2>Rows by functionality</h2>
+
+<!-----------------------  Data rows  ------------------------>
+<a name="DataRows"></a>
+<h3>Data rows</h3>
+Standard rows structured to sections, columns and cells containing values. They can be <b><a href="#Fixed">fixed</a></b> or <b><a href="#Variable">variable</a></b>. Are set by &lt;<b>I</b>> tag inside &lt;<b>Head</b>>, &lt;<b>Foot</b>> and &lt;<b>B</b>> tags.<br />
+By default have data rows one cell in every column. But the cells can be also spanned horizontally (by Span attribute) or vertically (by RowSpan attribute).<br />
+And the rows can also contain one or all custom sections without cells - the whole column section is spanned and custom HTML is displayed, from attribute specific for the section <b>LeftHtml</b> / <b>MidHtml</b> / <b>RightHtml</b>.<br />
+Data rows can also contain specific column definitions for individual cells (like <b>Type</b> or <b>Format</b>).<br /><br />
+
+Row position in tree is done by placing &lt;I> tags inside their parent &lt;I> tag. Variable rows order in body is by default set by position of the &lt;I> tags inside their parent, but is affected by actual sorting.<br />   
+
+<!-----------------------  Space rows  ------------------------>
+<a name="SpaceRows"></a>
+<h3>Space rows</h3>
+Nonstandard rows not structured to columns and sections, but containing independent cells with values. They can be only <b><a href="#Solid">solid</a></b>. Are set by &lt;<b>I</b>> or &lt;<b>Space</b>> tag inside &lt;<b>Solid</b>> tag.<br />
+
+<!-----------------------  Special rows  ------------------------>
+<a name="SpecialRows"></a>
+<h3>Special rows</h3>
+All rows with special functionality, they can be <b><a href="#Fixed">fixed</a></b> (&lt;<b>Header</b>>, &lt;<b>Filter</b>>) or <b><a href="#Solid">solid</a></b> (&lt;<b>Group</b>>, &lt;<b>Search</b>>, &lt;<b>Toolbar</b>>, &lt;<b>Tabber</b>>).<br />
+The changes in cell values are usually <u>not</u> updated to server.<br />
+The special rows are editable even if the grid has restricted editing by <tt>&lt;<b>Cfg Editing</b>='0'/></tt>.<br />
+
+<!-- Kind -->
+<a name="Kind"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b style="width:100px;margin-left:-15px;margin-right:15px;">API TRow var.</b> <i>string</i>
+   <h4>Kind</h4>
+   <s></s>
+</div>
+Kind of the row set in XML by the tag name.<br />
+It can be <b>Header</b>, <b>Filter</b>, <b>Panel</b> <i>(since 12.0)</i>, <b>Group</b>, <b>Search</b>, <b>Toolbar</b>, <b>Tabber</b> and <b>Space</b> for other Space rows or <b>Data</b> for all other non Space rows.<br />
+
+<!------------------------------------------------------------------ Rows by position -------------------------------------------------------------->
+<a name="RowFixed"></a>
+<h2>Rows by position</h2>
+
+<!-----------------------  Variable (scrollable) rows  ------------------------>
+<a name="Variable"></a>
+<a name="VariableRows"></a>
+<h3>Variable (scrollable) rows</h3>
+Standard data rows placed inside grid's &lt;<b>Body</b>> section to &lt;<b>B</b>> pages. If grid does not use paging, all the variable rows are in one page, otherwise they are in more pages.<br />
+They can be scrolled vertically or horizontally, paged, structured to tree, sorted, filtered, grouped. They can also be added, deleted or moved.<br />
+Variable rows can be only <b><a href="#DataRows">data rows</a></b>. Variable rows are base rows in TreeGrid.<br />
+
+<!-----------------------  Fixed (frozen) rows  ------------------------>
+<a name="FixedRows"></a>
+<h3>Fixed (frozen) rows</h3>
+Standard rows placed to &lt;<b>Head</b>> or &lt;<b>Foot</b>> section above or bellow the &lt;<b>Body</b>> section. They are still visible and <u>cannot</u> be scrolled vertically, only horizontally.<br />
+Rows order is set by position of the &lt;<b>I</b>> tags inside the section &lt;<b>Head</b>> or &lt;Foot</b>>.<br />
+They <u>cannot</u> be paged, structured to tree, sorted, filtered, grouped. They also <u>cannot</u> be added, deleted or moved, only shown or hidden by API.<br />
+Fixed rows are still divided to cells or at least to column sections (left, variable, right), so the variable column section is horizontally scrollable.<br />
+<i>If all fixed and solid rows plus header together are higher then <a href="Create.htm#MainTag">main tag</a> height, the grid cannot display its content and displays only "Too small extents" message.</i><br />
+Fixed rows can be <b><a href="#DataRows">data rows</a></b>, usually some sum or total result rows, or rows with some global input parameters.<br />
+Fixed rows can also be special <b>filter rows</b>.<br />
+
+<!-----------------------  Solid (floating) rows  ------------------------>
+<a name="Solid"></a>
+<a name="SolidRows"></a>
+<h3>Solid (floating) rows</h3>
+Solid space rows contain its own cells (set by <b>Cells</b> attribute) with their own widths not corresponding with grid columns widths and positions.<br /> 
+Rows position inside grid is specified by <b>Space</b> attribute (<b>0</b> above <b>Head</b>, <b>1</b> - between <b>Head</b> and <b>Body</b>, <b>2</b> - between <b>Body</b> and <b>Foot</b>, <b>3</b> - between <b>Foot</b> and scrollbar, <b>4</b> - below scrollbar).<br />
+Rows order inside section specified by Space is set by positions of &lt;I> tags inside the tag &lt;<b>Solid</b>>.<br />
+Their content is always visible and never scrolled. They have their own structure independent on columns.<br />
+The Solid space rows can also display custom html instead of cells, set by <b>Html</b> attribute.<br />
+They are still visible and <u>cannot</u> be scrolled. They <u>cannot</u> be paged, structured to tree, sorted, filtered, grouped. They also <u>cannot</u> be added, deleted or moved, only shown or hidden.<br />
+<i>If all fixed and solid rows plus header together are higher then <a href="Create.htm#MainTag">main tag</a> height, the grid cannot display its content and displays only "Too small extents" message.</i><br />
+Solid rows can be <b><a href="#SpaceRows">space rows</a></b> and also <a href="#SpecialRows">special</a> <b>group row</b>, <b>search row</b>, <b>simple pager</b> and <b>toolbar</b>.<br />
+
+<!-- Fixed -->
+<a name="Fixed"></a>
+<div class="API">
+   <u></u> <b style="width:100px;margin-left:-15px;margin-right:15px;">API TRow var.</b> <i>string</i>
+   <h4>Fixed</h4>
+   <s></s>
+</div>
+Position in table, it can be <b>Head</b> or <b>Foot</b> for fixed rows and <b>Solid</b> for Space rows. For all other rows is null.<br />
+
+<!------------------------------------------------------------------ Row name -------------------------------------------------------------->
+<a name="RowName"></a>
+<h2>Row name</h2>
+<p class="H2">Row visual identification</p>
+
+You can specify row name that will be shown in messages and alerts that speaking about the row.<br />
+For example "Are you sure to delete row '%d' ?", the %d will be replaced by row name.<br />
+The row name is its <a href="#IName">Name</a> attribute if set. Or value(s) in <a href="#CfgNameCol">NameCol</a> if set. Or row <b>id</b>.<br />
+
+<!-- Name -->
+<a name="IName"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>Name</h4> <s></s>
+</div>
+Row name shown in any text that mention the row.<br />
+
+<!-- NameCol -->
+<a name="CfgNameCol"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>NameCol</h4> <s></s>
+</div>
+One or more column that are used as row name, only if the row <a href="#IName">Name</a> attribute is <u>not</u> set.<br />
+Comma separated list of column names. Values from these column in the row (comma separated) will be used as row name in any texts mention the row.<br />
+It is possible to set NameCol to the same value as <a href="#CfgRowIndex">RowIndex</a> to use the row index as row name.<br />
+
+<!------------------------------------------------------------------ Row id -------------------------------------------------------------->
+<a name="RowId"></a>
+<h2>Row id</h2>
+<p class="H2">Row unique identification. See <b><a href="RowId.htm">Row id</a></b> document</p>
+
+Unique identification of every row in grid, including, hidden, fixed and space rows.<br />
+<b>The row ids are described in separate document <a href="RowId.htm">Row id</a>.</b><br />
+
+<!------------------------------------------------------------------ Row index -------------------------------------------------------------->
+<a name="RowIndex"></a>
+<h2>Row index</h2>
+<p class="H2">Row position</p>
+
+Shows column with row positions, usually as number from 1.<br /> 
+<i>It does <u>not</u> identify row uniquely, for row identification use <b><a href="RowId.htm">row id</a></b> instead.</i><br />
+Used also for <a href="CellFormula.htm">editable formulas</a>. See also <a href="ColBasics.htm#ColIndex">column index</a>.<br />
+
+<!-- RowIndex -->
+<a name="CfgRowIndex"></a>
+<a name="CfgUpCounter"></a>
+<div class="XML">
+   <u style="width:140px;">new <b>9.3</b> renamed <b>12.0</b></u> <b style="margin-right:-15px;">&lt;Cfg></b> <i>string</i>
+   <h4>RowIndex</h4> <s></s>
+</div>
+<i>Since 12.0 it was named <b>UpCounter</b>.</i><br />
+Column name that will show the row positions in grid.<br />
+If the column does <u>not</u> exist, it is created in the LeftCols next to the Panel as <tt>&lt;C Name='<i>RowIndex</i>' Type='Int or Text' CanEdit='0' CanSort='0' Width='30'/></tt><br />
+It is possible to set <a href="#CfgNameCol">NameCol</a> to the same value as RowIndex to use the row index as row name.<br />
+<i>I does <u>not</u> work in server paging.</i><br /> 
+<i>It iterates all the RowIndex cells after any row order change and resets the value, so it can be slow in very large grids.</i><br />
+
+<!-- RowIndexType -->
+<a name="CfgRowIndexType"></a>
+<a name="CfgUpCounterType"></a>
+<div class="XML">
+   <u style="width:140px;">new <b>9.3</b> renamed <b>12.0</b></u> <b style="margin-right:-15px;">&lt;Cfg></b> <i>int</i>
+   <h4>RowIndexType</h4> <s>[0]</s>
+</div>
+<i>Since 12.0 it was named <b>UpCounterType</b>.</i><br />
+Bit array of flags for the <a href="#CfgRowIndex">RowIndex</a>.<br />
+<table>
+<tr><td style="width:50px;">1. bit</td><td style="width:50px;">&amp;1</td><td>Count deleted rows</td></tr>
+<tr><td>2. bit</td><td>&amp;2</td><td>Count filtered rows</td></tr>
+<tr><td>3. bit</td><td>&amp;4</td><td>Count manually hidden rows (other than deleted and filtered)</td></tr>
+<tr><td>4. bit</td><td>&amp;8</td><td>Count collapsed children</td></tr>
+<tr><td>5. bit</td><td>&amp;16</td><td>Reset on children (first child gets 1). <i>It causes more rows with the same index! The <a href="#GetRowByIndex">GetRowByIndex</a> cannot be used!</i></td></tr>
+<tr><td>6. bit</td><td>&amp;32</td><td>Count fixed data rows</td></tr>
+<tr><td>7. bit</td><td>&amp;64</td><td>Count other fixed rows like Filter, but not Header</td></tr>
+<tr><td>8. bit</td><td>&amp;128</td><td>Count Header rows and <i>(since 13.0)</i> <a href="ColBasics.htm#CfgColIndex">ColIndex</a> row</td></tr>
+</table>
+For example <tt>RowIndexType='7'</tt> counts all hidden and deleted rows.<br />
+
+<!-- RowIndexStart -->
+<a name="CfgRowIndexStart"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RowIndexStart</h4> <s>[1]</s>
+</div>
+The index is created from this number. Useful to have all indexes the same length (e.g. starting from 1000).<br />
+
+<!-- RowIndexChars -->
+<a name="CfgRowIndexChars"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RowIndexChars</h4> <s>[ ]</s>
+</div>
+Characters to build the index. By default the index is a number. Setting the <tt>RowIndexChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ"</tt> use alphabetical indexes.<br />
+
+<!-- RowIndexWidth -->
+<a name="CfgRowIndexWidth"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>RowIndexWidth</h4> <s>[60]</s>
+</div>
+Width of created RowIndex column, in pixels. Used only of the column does not exist in grid.<br />
+
+<!-- AutoRows -->
+<a name="CfgAutoRows"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>AutoRows</h4> <s>[ ]</s>
+</div>
+If set, automatically generates given number of empty rows as the last children in the last page. Cannot be used in server paging.<br />
+The rows will get auto generated ids (<u>not</u> the same as RowIndex).<br />
+See also <a href="Paging.htm#CfgAutoPages">AutoPages</a> to add new rows on scroll down.<br />
+
+<!-- NoIndex -->
+<a name="INoIndex"></a>
+<a name="INoUpCounter"></a>
+<div class="XML">
+   <u style="width:140px;">new <b>9.3</b> renamed <b>12.0</b></u> <b style="margin-right:-15px;">&lt;I></b> <i>int</i>
+   <h4>NoIndex</h4> <s></s>
+</div>
+<i>Since 12.0 it was named <b>NoUpCounter</b></i><br />
+If set to <b>1</b>, the row and its children will <u>not</u> be counted by <a href="#CfgRowIndex">RowIndex</a><br />
+<i>(new 11.0)</i> If set to <b>2</b>, the row only will <u>not</u> be counted by <a href="#CfgRowIndex">RowIndex</a>, but the row's children will be counted.<br />
+<i>(new 11.0)</i> If set to <b>3</b>, the row's children will <u>not</u> be counted by <a href="#CfgRowIndex">RowIndex</a>, but the row itself will be counted.<br />
+
+<!-- HasIndex -->
+<a name="HasIndex"></a>
+<a name="TRowvariableHasIndex"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b style="width:110px;margin-left:-15px;">TRow variable</b> <i>int</i>
+   <h4>HasIndex</h4>
+   <s></s>
+</div>
+Row position from 1 or 0 for row without index. On grid loading it is available in OnReady and later.<br />
+It is <u>not</u> affected by RowIndexStart / RowIndexChars.<br />
+ 
+<!-- GetRowByIndex -->
+<a name="GetRowByIndex"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>TRow</i>
+   <h4>GetRowByIndex</h4>
+   <s>(<i>type</i> <b>index</b>, <i>bool</i> <b>type</b> = 0)</s>
+</div>
+Returns row according to its index. On grid loading it is available in OnReady and later.<br />
+For <tt><b>type</b> = <b>0</b></tt> The index is number from 1 as for row (<a href="#HasIndex">HasIndex</a>).<br /> 
+For <tt><b>type</b> = <b>1</b></tt> The index is number or string according to the displayed row index in <a href="#CfgRowIndex">RowIndex</a> column.<br />
+
+<!-- GetRowIndex -->
+<a name="GetRowIndex"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>type</i>
+   <h4>GetRowIndex</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>bool</i> <b>type</b> = 0, <i>type</i> <b>default</b> = null)</s>
+</div>
+Returns row index. The <b>row</b> can be row object or row id. On grid loading it is available in OnReady and later.<br />
+For <tt><b>type</b> = <b>0</b></tt> Returns number from 1 as the row (<a href="#HasIndex">HasIndex</a>).<br /> 
+For <tt><b>type</b> = <b>1</b></tt> Returns number or string as the displayed row index in <a href="#CfgRowIndex">RowIndex</a> column.<br />
+If the row has not index, return <b>default</b>.<br />
+
+<!-- OnRowIndex -->
+<a name="OnRowIndex"></a>
+<a name="OnUpCounter"></a>
+<div class="API">
+   <u style="width:140px;">new <b>9.3</b> renamed <b>12.0</b></u> <b style="margin-right:-15px;">API event</b> <i>bool</i>
+   <h4>OnRowIndex</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i>[ ] <b>values</b>)</s>
+</div>
+<i>Since 12.0 it was named <b>OnUpCounter</b></i><br />
+Called on recalculate the <a href="#CfgRowIndex">RowIndex</a> column.<br />
+<i>(new 12.0)</i> <b>values</b> contains the changed indexes that will be assigned after the event finishes. It is named array as new value by row id. The indexes are always from 1, the index to delete is set as "".<br />
+<i>(new 12.0)</i> You can modify the <b>values</b>, but you cannot add or delete the items from the array.<br />
+Or you can assign your own index to the RowIndex column and true to not process the <b>values</b>, it is not possible if the index is used for calculated formula.<br /> 
+
+</div>
+</body>	
+</html>

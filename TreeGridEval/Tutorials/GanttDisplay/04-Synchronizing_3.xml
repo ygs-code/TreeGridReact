@@ -1,0 +1,66 @@
+<Grid>
+   <Cfg id="FlagsSync" IdChars="0123456789" NumberId="1"/>
+   <Cfg DefaultDate="1/1/2010"/>
+   <LeftCols>
+      <C Name="id" Type="Int" CanEdit="0" CanSort="0"/>
+      <C Name="INFO" Type="Text"/>
+      <C Name="EMPTYLEFT" ConstWidth="1" RelWidthType="1"/>
+   </LeftCols>
+   <Cols>
+      <C Name="FLAGS" Type="Date" Range="1" Width="120" Button="" Format="dddddd" EditFormat="dd" Align="Left"/>
+      <C Name="ICONS" Type="Text" Width="120"/>
+      <C Name="CLASSES" Type="Text" Width="120"/>
+      <C Name="TEXTS" Type="Text" Width="120"/>
+      <C Name="EMPTYMID" ConstWidth="1" RelWidthType="1"/>
+   </Cols>
+   <RightCols>
+      <C Name="GANTT" Type="Gantt" 
+         GanttDataUnits="d"
+         GanttFlags="FLAGS" GanttFlagTexts="TEXTS" GanttFlagIcons="ICONS" GanttFlagClasses="CLASSES"
+         GanttLeft="1" GanttRight="1"
+         GanttFlagsTip="*id*. *Start*&lt;br>*Text*"
+         GanttFlagIconList="|-||Red.svg|Yellow.svg|Green.svg"
+         GanttFlagIconNames="|None|Default|%d Error|%d Warning|%d Info"
+         GanttTextOverlay="1" GanttFlagsMove="2"
+         />
+   </RightCols>
+   <Foot>
+      <Header id="Header"/>
+   </Foot>
+   <Body>
+      <B>
+         <I id="0"/>
+         <I id="1" 
+            FLAGS="1/2/2010" TEXTS="this is flag text"
+            INFO="Single flag with text tip"
+            />
+         <I id="2"
+            FLAGS="1/3/2010;1/7/2010;1/8/2010" TEXTS="the first flag text;the second flag text;the third flag text"
+            INFO="More flags with text tips"
+            />
+         <I id="5"
+            FLAGS="1/2/2010" TEXTS="flag text right to the icon"
+            INFO="Single flag with text" 
+            GANTTGanttFlagsType="3"
+            />
+         <I id="6"
+            FLAGS="1/3/2010;1/7/2010;1/9/2010" TEXTS="1st text;2nd text;3rd text"
+            INFO="More flags with texts"
+            GANTTGanttFlagsType="3"
+            />
+         <I id="7"
+            FLAGS="1/3/2010;1/7/2010;1/9/2010" TEXTS="1st text;2nd text;3rd text"
+            INFO="Only texts"
+            GANTTGanttFlagsType="2" GANTTGanttFlagIconList=""
+            />
+         <I id="9"
+            FLAGS="1/3/2010;1/7/2010;1/9/2010" TEXTS="1st text;2nd text;3rd text"
+            INFO="Only texts with CSS class" CLASSES="Green;Green;Red;"
+            GANTTGanttFlagsType="2" GANTTGanttFlagIconList=""
+            GANTTGanttFlagClassList="||Red|Blue|Green"
+            GANTTGanttFlagIconNames="|Default|%2Error%3|%2Warning%3|%2Info%3"
+            />
+      </B>
+   </Body>
+   <Header id="id"/>
+</Grid>

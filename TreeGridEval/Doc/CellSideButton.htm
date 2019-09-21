@@ -1,0 +1,245 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Cell side button</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Cell side buttons</h1>
+<p class="H1">TreeGrid documentation</p>
+
+Any cell can display a right or left side button.<br />
+It is also possible to have both left and right side buttons in one cell.<br />
+And it is also possible to have two right buttons (but not two left).<br />
+Only <b>right</b> side <a href="#CButton">Button</a> can display custom HTML code or &lt;BUTTON> tag. But <u>not</u> in <b>Space</b> row.
+
+<!-----------------------------------------------------------------------  Right side button ------------------------------------------------->
+<a name="Button"></a>
+<h2>Right side button</h2>
+
+<!-- Button -->
+<a name="CButton"></a>
+<div class="XML">
+   <u>chg <b>6.0</b> <i>upd <b>14.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Button</h4> <s></s>
+</div>
+Cell <b>right side</b> button with various functionality. It can be used along with <a href="#CIcon">Icon</a>.<br />
+
+<table>
+   <tr><td style="width:120px;"><i>empty string</i></td><td>To hide the predefined button for <a href="TypeDate.htm">Date</a> type.</td></tr>   
+   <tr><td><i>icon source file</i></td><td>
+      Shows custom icon, the icon width is set by <a href="#CWidthPad">WidthPad</a> for <u>non</u> <b>Space</b> cell and by <a href="#SpaceCellButtonWidth">ButtonWidth</a> for <b>Space</b> cell.<br />
+      The <b>Button</b> is an URL to some GIF, PNG, JPG. On mouse click it calls custom event <a href="#OnButtonClick">OnButtonClick</a>.<br />
+      This button type is identified as "<b>Icon</b>" in events.<br />
+      <i>The URL is relative to actual page URL, <u>not</u> to Grid.css, <u>not</u> to XML data!</i>
+      </td></tr>
+   <tr><td><b>Defaults</b></td><td>
+      Shows <b>Defaults</b> icon for popup defaults menu.<br />
+      On mouse click it shows popup menu with predefined default values to select one or more for them like in combo box.<br /> 
+      The list of default values is defined by <a href="CellEdit.htm#CDefaults">Defaults</a> attribute.
+      </td></tr>
+   <tr><td><b>Dates</b></td><td>Shows <b>Dates</b> icon for popup <a href="TypeDate.htm#Dates">Dates</a> menu.</td></tr>
+   <tr><td><b>Expand</b></td><td>Shows Expand / Collapse button to expand rows and / or columns. See <a href="ColTree.htm">column tree</a>.
+      </td></tr>
+   <tr><td><b>Check</b></td><td>Shows checkbox, see <a href="CellEdit.htm#Check">Side checkbox</a>.</td></tr>
+   <tr><td><b>File</b></td><td><i>(new 12.0)</i> Shows File icon, usually to choose files for <a href="TypeHtml.htm#TFile">File</a> type cell.</td></tr>
+   <tr><td><b>Clear</b></td><td><i>(new 12.0)</i> Shows Clear icon to clear the cell value.</td></tr>
+   <tr><td><b>Button</b></td><td>
+      Shows HTML &lt;BUTTON>, the button text is specified by <a href="#CButtonText">ButtonText</a> attribute.<br />
+		   <i>Remember, the width of the button must be the same for all cells in the column and is specified by <a href="#CWidthPad">WidthPad</a> attribute.</i><br /> 
+      After a user clicks the button, it is called <a href="#OnButtonClick">OnButtonClick</a> event.<br />
+      <i>Can be set only to <b>Button</b>, <u>not</u> to <a href="#CIcon">Icon</a>. And <u>cannot</u> be set to <b>Space</b> cell.
+      </td></tr>
+   <tr><td><b>Html</b></td><td>
+      Any HTML code displayed as is. It can be &lt;button>, &lt;img>, &lt;a> tag or any other HTML code. It is specified by <a href="#CButtonText">ButtonText</a> attribute.<br />
+		   It can contain also any predefined JavaScript onclick code.<br />
+		   <i>Remember, the width of the button must be the same for all cells in the column and is specified by <a href="#CWidthPad">WidthPad</a> attribute.</i><br /> 
+      After a user clicks the button, it is called <a href="#OnButtonClick">OnButtonClick</a> event.<br />
+      <i>Can be set only to <b>Button</b>, <u>not</u> to <a href="#CIcon">Icon</a>. And <u>cannot</u> be set to <b>Space</b> cell.</i>      
+      </td></tr>
+   <tr><td><b>Empty</b></td><td><i>(new 14.0)</i> Shows icon button without any image, to preset it by Class attribute.</td></tr>
+</table><br />
+There are also four values <b>Date</b>, <b>Sort</b>, <b>Filter</b>, <b>Enum</b> that are filled automatically by grid and are used explicitly only in rare cases, e.g. to show it in Button instead of Icon or vice versa.
+
+<!-- WidthPad -->
+<a name="CWidthPad"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>WidthPad</h4> <s>[20]</s>
+</div>
+Width of right side Button in <u>non</u> <b>Space</b> row. In pixels.<br />
+<i>It is the same for whole column, so all right side buttons in one column have the same width!</i><br />
+<i>It affects also sort icons in header! To avoid it, change the header button to icon by <tt>&lt;Header Col1Icon='Sort' Col1IconAlign='Right'/></tt>. Remember, it will overflow the icon if the caption is too wide.</i>
+
+<!-- ButtonWidth -->
+<a name="SpaceCellButtonWidth"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Space cell></b> <i>int</i>
+   <h4>ButtonWidth</h4> <s>[20]</s>
+</div>
+Width of right side Button in <u>Space</u> row. In pixels.
+
+<!-- ButtonAlign -->
+<a name="SpaceCellButtonAlign"></a>
+<div class="XML">
+   <u>new <b>6.2</b></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>ButtonAlign</h4> <s>['Right']</s>
+</div>
+In Space row the button can be displayed also on left side by <tt>...ButtonAlign='Left'</tt>.
+
+<!-- ButtonText -->
+<a name="CButtonText"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>ButtonText</h4> <s></s>
+</div>
+&lt;BUTTON> caption for custom <a href="#CButton">Button</a> type <b>Button</b>.<br /> 
+HTML code for custom <a href="#CButton">Button</a> type <b>Html</b>.
+
+<!-- ButtonClickF -->
+<a name="ActionsButtonClickF"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ButtonClick ...F</h4> <s></s>
+</div>
+Calls <a href="#OnButtonClick">OnButtonClick</a> event for actual or focused cell with custom <a href="#CButton">Button</a> type <b>Button</b>, <b>Icon</b> or <b>Html</b>.
+
+<!-- OnButtonClick -->
+<a name="OnButtonClick"></a>
+<div class="API">
+   <u><i>upd <b>6.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnButtonClick</h4> <s>(<i>TGrid </i><b>grid</b><i>, TRow </i><b>row</b><i>, string </i><b>col</b><i>, int </i><b>x</b><i>, int </i><b>y</b>)</s>
+</div>
+Called on click to custom <a href="#CButton">Button</a> type <b>Button</b>, <b>Icon</b> or <b>Html</b>.<br />
+x, y is click position inside the button.<br />
+Return <b>true</b> to suppress the default action, especially for Button <b>Html</b>.<br />
+<i>For read only cells with only one side button is called for the whole cell, opposite to OnClickSide.</i>
+
+<!-- OnClickSide -->
+<a name="OnClickSide"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;XML event></b> <i>void</i>
+   <h4>OnClickSide</h4> <s>(<i>TGrid </i><b>Grid</b><i>, TRow </i><b>Row</b><i>, string </i><b>Col</b><i>, TEvent </i><b>Event</b>)</s>
+</div>
+Standard column, row, cell or Actions attribute containing JavaScript code.<br />
+It is called on click to <b>left</b> or <b>right</b> side <a href="#CButton">Button</a> or <a href="#CIcon">Icon</a>.<br />
+<i>It is standard TreeGrid mouse event, here is just mentioned to not forget its possibility when handling custom side button clicks.</i><br />
+Example: <tt>&lt;I Col1OnClickSide='alert("clicked column "+Col);'/></tt><br />
+If the cell has both Button and Icon, you can distinguish the clicks by defining <b>OnClickSideButton</b> and <b>OnClickSideIcon</b> events.<br />
+<i>For <b>read only</b> cell with only one side button is this event called only on click to the button, but the OnClickSideButton / Icon is called for click to the whole cell.</i>
+<br />
+
+<!-----------------------------------------------------------------------  Left side icon ------------------------------------------------->
+<a name="Icon"></a>
+<h2>Left side icon</h2>
+
+<!-- Icon -->
+<a name="CIcon"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>14.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Icon</h4> <s></s>
+</div>
+Cell <b>left side</b> button with various functionality. It can be used along with <a href="#CButton">Button</a>.<br />
+<i>It can be used also to set background image of the cell (<tt>Icon='Icon' IconWidth='0' IconSrc='url'</tt>).</i><br />
+It can be also positioned right to replace <a href="#CButton">Button</a> or even to show two side right buttons, but check the problems in <a href="#CIconAlign">IconAlign</a> description. The <b>Icon</b> rendering is slightly faster than the <a href="#CButton">Button</a>.<br />
+
+<table>
+   <tr><td style="width:120px;"><i>empty string</i></td><td>To hide the predefined icon for <a href="TypeEnum.htm">Enum</a> type.</td></tr>   
+   <tr><td><i>icon source file</i></td><td>
+      Shows custom icon, the icon width is set by <a href="#CIconWidth">IconWidth</a>. The Icon is an URL to some GIF, PNG, JPG.<br />
+      On mouse click it calls custom event <a href="#OnIconClick">OnIconClick</a>.<br />
+      This button type is identified as "<b>Icon</b>" in events.<br />
+      <i>The URL is relative to actual page URL, <u>not</u> to Grid.css, <u>not</u> to XML data!</i>
+      </td></tr>
+   <tr><td><b>Defaults</b></td><td>
+      Shows <b>Defaults</b> icon for popup defaults menu.<br />
+      On mouse click it shows popup menu with predefined default values to select one or more for them like in combo box.<br /> 
+      The list of default values is defined by <a href="CellEdit.htm#CDefaults">Defaults</a> attribute.
+      </td></tr>
+   <tr><td><b>Dates</b></td><td>Shows <b>Dates</b> icon for popup <a href="TypeDate.htm#Dates">Dates</a> menu.</td></tr>   
+   <tr><td><b>Expand</b></td><td>Shows Expand / Collapse button to expand rows and / or columns. See <a href="ColTree.htm">column tree</a>.
+      </td></tr>   
+   <tr><td><b>Check</b></td><td>Shows checkbox, see <a href="CellEdit.htm#Check">Side checkbox</a>.</td></tr>
+   <tr><td><b>File</b></td><td><i>(new 12.0)</i> Shows File icon, usually to choose files for <a href="TypeHtml.htm#TFile">File</a> type cell.</td></tr>
+   <tr><td><b>Clear</b></td><td><i>(new 12.0)</i> Shows Clear icon to clear the cell value. Shown automatically for not empty <a href="TypeHtml.htm#TFile">File</a> type cell.</td></tr>
+   <tr><td><b>Empty</b></td><td><i>(new 14.0)</i> Shows icon button without any image, to preset it by Class attribute.</td></tr>
+</table><br />
+There are also four values <b>Date</b>, <b>Sort</b>, <b>Filter</b>, <b>Enum</b> that are filled automatically by grid and are used explicitly only in rare cases, e.g. to show it in Button instead of Icon or vice versa.
+
+<!-- IconAlign -->
+<a name="CIconAlign"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>IconAlign</h4> <s>['Left']</s>
+</div>
+Position of the cell side <a href="#CIcon">Icon</a> button. By default is the <a href="#CIcon">Icon</a> placed left side of the cell.<br />
+Supported values are "<b>Left</b>", "<b>Right</b>", "<b>Center</b>".<br />
+You can place the icon on the right side by setting IconAlign="<b>Right</b>". Use it only if <a href="#CButton">Button</a> is already set or you cannot use <a href="#CButton">Button</a> due <a href="#CWidthPad">WidthPad</a> difference.<br />
+You can place the icon center by setting IconAlign="<b>Center</b>", it is intended only for empty cells or to use Icon as background image.<br />
+<i>Attention, if the <a href="#CIcon">Icon</a> is placed <b>right</b> side and the cell content is wider than the cell, the text is displayed through this icon in many browsers due wrong implementation of CSS right padding. For such cells prefer the <a href="#CButton">Button</a> attribute if possible.</i>
+
+<!-- IconWidth -->
+<a name="CIconWidth"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>IconWidth</h4> <s>[20]</s>
+</div>
+Width in pixels of custom <a href="#CIcon">Icon</a> (<tt>Icon="<i>icon source file</i>"</tt>).<br />
+The icon should <u>not</u> be wider than IconWidth, otherwise it is overwritten by the cell text.<br />
+The IconWidth can be also set to 0 to use the Icon as background image of the cell.
+
+<!-- Height -->
+<a name="SpaceCellHeight"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Space cell></b> <i>int</i>
+   <h4>Height</h4> <s></s>
+</div>
+Height of the cell in pixels.<br />
+Set it when the <a href="#CIcon">Icon</a> in Space cell is not visible whole.
+
+<!-- EscapeImages -->
+<a name="CfgEscapeImages"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>EscapeImages</h4> <s>[0]</s>
+</div>
+Set it to 1 if any custom image url contains white spaces or ' ( ) &amp;
+
+<!-- IconClickF -->
+<a name="ActionsIconClick"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>IconClick ...F</h4> <s></s>
+</div>
+Calls <a href="#OnIconClick">OnIconClick</a> event for actual or focused cell with custom <a href="#CIcon">Icon</a> type <b>Icon</b>.
+
+<!-- OnIconClick -->
+<a name="OnIconClick"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnIconClick</h4> <s>(<i>TGrid </i><b>grid</b><i>, TRow </i><b>row</b><i>, string </i><b>col</b><i>, int </i><b>x</b><i>, int </i><b>y</b>)</s>
+</div>
+Called on click to custom <a href="#CIcon">Icon</a> type <b>Icon</b>.<br /> 
+<b>x</b>, <b>y</b> is click position inside the icon.<br />
+Return true to suppress the default action.<br />
+<i>For read only cells with only one side button is called for the whole cell, opposite to OnClickSide.</i>
+
+<!-- OnClickSide -->
+<a name="OnClickSide"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;XML event></b> <i>void</i>
+   <h4>OnClickSide</h4> <s>(<i>TGrid </i><b>Grid</b><i>, TRow </i><b>Row</b><i>, string </i><b>Col</b><i>, TEvent </i><b>Event</b>)</s>
+</div>
+Standard column, row, cell or Actions attribute containing JavaScript code.<br />
+It is called on click to <b>left</b> or <b>right</b> side <a href="#CButton">Button</a> or <a href="#CIcon">Icon</a>.<br />
+<i>It is standard TreeGrid mouse event, here is just mentioned to not forget its possibility when handling custom side button clicks.</i><br />
+Example: <tt>&lt;I Col1OnClickSide='alert("clicked column "+Col);'/></tt><br />
+If the cell has both Button and Icon, you can distinguish the clicks by defining <b>OnClickSideButton</b> and <b>OnClickSideIcon</b> events.<br />
+<i>For <b>read only</b> cell with only one side button is this event called only on click to the button, but the OnClickSideButton / Icon is called for click to the whole cell.</i>
+
+
+</div>
+</body>
+</html>

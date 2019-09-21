@@ -1,0 +1,85 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; overflow:hidden; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>7. Master detail trees</h1>
+   <h2>Master detail relation among trees</h2>
+
+   <center class="Border" id="Border">
+      <div style="width:780px;">
+         <div style="float:left; margin-right:10px;">
+            <div class="Xml">Source: <a href='07-Master1.xml'>07-Master1.xml</a></div>
+            <div class="Main" style='width:385px; height:400px;'>
+               <bdo Debug='check' Data_Url='07-Master1.xml'></bdo>
+            </div>
+            <br />
+            <div class="Xml">Source: <a href='07-Detail1.xml'>07-Detail1.xml</a></div>
+            <div class="Main" style='width:385px; height:250px;'>
+               <bdo Debug='check' Data_Url='07-Detail1.xml'></bdo>
+            </div>
+         </div>
+         <div style="float:left;">
+            <div class="Xml">Source: <a href='07-Master2.xml'>07-Master2.xml</a></div>
+            <div class="Main" style='width:385px; height:400px;'>
+               <bdo Debug='check' Data_Url='07-Master2.xml'></bdo>
+            </div>
+            <br />
+            <div class="Xml">Source: <a href='07-Detail2.xml'>07-Detail2.xml</a></div>
+            <div class="Main" style='width:385px; height:250px;'>
+               <bdo Debug='check' Data_Url='07-Detail2.xml'></bdo>
+            </div>
+        </div>
+      </div>
+   </center>
+
+   <ul>
+      <li>
+        TreeGrid supports also simple master / detail relation between trees.<br />
+        A row in master grid can have set its attribute <h3>Detail</h3> to id of detail grid where the rows children will be displayed.<br />
+      </li>
+      <li>
+        It is possible to display the row's children in the detail grid only, in the master grid only, or in both grids. It is controlled by <b>DetailExpand</b> Cfg attribute of master grid.<br />
+      </li>
+      <li>
+         In this relation there is no copying values by CopyTo, the structure of all the grids should be the same, the rows are displayed in one or more grids.
+      </li>
+      <li>
+         It is possible to moving rows between grids or inside one grid or copy rows inside grid or add or delete rows in any grid.
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialMaster\s*=\s*(\d+)/), TGIndex = 64;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridMaster7", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialMaster="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

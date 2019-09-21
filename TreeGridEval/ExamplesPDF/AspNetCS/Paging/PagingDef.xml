@@ -1,0 +1,27 @@
+<Grid>
+   <Cfg id="ServerPaging" NoHScroll="1" IdChars="0123456789" NumberId="1" SuppressCfg="1" Sorting="0"/>
+   <Cfg Paging="3"/> <!-- Uses server side paging of root rows -->
+   <Cfg PrintLoad="1" ExportLoad="1"/> <!-- Downloads all data when printing or exporting them -->
+   <Cfg PrintPagePrefix="&lt;center class='%9' style='width:%7px'>Paging example printed page %3 from %6&lt;/center>"/> <!-- Sample page header for printing -->
+   <Cfg PrintPagePostfix="&lt;center class='%9' style='width:%7px'>Page %1 horizontally from %4 , page %2 vertically from %5&lt;/center>"/>  <!-- Sample page footer for printing -->
+   <Pager Width="90"/>
+   <Cols>
+      <C Name="id" Type="Int" CanEdit="0" Width="45"/>
+      <C Name="R" Type="Text" CaseSensitive="0" Width="130"/>
+      <C Name="C" Type="Text" CaseSensitive="0" Width="130" GroupWidth="260"/>
+      <C Name="N" Type="Int" Width="50"/>
+      <C Name="NN" Type="Int" Width="50" Formula="N*N"/>
+   </Cols>
+   <Solid>
+      <I id="PAGER" Cells="NAV,LIST" Space="4" CanPrint="0"
+         NAVType="Pager"
+         LISTType="Pages" LISTRelWidth="1" LISTAlign="left" LISTLeft="10"
+         />
+   </Solid>
+   <Header id="id" R="Region" C="Country" N="Num" NN="N*N"/>
+   <Toolbar 
+      Cells="Reload,Print,Add,Sort,Columns,Cfg,StyleLabel,StyleCombo,ALL,Empty,Formula"
+      Styles="2" Formula="'Rows: &lt;b>'+count()+'&lt;/b>, Num sum:&lt;b>'+sum('N')+'&lt;/b>'" FormulaLeft="5"
+      ALLType="Button" ALLButton="Button" ALLOnClick="LoadAllPages(Grid);" ALL="Load all pages" ALLTip="Download all pages on background"
+      />
+</Grid>

@@ -1,0 +1,13 @@
+<Grid>
+   <Cfg Sync='All' SyncId='DetailDetailNested' CfgId='DetailDetailNested' SyncStyle='1' FullId='1' NumberId='1' IdChars='0123456789' Style='White'/>
+   <Cfg AddFocusColEmpty='REMARK'/> <!-- Automatically focuses this column when added new row from master grid -->
+   <Cols>
+      <C Name='id' Type='Text' Width='80' Format='||||\$|g|-' CanCopyPaste='0'/>
+      <C Name='REMARK' Type='Lines' VarHeight='2' RelWidth='1' MinWidth='100'/>
+   </Cols>
+   <Root CDef='DETAILDETAILROW' AcceptDef='DETAILDETAILROW'/>
+   <MenuCfg ShowPanel='0'/>
+   <Toolbar Visible='0'/>
+   <Header Visible='0' MenuName='Header'/>
+   <Panel Copy='1'/>
+</Grid>

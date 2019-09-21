@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+   </head>
+   <body class="Example">
+      <style>
+         /* Examples shared styles */
+         .Example h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+         .Example h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+         .Example h3,.Example h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+         .Example h3 { background:#EE9; border:1px solid #DD8; }
+         .Example h4 { background:#BDE; border:1px solid #ACD; }
+         .Example a { text-decoration:underline; }      
+         .Example li { padding-bottom:8px; }
+         .Example ul { margin:6px 0px 0px 20px; font:13px Arial; }
+         .Example .Desc { margin:0px 5px 10px 5px; padding:10px; border:1px solid #dfdfdf; }
+         .Example .Desc > ul { margin-left:0px; padding:0px 0px 0px 15px; clear:both; }
+         .Example .Desc b { color:#0585B9; }
+         .Example .Path { font:normal 12px Arial; color:#0585B9; }
+         .Example .Path b { color:#D73938; }
+         .Example .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+         .Example .Path i { color:black; font-style:normal; font-weight:bold; }
+         .Example .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+         .Example .Border { margin:0px 5px 15px 5px; }
+         .Example .Main { }
+      </style>
+      <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Examples\/|\/ExamplesGantt\/)([^\/]+)\/([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/<i>$4</i>/$5").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+      <h1>Simple Gantt chart in CSV</h1>
+      <h2>Gantt chart that loads its data from CSV file</h2>
+      <div class="Desc">
+         The example shows loading data in custom format (here CSV) using custom AJAX communication and custom parsing.<br />
+         The input CSV data are the same as the exported data from this example.
+         It is the same example as GanttSimple, but loads its data from CSV instead of XML.<br />
+         <i>You can open the CSV files in Gantt or drop the CSV file directly to the Gantt to open it here.</i>
+         <i>This example cannot be run directly from file system either in IE.</i><br />
+      </div>
+      <div class="Border">
+         <div class="Main" style="WIDTH:100%;HEIGHT:650px;">
+            <bdo Debug="check" Layout_Url="GanttCsvDef.xml" Data_Url="GanttCsvData.csv"></bdo>
+         </div>
+      </div>
+      <script>
+
+// Simple CSV parser from StackOverflow answer, parses the CSV to 2D JS array
+// csv is the csv string, sep is column separator. Row separator is always CR, LF or CRLF
+function ParseCsv(csv,sep){
+var arr = [];
+var quote = false;  // true means we're inside a quoted field
+
+// iterate over each character, keep track of current row and column (of the returned array)
+for (var row = col = c = 0; c < csv.length; c++) {
+   var cc = csv[c], nc = csv[c+1];        // current character, next character
+   arr[row] = arr[row] || [];             // create a new row if necessary
+   arr[row][col] = arr[row][col] || '';   // create a new column (start with empty string) if necessary
+
+   // If the current character is a quotation mark, and we're inside a
+   // quoted field, and the next character is also a quotation mark,
+   // add a quotation mark to the current column and skip the next character
+   if (cc == '"' && quote && nc == '"') { arr[row][col] += cc; ++c; continue; }  
+
+   // If it's just one quotation mark, begin/end quoted field
+   if (cc == '"') { quote = !quote; continue; }
+
+   // If it's a delimiter and we're not in a quoted field, move on to the next column
+   if (cc == sep && !quote) { ++col; continue; }
+
+   // If it's a newline (CRLF) and we're not in a quoted field, skip the next character
+   // and move on to the next row and move to column 0 of that new row
+   if (cc == '\r' && nc == '\n' && !quote) { ++row; col = 0; ++c; continue; }
+
+   // If it's a newline (LF or CR) and we're not in a quoted field,
+   // move on to the next row and move to column 0 of that new row
+   if (cc == '\n' && !quote) { ++row; col = 0; continue; }
+   if (cc == '\r' && !quote) { ++row; col = 0; continue; }
+
+   // Otherwise, append the current character to the current column
+   arr[row][col] += cc;
+   }
+return arr;
+}
+
+// Converts  2D JS array to TreeGrid JSON format. The first row in that array must contain column captions
+// arr is the 2d JS array, tree is 1 if row ids contain information about row level (as "parent_id$id")
+// cols is named array of column names as cols[captions] = column_name
+// dates is named array of columns of type date to convert them from Excel format (in count of days) to JS format (count of milliseconds) as dates[column_name] = 0/1;
+function GetJson(arr,tree,cols,dates){
+var B = [];        // Fills here root rows
+var hd = arr[0];   // hd is the first row in csv that contain the column captions. The captions are converted to column names using cols array
+var rows = {};     // Named array rows by their ids used to find row parent in tree
+if(tree) for(var c=0,tree=0;c<hd.length;c++) if(cols[hd[c]]=="id") { tree = 1; break; } // The csv must contain id column to create tree
+for(var r=1;r<arr.length;r++){
+   for(var c=0,row=arr[r],R={};c<row.length;c++) if(hd[c]) R[cols[hd[c]]] = row[c]>1e3&&row[c]<1e5&&dates[cols[hd[c]]] ? Math.round(row[c]*86400)*1000-2209161600000 : row[c]; // Fills the R by the values from one row
+   if(tree){ // Places the row to its parent if its id contains its parent id
+      rows[R.id] = R;
+      var p = R.id.lastIndexOf("$");
+      if(p>=0) {
+         var P = rows[R.id.slice(0,p)];
+         if(P) {
+            if(!P.Items) P.Items = [];
+            P.Items[P.Items.length] = R; R = null;
+            }
+         }
+      }
+   if(R) B[B.length] = R; // Places the row to the body rows if it was not placed to any parent
+   }
+return {Body:[B]};
+}
+
+// Main function to convert the input CSV data to TreeGrid JSON data
+function CsvToJson(G,csv){
+var arr = ParseCsv(csv,G.CSVValueSeparator); // Parses the CSV to Array
+var cols = {}, dates = {}; for(var c in G.Cols) { cols[G.Header[c]] = c; if(G.Cols[c].Type=="Date") dates[c] = 1; } // Creates the captions to columns conversion array
+var json = GetJson(arr,G.FullId,cols,dates); // Creates TreeGrid JSON from the Array
+return json;
+}
+
+// Called when TreeGrid requests its data, used to convert the input csv to TreeGrid json
+Grids.OnDataParse = function(G,IO,csv){ 
+if(IO.Name!="Data") return null;      // Only _Data source is CSV, the others are ignored
+return CsvToJson(G,csv);              // Converts the csv to TreeGrid json object
+}
+
+Grids.OnImportText = function(G,csv){
+var json = CsvToJson(G,csv);
+G.Source.Data.Url = null;
+G.Source.Data.Data = json;
+G.ReloadBody();
+}
+
+      </script>
+
+      <!-- Google Analytics code run once for trial -->
+      <script>
+         var TGTrial = document.cookie.match(/TGTrialGantt\s*=\s*(\d+)/), TGIndex = 4;
+         if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+            var n = "RunTrialHtmlGanttCsv", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGantt="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+            var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+            var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+                 +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+            var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+            },100);
+      </script>
+
+   </body>
+</html>

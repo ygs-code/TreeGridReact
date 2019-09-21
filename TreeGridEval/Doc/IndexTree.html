@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <title>TreeGrid - Documentation</title>
+   <style>
+      .Tree { padding-left:5px; }
+      .Tree h5 { font-size:19.5px; padding:10px 0px 10px 5px; margin:0px; }
+      .Tree div { background:url(ArrowBlue.png) left center no-repeat; padding-left:14px; margin-bottom:5px; cursor:pointer; white-space:nowrap; }
+      .Tree div.TreeExpanded { background:url(ArrowBlueDown.png) left center no-repeat; color:#019BD9; }
+      .Tree div:hover { text-decoration: none; color:blue; }
+      .Tree a.TreeActive { color:#019BD9!important; text-decoration: underline!important; }
+      .Tree a { display:block; text-decoration: none!important; color:black!important; font-size:12px; padding-left:14px; margin-bottom:5px; white-space:nowrap; }
+      .Tree a:hover { text-decoration: underline!important; color:blue!important; }
+      .Tree a.Deprecated { color:#999!important; }
+      .Tree span { font-size:10px; }
+      .Tree p { display:none; }
+      .Tree i { padding:15px 0px 15px 14px; display:none; font-style:normal; font-size:12px; }
+      .Tree u  { height:20px; width:20px; overflow:hidden; display:block; cursor:pointer; float:right; }
+      .Tree a[target="_top"] { padding:5px 0px 0px 16px; color:blue!important; font-size:15px; }
+   </style>
+</head>
+<body>
+   <div>
+      <div id="Tree" class="DocIndex Tree">
+
+         <a href='../Index.html' target="_top">Back to Package index</a>
+
+         <a href="Glossary.htm" style="padding:0px;"><h5>TreeGrid documentation</h5></a>
+
+         <a href='SearchAttr.html'>Search in documentation</a>
+
+         <div onclick="Expand(this)" style="font-style:italic;">TreeGrid versions compatibility</div><p>
+            <a href='Changes.txt'>Changes log (txt file)</a>
+            <a href='Changes14.htm'>Using custom CSS from 13.3 to 14.0</a>
+            <a href='Changes10.htm'>Upgrading from 9.3 to 10.0</a>
+            <a href='Changes6.htm'>Upgrading from 5.9 to 6.0</a>
+         </p>
+
+         <div onclick="Expand(this)">Using in JavaScript frameworks</div><p>
+            <a href='TreeGridAngular.html'>Angular</a>
+            <a href='TreeGridReact.html'>React</a>
+            <a href='TreeGridVue.html'>Vue</a>
+            <a href='TreeGridHtml.html'>Other frameworks</a>
+            <a href='TreeGridNodeServer.html'>NodeJS server</a>
+         </p>
+
+         <div onclick="Expand(this)">Creating grid</div><p>
+            <a href='Create.htm'>Simple examples</a>
+            <a href='Create.htm#Basic'>Basic information</a>
+            <a href='Create.htm#Creating'>Creating grid</a>
+            <a href='Create.htm#Deleting'>Deleting grid</a>
+            <a href='Create.htm#Reloading'>Reloading grid</a>
+            <a href='Create.htm#RenderingGrid'>Rendering grid</a>
+            <a href='Create.htm#API'>Accessing grid by API</a>
+         </p>
+
+         <div onclick="Expand(this)">Data &amp; communication</div><i>
+            <div onclick="Expand(this)">Data communication with server</div><p>
+               <a href='DataCommunication.htm'>Communication types</a>
+               <a href='DataCommunication.htm#AJAX'>AJAX communication</a>
+               <a href='DataCommunication.htm#SOAP'>AJAX SOAP envelope</a>
+               <a href='DataCommunication.htm#Submit'>Submit communication</a>
+               <a href='DataCommunication.htm#Data'>Directly included data</a>
+               <a href='DataCommunication.htm#Script'>Data from JavaScript</a>
+               <a href='DataCommunication.htm#JSONP'>Cross domain / local load by JSONP</a>
+               <a href='DataCommunication.htm#Sessions'>Sessions (AJAX)</a>
+               <a href='DataCommunication.htm#ServerResponse'>Server response (AJAX)</a>
+               <a href='DataCommunication.htm#SynchronousAJAX'>Synchronous communication (AJAX)</a>
+               <a href='DataCommunication.htm#Caching'>Caching (AJAX)</a>
+               <a href='DataCommunication.htm#API'>API (AJAX)</a>
+            </p>
+            <div onclick="Expand(this)">Download data</div><p>
+               <a href='DataDownload.htm'>Settings for data download</a>
+               <a href='DataDownload.htm#LayoutXML'>Layout XML structure</a>
+               <a href='DataDownload.htm#DataXML'>Data XML structure</a>
+            </p>
+            <div onclick="Expand(this)">Upload data</div><p>
+               <a href='DataUpload.htm'>Settings for data upload</a>
+               <a href='DataUpload.htm#API'>API for upload</a>
+               <a href='DataUpload.htm#XML'>XML structure sent to server</a>
+            </p>
+            <div onclick="Expand(this)">Changing data from server</div><p>
+               <a href='DataServerChanges.htm'>XML structure of download changes</a>
+               <a href='DataServerChanges.htm#XMLRequest'>XML structure of request for a cell</a>
+               <a href='DataServerChanges.htm#Synchronizing'>Synchronizing data with server</a>
+            </p>
+            <div onclick="Expand(this)">Input / output data formats</div><p>
+               <a href='DataFormats.htm'>Complete list of tags</a>
+               <a href='DataFormats.htm#InternalFormat'>Internal XML format</a>
+               <a href='DataFormats.htm#ShortFormat'>Short XML format</a>
+               <a href='DataFormats.htm#ExtraShortFormat'>Extra short XML format</a>
+               <a href='DataFormats.htm#DTDFormat'>DTD XML format</a>
+               <a href='DataFormats.htm#JSONFormat'>JSON format</a>
+            </p>
+         </i>
+
+         <div onclick="Expand(this)">Cells</div><i>
+            <div onclick="Expand(this)">Cell basics</div><p>
+               <a href='CellBasics.htm'>Cell type</a>
+               <a href='CellBasics.htm#CellFormat'>Cell format</a>
+               <a href='CellBasics.htm#DynamicFormat'>Dynamic format</a>
+               <a href='CellBasics.htm#DynamicType'>Dynamic type</a>
+               <a href='CellBasics.htm#CellValue'>Cell value</a>
+               <a href='CellBasics.htm#CellAPI'>Reading / writing attributes by API</a>
+               <a href='CellBasics.htm#CellHTML'>Cell HTML</a>
+               <a href='CellBasics.htm#CellDef'>Cell default</a>
+               <a href='CellBasics.htm#CellRange'>Range or more values in one cell</a>
+               <a href='CellBasics.htm#CellLink'>Cell with link URL</a>
+               <a href='CellBasics.htm#CellHint'>Cell hint</a>
+               <a href='CellBasics.htm#CellTip'>Cell tooltip / title</a>
+               <a href='CellBasics.htm#CellMenu'>Cell popup menu</a>
+            </p>
+            <div onclick="Expand(this)">Cell editing and changing values</div><p>
+               <a href='CellEdit.htm'>Cell editability</a>
+               <a href='CellEdit.htm#Defaults'>Defaults list</a>
+               <a href='CellEdit.htm#Suggest'>Suggest list (auto complete)</a>
+               <a href='CellEdit.htm#ChangingValue'>Changing cell value</a>
+               <a href='CellEdit.htm#Mass'>Mass cell change</a>
+               <a href='CellEdit.htm#Clear'>Clearing cells</a>
+               <a href='CellEdit.htm#Editing'>Editing cells</a>
+               <a href='CellEdit.htm#Input'>Controlling &lt;input> tag by JavaScript</a>
+               <a href='CellEdit.htm#Validation'>Input validation and restrictions</a>
+               <a href='CellEdit.htm#Check'>Side checkbox</a>
+               <a href='RowSelect.htm#Cells'>Cell selecting</a>
+            </p>
+            <div onclick="Expand(this)">Calculations - cell formulas</div><p>
+               <a href='CellFormula.htm'>Basics</a>
+               <a href='CellFormula.htm#Formulas'>Formulas</a>
+               <a href='CellFormula.htm#MathFunc'>Mathematical functions</a>
+               <a href='CellFormula.htm#AggFunc'>Aggregate functions</a>
+               <a href='CellFormula.htm#SpecialFunc'>Special functions for actions</a>
+               <a href='CellFormula.htm#CustomFunc'>Custom functions</a>
+            </p>
+            <div onclick="Expand(this)">Calculations - editable cell formulas</div><p>
+               <a href='CellEditFormula.htm'>Basics</a>
+               <a href='CellEditFormula.htm#Suggest'>Suggest list (auto complete)</a>
+               <a href='CellEditFormula.htm#Actions'>Actions for choosing cells</a>
+               <a href='CellEditFormula.htm#CondFunc'>Conditional functions</a>
+               <a href='CellEditFormula.htm#LookupFunc'>Lookup functions</a>
+               <a href='CellEditFormula.htm#CellFunc'>Cell reference functions</a>
+               <a href='CellEditFormula.htm#LogicFunc'>Logical functions</a>
+               <a href='CellEditFormula.htm#InfoFunc'>Informational functions</a>
+               <a href='CellEditFormula.htm#MathFunc'>Mathematical functions</a>
+               <a href='CellEditFormula.htm#TrigFunc'>Trigonometry functions</a>
+               <a href='CellEditFormula.htm#RoundFunc'>Rounding numbers</a>
+               <a href='CellEditFormula.htm#ConvFunc'>Number conversions</a>
+               <a href='CellEditFormula.htm#StringFunc'>String functions</a>
+               <a href='CellEditFormula.htm#DateFunc'>Date functions</a>
+               <a href='CellEditFormula.htm#SumFunc'>Summary functions</a>
+               <a href='CellEditFormula.htm#Custom'>Custom functions</a>
+            </p>
+            <div onclick="Expand(this)">Cell side buttons</div><p>
+               <a href='CellSideButton.htm'>Introduction</a>
+               <a href='CellSideButton.htm#Button'>Right side Button</a>
+               <a href='CellSideButton.htm#Icon'>Left side Icon</a>
+            </p>
+            <div onclick="Expand(this)">Cell spanning</div><p>
+               <a href='CellSpan.htm'>Column span</a>
+               <a href='CellSpan.htm#RowSpan'>Row span</a>
+               <a href='CellSpan.htm#Dynamic'>Dynamic spanning</a>
+            </p>
+            <div onclick="Expand(this)">Cell style and color</div><p>
+               <a href='CellStyle.htm'>Basic grid style</a>
+               <a href='CellStyle.htm#Size'>Sizing and scaling - responsive design</a>
+               <a href='CellStyle.htm#DynamicStyle'>Dynamic cell style attributes</a>
+               <a href='CellStyle.htm#CellClass'>Cell CSS class</a>
+               <a href='CellStyle.htm#CellColor'>Cell background color</a>
+               <a href='CellStyle.htm#DynamicBorder'>Dynamic cell border</a>
+               <a href='CellStyle.htm#CellHTMLStyle'>Cell HTML style</a>
+               <a href='CellStyle.htm#Alternate'>Row color alteration</a>
+               <a href='CellStyle.htm#MouseCursor'>Cell mouse cursor</a>
+            </p>
+         </i>
+
+         <div onclick="Expand(this)">Cell types</div><i>
+            <a href='TypeAuto.htm'>Automatic type - Auto</a>
+            <a href='TypeText.htm'>String - Text, Lines &amp; Pass</a>
+            <div onclick="Expand(this)">Number - Int &amp; Float</div><p>
+               <a href='TypeNumber.htm'>Format</a>
+               <a href='TypeNumber.htm#Localization'>Localization</a>
+            </p>
+            <div onclick="Expand(this)">Date and time - Date</div><p>
+               <a href='TypeDate.htm'>Format</a>
+               <a href='TypeDate.htm#Calendar'>Calendar component</a>
+               <a href='TypeDate.htm#Dates'>Dates dialog</a>
+               <a href='TypeDate.htm#Localization'>Localization</a>
+            </p>
+            <div onclick="Expand(this)">List &amp; combo - Enum &amp; Radio</div><p>
+               <a href='TypeEnum.htm'>Introduction</a>
+               <a href='TypeEnum.htm#Definition'>Definition</a>
+               <a href='TypeEnum.htm#Related'>Related lists</a>
+               <a href='TypeEnum.htm#Enum'>Enum specific</a>
+               <a href='TypeEnum.htm#Radio'>Radio specific</a>
+            </p>
+            <a href='TypeBool.htm'>Checkbox - Bool</a>
+            <div onclick="Expand(this)">Action button - Button</div><p>
+               <a href='TypeButton.htm'>Introduction</a>
+               <a href='TypeButton.htm#Button'>Basic clickable button</a>
+               <a href='TypeButton.htm#Switch'>Switch button</a>
+               <a href='TypeButton.htm#Radio'>Radio / tab button</a>
+               <a href='TypeButton.htm#Menu'>Menu button</a>
+               <a href='TypeButton.htm#ComboSwitch'>Combo switch button</a>
+               <a href='TypeButton.htm#ComboRadio'>Combo radio / tab button</a>
+               <a href='TypeButton.htm#Special'>Special Space rows with buttons</a>
+            </p>
+            <div onclick="Expand(this)">Panel with more buttons - Panel</div><p>
+               <a href='TypePanel.htm'>Definition</a>
+               <a href='TypePanel.htm#Standard'>Standard fast panel</a>
+               <a href='TypePanel.htm#Custom'>Custom panel</a>
+            </p>
+            <div onclick="Expand(this)">HTML and special types</div><p>
+               <a href='TypeHtml.htm'>Html type</a>
+               <a href='TypeHtml.htm#TIcon'>Icon type</a>
+               <a href='TypeHtml.htm#TAbs'>Abs type</a>
+               <a href='TypeHtml.htm#TList'>List type</a>
+               <a href='TypeHtml.htm#TLink'>Editable Link type</a>
+               <a href='TypeHtml.htm#TImg'>Editable Img type</a>
+               <a href='TypeHtml.htm#TDropCols'>DropCols type</a>
+               <a href='TypeHtml.htm#TFile'>Upload File type</a>
+            </p>
+         </i>
+
+         <div onclick="Expand(this)">Columns</div><p>
+            <a href='ColBasics.htm'>Column basics</a>
+            <a href='ColBasics.htm#ColIndex'>Column index</a>
+            <a href='ColVisibility.htm'>Column visibility</a>
+            <a href='ColVisibility.htm#MenuColumns'>Column visibility menu</a>
+            <a href='RowSelect.htm#Columns'>Column selecting</a>
+            <a href='ColTree.htm'>Column tree</a>
+            <a href='ColPosition.htm'>Column position and moving</a>
+            <a href='ColAdd.htm'>Column adding and copying</a>
+            <a href='ColDelete.htm'>Column deleting</a>
+            <a href='ColWidth.htm'>Column width</a>
+            <a href='ColAPI.htm'>Column API</a>
+         </p>
+
+         <div onclick="Expand(this)">Rows</div><i>
+            <div onclick="Expand(this)">Row basics</div><p>
+               <a href='RowBasics.htm'>Rows by functionality</a>
+               <a href='RowBasics.htm#RowFixed'>Rows by position</a>
+               <a href='RowBasics.htm#RowName'>Row name</a>
+               <a href='RowBasics.htm#RowId'>Row id</a>
+               <a href='RowBasics.htm#RowIndex'>Row index</a>
+            </p>
+            <div onclick="Expand(this)">Default rows</div><p>
+               <a href='RowDefaults.htm'>Description</a>
+               <a href='RowDefaults.htm#DefaultsExample'>Example of default rows</a>
+               <a href='RowDefaults.htm#DefaultsChangeExample'>Example of changing default row</a>
+               <a href='RowDefaults.htm#DefaultsAttributes'>Attributes</a>
+            </p>
+            <div onclick="Expand(this)">Row tree</div><p>
+               <a href='Tree.htm'>Tree attributes</a>
+               <a href='Tree.htm#API'>Actions &amp; API for expand / collapse</a>
+            </p>
+            <div onclick="Expand(this)">Row identification</div><p>
+               <a href='RowId.htm'>Setting row id attribute</a>
+               <a href='RowId.htm#RowIdTree'>Row id attribute in tree</a>
+               <a href='RowId.htm#RowIdColumn'>Row id created from cell values</a>
+               <a href='RowId.htm#RowIdAPI'>API for row ids</a>
+            </p>
+            <a href='RowVisibility.htm'>Row visibility</a>
+            <div onclick="Expand(this)">Row adding and copying</div><p>
+               <a href='RowAdd.htm'>Five ways of adding rows to grid</a>
+               <a href='RowAdd.htm#Restrictions'>Adding and copying restrictions</a>
+               <a href='RowAdd.htm#Adding'>Adding new empty rows</a>
+               <a href='RowAdd.htm#Copying'>Copying existing rows</a>
+            </p>
+            <a href='RowDelete.htm'>Row deleting</a>
+            <a href='RowMove.htm'>Row moving and dragging</a>
+            <a href='RowSelect.htm#Rows'>Row selecting</a>
+            <a href='RowHeight.htm'>Row height</a>
+            <a href='RowAPI.htm'>Row API</a>
+            <a href='RowSpace.htm'>Space rows</a>
+         </i>
+
+         <div onclick="Expand(this)">Features</div><i>
+            <div onclick="Expand(this)">Sorting rows</div><p>
+               <a href='Sort.htm'>Sort settings</a>
+               <a href='Sort.htm#Position'>Controlling sort position</a>
+               <a href='Sort.htm#Strings'>Comparing strings</a>
+               <a href='Sort.htm#Actions'>Sorting actions</a>
+               <a href='Sort.htm#API'>Sorting API</a>
+            </p>
+            <div onclick="Expand(this)">Grouping rows to tree</div><p>
+               <a href='Group.htm'>Group settings</a>
+               <a href='Group.htm#Groups'>Creating groups</a>
+               <a href='Group.htm#Strings'>Comparing strings</a>
+               <a href='Group.htm#DGroup1'>Created group rows &lt;D Group='1'/></a>
+               <a href='Group.htm#Group'>User interface to choose grouping</a>
+               <a href='Group.htm#Actions'>Grouping actions and API</a>
+            </p>
+            <div onclick="Expand(this)">Filtering rows</div><p>
+               <a href='Filter.htm'>Filter settings</a>
+               <a href='Filter.htm#Strings'>Comparing strings</a>
+               <a href='Filter.htm#Filter'>User interface to choose filter</a>
+               <a href='Filter.htm#Actions'>Filter actions and API</a>
+            </p>
+            <div onclick="Expand(this)">Searching in rows and cells</div><p>
+               <a href='Search.htm'>Search settings</a>
+               <a href='Search.htm#Search'>User interface for search</a>
+               <a href='Search.htm#Actions'>Search actions and API</a>
+            </p>
+            <div onclick="Expand(this)">Printing grid</div><p>
+               <a href='Print.htm'>Print settings</a>
+               <a href='Print.htm#Items'>Choosing items to print</a>
+               <a href='Print.htm#Page'>Page size</a>
+               <a href='Print.htm#API'>Print API</a>
+            </p>
+            <div onclick="Expand(this)">Print / export to PDF</div><p>
+               <a href='ExportPDF.htm'>Introduction</a>
+               <a href='ExportPDF.htm#Client'>Client side settings</a>
+               <a href='ExportPDF.htm#Print'>Printing options</a>
+               <a href='ExportPDF.htm#ClientAPI'>Client side API</a>
+               <a href='ExportPDF.htm#ServerAPI'>Server side API</a>
+               <a href='ExportPDF.htm#Data'>Data sent from client to server</a>
+            </p>
+            <div onclick="Expand(this)">Export to Excel or CSV</div><p>
+               <a href='Export.htm'>Introduction</a>
+               <a href='Export.htm#Basic'>Basic settings</a>
+               <a href='Export.htm#Communication'>Communication with server</a>
+               <a href='Export.htm#API'>Export API</a>
+               <a href='Export.htm#Client'>Client export</a>
+               <a href='Export.htm#Server'>Server export</a>
+            </p>
+            <div onclick="Expand(this)">Import from Excel</div><p>
+               <a href='Import.htm'>Basic settings</a>
+               <a href='Import.htm#Sheets'>Sheets manipulation</a>
+            </p>
+            <div onclick="Expand(this)">Copy &amp; paste rows via clipboard</div><p>
+               <a href='CopyPaste.htm'>Copy &amp; paste permissions</a>
+               <a href='CopyPaste.htm#Copy'>Copying to clipboard</a>
+               <a href='CopyPaste.htm#Paste'>Pasting from clipboard</a>
+            </p>
+            <div onclick="Expand(this)">Master - detail grids</div><p>
+               <a href='MasterDetail.htm'>Introduction</a>
+               <a href='MasterDetail.htm#External'>External master - detail grids</a>
+               <a href='MasterDetail.htm#Nested'>Nested master - detail grids</a>
+               <a href='MasterDetail.htm#Synchronizing'>Synchronizing grids</a>
+               <a href='MasterDetail.htm#Other'>Other attributes for master - detail</a>
+            </p>
+            <div onclick="Expand(this)">Pivot tables</div><p>
+               <a href='Pivot.htm'>Pivot attributes &amp; API</a>
+               <a href='Pivot.htm#Formula'>Pivot formulas</a>
+            </p>
+            <a href='ExtObjects.htm'>External objects (like Adobe Flash)</a>
+            <a href='Undo.htm'>Undo &amp; Redo</a>
+         </i>
+
+         <div onclick="Expand(this)">Gantt and bar chart</div><i>
+            <div onclick="Expand(this)">Gantt objects</div><p>
+               <a href='GanttObjects.htm'>Gantt objects list</a>
+               <a href='GanttObjects.htm#Display'>Display settings</a>
+               <a href='GanttObjects.htm#Edit'>Edit settings</a>
+            </p>
+            <div onclick="Expand(this)">Main bar</div><p>
+               <a href='GanttMain.htm'>Definition of main bar and plans</a>
+               <a href='GanttMain.htm#Task'>Main bar as Task</a>
+               <a href='GanttMain.htm#Edit'>Edit settings</a>
+               <a href='GanttMain.htm#Text'>Main bar content and side html</a>
+               <a href='GanttMain.htm#Tip'>Tip on mouse hover</a>
+               <a href='GanttMain.htm#Position'>Vertical position and height</a>
+               <a href='GanttMain.htm#Style'>Style specific attributes</a>
+               <a href='GanttMain.htm#API'>API to manipulate Main bars</a>
+               <a href='GanttMain.htm#Actions'>Actions</a>
+               <a class="Deprecated" href='GanttMain.htm#Format'>Side text (deprecated)</a>
+               <a class="Deprecated" href='GanttMain.htm#Flow'>Real Flow (deprecated)</a>
+            </p>
+            <div onclick="Expand(this)">Run bar</div><p>
+               <a href='GanttRun.htm'>GanttRun Definition</a>
+               <a href='GanttRun.htm#Extended'>Extended definition</a>
+               <a href='GanttRun.htm#Task'>Run bar as Task</a>
+               <a href='GanttRun.htm#Edit'>Edit settings</a>
+               <a href='GanttRun.htm#Save'>Save format</a>
+               <a href='GanttRun.htm#Select'>Selecting Run boxes</a>
+               <a href='GanttRun.htm#Text'>Run box content and side html</a>
+               <a href='GanttRun.htm#Tip'>Tip on mouse hover</a>
+               <a href='GanttRun.htm#id'>Box identification</a>
+               <a href='GanttRun.htm#Position'>Vertical position and height</a>
+               <a href='GanttRun.htm#Style'>Style specific attributes</a>
+               <a href='GanttRun.htm#Error'>Overlaid (Error) boxes</a>
+               <a href='GanttRun.htm#Container'>Containers for more boxes</a>
+               <a href='GanttRun.htm#Moving'>Dragging - moving and resizing</a>
+               <a href='GanttRun.htm#API'>API to manipulate Run boxes</a>
+               <a href='GanttRun.htm#Actions'>Actions</a>
+               <a href='GanttRun.htm#Formulas'>Run special formulas</a>
+            </p>
+            <div onclick="Expand(this)">Summary task</div><p>
+               <a href='GanttSummary.htm'>Main for Main</a>
+               <a href='GanttSummary.htm#MainRun'>Main for Run</a>
+               <a href='GanttSummary.htm#EditMain'>Editable Main</a>
+               <a href='GanttSummary.htm#RunMain'>Editable Run</a>
+            </p>
+            <div onclick="Expand(this)">Gantt icons - Flag &amp; Point</div><p>
+               <a href='GanttIcons.htm'>Flag - icon with text</a>
+               <a href='GanttIcons.htm#Point'>Point - math points</a>
+            </p>
+            <div onclick="Expand(this)">Gantt display objects</div><p>
+               <a href='GanttDisplay.htm'>Header - column captions</a>
+               <a href='GanttDisplay.htm#Background'>Cell and column Background</a>
+               <a href='GanttDisplay.htm#Line'>Vertical movable Line</a>
+               <a href='GanttDisplay.htm#Mark'>Mark &amp; Progress line</a>
+            </p>
+            <div onclick="Expand(this)">Gantt zoom</div><p>
+               <a href='GanttZoom.htm'>Zoom options</a>
+               <a href='GanttZoom.htm#Size'>Chart size limits</a>
+               <a href='GanttZoom.htm#ZoomList'>Zoom selection</a>
+               <a href='GanttZoom.htm#Paging'>Paging in Gantt chart</a>
+            </p>
+            <div onclick="Expand(this)">Dependency, constraints &amp; schedule</div><p>
+               <a href='GanttCompute.htm'>Introduction</a>
+               <a href='GanttCompute.htm#Data'>Data units</a>
+               <a href='GanttCompute.htm#Dependencies'>Defining dependencies</a>
+               <a href='GanttCompute.htm#Colors'>Dependency colors and shapes</a>
+               <a href='GanttCompute.htm#Changing'>Changing dependencies</a>
+               <a href='GanttCompute.htm#Correcting'>Correcting dependencies</a>
+               <a href='GanttCompute.htm#Algorithm'>Scheduling algorithm</a>
+               <a href='GanttCompute.htm#ProjectConstraints'>Project date constraints</a>
+               <a href='GanttCompute.htm#TaskConstraints'>Task date constraints</a>
+               <a href='GanttCompute.htm#Critical'>Critical path - Slack (Float)</a>
+            </p>
+            <div onclick="Expand(this)">Gantt calendars</div><p>
+               <a href='GanttCalendars.htm'>Global base calendar</a>
+               <a href='GanttCalendars.htm#Local'>Local calendar</a>
+               <a href='GanttCalendars.htm#List'>Calendar list</a>
+               <a href='GanttCalendars.htm#Dialog'>Calendars dialog</a>
+               <a href='GanttCalendars.htm#Other'>Other settings</a>
+            </p>
+            <div onclick="Expand(this)">Gantt resources</div><p>
+               <a href='GanttResources.htm'>Resources list</a>
+               <a href='GanttResources.htm#Assign'>Resources assign</a>
+               <a href='GanttResources.htm#Filter'>Resources filter</a>
+               <a href='GanttResources.htm#Calculations'>Resources calculations</a>
+               <a href='GanttResources.htm#Availability'>Availability chart</a>
+               <a href='GanttResources.htm#Usage'>Resource usage chart</a>
+               <a href='GanttResources.htm#Auto'>Generated resource usage chart</a>
+            </p>
+            <a href='GanttMenu.htm'>Gantt popup menu</a>
+            <a href='GanttAPI.htm'>Gantt API</a>
+         </i>
+
+         <div onclick="Expand(this)">Line and XY points charts</div><p>
+            <a href='Charts.htm'>Charts in grid cells</a>
+            <a href='Charts.htm#Chart'>Chart JSON definition</a>
+            <a href='Charts.htm#Base'>Base chart settings</a>
+            <a href='Charts.htm#Basic'>Basic attributes</a>
+            <a href='Charts.htm#Size'>Size</a>
+            <a href='Charts.htm#Axis'>Axis and caption</a>
+            <a href='Charts.htm#Lines'>Individual chart lines</a>
+            <a href='Charts.htm#Sources'>Data sources</a>
+            <a href='Charts.htm#Visual'>Visual settings</a>
+            <a href='Charts.htm#API'>API for standalone usage</a>
+         </p>
+
+         <div onclick="Expand(this)">Paging in large grids</div><i>
+            <div onclick="Expand(this)">Paging root rows</div><p>
+               <a href='Paging.htm'>Paging types and attributes</a>
+               <a href='Paging.htm#Auto'>Auto adding root pages</a>
+               <a href='Paging.htm#API'>API for paging</a>
+            </p>
+            <div onclick="Expand(this)">Pager components</div><p>
+               <a href='Pager.htm'>Side pager</a>
+               <a href='Pager.htm#Pages'>Side pager type Pages</a>
+               <a href='Pager.htm#Gantt'>Side pager type Gantt</a>
+               <a href='Pager.htm#Custom'>Side pager type Custom</a>
+               <a href='Pager.htm#SimplePager'>Pager with navigation buttons &amp; edit</a>
+               <a href='Pager.htm#ListPager'>Pager as list of page indexes</a>
+            </p>
+            <div onclick="Expand(this)">Paging in tree</div><p>
+               <a href='TreePaging.htm'>ChildPaging - load / render on expand</a>
+               <a href='TreePaging.htm#MaxChildren'>MaxChildren - limit children count</a>
+               <a href='TreePaging.htm#ChildParts'>ChildParts - load / render on scroll</a>
+            </p>
+            <div onclick="Expand(this)">Paging columns</div><p>
+               <a href='ColPaging.htm'>Paging types and attributes</a>
+               <a href='ColPaging.htm#Auto'>Auto adding column pages</a>
+               <a href='ColPaging.htm#API'>API for column paging</a>
+            </p>
+            <div onclick="Expand(this)">Server paging</div><p>
+               <a href='PagingServer.htm'>Server paging for root rows</a>
+               <a href='PagingServer.htm#RootCommunication'>Server communication in root paging</a>
+               <a href='PagingServer.htm#LargeTables'>Root paging in very large tables</a>
+               <a href='PagingServer.htm#ChildPaging'>Server paging in tree</a>
+               <a href='PagingServer.htm#ChildPagingCommunication'>Server communication in tree paging</a>
+               <a href='PagingServer.htm#DataRequest'>XML Request for Data in root paging</a>
+               <a href='PagingServer.htm#DataDownload'>XML Download Data in root paging</a>
+               <a href='PagingServer.htm#PageRequest'>XML Request for root Page / children</a>
+               <a href='PagingServer.htm#PageDownload'>XML Download root Page / children</a>
+               <a href='PagingServer.htm#API'>API for server paging</a>
+            </p>
+            <div onclick="Expand(this)">TreeGrid DLL/SO for server paging</div><p>
+               <a href='DLL.htm'>Introduction</a>
+               <a href='DLL.htm#Compatibility'>Compatibility with TreeGrid control</a>
+               <a href='DLL.htm#Using'>Using TreeGrid server DLL/SO</a>
+               <a href='DLL.htm#ASPNETC'>ASP.NET C#</a>
+               <a href='DLL.htm#ASPNETVB'>ASP.NET VB</a>
+               <a href='DLL.htm#PHP'>PHP</a>
+               <a href='DLL.htm#JSPJava'>JSP Java</a>
+               <a href='DLL.htm#Concepts'>TreeGrid server concepts</a>
+               <a href='DLL.htm#Reference'>Function reference</a>
+               <a href='DLL.htm#Calculations'>Calculations</a>
+            </p>
+         </i>
+
+         <div onclick="Expand(this)">JSON menus and dialogs</div><i>
+            <a href='Menu.htm'>JSON menu description</a>
+            <a href='Menu.htm#JSON'>JSON menu definition example</a>
+            <div onclick="Expand(this)">Menu settings</div><p>
+               <a href='Menu.htm#Base'>Base attributes</a>
+               <a href='Menu.htm#VisualSettings'>Visual settings</a>
+               <a href='Menu.htm#KeyNavigation'>Key navigation</a>
+               <a href='Menu.htm#Behavior'>Behavior</a>
+               <a href='Menu.htm#SizeScroll'>Size and scroll</a>
+            </p>
+            <div onclick="Expand(this)">Menu item settings</div><p>
+               <a href='Menu.htm#Item'>Base attributes</a>
+               <a href='Menu.htm#Clickable'>Clickable item</a>
+               <a href='Menu.htm#Inactive'>Inactive caption</a>
+               <a href='Menu.htm#Level'>Collapsible sub level</a>
+               <a href='Menu.htm#Submenu'>Popup sub menu</a>
+               <a href='Menu.htm#Columns'>Columns</a>
+               <a href='Menu.htm#Bool'>Bool item</a>
+               <a href='Menu.htm#Enum'>Enum item</a>
+               <a href='Menu.htm#Edit'>Edit item</a>
+            </p>
+            <div onclick="Expand(this)">Custom menu in JavaScript</div><p>
+               <a href='Menu.htm#Custom'>Show custom menu</a>
+               <a href='Menu.htm#TPosition'>Custom menu position</a>
+               <a href='Menu.htm#Advanced'>Custom menu advanced settings</a>
+               <a href='Menu.htm#Events'>Custom menu JavaScript events</a>
+               <a href='Menu.htm#Methods'>Custom menu JavaScript methods</a>
+            </p>
+            <a href='Menu.htm#Calendar'>Calendar dialog</a>
+            <a href='Menu.htm#CustomCalendar'>Custom calendar &amp; JavaScript events</a>
+            <a href='Menu.htm#Dialog'>Custom dialog in JavaScript</a>
+         </i>
+
+         <div onclick="Expand(this)">Global grid settings</div><i>
+            <div onclick="Expand(this)">Grid size and scroll</div><p>
+               <a href='GridSize.htm'>Default behavior</a>
+               <a href='GridSize.htm#Maximize'>Maximize grid height and width</a>
+               <a href='GridSize.htm#NoScroll'>Update size according to the content</a>
+               <a href='GridSize.htm#Resizing'>Let a user to control the grid size</a>
+               <a href='GridSize.htm#Widths'>Widths of individual sections</a>
+               <a href='GridSize.htm#Other'>Other scrolling attributes and API</a>
+            </p>
+            <a href='Media.htm'>Media rules - responsive design</a>
+            <div onclick="Expand(this)">Languages</div><p>
+               <a href='Languages.htm#Text'>Language &amp; regional setup (Text.xml)</a>
+               <a href='Languages.htm#Translate'>Translate texts dynamically</a>
+               <a href='Languages.htm#Language'>Change language</a>
+            </p>
+            <div onclick="Expand(this)">Grid cursor - Focus &amp; hover</div><p>
+               <a href='Focus.htm'>Focused cell and row</a>
+               <a href='Focus.htm#Range'>Focused cell range</a>
+               <a href='Focus.htm#Move'>Move and copy focused cells</a>
+               <a href='Focus.htm#Fill'>Filling cell values by dragging</a>
+               <a href='Focus.htm#Tab'>Tabulator navigation</a>
+               <a href='Focus.htm#Key'>Key navigation</a>
+               <a href='Cursor.htm'>Cursor look - focus &amp; hover</a>
+            </p>
+            <div onclick="Expand(this)">Selecting rows, cells and columns</div><p>
+               <a href='RowSelect.htm'>Selecting base</a>
+               <a href='RowSelect.htm#Rows'>Selecting rows</a>
+               <a href='RowSelect.htm#Cells'>Selecting cells</a>
+               <a href='RowSelect.htm#Columns'>Selecting columns</a>
+            </p>
+            <div onclick="Expand(this)">Global settings</div><p>
+               <a href='GlobalSettings.htm'>Status messages</a>
+               <a href='GlobalSettings.htm#CfgMenu'>Configuration menus</a>
+               <a href='GlobalSettings.htm#MenuCfg'>Configuration menu - options</a>
+               <a href='GlobalSettings.htm#MenuColumns'>Configuration menu - columns</a>
+               <a href='GlobalSettings.htm#MenuPrint'>Configuration menu - print / PDF</a>
+               <a href='GlobalSettings.htm#MenuExport'>Configuration menu - export</a>
+               <a href='GlobalSettings.htm#DefaultToolbar'>Default toolbar</a>
+               <a href='GlobalSettings.htm#API'>Useful API function</a>
+               <a href='GlobalSettings.htm#Help'>Help file</a>
+            </p>
+            <div onclick="Expand(this)">Animations</div><p>
+               <a href='Animations.htm'>Animations base</a>
+               <a href='Animations.htm#Row'>Row animations</a>
+               <a href='Animations.htm#Col'>Column animations</a>
+               <a href='Animations.htm#Cell'>Cell animations</a>
+               <a href='Animations.htm#Undo'>Animations for undo / redo</a>
+               <a href='Animations.htm#Server'>Animations for server side changes</a>
+               <a href='Animations.htm#Dialog'>Dialog animations</a>
+            </p>
+            <a href='Cookie.htm'>Grid configuration in cookies</a>
+            <div onclick="Expand(this)">Mouse &amp; key events &amp; actions</div><p>
+               <a href='Events.htm'>List of event handler types</a>
+               <a href='Events.htm#Mouse'>TreeGrid mouse events</a>
+               <a href='Events.htm#Names'>Mouse event names</a>
+               <a href='Events.htm#Prefixes'>Key and mouse button prefixes</a>
+               <a href='Events.htm#IPAD'>Touch event names</a>
+               <a href='Events.htm#Targets'>Event targets</a>
+               <a href='Events.htm#Assigning'>Assigning event actions / callbacks</a>
+               <a href='Events.htm#Parameters'>Event action parameters</a>
+               <a href='Events.htm#CallingEvents'>Calling actions from JavaScript</a>
+               <a href='Events.htm#Custom'>Creating custom actions</a>
+               <a href='Events.htm#FocusedActual'>Focused vs. Actual cell</a>
+               <a href='Events.htm#Key'>TreeGrid key events</a>
+               <a href='Events.htm#API'>JavaScript API events</a>
+            </p>
+            <a href='Mouse.htm'>Mouse API event</a>
+            <a href='Files.htm'>TreeGrid files</a>
+            <div onclick="Expand(this)">Debugging and testing</div><p>
+               <a href='Debug.htm'>Debug window</a>
+               <a href='Debug.htm#test'>Automated testing</a>
+            </p>
+         </i>
+         
+      </div>
+      
+   </div>
+
+   <script>
+      var LastActive = null;
+
+      function OnClick(){
+      if(LastActive) LastActive.className = "";
+      this.className = "TreeActive";
+      LastActive = this;
+      }
+
+      function Expand(O){
+      var exp = O.className=="TreeExpanded";
+      O.className = exp ? "" : "TreeExpanded";
+      O = O.nextSibling;
+      O.style.display = exp ? "": "block";
+      }
+
+      var A = document.body.getElementsByTagName("a");
+      for(var i=0;i<A.length;i++) if(A[i].target!="_top"){
+         A[i].onclick = OnClick;
+         A[i].target = "Content";
+         }
+
+   </script>
+</body>

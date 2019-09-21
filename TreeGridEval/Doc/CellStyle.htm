@@ -1,0 +1,2311 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Cell style</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Cell style and color</h1>
+<p class="H1">TreeGrid documentation</p>
+
+<!-----------------------------------------------------------------------  Basic grid style ------------------------------------------------->
+<a name="BasicStyle"></a>
+<h2>Basic grid style</h2>
+
+Base grid styles are defined in ...Grid.css and ...Gantt.css in Styles/ directory (default is Standard for grid and White for Gantt).<br />
+                                                        
+<!-- Style -->
+<a name="CfgStyle"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>Style</h4> <s>["Standard"] Can be saved to cookies, if set StyleLap='0'</s>
+</div>
+Base TreeGrid style selection. The base TreeGrid style presets nearly all visual settings in TreeGrid except Gantt chart. It can be:<br />
+a) Name of the predefined style from <a href="#CfgStyles">Styles</a>, e.g. "Standard" or "White".
+In this case no <a href="#CfgCSS">CSS</a> attribute should be set.<br />
+b) Prefix for custom or predefined CSS style. 
+All the CSS classes in the file must start by this prefix, e.g. "TS", "XX" or "MyCustomPrefix".
+For custom prefix the <a href="#CfgCSS">CSS</a> attribute must be set to style file or directory, e.g. <tt>&lt;Cfg Style='PR1' GanttStyle='PR2' CSS='../CSSPR/Grid.css' GanttCSS='../CSSPR/Gantt.css'/></tt>
+
+<!-- GanttStyle -->
+<a name="CfgGanttStyle"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>GanttStyle</h4> <s>["White"] Can be saved to cookies, if set StyleLap='0'</s>
+</div>
+<i>Used only if defined Gantt chart.</i> TreeGrid style selection for Gantt chart. The TreeGrid Gantt style presets nearly all visual settings in the Gantt chart cells. It can be:<br />
+a) Name of the predefined style from <a href="#CfgGanttStyles">GanttStyles</a>, e.g. "Standard" or "White".
+In this case no <a href="#CfgGanttCSS">GanttCSS</a> attributes should be set.<br />
+b) Prefix for custom or predefined CSS style. 
+All the CSS classes in the file must start by this prefix, e.g. "TS", "YY" or "MyCustomPrefix".
+For custom prefix the <a href="#CfgGanttCSS">GanttCSS</a> attribute must be set to style file or directory, e.g. <tt>&lt;Cfg Style='PR1' GanttStyle='PR2' CSS='../CSSPR/Grid.css' GanttCSS='../CSSPR/Gantt.css'/></tt>
+
+<!-- CSS -->
+<a name="CfgCSS"></a>
+<div class="XML">
+   <u>new <b>6.0</b> chg <b>7.0</b> <i>upd <b>14.1</b></i></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>CSS</h4> <s>[""]</s>
+</div>
+Where the file with TreeGrid CSS style is located, it can be:<br />
+a) empty to load CSS file from default style location defined in <a href="#CfgStyles">Styles</a> according to the <a href="#CfgStyle">Style</a>.<br />
+b) CSS file path and name with original or custom CSS style. 
+For example <tt>CSS='*Styles/BlackGrid.css'</tt> or <tt>CSS='../../../Grid/Compatible/Gradient/Grid.css'</tt>. <br />
+<i>If the path starts by <b>*</b>, it is relative to Grid/ directory <i>(new 13.0)</i>, otherwise it is relative to the actual page URL.</i><br />
+c) CSS directory name inside base /Grid directory. This directory must contain files Grid.css as the style definition. For example CSS="Compatible/Standard"<br />
+d) <i>Since 14.1</i> it can be set to "*" to not load anything. In this case the page must link or contain the Grid css file or its content.<br />
+
+<!-- DialogCSS -->
+<a name="CfgDialogCSS"></a>
+<div class="XML">
+   <u>new <b>14.0</b> <i>upd <b>14.1</b></i></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>DialogCSS</h4> <s>[""]</s>
+</div>
+<i>The CSS for dialogs has the same CSS class prefix as CSS for grid (defined by the <a href="#CfgStyle">Style</a>).</i><br />
+Where the file with TreeGrid CSS style for dialogs, menus, messages, inline edit, debug print, line chart and animations is located, it can be:<br />
+a) empty to load CSS file from default style location defined in <a href="#CfgStyles">Styles</a> according to the <a href="#CfgStyle">Style</a>.<br />
+Or if defined <a href="#CfgCSS">CSS</a> as directory name, the DialogCSS is set to the same name.<br />
+Or if defined <a href="#CfgCSS">CSS</a> as url and contains "Grid.css", the DialogCSS is set to the same url with replaced "Grid.css" by "Dialog.css" and all standalone words "Grid" by "Dialog.<br />
+b) CSS file path and name with original or custom CSS style. 
+For example <tt>DialogCSS='*Styles/BlackDialogcss'</tt> or <tt>DialogCSS='../../../Grid/New/Dialog.css'</tt>. <br />
+<i>If the path starts by <b>*</b>, it is relative to Grid/ directory <i>(new 13.0)</i>, otherwise it is relative to the actual page URL.</i><br />
+c) CSS directory name inside base /Grid directory. This directory must contain file Dialog.css as the style definition. For example DialogCSS="New/Standard".<br />
+d) <i>Since 14.1</i> it can be set to "*" to not load anything. In this case the page must link or contain the Dialog css file or its content.<br />
+<i>In compatible CSS styles there is no standalone Dialog.css, all the definitions are in Grid.css.</i><br />
+
+<!-- GanttCSS -->
+<a name="CfgGanttCSS"></a>
+<div class="XML">
+   <u>new <b>10.0</b> <i>upd <b>14.1</b></i></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>GanttCSS</h4> <s>[""]</s>
+</div>
+<i>Used only if defined Gantt chart.</i> Where the file with TreeGrid Gantt CSS style is located, it can be:<br />
+a) empty to load CSS file from default style location defined in <a href="#CfgGanttStyles">GanttStyles</a> according to the <a href="#CfgGanttStyle">GanttStyle</a>.<br />
+Or if defined <a href="#CfgCSS">CSS</a> as directory name, the GanttCSS is set to the same name.<br />
+Or if defined <a href="#CfgCSS">CSS</a> as url and contains "Grid.css", the GanttCSS is set to the same url with replaced "Grid.css" by "Gantt.css".<br />
+b) CSS file path and name with original or custom CSS style. 
+For example <tt>GanttCSS='*Styles/BlackGanttcss'</tt> or <tt>GanttCSS='../../../Grid/Compatible/Gradient/Gantt.css'</tt>. <br />
+<i>If the path starts by <b>*</b>, it is relative to Grid/ directory <i>(new 13.0)</i>, otherwise it is relative to the actual page URL.</i><br />
+c) CSS directory name inside base /Grid directory. This directory must contain file Gantt.css as the style definition. For example GanttCSS="Compatible/Standard".<br />
+d) <i>Since 14.1</i> it can be set to "*" to not load anything. In this case the page must link or contain the Gantt css file or its content.<br />
+
+<!-- Styles -->
+<a name="CfgStyles"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>Styles</h4> <s>[...]</s>
+</div>
+List of available TreeGrid styles in JSON format.<br />
+Its structure is <tt>Styles="{prefix1:{Name:name1,CSS:url1},prefix2:{Name:name2,CSS:url2},...}"</tt>,<br />
+where <b>prefix</b> is the style prefix like "TS" (will be used in <a href="#CfgStyle">Style</a> attribute), <br />
+<b>Name</b> is the style name like "Standard" (will be shown in Toolbar Styles type cell or optionally in <a href="#CfgStyle">Style</a> attribute),<br />
+<b>CSS</b> is the CSS style url (will be used in <a href="#CfgCSS">CSS</a> attribute). If not set, the Name is used,<br />
+
+<!-- GanttStyles -->
+<a name="CfgGanttStyles"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>GanttStyles</h4> <s>[...]</s>
+</div>
+List of available TreeGrid styles for Gantt chart in JSON format.<br />
+Its structure is <tt>GanttStyles="{prefix1:{Name:name1,CSS:url1},prefix2:{Name:name2,CSS:url2},...}"</tt>,<br />
+where <b>prefix</b> is the style prefix like "GW" (will be used in <a href="#CfgGanttStyle">GanttStyle</a> attribute), <br />
+<b>Name</b> is the style name like "Standard" (will be shown in Toolbar Styles type cell or optionally in <a href="#CfgGanttStyle">GanttStyle</a> attribute),<br />
+<b>CSS</b> is the CSS style url (will be used in <a href="#CfgGanttCSS">GanttCSS</a> attribute). If not set, the Name is used,<br />
+
+<!-- Type -->
+<a name="SpaceCellType"></a>
+<a name="Styles"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>Type</h4> <s>Type="<h4>Styles</h4>"</s>
+</div>
+Shows list of TreeGrid CSS styles defined in &lt;Cfg> <a href="#CfgStyles">Styles</a> attribute, by default used on Toolbar.<br />
+If the cell value is <b>0</b>, no style list is shown. Set &lt;Toolbar Styles='0'/> to hide the default list on toolbar.<br />
+If the cell value is <b>1</b>, it creates one space cell for every TreeGrid CSS style.<br />
+If the cell value is <b>2</b>, it creates one combo with popup list with all TreeGrid CSS styles.<br />
+
+<!-- Type -->
+<a name="GanttStyles"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>Type</h4> <s>Type="<h4>GanttStyles</h4>"</s>
+</div>
+Shows list of TreeGrid CSS for Gantt chart styles defined in &lt;Cfg> <a href="#CfgGanttStyles">GanttStyles</a> attribute, by default used on Toolbar.<br />
+If the cell value is <b>0</b>, no style list is shown. Set &lt;Toolbar Styles='0'/> to hide the default list on toolbar.<br />
+If the cell value is <b>1</b>, it creates one space cell for every TreeGrid CSS style.<br />
+If the cell value is <b>2</b>, it creates one combo with popup list with all TreeGrid CSS styles.<br />
+
+<!-- SafeCSS -->
+<a name="CfgSafeCSS"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SafeCSS</h4> <s>[ ]</s>
+</div>
+If set to <b>1</b>, switches TreeGrid CSS style to safe mode, to not be affected by any external CSS style attribute setting except with !important.<br />
+Set the SafeCSS to 1 if the grid style looks differently on your page than in our examples and you cannot find the problem or you cannot change the external style.<br />
+The grid rendering in Safe mode is for about <b>20-30% slower</b>.<br />
+All grids on page share the SafeCSS setting, the SafeCSS value is chosen according to the first grid loading.<br />
+Default value for the attribute is empty, it means auto selection - the CSS mode is switched to safe if there is some CSS setting that affect TreeGrid layout by margin, padding, border or display. Remember, the first loaded grid on page does the selection.<br />
+
+<!-- SetStyle -->
+<a name="SetStyle"></a>
+<div class="API">
+   <u>chg <b>13.0</b></u> <b>API method</b> <i>void</i>
+   <h4>SetStyle</h4>
+   <s>(<i>string</i> <b>Style</b>, <i>string</i> <b>CSS</b>, <i>string</i> <b>GanttCSS</b>, <i>string</i> <b>GanttStyle</b>, <i>bool</i> <b>render</b>)</s>
+</div>
+Changes TreeGrid style and optionally re-renders grid to show the changes.<br />
+<b>Style</b>, <b>CSS</b>, <b>GanttCSS</b> <i>(since 10.0)</i>, <b>GanttStyle</b> <i>(since 13.0)</i> are appropriate attributes <a href="#CfgStyle">Style</a>, <a href="#CfgCSS">CSS</a> and <a href="#CfgGanttCSS">GanttCSS</a>. <b>CSS</b> and <b>GanttCSS</b> should be null for predefined TreeGrid style.
+
+<!-- OnSetStyle -->
+<a name="OnSetStyle"></a>
+<div class="API">
+   <u><i>upd <b>13.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnSetStyle</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>Style</b>, <i>string</i> <b>CSS</b>, <i>string</i> <b>GanttCSS</b>, <i>string</i> <b>GanttStyle</b>)</s>
+</div>
+Called before the style is loaded.<br /> 
+Return true to suppress loading the style.<br />
+<b>Style</b>, <b>CSS</b>, <b>GanttCSS</b> <i>(since 10.0)</i>, <b>GanttStyle</b> <i>(since 13.0)</i> are appropriate attributes <a href="#CfgStyle">Style</a>, <a href="#CfgCSS">CSS</a> and <a href="#CfgGanttCSS">GanttCSS</a>.
+
+<!-- OnAfterSetStyle -->
+<a name="OnAfterSetStyle"></a>
+<div class="API">
+   <u><i>upd <b>13.0</b></i></u> <b>API event</b> <i>void</i>
+   <h4>OnAfterSetStyle</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>Style</b>, <i>string</i> <b>CSS</b>, <i>string</i> <b>GanttCSS</b>, <i>string</i> <b>GanttStyle</b>)</s>
+</div>
+Called after the style is loaded, but before any render is started.<br />
+<b>Style</b>, <b>CSS</b>, <b>GanttCSS</b> <i>(since 10.0)</i>, <b>GanttStyle</b> <i>(since 13.0)</i> are appropriate attributes <a href="#CfgStyle">Style</a>, <a href="#CfgCSS">CSS</a> and <a href="#CfgGanttCSS">GanttCSS</a>.
+
+<!-- DragCursor -->
+<a name="CfgDragCursor"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>DragCursor</h4> <s>[ "url(Drag.cur),default" ]</s>
+</div>
+Mouse cursor shown during dragging. By default it shows the Drag.cur file located in /Grid/ directory.
+
+<!-- NoDragCursor -->
+<a name="CfgNoDragCursor"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>NoDragCursor</h4> <s>[ "url(noDrag.cur),default" ]</s>
+</div>
+Mouse cursor shown during dragging if no drop is possible. By default it shows the NoDrag.cur file located in /Grid/ directory.
+
+<!-- GlobalCursor -->
+<a name="CfgGlobalCursor"></a>
+<div class="XML">
+   <u>new <b>9.1</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>GlobalCursor</h4> <s>[0]</s>
+</div>
+Set it to true to set dragging cursor to document to show it while dragging between grids.
+
+<!-- ExternalAlign -->
+<a name="CfgExternalAlign"></a>
+<div class="XML">
+   <u>new <b>9.1</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ExternalAlign</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, does not align the grid content and use alignment from outside.<br />
+<i>Cannot be used with <b>ResizingMain</b>. It affects also <b>SafeCSS</b>, but there is shared for all grids.</i>
+
+<!-- ZIndex -->
+<a name="CfgZIndex"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ZIndex</h4> <s></s>
+</div>
+CSS z-index value for the grid and all its popup dialogs, messages and cursors.<br /> 
+Set it, if the grid is placed inside some absolutely positioned container, e.g. some popup dialog. Set it higher than the z-index of the parent container.<br />
+It sets z-index for all the grid objects in range ZIndex ~ ZIndex+20.<br /> 
+Any popup grid (shown by ShowPopupGrid or Dates dialog) will get ZIndex+20.
+
+<!-- StyleDependencyModifier -->
+<a name="CfgStyleDependencyModifier"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>StyleDependencyModifier</h4> <s>[1]</s>
+</div>
+If adds GGxDep class to the main grid tag.<br />
+Used in some CSS styles to modify boxes if dependencies are used in Gantt, e.g. in White style shifts box content to not overlay the dependency arrow / stub.<br />
+
+<!-- IESvg -->
+<a name="CfgIESvg"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>IESvg*</h4> <s>[...]</s>
+</div>
+Used in <b>MS IE</b> / <b>Edge</b> to load SVG images before they are used to avoid disappearing the icons in various cases.<br />
+It is comma separated list of CSS classes that contain svg image.<br />
+The CSS class names are listed without <a href="#CfgStyle">style prefix</a>. The list can contain white characters for formatting.<br />
+Dot is used to set more classes to one class attribute: "aaa.bbb" is converted to &lt;span class='XXaaa XXbbb'>&lt;/span>, where XX is the style prefix.<br />
+Space is used to nest the classes: "aaa bbb" is converted to &lt;span class='XXaaa'>&lt;span class='XXbbb'>&lt;/span>&lt;/span>, where XX is the style prefix.<br />
+Space plus "div" is used to nest tag dive: "aaa div" is converted to &lt;span class='XXaaa'>&lt;div>&lt;/div>&lt;/span>, where XX is the style prefix.<br />
+Attributes with SVG lists:<br />
+<b>IESvg</b> - base list with all grid and dialog images. Adds <a href="#CfgStyle">Style</a> prefix before every class.<br />
+<b>IESvgTool</b> - list with toolbar buttons. Adds <a href="#CfgStyle">Style</a> prefix plus "<b>Tool</b>" before every class.<br />
+<b>IESvgGantt</b> - base list with Gantt images. Adds <a href="#CfgGanttStyle">GanttStyle</a> prefix plus "<b>Gantt</b>" before every class.<br />
+<b>IESvgFGantt</b> - list with FastGantt run images. Adds <a href="#CfgGanttStyle">GanttStyle</a> prefix plus "<b>FGantt</b>" before every class.<br />
+<b>IESvgGanttMilestone</b> - list with Gantt milestone images. Adds <a href="#CfgGanttStyle">GanttStyle</a> prefix plus "<b>Gantt</b>" before every class and replaces '*' by "Milestone".<br />
+<b>IESvgGanttArrow</b> - list with Gantt Arrow image sides. Generates 40 images for every item as "XXGanttArrowNNaaa</b>", where XX is the <a href="#CfgGanttStyle">GanttStyle</a> prefix, NN is number 0 - 39 and aaa is the list item.<br />
+<b>IESvgCustom</b> - list with custom images. Does not add anything before the class names.<br />
+
+
+<!-----------------------------------------------------------------------  Sizing and scaling ------------------------------------------------->
+<a name="Size"></a>
+<h2>Sizing and scaling - responsive design </h2>
+
+<!-- Size -->
+<a name="CfgSize"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>Size</h4> <s>["Normal"] Saved to cookies except set SizeLap='1'</s>
+</div>
+Chosen variant of actual CSS style. It can be comma separated list of CSS class names that are added (with prefix) to the TreeGrid main tags and dialog parents to modify actual CSS style.<br />
+For example Size="Small,Low" for <a href="#CfgStyle">Style</a>="TS" and <a href="#CfgGanttStyle">GanttStyle</a>="GW" adds CSS classes "TSSmall", "TSLow", "GWSmall" and "GWLow" to the TreeGrid main tags. And the CSS style can change itself like: .TSSmall * { font-size:10px; }<br />
+The Size modifiers usually changes size of the CSS style items, but can change also anything else, e.g. color schema.<br />
+Or it can be one of the <b>names</b> in <a href="#CfgSizes">Sizes</a> list to use its assigned <b>classes</b> value.<br />
+
+<!-- Sizes -->
+<a name="CfgSizes"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>Sizes</h4> <s>[...]</s>
+</div>
+List of available TreeGrid style sizes in JSON format. <br />
+Its structure is <tt>Sizes="{name1:'classes1',name2:'classes2',...}"</tt>,<br />
+where <b>name</b> is the style name shown in Toolbar Sizes type cell and <b>classes</b> is comma separated list of CSS classes assigned to the <a href="#CfgSize">Size</a> attribute.<br />
+
+<!-- Sizes -->
+<a name="Sizes"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>Type</h4> <s>Type="<h4>Sizes</h4>"</s>
+</div>
+Shows list of TreeGrid CSS styles sizes defined in &lt;Cfg> <a href="#CfgSizes">Sizes</a> attribute, by default used on Toolbar.<br />
+If the cell value is <b>0</b>, no style sizes list is shown. Set &lt;Toolbar Sizes='0'/> to hide the default list on toolbar.<br />
+If the cell value is <b>1</b>, it creates one space cell for every TreeGrid CSS style size.<br />
+If the cell value is <b>2</b>, it creates one combo with popup list with all TreeGrid CSS style sizes.<br />
+
+<!-- SetSize -->
+<a name="SetSize"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>void</i>
+   <h4>SetSize</h4>
+   <s>(<i>string</i> <b>size</b>)</s>
+</div>
+Changes the grid <a href="#CfgSize">Size</a> to <b>size</b> value and rerenders the grid.<br />
+
+<!-- SizeScaled -->
+<a name="CfgSizeScaled"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>SizeScaled</h4> <s>[0]</s>
+</div>
+If set, does not modify the Width attributes according to css style size modifiers on grid loading.<br />
+
+<!-- Scale -->
+<a name="CfgScale"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>float</i>
+   <h4>Scale</h4> <s>Saved to cookies except set ScaleLap='1'</s>
+</div>
+If set, it scales the grid by given zoom factor, for <b>&lt; 1.0</b> shrinks, for <b>> 1.0</b> magnifies.<br />
+<i>Since 13.0 TreeGrid can be placed to parent tag that has CSS <b>transform: scale()</b>. This scale is independent on the <b>Scale</b> and both ways can be used also together.</i><br />
+It does <u>not</u> affect menus, dialogs and messages, see <a href="#CfgScaleMenu">ScaleMenu</a>.<br />
+It is not related to Gantt zoom, to scale Gantt chart use <a href="GanttZoom.htm#CGanttZoom">GanttZoom</a>.<br />
+
+<!-- ScaleMenu -->
+<a name="CfgScaleMenu"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>float</i>
+   <h4>ScaleMenu</h4> <s></s>
+</div>
+If set, it scales the grid menus, dialogs and messages by given zoom factor, for <b>&lt; 1.0</b> shrinks, for <b>> 1.0</b> magnifies.<br />
+If set to <b>negative</b> value it is taken as positive and also multiplied by <a href="#CfgScale">Scale</a> and any grid parent <b>transform: scale()</b> value.<br />
+
+<!-- Scales -->
+<a name="CfgScales"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>Scales</h4> <s>[...]</s>
+</div>
+List of available TreeGrid scales in JSON format. <br />
+Its structure is <tt>Scales="{name1:scale1,name2:scale2,...}"</tt>,<br />
+where <b>name</b> is the style name shown in Toolbar Scales type cell.) and <b>scale</b> is set to the <a href="#CfgScale">Scale</a> attribute.<br />
+
+<!-- Scales -->
+<a name="Scales"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>Type</h4> <s>Type="<h4>Scales</h4>"</s>
+</div>
+Shows list of TreeGrid CSS scales defined in &lt;Cfg> <a href="#CfgScales">Scales</a> attribute, by default used on Toolbar.<br />
+If the cell value is <b>0</b>, no scales list is shown. Set &lt;Toolbar Scales='0'/> to hide the default list on toolbar.<br />
+If the cell value is <b>1</b>, it creates one space cell for every TreeGrid CSS scale.<br />
+If the cell value is <b>2</b>, it creates one combo with popup list with all TreeGrid CSS scales.<br />
+
+<!-- SetScale -->
+<a name="SetScale"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>void</i>
+   <h4>SetScale</h4>
+   <s>(<i>float</i> <b>scale</b>)</s>
+</div>
+Changes the grid <a href="#CfgScale">Scale</a> to <b>scale</b> value and updates the grid size.<br />
+
+<!-- ShrinkStyle -->
+<a name="CfgShrinkStyle"></a>
+<div class="XML">
+   <u>new <b>13.0</b> chg <b>13.1</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ShrinkStyle</h4> <s>[3]   Saved to cookies</s>
+</div>
+If it changes <a href="#CfgSize">Size</a> to smaller value from <a href="#CfgSizes">Sizes</a> and / or <a href="#CfgScale">Scale</a> to smalled value from <a href="#CfgScales">Scales</a>,
+if there is not enough room to display the grid readable.<br />
+<b>0</b> - never, <b>1</b> - always, <b>2</b> - ask user, <b>3</b> (<i>new 13.1, set as default</i>) - minimal (only to display grid).<br />
+
+<!-- ShrinkStyleType -->
+<a name="CfgShrinkStyleType"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ShrinkStyleType</h4> <s>[31]</s>
+</div>
+When it changes <a href="#CfgSize">Size</a> to smaller value from <a href="#CfgSizes">Sizes</a> and / or <a href="#CfgScale">Scale</a> to smalled value from <a href="#CfgScales">Scales</a>,
+if there is not enough room to display the grid readable. Bit array.<br />
+It is applied before <a href="GridSize.htm#CfgLimitScroll">LimitScroll</a>.<br />
+<b>1</b>. bit <b>&1</b> - Horizontal limit. Shrinks if the width of any column section is lower than the
+<a href="GridSize.html#CfgMinLeftWidth">MinLeftWidth</a> / <a href="GridSize.html#CfgMinMidWidth">MinMidWidth</a> / <a href="GridSize.html#CfgMinRightWidth">MinRightWidth</a> value. <br />
+<b>2</b>. bit <b>&2</b> - Vertical limit. Shrinks if the height of visible variable rows count is smaller than <a href="#CfgMinBodyRows">MinBodyRows</a> value. <br />
+<b>3</b>. bit <b>&4</b> - Space width limit. Shrinks if any Space row does not display all its cells fully because too small grid width.<br />
+<b>4</b>. bit <b>&8</b> - Pager height limit. Shrinks pager only, if it shows vertical scrollbar. 
+It does not change the <a href="#CfgStyleSize">StyleSize</a> in this case. Not affected by <a href="#CfgShrinkSize">ShrinkSize</a>. Ignored if set <a href="#SafeCSS">SafeCSS</a>=<b>1</b>.<br />
+<b>5</b>. bit <b>&16</b> - Decrease <a href="#CfgScale">Scale</a>, if the style size cannot be more reduced. To reduce only Scale set empty <a href="#CfgShrinkStyleWidth">ShrinkStyleWidth</a> and <a href="#ShrinkStyleHeight">ShrinkStyleHeight</a>. <br />
+<b>6</b>. bit <b>&32</b> - Save the automatically changed Size and Scale to cookies.<br />
+
+
+<!-- MinBodyRows -->
+<a name="CfgMinBodyRows"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MinBodyRows</h4> <s>[5]</s>
+</div>
+Minimal count of variable rows to be displayed, for <a href="#CfgShrinkStyleType">ShrinkStyleType</a> <b>2</b>. bit.<br />
+The row height is taken as minimal row height set in actual style and style size or by <a href="RowHeight.htm#CfgMinRowHeight">MinRowHeight</a>.<br />
+
+<!-- ShrinkStyleWidth -->
+<a name="CfgShrinkStyleWidth"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>ShrinkStyleWidth</h4> <s>["Mini,Small,Low,Normal,High"]</s>
+</div>
+Comma separated list of style size names that be used when shrinking horizontally by ShrinkStyle, <a href="#CfgShrinkStyleType">ShrinkStyleType</a> <b>1</b>. bit.
+If not defined, all style sizes from <a href="#CfgSizes">Sizes</a> are used.
+
+<!-- ShrinkStyleHeight -->
+<a name="CfgShrinkStyleHeight"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>ShrinkStyleHeight</h4> <s></s>
+</div>
+Comma separated list of style size names that be used when shrinking vertically by ShrinkStyle, <a href="#CfgShrinkStyleType">ShrinkStyleType</a> <b>2</b>. bit.
+If not defined, all style sizes from <a href="#CfgSizes">Sizes</a> are used.
+
+<!-- ShrinkStyleScale -->
+<a name="CfgShrinkStyleScale"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>ShrinkStyleScale</h4> <s></s>
+</div>
+Comma separated list of <a href="#CfgScale">Scale</a> value that be used when decreasing scale by ShrinkStyle, <a href="#CfgShrinkStyleType">ShrinkStyleType</a> <b>5</b>. bit.
+If not defined, all scales from <a href="#CfgScales">Scales</a> are used.<br />
+
+<!-- LastVisible -->
+<a name="SpaceCellLastVisible"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Space cell></b> <i>int</i>
+   <h4>LastVisible</h4> <s>[...]</s>
+</div>
+Last cell in space row to be visible, for <a href="#CfgShrinkStyleType">ShrinkStyleType</a> <b>4</b>. bit.<br />
+Default value is "Cfg" for default Toolbar and empty for other space rows.<br />
+
+
+<!-----------------------------------------------------------------------  Dynamic cell style attributes ------------------------------------------------->
+<a name="DynamicStyle"></a>
+<a name="SpecialStyle"></a>
+<h2>Dynamic cell style attributes</h2>
+Cell styles used only if set &lt;Cfg <a href="#CfgDynamicStyle">DynamicStyle</a>/>. 
+Otherwise the look can be preset by <a href="#CClass">Class</a> attribute.<br />
+<i>All style attributes are read from row before column</i>.<br /> 
+
+<!-- DynamicStyle -->
+<a name="CfgDynamicStyle"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>DynamicStyle</h4> <s>[ ]</s>
+</div>
+Permits individual cell style attributes to set the CSS styles directly instead of using <a href="#CClass">Class</a> attribute. <br />
+<b>0</b> - off, all attributes are ignored<br /> 
+<b>1</b> - on, but sets <a href="#CNoStyle">NoStyle</a> = 1 for all fixed rows and columns. <br />
+<b>2</b> - on<br />
+<b><i>empty</i></b> - by default for backward compatibility there are enabled attributes 
+<a href="#CColor">Color</a>, <a href="#CWrap">Wrap</a>, <a href="#CAlign">Align</a>, <a href="#CVAlign">VAlign</a> and <a href="#CRotate">Rotate</a> 
+in all cells only statically and other attributes are disabled.<br />
+The DynamicStyle affects also background <a href="#CColor">Color</a> attribute, but not <a href="#CBackground"><s>Background</s></a>.<br />
+
+<!-- CNoStyle -->
+<a name="CNoStyle"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>NoStyle</h4> <s>[0/2]</s>
+</div>
+If the style attributes will be read for the cells in the column.<br />
+<b>0</b> - all, <b>1</b> - all except styles set for whole row, <b>2</b> none dynamically, <b>3</b> none.<br />
+By default it is 2 for Index, Panel and ConstWidth columns and 0 for other rows.<br />
+
+<!-- INoStyle -->
+<a name="INoStyle"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;I></b> <i>int</i>
+   <h4>NoStyle</h4> <s>[0/2]</s>
+</div>
+If the style attributes will be read for the cells in the row.<br />
+<b>0</b> - all, <b>1</b> - all except styles set for whole column, <b>2</b> none dynamically, <b>3</b> none.<br />
+By default it is 3 for Header and Panel rows and 0 for other rows.<br />
+
+<!-- CTextStyle -->
+<a name="CTextStyle"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>int</i>
+   <h4>TextStyle</h4> <s></s>
+</div>
+CSS settings for font-weight, font-style, font-variant and text-decoration, bit array.<br />
+1. bit &amp;<b>1</b> Bold, 2. bit &amp;<b>2</b> Italic, 3. bit &amp;<b>4</b> Underline,
+4. bit &amp;<b>8</b> Strike, 5. bit &amp;<b>16</b> Overline, 6. bit &amp;<b>32</b> Small caps.
+
+<!-- Action Bold... -->
+<a name="ActionsBoldOn"></a>
+<a name="ActionsBoldOff"></a>
+<a name="ActionsBoldOnCells"></a>
+<a name="ActionsBoldOffCells"></a>
+<a name="ActionsBoldOnSelected"></a>
+<a name="ActionsBoldOffSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>BoldOn</h4>, 
+   <h4>BoldOff</h4>,
+   <h4>BoldOnCells</h4>, 
+   <h4>BoldOffCells</h4>,
+   <h4>BoldOnSelected</h4>, 
+   <h4>BoldOffSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonBold</b> event</s>
+</div>
+Changes <a href="CTextStyle">TextStyle</a> bit 1 in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action Italic... -->
+<a name="ActionsItalicOn"></a>
+<a name="ActionsItalicOff"></a>
+<a name="ActionsItalicOnCells"></a>
+<a name="ActionsItalicOffCells"></a>
+<a name="ActionsItalicOnSelected"></a>
+<a name="ActionsItalicOffSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ItalicOn</h4>, 
+   <h4>ItalicOff</h4>,
+   <h4>ItalicOnCells</h4>, 
+   <h4>ItalicOffCells</h4>,
+   <h4>ItalicOnSelected</h4>, 
+   <h4>ItalicOffSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonItalic</b> event</s>
+</div>
+Changes <a href="CTextStyle">TextStyle</a> bit 2 in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action Underline... -->
+<a name="ActionsUnderlineOn"></a>
+<a name="ActionsUnderlineOff"></a>
+<a name="ActionsUnderlineOnCells"></a>
+<a name="ActionsUnderlineOffCells"></a>
+<a name="ActionsUnderlineOnSelected"></a>
+<a name="ActionsUnderlineOffSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>UnderlineOn</h4>, 
+   <h4>UnderlineOff</h4>,
+   <h4>UnderlineOnCells</h4>, 
+   <h4>UnderlineOffCells</h4>,
+   <h4>UnderlineOnSelected</h4>, 
+   <h4>UnderlineOffSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonUnderline</b> event</s>
+</div>
+Changes <a href="CTextStyle">TextStyle</a> bit 3 in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action Strike... -->
+<a name="ActionsStrikeOn"></a>
+<a name="ActionsStrikeOff"></a>
+<a name="ActionsStrikeOnCells"></a>
+<a name="ActionsStrikeOffCells"></a>
+<a name="ActionsStrikeOnSelected"></a>
+<a name="ActionsStrikeOffSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>StrikeOn</h4>, 
+   <h4>StrikeOff</h4>,
+   <h4>StrikeOnCells</h4>, 
+   <h4>StrikeOffCells</h4>,
+   <h4>StrikeOnSelected</h4>, 
+   <h4>StrikeOffSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonStrike</b> event</s>
+</div>
+Changes <a href="CTextStyle">TextStyle</a> bit 4 in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action Overline... -->
+<a name="ActionsOverlineOn"></a>
+<a name="ActionsOverlineOff"></a>
+<a name="ActionsOverlineOnCells"></a>
+<a name="ActionsOverlineOffCells"></a>
+<a name="ActionsOverlineOnSelected"></a>
+<a name="ActionsOverlineOffSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>OverlineOn</h4>, 
+   <h4>OverlineOff</h4>,
+   <h4>OverlineOnCells</h4>, 
+   <h4>OverlineOffCells</h4>,
+   <h4>OverlineOnSelected</h4>, 
+   <h4>OverlineOffSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Changes <a href="CTextStyle">TextStyle</a> bit 5 in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action SmallCaps... -->
+<a name="ActionsSmallCapsOn"></a>
+<a name="ActionsSmallCapsOff"></a>
+<a name="ActionsSmallCapsOnCells"></a>
+<a name="ActionsSmallCapsOffCells"></a>
+<a name="ActionsSmallCapsOnSelected"></a>
+<a name="ActionsSmallCapsOffSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SmallCapsOn</h4>, 
+   <h4>SmallCapsOff</h4>,
+   <h4>SmallCapsOnCells</h4>, 
+   <h4>SmallCapsOffCells</h4>,
+   <h4>SmallCapsOnSelected</h4>, 
+   <h4>SmallCapsOffSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Changes <a href="CTextStyle">TextStyle</a> bit 6 in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action NoTextStyle... -->
+<a name="ActionsNoTextStyle"></a>
+<a name="ActionsNoTextStyleCells"></a>
+<a name="ActionsNoTextStyleSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NoTextStyle</h4>, 
+   <h4>NoTextStyleCells</h4>, 
+   <h4>NoTextStyleSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets null to <a href="CTextStyle">TextStyle</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- CTextColor -->
+<a name="CTextColor"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>TextColor</h4> <s></s>
+</div>
+Color of the text. Can be any CSS color.
+
+<!-- CfgTextColor -->
+<a name="CfgTextColor"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>TextColor</h4> <s>["red"]</s>
+</div>
+Predefined text color set by actions SetTextColor... to cell <a href="#CTextColor">TextColor</a> attribute<br />
+
+<!-- CfgTextColors -->
+<a name="CfgTextColors"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string[*]</i>
+   <h4>TextColors</h4> <s>[...]</s>
+</div>
+Predefined text colors set by actions ChooseTextColor... to cell <a href="#CTextColor">TextColor</a> attribute. First character separated array.
+Format is "|value1|name1|value2|name2|..."<br />
+The <b>value</b> is set to cell <a href="#CTextColor">TextColor</a> if chosen menu item <b>name</b>. <b>value</b> can be any CSS color definition or empty. <b>name</b> can be empty to show the <b>value</b> as menu item.<br />
+Default value is "|red||green||blue||brown||maroon||gray|||none".<br />
+
+<!-- Action SetTextColor... -->
+<a name="ActionsSetTextColor"></a>
+<a name="ActionsSetTextColorCells"></a>
+<a name="ActionsSetTextColorSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetTextColor</h4>, 
+   <h4>SetTextColorCells</h4>, 
+   <h4>SetTextColorSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonColorText</b> event</s>
+</div>
+Sets value of global <a href="#CfgTextColor">TextColor</a> to <a href="CTextColor">TextColor</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action ChooseTextColor... -->
+<a name="ActionsChooseTextColor"></a>
+<a name="ActionsChooseTextColorCells"></a>
+<a name="ActionsChooseTextColorSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseTextColor</h4>, 
+   <h4>ChooseTextColorCells</h4>, 
+   <h4>ChooseTextColorSelected <i>...F</i></h4>
+   <s>Attached to Toolbar cell ColorText <b>OnClickPopup</b> event</s>
+</div>
+Shows menu with items in global <a href="#CfgTextColors">TextColors</a>.
+If used in Menu, shows submenu with the global <a href="#CfgTextColors">TextColors</a>.<br />
+And sets the chosen color to <a href="CTextColor">TextColor</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action NoTextColor... -->
+<a name="ActionsNoTextColor"></a>
+<a name="ActionsNoTextColorCells"></a>
+<a name="ActionsNoTextColorSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NoTextColor</h4>, 
+   <h4>NoTextColorCells</h4>, 
+   <h4>NoTextColorSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets null to <a href="CTextColor">TextColor</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+
+<!-- CTextSize -->
+<a name="CTextSize"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>TextSize</h4> <s></s>
+</div>
+Size of the text font in pixels. 
+Or can contain the unit suffix like in CSS. ("10" means 10px, but can be set also "10px" or "10em" or "10pt" etc.<br />
+
+<!-- CfgTextSize -->
+<a name="CfgTextSize"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>TextSize</h4> <s>["14"]</s>
+</div>
+Predefined font size set by actions SetTextSize... to cell <a href="#CTextSize">TextSize</a> attribute<br />
+
+<!-- CfgTextSizes -->
+<a name="CfgTextSizes"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string[*]</i>
+   <h4>TextSizes</h4> <s>[...]</s>
+</div>
+Predefined font sizes set by actions ChooseTextSize... to cell <a href="#CTextSize">TextSize</a> attribute. First character separated array.
+Format is "|value1|name1|value2|name2|..."<br />
+The <b>value</b> is set to cell <a href="#CTextSize">TextSize</a> if chosen menu item <b>name</b>. <b>value</b> can be any CSS font-size definition or empty. <b>name</b> can be empty to show the <b>value</b> as menu item.<br />
+Default value is "|8px|smallest|9px|smaller|10.5px|small||normal|14px|large|17px|larger|22px|largest".<br />
+
+<!-- Action SetTextSize... -->
+<a name="ActionsSetTextSize"></a>
+<a name="ActionsSetTextSizeCells"></a>
+<a name="ActionsSetTextSizeSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetTextSize</h4>, 
+   <h4>SetTextSizeCells</h4>, 
+   <h4>SetTextSizeSelected <i>...F</i></h4>
+   <s>Attached to Toolbar button Size <b>OnChange</b> and <b>OnSame</b> events</s>
+</div>
+Sets value of global <a href="#CfgTextSize">TextSize</a> to <a href="CTextSize">TextSize</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action ChooseTextSize... -->
+<a name="ActionsChooseTextSize"></a>
+<a name="ActionsChooseTextSizeCells"></a>
+<a name="ActionsChooseTextSizeSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseTextSize</h4>, 
+   <h4>ChooseTextSizeCells</h4>, 
+   <h4>ChooseTextSizeSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Shows menu with items in global <a href="#CfgTextSizes">TextSizes</a>.
+If used in Menu, shows submenu with the global <a href="#CfgTextSizes">TextSizes</a>.<br />
+And sets the chosen size to <a href="CTextSize">TextSize</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action NoTextSize... -->
+<a name="ActionsNoTextSize"></a>
+<a name="ActionsNoTextSizeCells"></a>
+<a name="ActionsNoTextSizeSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NoTextSize</h4>, 
+   <h4>NoTextSizeCells</h4>, 
+   <h4>NoTextSizeSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets null to <a href="CTextSize">TextSize</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- CTextFont -->
+<a name="CTextFont"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>TextFont</h4> <s></s>
+</div>
+Font family name. Can be any CSS font-family name. If the name contains spaces, it should be double quoted.<br />
+
+<!-- CfgTextFont -->
+<a name="CfgTextFont"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>TextFont</h4> <s>["'Times New Roman',serif"]</s>
+</div>
+Predefined font name/family set by actions SetTextFont... to cell <a href="#CTextFont">TextFont</a> attribute<br />
+
+<!-- CfgTextFonts -->
+<a name="CfgTextFonts"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string[*]</i>
+   <h4>TextFonts</h4> <s>[...]</s>
+</div>
+Predefined font names/families set by actions ChooseTextFont... to cell <a href="#CTextFont">TextFont</a> attribute. First character separated array.
+Format is "|value1|name1|value2|name2|..."<br />
+The <b>value</b> is set to cell <a href="#CTextFont">TextFont</a> if chosen menu item <b>name</b>. <b>value</b> can be any CSS font-family definition or empty. <b>name</b> can be empty to show the <b>value</b> as menu item.<br />
+Default value is "|'Microsoft Sans Serif',Tahoma,'Trebuchet MS',sans-serif|sans serif|'Times New Roman',serif|serif|'Courier New',monospace|monospace||default".<br />
+
+<!-- Action SetTextFont... -->
+<a name="ActionsSetTextFont"></a>
+<a name="ActionsSetTextFontCells"></a>
+<a name="ActionsSetTextFontSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetTextFont</h4>, 
+   <h4>SetTextFontCells</h4>, 
+   <h4>SetTextFontSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets value of global <a href="#CfgTextFont">TextFont</a> to <a href="CTextFont">TextFont</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action ChooseTextFont... -->
+<a name="ActionsChooseTextFont"></a>
+<a name="ActionsChooseTextFontCells"></a>
+<a name="ActionsChooseTextFontSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseTextFont</h4>, 
+   <h4>ChooseTextFontCells</h4>, 
+   <h4>ChooseTextFontSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Shows menu with items in global <a href="#CfgTextFonts">TextFonts</a>.
+If used in Menu, shows submenu with the global <a href="#CfgTextFonts">TextFonts</a>.<br />
+And sets the chosen font to <a href="CTextFont">TextFont</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action NoTextFont... -->
+<a name="ActionsNoTextFont"></a>
+<a name="ActionsNoTextFontCells"></a>
+<a name="ActionsNoTextFontSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NoTextFont</h4>, 
+   <h4>NoTextFontCells</h4>, 
+   <h4>NoTextFontSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets null to <a href="CTextFont">TextFont</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- CTextShadow -->
+<a name="CTextShadow"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>int</i>
+   <h4>TextShadow</h4> <s>[0]</s>
+</div>
+A shadow displayed behind or in front of the original text. 
+There are predefined 0 - 9 shadows, more shadows can be added in Grid.css, GxTextShadowXX.<br />
+The shadow value 0 (default) is used only if the <a href="#CTextShadowColor">TextShadowColor</a> is set.<br />
+Use it for visual effects for the text. <i> In IE it works only for versions higher than 9</i>.
+
+<!-- CfgTextShadow -->
+<a name="CfgTextShadow"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>TextShadow</h4> <s>[1]</s>
+</div>
+Predefined text shadow number set by actions SetTextShadow... to cell <a href="#CTextShadow">TextShadow</a> attribute<br />
+
+<!-- CfgTextShadows -->
+<a name="CfgTextShadows"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string[*]</i>
+   <h4>TextShadows</h4> <s>[...]</s>
+</div>
+Predefined text shadow numbers set by actions ChooseTextShadow... to cell <a href="#CTextShadow">TextShadow</a> attribute. First character separated array.
+Format is "|value1|name1|value2|name2|..."<br />
+The <b>value</b> is set to cell <a href="#CTextShadow">TextShadow</a> if chosen menu item <b>name</b>. <b>value</b> can be any number 0 - 9 or empty. <b>name</b> can be empty to show the <b>value</b> as menu item.<br />
+Default value is "|0|default background|1|bold|2|bold with ghost|3|bold with background|4|bold with light background|5|ghost|6|ghost with bold|7|dark background|8|background with bold|9|light background".<br />
+
+<!-- Action SetTextShadow... -->
+<a name="ActionsSetTextShadow"></a>
+<a name="ActionsSetTextShadowCells"></a>
+<a name="ActionsSetTextShadowSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetTextShadow</h4>, 
+   <h4>SetTextShadowCells</h4>, 
+   <h4>SetTextShadowSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets value of global <a href="#CfgTextShadow">TextShadow</a> to <a href="CTextShadow">TextShadow</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action ChooseTextShadow... -->
+<a name="ActionsChooseTextShadow"></a>
+<a name="ActionsChooseTextShadowCells"></a>
+<a name="ActionsChooseTextShadowSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseTextShadow</h4>, 
+   <h4>ChooseTextShadowCells</h4>, 
+   <h4>ChooseTextShadowSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Shows menu with items in global <a href="#CfgTextShadows">TextShadows</a>.
+If used in Menu, shows submenu with the global <a href="#CfgTextShadows">TextShadows</a>.<br />
+And sets the chosen shadow to <a href="CTextShadow">TextShadow</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action NoTextShadow... -->
+<a name="ActionsNoTextShadow"></a>
+<a name="ActionsNoTextShadowCells"></a>
+<a name="ActionsNoTextShadowSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NoTextShadow</h4>, 
+   <h4>NoTextShadowCells</h4>, 
+   <h4>NoTextShadowSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets null to <a href="CTextShadow">TextShadow</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- CTextShadowColor -->
+<a name="CTextShadowColor"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>TextShadowColor</h4> <s></s>
+</div>
+Color of the shadow selected by <a href="#CTextShadow">TextShadow</a>.<br />
+If used without TextShadow (for its value 0), it displays default shadow in selected color as direct background of the text.<br />
+
+<!-- CfgTextShadowColor -->
+<a name="CfgTextShadowColor"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>TextShadowColor</h4> <s>["#FF0"]</s>
+</div>
+Predefined text shadow color set by actions SetTextShadowColor... to cell <a href="#CTextShadowColor">TextShadowColor</a> attribute<br />
+
+<!-- CfgTextShadowColors -->
+<a name="CfgTextShadowColors"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string[*]</i>
+   <h4>TextShadowColors</h4> <s>[...]</s>
+</div>
+Predefined text shadow colors set by actions ChooseTextShadowColor... to cell <a href="#CTextShadowColor">TextShadowColor</a> attribute. First character separated array.
+Format is "|value1|name1|value2|name2|..."<br />
+The <b>value</b> is set to cell <a href="#CTextShadowColor">TextShadowColor</a> if chosen menu item <b>name</b>. <b>value</b> can be any CSS color definition or empty. <b>name</b> can be empty to show the <b>value</b> as menu item.<br />
+Default value is "|black||red||green||blue||brown||maroon||gray||yellow||lime||aqua||pink||orange||silver|||none".<br />
+
+<!-- Action SetTextShadowColor... -->
+<a name="ActionsSetTextShadowColor"></a>
+<a name="ActionsSetTextShadowColorCells"></a>
+<a name="ActionsSetTextShadowColorSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetTextShadowColor</h4>, 
+   <h4>SetTextShadowColorCells</h4>, 
+   <h4>SetTextShadowColorSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonColorShadow</b> event</s>
+</div>
+Sets value of global <a href="#CfgTextShadowColor">TextShadowColor</a> to <a href="CTextShadowColor">TextShadowColor</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action ChooseTextShadowColor... -->
+<a name="ActionsChooseTextShadowColor"></a>
+<a name="ActionsChooseTextShadowColorCells"></a>
+<a name="ActionsChooseTextShadowColorSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseTextShadowColor</h4>, 
+   <h4>ChooseTextShadowColorCells</h4>, 
+   <h4>ChooseTextShadowColorSelected <i>...F</i></h4>
+   <s>Attached to Toolbar button ColorShadow <b>OnClickPopup</b> event</s>
+</div>
+Shows menu with items in global <a href="#CfgTextShadowColors">TextShadowColors</a>.
+If used in Menu, shows submenu with the global <a href="#CfgTextShadowColors">TextShadowColors</a>.<br />
+And sets the chosen color to <a href="CTextShadowColor">TextShadowColor</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action NoTextShadowColor... -->
+<a name="ActionsNoTextShadowColor"></a>
+<a name="ActionsNoTextShadowColorCells"></a>
+<a name="ActionsNoTextShadowColorSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NoTextShadowColor</h4>, 
+   <h4>NoTextShadowColorCells</h4>, 
+   <h4>NoTextShadowColorSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets null to <a href="CTextShadowColor">TextShadowColor</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Wrap -->
+<a name="CWrap"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>bool</i>
+   <h4>Wrap</h4> <s>[0/1]</s>
+</div>
+If the cell content will be wrapped.<br />
+By default it is <b>1</b> for types <b>Html</b>, <b>Lines</b>, <b>List</b> and <b>0</b> for other types and <b>Header</b>.<br />
+
+<!-- WrapEdit -->
+<a name="CWrapEdit"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>bool</i>
+   <h4>WrapEdit</h4> <s></s>
+</div>
+If the cell content will be wrapped during editing. If not set, <a href="#CWrap">Wrap</a> is used.<br />
+
+<!-- WordWrap -->
+<a name="CfgWordWrap"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>WordWrap</h4> <s>[1]</s>
+</div>
+If long words in wrapped cells can be wrapped too.
+
+<!-- SetWordWrap -->
+<a name="SetWordWrap"></a>
+<div class="API">
+   <u>new <b>13.3</b></u> <b>API method</b> <i>void</i>
+   <h4>SetWordWrap</h4> <s>(<i>bool</i> <b>wrap</b>)</s>
+</div>
+Changes <a href="#CfgWordWrap">WordWrap</a> attribute value and shows the changes.<br />
+
+<!-- Action WrapOn... -->
+<a name="ActionsWrapOn"></a>
+<a name="ActionsWrapOnCells"></a>
+<a name="ActionsWrapOnSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>WrapOn</h4>, 
+   <h4>WrapOnCells</h4>, 
+   <h4>WrapOnSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonWrap</b> event</s>
+</div>
+Sets 1 to <a href="CWrap">Wrap</a> attribute in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action WrapOff... -->
+<a name="ActionsWrapOff"></a>
+<a name="ActionsWrapOffCells"></a>
+<a name="ActionsWrapOffSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>WrapOff</h4>, 
+   <h4>WrapOffCells</h4>, 
+   <h4>WrapOffSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonWrap</b> event</s>
+</div>
+Sets 0 to <a href="CWrap">Wrap</a> attribute in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action NoWrap... -->
+<a name="ActionsNoWrap"></a>
+<a name="ActionsNoWrapCells"></a>
+<a name="ActionsNoWrapSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NoWrap</h4>, 
+   <h4>NoWrapCells</h4>, 
+   <h4>NoWrapSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets null to <a href="CWrap">Wrap</a> attribute in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Align -->
+<a name="CAlign"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>9.3</b></i></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>bool</i>
+   <h4>Align</h4> <s>["Left" / "Right"]</s>
+</div>
+How the cell content will be aligned. Case insensitive keyword: "<b>Left</b>", "<b>Right</b>", "<b>Center</b>", "<b>Justify</b>", "<b>Scroll</b>".<br />
+By default it is "<b>Right</b>" for types <b>Int</b>, <b>Float</b>, <b>Date</b> and "<b>Left</b>" for other types.<br />
+The <b>Justify</b> works only for more lines text except the last line.<br />
+The side <a href="CellSideButton.htm#CButton">Button</a> is not rotated, use side <a href="CellSideButton.htm#CIcon">Icon</a> instead. For example for Date type set <tt>Icon='Date' IconAlign='Right'</tt><br />
+<i>(Since 9.3)</i> The <b>Scroll</b> moves the position of the text on scroll to be always visible if at least a part of the cell is visible. Usable especially for spanned cells.<br /> 
+<i>Using too many cells with <tt>Align="Scroll"</tt> can slow down the grid scrolling!</i>
+
+<!-- Action AlignLeft... -->
+<a name="ActionsAlignLeft"></a>
+<a name="ActionsAlignLeftCells"></a>
+<a name="ActionsAlignLeftSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>AlignLeft</h4>, 
+   <h4>AlignLeftCells</h4>, 
+   <h4>AlignLeftSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonLeft</b> event</s>
+</div>
+Sets "Left" to <a href="CAlign">Align</a> attribute in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action AlignRight... -->
+<a name="ActionsAlignRight"></a>
+<a name="ActionsAlignRightCells"></a>
+<a name="ActionsAlignRightSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>AlignRight</h4>, 
+   <h4>AlignRightCells</h4>, 
+   <h4>AlignRightSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonRight</b> event</s>
+</div>
+Sets "Right" to <a href="CAlign">Align</a> attribute in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action AlignCenter... -->
+<a name="ActionsAlignCenter"></a>
+<a name="ActionsAlignCenterCells"></a>
+<a name="ActionsAlignCenterSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>AlignCenter</h4>, 
+   <h4>AlignCenterCells</h4>, 
+   <h4>AlignCenterSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonCenter</b> event</s>
+</div>
+Sets "Center" to <a href="CAlign">Align</a> attribute in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action NoAlign... -->
+<a name="ActionsNoAlign"></a>
+<a name="ActionsNoAlignCells"></a>
+<a name="ActionsNoAlignSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NoAlign</h4>, 
+   <h4>NoAlignCells</h4>, 
+   <h4>NoAlignSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets null to <a href="CAlign">Align</a> attribute in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- VAlign -->
+<a name="CVAlign"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>VAlign</h4> <s>[""]</s>
+</div>
+Vertical alignment of the cell content, including side buttons and icons.<br />
+Possible value: <b>top</b>, <b>middle</b>, <b>bottom</b>.<br />
+To vertically align tree buttons, you have also to set <tt>&lt;Cfg <a href="Tree.htm#CfgNoTreeLines">NoTreeLines</a>='2'/></tt>.<br />
+By default are all the cells aligned to top.<br />
+<i>Setting this attribute to any value including "top" renders cells with more tags and can slow down the grid.</i><br />
+<i>Setting this attribute forces setting <tt><a href="#CClassInnerIcon">ClassInnerIcon</a>='<b>1</b>' <a href="TypePanel.htm#CfgFastPanel">FastPanel</a>='<b>0</b>'</tt>.</i><br />
+Set the <tt>VAlign="top"</tt> for rows higher than 250px to correctly display icon images.<br />
+For cell with <a href="#CRotate">Rotate</a> cell use <a href="#CAlign">Align</a> to vertically align the cell.<br />
+
+<!-- Action VAlignTop... -->
+<a name="ActionsVAlignTop"></a>
+<a name="ActionsVAlignTopCells"></a>
+<a name="ActionsVAlignTopSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>VAlignTop</h4>, 
+   <h4>VAlignTopCells</h4>, 
+   <h4>VAlignTopSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonTop</b> event</s>
+</div>
+Sets "Top" to <a href="CVAlign">VAlign</a> attribute in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action VAlignBottom... -->
+<a name="ActionsVAlignBottom"></a>
+<a name="ActionsVAlignBottomCells"></a>
+<a name="ActionsVAlignBottomSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>VAlignBottom</h4>, 
+   <h4>VAlignBottomCells</h4>, 
+   <h4>VAlignBottomSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonBottom</b> event</s>
+</div>
+Sets "Bottom" to <a href="CVAlign">VAlign</a> attribute in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action VAlignMiddle... -->
+<a name="ActionsVAlignMiddle"></a>
+<a name="ActionsVAlignMiddleCells"></a>
+<a name="ActionsVAlignMiddleSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>VAlignMiddle</h4>, 
+   <h4>VAlignMiddleCells</h4>, 
+   <h4>VAlignMiddleSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonMiddle</b> event</s>
+</div>
+Sets "Middle" to <a href="CVAlign">VAlign</a> attribute in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action NoVAlign... -->
+<a name="ActionsNoVAlign"></a>
+<a name="ActionsNoVAlignCells"></a>
+<a name="ActionsNoVAlignSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NoVAlign</h4>, 
+   <h4>NoVAlignCells</h4>, 
+   <h4>NoVAlignSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets null to <a href="CVAlign">VAlign</a> attribute in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Rotate -->
+<a name="CRotate"></a>
+<a name="CellRotate"></a>
+<div class="XML">
+   <u>new <b>6.6</b> <i>upd <b>12.0</b></i></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>int</i>
+   <h4>Rotate</h4> <s>[0]</s>
+</div>
+Rotates text in the cell. It does work only in IE 6+, FF 3.5+, Opera 10.5+, Safari 4+, Chrome 4+.<br />
+<b>1</b> - text is from bottom to top, <b>2</b> - text is from top to bottom, <b>3</b> - <i>(since 9.1)</i> like <b>2</b> for IE and <b>1</b> for other browser, because 1 is better readable but slow in IE.<br />
+<i>Since 12.0</i> it can be set also to whole row or column.<br />
+<i>Don't set it to too many cells, it is intended to use especially in header. It can remarkably slow down the grid!</i>
+
+<!-- Action RotateLeft... -->
+<a name="ActionsRotateLeft"></a>
+<a name="ActionsRotateLeftCells"></a>
+<a name="ActionsRotateLeftSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>RotateLeft</h4>, 
+   <h4>RotateLeftCells</h4>, 
+   <h4>RotateLeftSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonRotateLeft</b> event</s>
+</div>
+Sets 1 to <a href="CRotate">Rotate</a> attribute in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action RotateRight... -->
+<a name="ActionsRotateRight"></a>
+<a name="ActionsRotateRightCells"></a>
+<a name="ActionsRotateRightSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>RotateRight</h4>, 
+   <h4>RotateRightCells</h4>, 
+   <h4>RotateRightSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonRotateLeft</b> event</s>
+</div>
+Sets 2 to <a href="CRotate">Rotate</a> attribute in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action NoRotate... -->
+<a name="ActionsNoRotate"></a>
+<a name="ActionsNoRotateCells"></a>
+<a name="ActionsNoRotateSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NoRotate</h4>, 
+   <h4>NoRotateCells</h4>, 
+   <h4>NoRotateSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonRotateLeft</b> and <b>OnClickButtonRotateRight</b> events</s>
+</div>
+Sets null to <a href="CRotate">Rotate</a> attribute in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- CIndent -->
+<a name="CIndent"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>int</i>
+   <h4>Indent</h4> <s>[0]</s>
+</div>
+Indent of the cell value. For right aligned from right edge, otherwise from left edge. One indent step is 10px, can be changed in CSS.<br />
+
+<!-- CfgIndent -->
+<a name="CfgIndent"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>Indent</h4> <s>[1]</s>
+</div>
+Predefined indent set by actions SetIndent... to cell <a href="#CIndent">Indent</a> attribute<br />
+
+<!-- CfgIndents -->
+<a name="CfgIndents"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>string[*]</i>
+   <h4>Indents</h4> <s>[...]</s>
+</div>
+Predefined indents set by actions ChooseIndent... to cell <a href="#CIndent">Indent</a> attribute. First character separated array.
+Format is "|value1|name1|value2|name2|..."<br />
+The <b>value</b> is set to cell <a href="#CIndent">Indent</a> if chosen menu item <b>name</b>. <b>value</b> is a number as the indent size or empty. <b>name</b> can be empty to show the <b>value</b> as menu item.<br />
+Indents="||&lt;span style='font-size:9px;color:silver;'>indent&lt;/span>|0|0|1|1|2|2|3|3|4|4|5|5|6|6|7|7|8|8|9|9|10|10|15|15|20|20|25|25|30|30|35|35|40|40|45|45|50|50"<br />
+
+<!-- Action SetIndent... -->
+<a name="ActionsSetIndent"></a>
+<a name="ActionsSetIndentCells"></a>
+<a name="ActionsSetIndentSelected"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetIndent</h4>, 
+   <h4>SetIndentCells</h4>, 
+   <h4>SetIndentSelected <i>...F</i></h4>
+   <s>Attached to Toolbar button TextIndent <b>OnChange</b> and <b>OnSame</b> events</s>
+</div>
+Sets value of global <a href="#CfgIndent">Indent</a> to <a href="CIndent">Indent</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action ChooseIndent... -->
+<a name="ActionsChooseIndent"></a>
+<a name="ActionsChooseIndentCells"></a>
+<a name="ActionsChooseIndentSelected"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseIndent</h4>, 
+   <h4>ChooseIndentCells</h4>, 
+   <h4>ChooseIndentSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Shows menu with items in global <a href="#CfgIndents">Indents</a>.
+If used in Menu, shows submenu with the global <a href="#CfgIndents">Indents</a>.<br />
+And sets the chosen indent to <a href="CIndent">Indent</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- Action NoIndent... -->
+<a name="ActionsNoIndent"></a>
+<a name="ActionsNoIndentCells"></a>
+<a name="ActionsNoIndentSelected"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NoIndent</h4>, 
+   <h4>NoIndentCells</h4>, 
+   <h4>NoIndentSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets null to <a href="CIndent">Indent</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+<!-- OnGetCellStyle -->
+<a name="OnGetCellStyle"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>type</i>
+   <h4>OnGetCellStyle</h4> <s>(<i>TGrid</i> <b>grid</b>,<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>attr</b>, <i>type</i> <b>value</b>)</s>
+</div>
+Called to get individual cell style attribute dynamically. It is <u>not</u> called to get <a href="#CColor">Color</a>.<br />
+<b>attr</b> is attribute name, <b>value</b> is predefined value.
+Return new value or null to ignore.<br />
+
+<!-- GetCellStyleAttribute -->
+<a name="GetCellStyleAttribute"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>type</i>
+   <h4>GetCellStyleAttribute</h4> <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>attr</b>)</s>
+</div>
+Returns given style attribute <b>attr</b> from the cell. <br />
+It reads it also from row and column and calls <a href="OnGetCellStyle">OnGetCellStyle</a>.
+To read just the cell attribute value use <a href="CellBasics.htm#Get">Get</a> (row,col+attr) instead.<br />
+
+<!-- SetCellStyle -->
+<a name="SetCellStyle"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>SetCellStyle</h4> <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>object</i> <b>attrs</b>, <i>bool</i> <b>refresh</b> = 0)</s>
+</div>
+Sets given attributes to cell. If <b>row</b> is null, sets them to column, if the <b>col</b> is null, sets them to row.<br />
+<b>attrs</b> is JavaScript object as named array, attribute = value, for example {Color:"red",TextColor:"blue",TextStyle:27}.<br />
+The <b>attrs</b> can contain all dynamic cell attributes in this section and <a href="#CColor">Color</a>.<br />
+If set <b>refresh</b>, refreshes all the cells to show the changes.<br />
+It saves the change to undo, if the undo is permitted.<br />
+Returns true for success, false if NoStyle restricts setting the cell.<br />
+
+
+<!-----------------------------------------------------------------------  Cell CSS class ------------------------------------------------->
+<a name="CellClass"></a>
+<h2>Cell CSS class</h2>
+
+<!-- Class -->
+<a name="CClass"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>Class</h4> <s></s>
+</div>
+A CSS class name(s) applied to the cell.<br />
+To set <b>background colors</b> use rather <a href="#CBackground">Background</a> or <a href="#CColor">Color</a> attribute or you must use <b>!important</b> modifier, because background colors are set also by grid.<br />
+<i>Remember, the cell already contains its basic CSS definition, so this class must be defined after the included Grid.css file or use !important modifier.</i><br />
+<i>Attention, not all CSS setting can be modified (e.g overflow), always test the result if it does not break down grid layout.</i>
+
+<!-- ClassInner -->
+<a name="CClassInner"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>ClassInner</h4> <s></s>
+</div>
+If set, it adds new inner &lt;DIV> with this class to the cell. <a href="#CWrap">Wrap</a> and <a href="#CAlign">Align</a> and type classes are applied to this &lt;DIV> instead of the cell itself.<br />
+Use ClassInner to add some <b>inner border</b> and <b>margin</b> to the cell, for other settings use <a href="#CClass">Class</a> attribute instead.<br />
+<i>Remember, setting ClassInner for many cells can <b>slow down</b> the grid rendering and usage!</i>
+
+<!-- ClassInnerIcon -->
+<a name="CClassInnerIcon"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>bool</i>
+   <h4>ClassInnerIcon</h4> <s>[0/1]</s>
+</div>
+When used left side <a href="CellSideButton.htm#CIcon">Icon</a> and <a href="#CClassInner">ClassInner</a>, if the icon will be inside the ClassInner &lt;DIV>.<br />
+The default value is <b>0</b>. If set <a href="#CVAlign">VAlign</a> attribute, the value is <b>1</b> and cannot be changed.<br />
+<i>The right side Button is always outside.</i>
+
+<!-- UsePrefix -->
+<a name="CfgUsePrefix"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>UsePrefix</h4> <s></s>
+</div>
+If set to <b>1</b>, inserts the <tt>&lt;Cfg Style/></tt> attribute value before every custom <a href="#CClass">Class</a> and <a href="#CClassInner">ClassInner</a> attribute, in this case the Class must contain only one CSS class name.<br />
+Set it to <b>1</b> to differ between TreeGrid styles - for every supported style you can define different custom classes.
+
+<!-- OnGetClass -->
+<a name="OnGetClass"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetClass</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>cls</b>)</s>
+</div>
+Called to get custom class name(s) for the cell.<br />
+<b>cls</b> is the custom class name(s) for the cell set by <a href="#CClass">Class</a> attribute.<br /> 
+Return null to not change the class or return new class name(s).
+
+<!-----------------------------------------------------------------------  Cell background color ------------------------------------------------->
+<a name="CellColor"></a>
+<h2>Cell background color</h2>
+
+Default row and cell backgrounds are defined in the style in Grid.css file. Also state colors are defined there.
+
+<!-- Color -->
+<a name="CColor"></a>
+<div class="XML">
+   <u><i>upd <b>12.0</b></i></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>Color</h4> <s></s>
+</div>
+Predefined base background color for cell, used instead of CSS Default color.<br />
+<i>This color is <b>modified</b> by all row and cell state colors, so it preserves the row state highlight!</i><br />
+It can be set as "240,240,240" or "rgb(240,240,240)" or "#F0F0F0" or "#FFF" or to basic 16 color names (black, red, green, ...)<br />
+The color "255,255,255" is <b>transparent</b> color, so it displays background color of its parent if no state color is computed.<br />
+<i>Since 12.0 it is affected by <a href="#CfgDynamicStyle">DynamicStyle</a>.<br />
+If the DynamicStyle is set to 0, the Color is ignored. <br />
+If the DynamicStyle is set to 1 or 2, the Color can be dynamically changed by <a href="#SetCellStyle">SetCellStyle</a>, is affected by <a>NoStyle</a> and is read from row before column.</i><br />
+
+<!-- CfgDefaultColor -->
+<a name="CfgDefaultColor"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>DefaultColor</h4> <s>["#FF0"]</s>
+</div>
+Predefined text color set by actions SetColor... to cell <a href="#CColor">Color</a> attribute<br />
+
+<!-- CfgDefaultColors -->
+<a name="CfgDefaultColors"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string[*]</i>
+   <h4>DefaultColors</h4> <s>[...]</s>
+</div>
+Predefined background colors set by actions ChooseColor... to <a href="#CColor">Color</a> attribute. First character separated array.
+Format is "|value1|name1|value2|name2|..."<br />
+The <b>value</b> is set to cell <a href="#CColor">Color</a> if chosen menu item <b>name</b>. <b>value</b> can be CSS color as "#RGB" or "#RRGGBB" or "rgb(R,G,B)" definition or empty. <b>name</b> can be empty to show the <b>value</b> as menu item.<br />
+Default value is "|#FF0|yellow|#0F0|lime|#0FF|aqua|#FCC|pink|#FA0|orange|#CCC|silver||none".<br />
+
+<!-- Action SetColor... -->
+<a name="ActionsSetColor"></a>
+<a name="ActionsSetColorCells"></a>
+<a name="ActionsSetColorSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetColor</h4>, 
+   <h4>SetColorCells</h4>, 
+   <h4>SetColorSelected <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonColorBackground</b> event</s>
+</div>
+Sets value of global <a href="#CfgDefaultColor">DefaultColor</a> to <a href="CColor">Color</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+<i>Used only if <a href="#CfgDynamicStyle">DynamicStyle</a> is set.</i><br />
+
+<!-- Action ChooseColor... -->
+<a name="ActionsChooseColor"></a>
+<a name="ActionsChooseColorCells"></a>
+<a name="ActionsChooseColorSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseColor</h4>, 
+   <h4>ChooseColorCells</h4>, 
+   <h4>ChooseColorSelected <i>...F</i></h4>
+   <s>Attached to Toolbar button ColorBackground <b>OnClickPopup</b> event</s>
+</div>
+Shows menu with items in global <a href="#CfgDefaultColors">DefaultColors</a>.
+If used in Menu, shows submenu with the global <a href="#CfgDefaultColors">DefaultColors</a>.<br />
+And sets the chosen color to <a href="CColor">Color</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+<i>Used only if <a href="#CfgDynamicStyle">DynamicStyle</a> is set.</i><br />
+
+<!-- Action NoColor... -->
+<a name="ActionsNoColor"></a>
+<a name="ActionsNoColorCells"></a>
+<a name="ActionsNoColorSelected"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NoColor</h4>, 
+   <h4>NoColorCells</h4>, 
+   <h4>NoColorSelected <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets null to <a href="CColor">Color</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+<i>Used only if <a href="#CfgDynamicStyle">DynamicStyle</a> is set.</i><br />
+
+<!-- Background  -->
+<a name="CBackground"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>Background</h4> <s></s>
+</div>
+Background color for the cell.<br />
+<i>This color <b>overrides</b> any state and type background color of the row, so it hides any row state!</i><br />
+It can be set as "240,240,240" or "rgb(240,240,240)" or "#F0F0F0" or "#FFF" or to basic 16 color names (black, red, green, ...)<br />
+The color "255,255,255" is <b>transparent</b> color, so it displays background color of its parent.
+
+<!-- NoColor -->
+<a name="CNoColor"></a>
+<div class="XML">
+   <u><i>upd <b>14.0</b></i></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>int</i>
+   <h4>NoColor</h4> <s></s>
+</div>
+If set to <b>1</b>, the cell is not colored at all, all state and custom colors (Color, Background) are ignored - you can use CSS style background for the cell.<br /> 
+If set to <b>2</b>, the cell state and type and permission colors are ignored.<br />
+<i>Since 14.0</i> If set to <b>3</b>, the cell permission colors are ignored.<br />
+
+<!-- ColorState -->
+<a name="CfgColorState"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ColorState</h4> <s>[63]</s>
+</div>
+If the cell / row / column state change will be colored, bit array.<br />
+1. bit &amp;<b>1</b> If the changed cells will be colored.<br />
+2. bit &amp;<b>2</b> If the added, deleted, moved and changed rows will be colored.<br />
+3. bit &amp;<b>4</b> If the added and deleted columns will be colored.<br />
+4. bit &amp;<b>8</b> If the cell permissions (edit/readonly/preview/nofocus) will be colored.<br />
+5. bit &amp;<b>16</b> If the cell with editable formulas will be colored.<br />
+6. bit &amp;<b>32</b> If the cell with Error will be colored.<br />
+By default all options are colored.<br />
+
+<!-- NoColorState -->
+<a name="INoColorState"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>bool</i>
+   <h4>NoColorState</h4> <s></s>
+</div>
+If  set to <b>1</b>, does not change background color for changed, added, moved and deleted row.<br />
+Useful to set for some control rows that will not be uploaded to server.
+
+<!-- OnGetColor -->
+<a name="OnGetColor"></a>
+<div class="API">
+   <u><i>upd <b>6.0</b></i></u> <b>API event</b> <i>string</i>
+   <h4>OnGetColor</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>r</b>, <i>int</i> <b>g</b>, <i>int</i> <b>b</b>)</s>
+</div>
+Called to get final color of the cell.
+<b>r</b>, <b>g</b>, <b>b</b> are predefined colors for this state.<br />
+Can return null to use r,g,b values unchanged.<br /> 
+The returned color is the resulted color for the cell or row and is directly assigned to the cell.<br />
+The returned color must be in CSS format like "blue" or "#FFF" or "rgb(r,g,b)".
+
+<!-- OnGetDefaultColor -->
+<a name="OnGetDefaultColor"></a>
+<div class="API">
+   <u><i>upd <b>6.0</b></i></u> <b>API event</b> <i>int</i>
+   <h4>OnGetDefaultColor</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>r</b>, <i>int</i> <b>g</b>, <i>int</i> <b>b</b>)</s>
+</div>
+Called to get default color for the cell or row. <b>r</b>, <b>g</b>, <b>b</b> are predefined colors for this state.<br />
+Returns new integer #RRGGBB color or null to use default.<br /> 
+The returned color is modified according to row state.
+
+<!-- ColorRow -->
+<a name="ColorRow"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>ColorRow</h4>
+   <s>(<i>TRow</i> <b>row</b>)</s>
+</div>
+Re-colors row according to its state and color settings. It does <u>not</u> update the class.
+
+<!-- ColorCell -->
+<a name="ColorCell"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>ColorCell</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Re-colors cell according to its state and color settings. It does <u>not</u> update the class.
+
+<!-----------------------------------------------------------------------  Dynamic cell border ------------------------------------------------->
+<a name="DynamicBorder"></a>
+<h2>Dynamic cell border</h2>
+If set &lt;Cfg <a href="#CfgDynamicBorder">DynamicBorder</a>/>, every cell can have different border color, style and width defined by cell <a href="#CBorder">Border</a> attribute. 
+But the borders are shared between adjacent cells - adjacent cells have the same border edge color, style and width.<br />
+If the <a href="#CfgDynamicBorder">DynamicBorder</a> is <b>not</b> set, every cell can have different border color and style defined by cell <a href="#CClass">Class</a> attribute.
+But all cells must have the same border width, defined by the used TreeGrid CSS style.<br />
+
+<!-- DynamicBorder -->
+<a name="CfgDynamicBorder"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>DynamicBorder</h4> <s>[0]</s>
+</div>
+Sets the cell dynamic border to use in the grid. <br />
+<b>0</b> - off, <b>1</b> - for variable rows and middle columns only <b>2</b> - for all rows and columns.<br />
+If set, the cell border can be defined by <a href="#CBorder">Border</a> attribute. And can be dynamically changed by API method <a href="#SetBorder">SetBorder</a>.<br />
+If set, all the affected cells get 2px border top and left and 1px border bottom and right. This cell border is usually transparent.<br />
+<i>Using dynamic cell borders can slow down the grid refresh. It can also slightly modify the grid look, it increases the cell size by the border.</i><br />
+
+<!-- SpannedBorder -->
+<a name="CfgSpannedBorder"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SpannedBorder</h4> <s>[3]</s>
+</div>
+How the cell border is rendered for spanned cells, if the border cannot be shared due the cell edge length difference or shift.<br />
+<i>Due the border implementation the cell share their border, therefore spanned cells cannot share their border fully, if the span is different.</i><br />
+<table>
+<tr><td style="width:75px;">1+2. bit, &amp;<b>3</b></td><td><b>0</b> - The border part is hidden. It leads to missing border parts.</td></tr>
+<tr><td></td><td><b>1</b> - The border part width is changed to be shown for the cell always. The top and left edges are always 2px wide and the bottom and right edges are always 1px wide.</td></tr>
+<tr><td></td><td><b>2</b> - Like 1 and removes the changed border edge from adjacent cell, even if it could show it correctly.</td></tr>
+<tr><td></td><td><b>3</b> - Like 2 and it is used also for grid outside edges.</td></tr>
+<tr><td>3. bit, &<b>4</b></td><td>If set, spanned cell shows its right and bottom border. </td></tr>
+<tr><td></td><td>If not set, right border is read from top right cell and bottom border from bottom left cell.</td></tr>
+</table>
+
+<!-- DefaultBorder -->
+<a name="CfgDefaultBorder"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>DefaultBorder</h4> <s>[1] Saved to cookies, avoid it by &lt;Cfg DefaultBorderLap='1'/> </s>
+</div>
+If the grid with DynamicBorder displays standard cell border from chosen CSS style.
+
+<!-- ResetNextBorder -->
+<a name="CfgResetNextBorder"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ResetNextBorder</h4> <s>[1]</s>
+</div>
+If set, all border setting actions and API reset adjacent border of the next right and bottom cells to ensure all the borders are set.<br />
+If not set and the next right cell has set left border and / or next bottom cell has set top border, these borders are preferred and hide actually set borders of the left / top cell.<br />
+
+<!-- CNoBorder -->
+<a name="CNoBorder"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>NoBorder</h4> <s>[0/3]</s>
+</div>
+If the border will be shown for the cells in the column.<br />
+<b>0</b> - all, <b>1</b> - all except border set for whole row, <b>2</b> none dynamically, <b>3</b> none.<br />
+By default it is 3 for Index, Panel and ConstWidth columns and 0 for other rows.<br />
+
+<!-- INoBorder -->
+<a name="INoBorder"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;I></b> <i>int</i>
+   <h4>NoBorder</h4> <s>[0/3]</s>
+</div>
+If the border will be shown for the cells in the row.<br />
+<b>0</b> - all, <b>1</b> - all except border set for whole column, <b>2</b> none dynamically, 
+<b>3</b> - none and for fixed rows the border space is also not reserved in the row cells.<br />
+By default it is 3 for Header and Panel rows and 0 for other rows.<br />
+
+<!-- Border -->
+<a name="CBorder"></a> <a name="CBorderBottom"></a> <a name="CBorderTop"></a> <a name="CBorderRight"></a> <a name="CBorderLeft"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string[]</i>
+   <h4>BorderTop</h4>,  
+   <h4>BorderRight</h4>,  
+   <h4>BorderBottom</h4>, 
+   <h4>BorderLeft</h4>  
+   <s></s>
+</div>
+One cell border edge. 
+Format comma separated 3 values as "width,color,priority". For example BorderLeft="3,red" BorderTop="1,blue,2" BorderBottom="1".<br />
+If the border is not set or it is empty, it shows default cell border.<br /> 
+The <b>width</b> is the border width and style, it can be: <br />
+<b>0</b> - transparent border - no border is shown, <br />
+<b>1</b> - 1px solid, <b>2</b> - 2px solid, <b>3</b> - 3px solid,<br />
+<b>4</b> - 1px dotted, <b>5</b> - 2px dotted, <br />
+<b>6</b> - 1px dashed, <b>7</b> - 2px dashed, <br />
+The <b>color</b> can be any CSS color name or code like <i>red</i> or <i>#FF0000</i>. If empty, black color is used.<br />
+<br />
+To <b>priority</b> is a number to choose one border if more borders are defined for the same cell edge.<br />
+If adjacent cells define the same border edge, the cell with higher <b>priority</b> is preferred.
+For the same <b>priority</b>, the cell on right or bottom side is preferred.<br />
+If the Border attribute is defined for both cell and/or row and/or column, the value with higher <b>priority</b> is used.
+For the same <b>priority</b> the priority order is (high->low): cell, row, column.<br />
+<br />
+For <b>spanned</b> cells the top and left border is read from the spanned (top left) cell.<br />
+The right border is read from top right cell and the bottom border is read from bottom left cell, except <a href="#CfgSpannedBorder">SpannedBorder</a> has set <b>4</b>.<br />
+If the <b>spanned</b> cell edge row or column is <b>hidden</b>, the left and top border is read from the next bottom cell.<br />
+The right border is read from the next left cell and the bottom border from next top cell, except <a href="#CfgSpannedBorder">SpannedBorder</a> has set <b>4</b>.<br />
+
+<!-- BorderOut -->
+<a name="CfgBorderOut"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>BorderOut</h4> <s>["3,black"]</s>
+</div>
+Predefined border to be set by <a href="#ActionsSetBorder">SetBorder...</a> actions as outer cell border in cell range.<br />
+Contains up to 4 comma separated values as "width,color,priority,edge".<br />
+
+<!-- BorderIn -->
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>BorderIn</h4> <s>["1,black"]</s>
+</div>
+Predefined border to be set by <a href="#ActionsSetBorder">SetBorder...</a> actions as inner cell border in cell range.<br />
+Contains up to 4 comma separated values as "width,color,priority,edge".<br />
+
+<!-- BorderType -->
+<a name="CfgBorderType"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>BorderType</h4> <s>[0]</s>
+</div>
+Which rows and columns are affected by setting and clearing borders, bit array.<br />
+<table>
+   <tr><td style="width:70px;">1.bit (<b>&amp;1</b>)</td><td>Include deleted rows and columns.</td></tr>
+   <tr><td>2.bit (<b>&amp;2</b>)</td><td>Include filtered rows and columns.</td></tr>
+   <tr><td>3.bit (<b>&amp;4</b>)</td><td>Include manually hidden rows and columns</i></td></tr>
+   <tr><td>4.bit (<b>&amp;8</b>)</td><td>Include children in collapsed parents</i></td></tr>
+</table>
+
+<!-- BorderColors -->
+<a name="CfgBorderColors"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>BorderColors</h4> <s>[...]</s>
+</div>
+Predefined text shadow colors set by actions ChooseBorderColor... to cell border. First character separated array.
+Format is "|value1|name1|value2|name2|..."<br />
+The <b>value</b> is set to cell border if chosen menu item <b>name</b>. <b>value</b> can be any CSS color definition or empty. <b>name</b> can be empty to show the <b>value</b> as menu item.<br />
+Default value is "|black||red||green||blue||brown||maroon||gray||yellow||lime||aqua||pink||orange||silver||none".<br />
+
+<!-- GetBorder -->
+<a name="GetBorder"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>string[]</i>
+   <h4>GetBorder</h4> <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>edge</b> = 15)</s>
+</div>
+Returns parsed <a href="#CBorderTop">Border...</a> attributes for given cell, as JavaScript 2D array in format:<br />
+[[topwidth,topcolor,toppriority],[rightwidth,rightcolor,rightpriority],[bottomwidth,bottomcolor,bottompriority],[bottomwidth,bottomcolor,bottompriority]].<br />
+The array item can be null if the border edge is not set or required by <b>edge</b>.<br />
+<b>edge</b> is bit array to specify which border to read: <b>1</b> top, <b>2</b> right, <b>4</b> bottom, <b>8</b> left. Set it to <b>15</b> to get them all.<br />
+
+<!-- SetBorder -->
+<a name="SetBorder"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>void</i>
+   <h4>SetBorder</h4> <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>border</b>, <i>int</i> <b>edge</b> = 15, <i>int</i> <b>refresh</b> = 1, <i>int</i> <b>span</b> = 0)</s>
+</div>
+Sets given <b>border</b> to specified cell <a href="#CBorderTop">Border...</a> attributes and refreshes the cell border.<br />
+The <b>border</b> can be string as "width,color,priority" or JavaScrit array as [width,color,priority] or null to clear the border.<br />
+<b>edge</b> - which border edge will be set, bit array: <b>1</b> top, <b>2</b> right, <b>4</b> bottom, <b>8</b> left. Set it to <b>15</b> to set them all.<br />
+<b>refresh</b> - if and when the cell is refreshed, <b>0</b> - no, sets only the attribute, <b>1</b> - refresh only changed edges, <b>2</b> refresh always.<br />
+<table>
+<tr><td><b>span</b></td><td> how sets and refreshes spanned cell</td></tr>
+<tr><td></td><td><b>0</b> - for main cell sets the left and top border to main cell, right border to top right cell and bottom border to bottom left cell. Ignores all hidden spanned cells.</td></tr>
+<tr><td></td><td><b>1</b> - like <b>0</b>, but for hidden spanned cell sets and refreshes the main cell.</td></tr>
+<tr><td></td><td><b>2</b> - sets the border always to given cell, including hidden spanned cells. Refreshes only it the cell is main cell.</td></tr>
+<tr><td></td><td><b>3</b> - like <b>2</b>, but refreshes also if the cell is top right or bottom left cell.</td></tr>
+</table>
+<i>The shown cell border can be different than the one set because of the borders in adjacent cells.</i><br />
+
+<!-- RefreshBorder -->
+<a name="RefreshBorder"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>void</i>
+   <h4>RefreshBorder</h4> <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>edge</b> = 15, <i>int</i> <b>span</b> = 0)</s>
+</div>
+Refreshes the given cell border.<br />
+<b>edge</b> - which border edge will be refreshed, bit array: <b>1</b> top, <b>2</b> right, <b>4</b> bottom, <b>8</b> left. Set it to <b>15</b> to refresh them all.<br />
+<b>span</b> - for spanned cells; <b>0</b> or <b>2</b> - refreshes it only if it is main cell, <b>1</b> - refreshes always the main cell, <b>3</b> - refreshes it if it is main cell or top right or bottom left cell.<br />
+<i>Note, neither the <a href="CellBasics.htm#RefreshCell">RefreshCell</a> nor <a href="CellBasics.htm#SetAttribute">SetAttribute</a>, nor <a href="CellEdit.htm#SetValue">SetValue</a> refresh the cell border! And <a href="CellBasics.htm#RefreshRow">RefreshRow</a> refreshes only the inner vertical borders.</i><br />
+
+<!-- SetBorders -->
+<a name="SetBorders"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>void</i>
+   <h4>SetBorders</h4> <s>(<i>type</i>[] <b>range</b>, <i>type</i> <b>borderout</b> = null, <i>type</i> <b>borderin</b> = null, <i>int</i> <b>edge</b> = 15)</s>
+</div>
+Sets cell borders in the given <b>range</b> as [TRow row1, string col1, TRow row2, string col2].<br />
+<b>edge</b> - which border edge will be set, bit array: <b>1</b> top, <b>2</b> right, <b>4</b> bottom, <b>8</b> left. Set it to <b>15</b> to set them all.<br />
+<b>borderout</b> will be set to edge cells, only to their outside edges. It is ignored if set to null.<br />
+<b>borderin</b> will be set to every cell in the range, except the outside edges of edge cells. It is ignored if set to null.<br />
+The <b>borderout</b> and <b>borderin</b> can be string as "width,color,priority" or JavaScrit array as [width,color,priority] or null to clear the border.<br />
+
+<!-- OnGetBorder -->
+<a name="OnGetBorder"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>type[]</i>
+   <h4>OnGetBorder</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type[]</i> <b>border</b>, <i>int</i> <b>edge</b>)</s>
+</div>
+Called to get one border edge of the cell. <br />
+<b>edge</b> - which border edge is required, bit array: <b>1</b> top, <b>2</b> right, <b>4</b> bottom, <b>8</b> left. Set it to <b>15</b> to set them all.<br />
+<b>border</b> is a border to be set. It is an array as [width,color,priority]. Can be null for empty border.<br />
+Return new <b>border</b> or null to ignore or empty string to not set any border.<br />
+
+<!-- Action ClearBorder -->
+<a name="ActionsClearBorder"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearBorder <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all four borders in actual or focused cell.<br />
+
+<!-- Action ClearBorder... -->
+<a name="ActionsClearBorderTop"></a>
+<a name="ActionsClearBorderBottom"></a>
+<a name="ActionsClearBorderLeft"></a>
+<a name="ActionsClearBorderRight"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearBorderTop</h4>, 
+   <h4>ClearBorderBottom</h4>,
+   <h4>ClearBorderLeft</h4>,
+   <h4>ClearBorderRight <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears one border in actual or focused cell.<br />
+
+<!-- Action SetBorder -->
+<a name="ActionsSetBorder"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetBorder <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets all four borders in actual or focused cell to <a href="#CfgBorderOut">BorderOut</a>.<br />
+
+<!-- Action SetBorder... -->
+<a name="ActionsSetBorderTop"></a>
+<a name="ActionsSetBorderBottom"></a>
+<a name="ActionsSetBorderLeft"></a>
+<a name="ActionsSetBorderRight"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetBorderTop</h4>, 
+   <h4>SetBorderBottom</h4>,
+   <h4>SetBorderLeft</h4>,
+   <h4>SetBorderRight <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets one border in actual or focused cell to <a href="#CfgBorderOut">BorderOut</a>.<br />
+
+<!-- Action SetBorderIn -->
+<a name="ActionsSetBorderIn"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetBorderIn <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets all four borders in actual or focused cell to <a href="#CfgBorderIn">BorderIn</a>.<br />
+
+<!-- Action SetBorderIn... -->
+<a name="ActionsSetBorderInTop"></a>
+<a name="ActionsSetBorderInBottom"></a>
+<a name="ActionsSetBorderInLeft"></a>
+<a name="ActionsSetBorderInRight"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetBorderInTop</h4>, 
+   <h4>SetBorderInBottom</h4>,
+   <h4>SetBorderInLeft</h4>,
+   <h4>SetBorderInRight <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets one border in actual or focused cell to <a href="#CfgBorderIn">BorderIn</a>.<br />
+
+<!-- Action ClearBorders -->
+<a name="ActionsClearBorders"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearBorders <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all four borders in all focused cells. Version without ...F fails if the actual cell is not focused.<br />
+
+<!-- Action ClearBordersOut -->
+<a name="ActionsClearBordersOut"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearBordersOut <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all outer borders in the focused range. Version without ...F fails if the actual cell is not focused.<br />
+Outer border is between focused and not focused cell.<br />
+
+<!-- Action ClearBordersIn -->
+<a name="ActionsClearBordersIn"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearBordersIn <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all inner borders in the focused range. Version without ...F fails if the actual cell is not focused.<br />
+Inner border is between two focused cells.<br />
+
+<!-- Action ClearBorders... -->
+<a name="ActionsClearBordersTop"></a>
+<a name="ActionsClearBordersBottom"></a>
+<a name="ActionsClearBordersLeft"></a>
+<a name="ActionsClearBordersRight"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearBordersTop</h4>, 
+   <h4>ClearBordersBottom</h4>,
+   <h4>ClearBordersLeft</h4>,
+   <h4>ClearBordersRight <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears one border in the focused range. Version without ...F fails if the actual cell is not focused.<br />
+
+
+<!-- Action SetBorders -->
+<a name="ActionsSetBorders"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetBorders <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonBorder</b> event</s>
+</div>
+Sets outer and inner borders in the focused range. Version without ...F fails if the actual cell is not focused.<br />
+Outer border is set to <a href="#CfgBorderOut">BorderOut</a>, inner border to <a href="#CfgBorderIn">BorderIn</a>.<br />
+Outer border is between focused and not focused cell. Inner border is between two focused cells. <br />
+
+<!-- Action SetBordersOut -->
+<a name="ActionsSetBordersOut"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetBordersOut <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets outer borders in the focused range. Version without ...F fails if the actual cell is not focused.<br />
+The border is set to <a href="#CfgBorderOut">BorderOut</a>. Outer border is between focused and not focused cell. <br />
+
+<!-- Action SetBordersOut... -->
+<a name="ActionsSetBordersOutTop"></a>
+<a name="ActionsSetBordersOutBottom"></a>
+<a name="ActionsSetBordersOutLeft"></a>
+<a name="ActionsSetBordersOutRight"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetBordersOutTop</h4>, 
+   <h4>SetBordersOutBottom</h4>,
+   <h4>SetBordersOutLeft</h4>,
+   <h4>SetBordersOutRight <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets one outer border in the focused range to <a href="#CfgBorderOut">BorderOut</a>. Version without ...F fails if the actual cell is not focused.<br />
+
+<!-- Action SetBordersIn -->
+<a name="ActionsSetBordersIn"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetBordersIn <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets inner borders in the focused range. Version without ...F fails if the actual cell is not focused.<br />
+The border is set to <a href="#CfgBorderIn">BorderIn</a>. Inner border is between two focused cells. <br />
+
+<!-- Action SetBordersIn... -->
+<a name="ActionsSetBordersInTop"></a>
+<a name="ActionsSetBordersInBottom"></a>
+<a name="ActionsSetBordersInLeft"></a>
+<a name="ActionsSetBordersInRight"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetBordersInTop</h4>, 
+   <h4>SetBordersInBottom</h4>,
+   <h4>SetBordersInLeft</h4>,
+   <h4>SetBordersInRight <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets one inner border in the focused range to <a href="#CfgBorderIn">BorderIn</a>. Version without ...F fails if the actual cell is not focused.<br />
+
+
+
+
+
+
+
+
+
+
+
+<!-- Action ClearSelectedBorders -->
+<a name="ActionsClearSelectedBorders"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearSelectedBorders <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all four borders in all selected cells. Version without ...F fails if the actual cell is not selected.<br />
+
+<!-- Action ClearSelectedBordersOut -->
+<a name="ActionsClearSelectedBordersOut"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearSelectedBordersOut <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all outer borders in all selected ranges. Version without ...F fails if the actual cell is not selected.<br />
+Outer border is between focused and not focused cell.<br />
+
+<!-- Action ClearSelectedBordersIn -->
+<a name="ActionsClearSelectedBordersIn"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearSelectedBordersIn <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears all inner borders in all selected ranges. Version without ...F fails if the actual cell is not selected.<br />
+Inner border is between two focused cells.<br />
+
+<!-- Action ClearSelectedBorders... -->
+<a name="ActionsClearSelectedBordersTop"></a>
+<a name="ActionsClearSelectedBordersBottom"></a>
+<a name="ActionsClearSelectedBordersLeft"></a>
+<a name="ActionsClearSelectedBordersRight"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearSelectedBordersTop</h4>, 
+   <h4>ClearSelectedBordersBottom</h4>,
+   <h4>ClearSelectedBordersLeft</h4>,
+   <h4>ClearSelectedBordersRight <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Clears one border in all selected ranges. Version without ...F fails if the actual cell is not selected.<br />
+
+<!-- Action SetSelectedBorders -->
+<a name="ActionsSetSelectedBorders"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetSelectedBorders <i>...F</i></h4>
+   <s>Attached to <b>OnClickButtonBorder</b> event</s>
+</div>
+Sets outer and inner borders in all selected ranges. Version without ...F fails if the actual cell is not selected.<br />
+Outer border is set to <a href="#CfgBorderOut">BorderOut</a>, inner border to <a href="#CfgBorderIn">BorderIn</a>.<br />
+Outer border is between focused and not focused cell. Inner border is between two focused cells. <br />
+
+<!-- Action SetSelectedBordersOut -->
+<a name="ActionsSetSelectedBordersOut"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetSelectedBordersOut <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets outer borders in all selected ranges. Version without ...F fails if the actual cell is not selected.<br />
+The border is set to <a href="#CfgBorderOut">BorderOut</a>. Outer border is between focused and not focused cell. <br />
+
+<!-- Action SetSelectedBordersOut... -->
+<a name="ActionsSetSelectedBordersOutTop"></a>
+<a name="ActionsSetSelectedBordersOutBottom"></a>
+<a name="ActionsSetSelectedBordersOutLeft"></a>
+<a name="ActionsSetSelectedBordersOutRight"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetSelectedBordersOutTop</h4>, 
+   <h4>SetSelectedBordersOutBottom</h4>,
+   <h4>SetSelectedBordersOutLeft</h4>,
+   <h4>SetSelectedBordersOutRight <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets one outer border in all selected ranges to <a href="#CfgBorderOut">BorderOut</a>. Version without ...F fails if the actual cell is not selected.<br />
+
+<!-- Action SetSelectedBordersIn -->
+<a name="ActionsSetSelectedBordersIn"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetSelectedBordersIn <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets inner borders in all selected ranges. Version without ...F fails if the actual cell is not selected.<br />
+The border is set to <a href="#CfgBorderIn">BorderIn</a>. Inner border is between two focused cells. <br />
+
+<!-- Action SetSelectedBordersIn... -->
+<a name="ActionsSetSelectedBordersInTop"></a>
+<a name="ActionsSetSelectedBordersInBottom"></a>
+<a name="ActionsSetSelectedBordersInLeft"></a>
+<a name="ActionsSetSelectedBordersInRight"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SetSelectedBordersInTop</h4>, 
+   <h4>SetSelectedBordersInBottom</h4>,
+   <h4>SetSelectedBordersInLeft</h4>,
+   <h4>SetSelectedBordersInRight <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets one inner border in all selected ranges to <a href="#CfgBorderIn">BorderIn</a>. Version without ...F fails if the actual cell is not selected.<br />
+
+<!-- Action ChooseBorderStyle... -->
+<a name="ActionsChooseBorderStyle"></a>
+<a name="ActionsChooseBordersStyle"></a>
+<a name="ActionsChooseSelectedBordersStyle"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseBorderStyle</h4>,
+   <h4>ChooseBordersStyle</h4>,
+   <h4>ChooseSelectedBordersStyle <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Shows menu with 9 items as available border styles.
+If used in Menu, shows submenu with the 9 border styles.<br />
+And sets the chosen style to <a href="CBorderLeft">Border...</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+The result is affected also by edge and color set in <a href="#CfgBorderIn">BorderIn</a> and <a href="#CfgBorderOut">BorderOut</a>.<br />
+
+<!-- Action ChooseBorderEdge... -->
+<a name="ActionsChooseBorderEdge"></a>
+<a name="ActionsChooseBordersEdge"></a>
+<a name="ActionsChooseSelectedBordersEdge"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseBorderEdge</h4>,
+   <h4>ChooseBordersEdge</h4>,
+   <h4>ChooseSelectedBordersEdge <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Shows menu with 11 items as possible border edges.
+If used in Menu, shows submenu with the 11 border edges.<br />
+And sets the chosen edge in <a href="CBorderLeft">Border...</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+The result is affected also by style and color set in <a href="#CfgBorderIn">BorderIn</a> and <a href="#CfgBorderOut">BorderOut</a>.<br />
+
+<!-- Action ChooseBorderColor... -->
+<a name="ActionsChooseBorderColor"></a>
+<a name="ActionsChooseBordersColor"></a>
+<a name="ActionsChooseSelectedBordersColor"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseBorderColor</h4>,
+   <h4>ChooseBordersColor</h4>,
+   <h4>ChooseSelectedBordersColor <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Shows menu with colors predefined in <a href="#CfgBorderColors">BorderColors</a>.
+If used in Menu, shows submenu with the border colors.<br />
+And sets the chosen color to <a href="CBorderLeft">Border...</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+The result is affected also by edge and style set in <a href="#CfgBorderIn">BorderIn</a> and <a href="#CfgBorderOut">BorderOut</a>.<br />
+
+<!-- Action ChooseBorder... -->
+<a name="ActionsChooseBorder"></a>
+<a name="ActionsChooseBorders"></a>
+<a name="ActionsChooseSelectedBorders"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChooseBorder</h4>,
+   <h4>ChooseBorders</h4>,
+   <h4>ChooseSelectedBorders <i>...F</i></h4>
+   <s>Attached to Toolbar button Border <b>OnClickPopup</b> event</s>
+</div>
+Shows menu with 3 columns, in left column are 9 items as available border styles, 
+in middle column are 11 items are possible border edges and in right column are colors defined by <a href="#CfgBorderColors">BorderColors</a>.
+If used in Menu, shows submenu with the 9 border styles, 11 border edges and border colors.<br />
+And sets the chosen style to <a href="CBorderLeft">Border...</a> in actual or focused cell or in all focused cells or in all selected cells.<br />
+
+
+<!-----------------------------------------------------------------------  Cell HTML style ------------------------------------------------->
+<a name="CellHTMLStyle"></a>
+<h2>Cell HTML style</h2>
+
+<!-- HtmlPrefix -->
+<a name="CHtmlPrefix"></a>
+<div class="XML">
+   <u></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>HtmlPrefix</h4> <s></s>
+</div>
+Html code displayed inside cell in front of the value.<br />
+Use the HtmlPrefix and HtmlPostfix to add any text or formatting HTML tags before and after cell value.<br />
+<strong><i>For formatting use rather <a href="#CClass">Class</a> or <a href="#CColor">Color</a> attribute, it is remarkably faster.</i></strong><br />
+<i>Be careful while including HTML code to cell, any invalid HTML code can break down the grid layout.</i><br />
+<i>It is read from row before column</i>.<br /> 
+
+<!-- HtmlPostfix -->
+<a name="CHtmlPostfix"></a>
+<div class="XML">
+   <u></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>string</i>
+   <h4>HtmlPostfix</h4> <s></s>
+</div>
+Html code displayed inside cell after the value. See <a href="#CHtmlPrefix">HtmlPrefix</a>.<br />
+
+<!-- NoEscape -->
+<a name="HeaderNoEscape"></a>
+<div class="XML">
+   <u></u> <b>&lt;Header></b> <i>bool</i>
+   <h4>NoEscape</h4> <s>[0]</s>
+</div>
+Set it to <b>1</b> to use HTML code in column captions - Header cells. It uses <b>Html</b> Type cells for Header instead of default <b>Lines</b>.
+
+<!-----------------------------------------------------------------------  Row color alteration  ------------------------------------------------->
+<a name="Alternate"></a>
+<h2>Row color alteration</h2>
+
+<!-- Alternate -->
+<a name="CfgAlternate"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>Alternate</h4> <s></s>
+</div>
+Highlight odd or every N row by another color or class.<br />
+0 - no row, 1 - every row, 2 - every odd row, every third row, 3 - every fourth row, ...<br />
+By default it uses the Alternate color defined in the actual style in Grid.css.
+
+<!-- AlternateCount -->
+<a name="CfgAlternateCount"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>AlternateCount</h4> <s>[1]</s>
+</div>
+Count of colored rows in one group.<br />
+For example if set <tt>Alternate='5' AlternateCount='2'</tt> it will color: 3 normal, 2 alternate, 3 normal, 2 alternate, ...
+
+<!-- AlternateStart -->
+<a name="CfgAlternateStart"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>AlternateStart</h4> <s>[...]</s>
+</div>
+First row that will be marked with alternate color. 
+<b>0</b> means the first row.<br />
+By default it is Alternate - AlternateCount.<br />
+
+
+<!-- AlternateType -->
+<a name="CfgAlternateType"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>AlternateType</h4> <s>[0]</s>
+</div>
+Alternate coloring flags, bit array.<br />
+<table>
+<tr><td style="width:120px;"><b>1</b>. bit (&<b>1</b>)</td><td>If the expanded children coloring will be included in parent coloring. It will slow down expanding / collapsing, because it will always recolor the whole grid.</td></tr>
+<tr><td><b>2</b>. bit (&<b>2</b>)</td><td>If the root pages in server paging will be included in the other pages coloring. It will slow down loading pages, because it will always recolor the whole grid.</td></tr>
+</table>
+
+<!-- AlternateColor -->
+<a name="IAlternateColor"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>AlternateColor</h4> <s></s>
+</div>
+Alternate (absolute) color to be used instead of default alternate color, if the row is odd or Nth.<br />
+It can be set as "240,240,240" or "rgb(240,240,240)" or "#F0F0F0" or "#FFF".<br />
+<i>Remember it is overridden by <a href="#CBackground">Background</a>, but not by <a href="#CColor">Color</a>.</I>
+
+<!-- AlternateClass -->
+<a name="IAlternateClass"></a>
+<div class="XML">    
+   <u>new <b>6.0</b></u> <b>&lt;I></b> <i>string</i>
+   <h4>AlternateClass</h4> <s></s>
+</div>               
+Alternate CSS class name(s) to be used instead of default alternate class, if the row is odd or Nth.
+
+<!-- ReColor -->
+<a name="ReColor"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ReColor</h4>
+   <s>( )</s>
+</div>
+Recolors the whole grid. Call it after change in Alternate settings.
+
+<!-----------------------------------------------------------------------  Cell mouse cursor  ------------------------------------------------->
+<a name="MouseCursor"></a>
+<h2>Cell mouse cursor</h2>
+                     
+<!-- Cursor -->
+<a name="CCursor"></a>
+<div class="XML">    
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Cursor</h4> <s></s>
+</div>               
+Mouse cursor displayed when mouse hovering the cell.<br />
+It can be standard CSS cursor name: <b>auto</b>, <b>crosshair</b>, <b>default</b>, <b>pointer</b>, <b>move</b>, <b>e-resize</b>, <b>ne-resize</b>, <b>nw-resize</b>, <b>n-resize</b>, <b>se-resize</b>, <b>sw-resize</b>, <b>s-resize</b>, <b>w-resize</b>, <b>text</b>, <b>wait</b>, <b>help</b>.<br />
+<i>It is ignored if cell content contains some CSS cursor setting.</i>
+
+<!-- XXXCursor -->
+<a name="CXXXCursor"></a>
+<div class="XML">    
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>XXXCursor</h4> <s></s>
+</div>               
+Mouse cursor displayed when mouse hovering given cell event target. The XXX is actual cell event target under mouse cursor. If such cursor does not exist, the normal <a href="#CCursor">Cursor</a> is displayed.<br />
+The XXX can be any event target name, see <b>Actions and events</b>, for example EditInt, ButtonSave, SideDefaults, Side, Content and so on.<br />
+It is intended to show different cursor for part of the cell like side or tree button.
+
+<!-- Action CursorDefault -->
+<a name="ActionsCursorDefault"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CursorDefault<i></i></h4>
+   <s>Attached to many events, can be attached only to <b>OnMouseOver</b> and <b>OnDragOver</b> events</s>
+</div>
+Sets "default" cursor.<br />
+By default it is attached to OnMouseOverPanelOff, OnMouseOverHeaderOff, OnMouseOverSpaceOff, OnMouseOverTree, OnMouseOverNoFocus, OnMouseOverReadOnly, OnMouseOverNothing.
+
+<!-- Action CursorPointer -->
+<a name="ActionsCursorPointer"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CursorPointer<i></i></h4>
+   <s>Attached to many events, can be attached only to <b>OnMouseOver</b> and <b>OnDragOver</b> events</s>
+</div>
+Sets "pointer" / "hand" cursor.<br />
+By default it is attached to OnMouseOverButton, OnMouseOverPanel, OnMouseOverSide, OnMouseOverEditBool, OnMouseOverEditEnum, OnMouseOverEditRadio, OnMouseOverSort, OnMouseOverSortUp, OnMouseOverSortDown, OnMouseOverExpand.
+
+<!-- Action CursorText -->
+<a name="ActionsCursorText"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CursorText<i></i></h4>
+   <s>Attached to <b>OnMouseOverEditable</b>, can be attached only to <b>OnMouseOver</b> and <b>OnDragOver</b> events</s>
+</div>
+Sets "text" cursor.
+
+<!-- Action CursorResize -->
+<a name="ActionsCursorResize"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CursorResize<i></i></h4>
+   <s>Attached to many events, can be attached only to <b>OnMouseOver</b> and <b>OnDragOver</b> events</s>
+</div>
+Sets "e-resize" cursor.<br />
+By default it is attached to OnMouseOverHeaderLeft, OnMouseOverHeaderRight, OnMouseOverPagerHeaderRight.
+ 
+<!-- Action CursorResizeGrid -->
+<a name="ActionsCursorResizeGrid"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CursorResizeGrid<i></i></h4>
+   <s>Attached to <b>OnMouseOverResize</b>, can be attached only to <b>OnMouseOver</b> and <b>OnDragOver</b> events</s>
+</div>
+Sets "nw-resize" cursor.
+
+<!-- Action CursorMove -->
+<a name="ActionsCursorMove"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CursorMove<i></i></h4>
+   <s>Attached to <b>OnMouseOverPanelMove</b>, can be attached only to <b>OnMouseOver</b> and <b>OnDragOver</b> events</s>
+</div>
+Sets "move" cursor.
+
+<!-- Action CursorDrag -->
+<a name="ActionsCursorDrag"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CursorDrag<i></i></h4>
+   <s>Attached to <b>OnDragOverCell</b>, can be attached only to <b>OnMouseOver</b> and <b>OnDragOver</b> events</s>
+</div>
+Sets "Drag.cur" cursor when there is no dragging active.<br /> 
+Otherwise sets a cursor according to dragging action.
+
+</div>
+</body>
+</html> 

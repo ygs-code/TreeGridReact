@@ -1,0 +1,1568 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Gantt dependencies and calculations</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Gantt compute</h1>
+<p>TreeGrid documentation</p>
+
+TreeGrid Gantt chart support various features for project management computations.<br />
+<b>Dependencies</b> between tasks. These dependencies can be automatically checked and corrected after any change in the Gantt.<br />
+It is possible to set dependency <b>type</b> (ss,sf,fs,ff), dependency <b>lag</b> (reserved time between dependency start and its end), and dependency <b>float</b> (maximal permitted time between dependency start+lag and its end)<br />
+<b>Start date</b> - base start date of the whole project, no task should start before this date, all first tasks should start on this date.<br /> 
+<b>Finish date</b> - finish date of the whole project, no task should end after this date, used to calculate critical path.<br />
+<b>Date constraints</b> - early start, late start, mandatory start, early end, late end, mandatory end - maximal and minimal end and start date of the task.<br />
+<b>Critical path</b> - marks the tasks, that cannot move to future (be delayed) to not affect project finish date.<br />
+<b>Summary tasks</b> - group of tasks and their start, end and duration is summary of its children, their changes affect also their children.<br />
+<b>Calendars (holidays)</b> - excluding any dates or date ranges from the Gantt chart. These dates are ignored in calculations and can be highlighted or even hidden from display.<br /> 
+Described in separate document <a href="GanttCalendars.htm">GanttCalendars</a>.<br />
+
+<!-----------------------------------------------------------------------  Data units ------------------------------------------------->
+<a name="Data"></a>
+<h2>Data units</h2>
+
+Base units for calculations and duration
+
+<!-- GanttDataUnits -->
+<a name="CGanttDataUnits"></a>
+<div class="XML">
+   <u>chg <b>6.3</b> chg <b>14.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttDataUnits</h4> <s>['d']</s>
+</div>
+Base unit time for Gantt data lengths, namely for attributes <a href="GanttMain.htm#CGanttDuration">GanttDuration</a>, <a href="GanttRun.htm">GanttRun</a> (<a href="GanttRun.htm#RunDuration">Duration</a>) and <a href="#CGanttDescendants">GanttDescendants</a> and <a href="#CGanttAncestors">GanttAncestors</a> (lag, float).<br /> 
+Also <b>material resources</b> are consumed per one GanttDataUnits.<br />
+If not set, the values are in milliseconds.<br />
+If used Gantt calendar (<a href="GanttCalendars.htm#CGanttExclude">GanttExclude</a> or <a href="GanttCalendars.htm#CGanttCalendar">GanttCalendar</a>), these units are in workdays, it means <u>without</u> the excluded dates.<br />
+To these units are usually the values rounded for calculations (but not for display, here are used <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a>).<br />
+<i>Since 6.4</i> it can be also any number for <b>number units</b>, "1"as base number units, but it can be for example "0.5", "2", "10", "0.2", ...<br />
+<i>Since 6.6</i> it is also possible to replace the unit character by its value in milliseconds, for example 'd' is 24*60*60*1000='86400000'. And use such way for some custom units, for example "8 hours" units can be set as "28800000".<br />
+The supported units are:<br />
+'<b>ms</b>' - milliseconds, "<b>ms10</b>" - 10 milliseconds, "<b>ms100</b>" - 100 milliseconds,<br />
+'<b>s</b>' - seconds, '<b>s2</b>' - 2 seconds, '<b>s5</b>' - 5 seconds, '<b>s10</b>' - 10 seconds, '<b>s15</b>' - 15 seconds, '<b>s30</b>' - 30 seconds,<br />
+ '<b>m</b>' - minutes, '<b>m2</b>' - 2 minutes, '<b>m5</b>' - 5 minutes, '<b>m10</b>' - 10 minutes, '<b>m15</b>' - quarters of hour, '<b>m30</b>' - halves of hour,<br /> 
+'<b>h</b>' - hours, '<b>h2</b>' - 2 hours, '<b>h3</b>' - 3 hours, '<b>h6</b>' - quarters of day, '<b>h8</b>' - thirds of day, '<b>h12</b>' - halves of day,<br /> 
+'<b>d</b>' - days, '<b>w</b>' - weeks (starting by <a href="TypeDate.htm#FormatFirstWeekDay">FirstWeekDay</a>), '<b>w0</b>' - weeks (starting by Sunday), '<b>w1</b>' - weeks (starting by Monday), '<b>w6</b>' - weeks (starting by Saturday),<br /> 
+'<b>M</b>' - months, '<b>M2</b>' - <i>(new 10.0)</i> two months, '<b>M3</b>' - quarters of year, '<b>M4</b>' - <i>(new 10.0)</i> four months, '<b>M6</b>' - halves of year,<br /> 
+'<b>y</b>' - years, '<b>y2</b>' - 2 years, '<b>y3</b>' - 3 years, '<b>y4</b>' - 4 years, '<b>y5</b>' - 5 years, '<b>y10</b>' - 10 years, '<b>y20</b>' - 20 years, '<b>y50</b>' - 50 years <i>(2-50 year is  new 10.0)</i><br />
+<br />
+      
+The "<b>ms</b>" units can be used for any integer values, not only dates.<br />
+<i>Prior to 14.0.10 the "w" was starting on Sunday, "w1" in Hirji started on Saturday and "w0" and "w6" did not exist.</i>
+
+<!-- GanttDataModifiers -->
+<a name="CGanttDataModifiers"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttDataModifiers</h4> <s>['']</s>
+</div>
+Comma separated list of possible modifiers of <a href="#CGanttDataUnits">GanttDataUnits</a> in format name1:value1,name2:value2,....<br />
+These modifiers can be used to multiply or divide the duration value.<br />
+For example <tt>GanttDataUnits='h' GanttDataModifiers="dd:24,d:8,h:1,m:1/60" GanttDuration="7d"</tt>. It means the 7d value is 56 hours (7x8).<br />
+<i>Remember the difference between these custom modifiers and TreeGrid Gantt units. The custom modifiers can be used only for duration set in data units and multiply the value. The Gantt units are used in other settings and represent fixed size. The Gantt units cannot be renamed.</i><br />
+
+<!-- GanttLastUnit -->
+<a name="CGanttLastUnit"></a>
+<div class="XML">
+   <u>new <b>9.1</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttLastUnit</h4> <s>['']</s>
+</div>
+If set to some <a href="#CGanttDataUnits">GanttDataUnits unit</a>, adds this unit to every ending date that is rounded to this unit.<br /> 
+If affects ending date of main bar <a href="GanttMain.htm#CGanttEnd">GanttEnd</a>, second date in <a href="GanttMain.htm#CGanttParts">Parts</a> or <a href="GanttRun.htm">Run</a>, project finish <a href="#CGanttFinish">GanttFinish</a>, ending constraints <a href="#CGanttMaxEnd">GanttMaxEnd</a> and <a href="#CGanttMinEnd">GanttMinEnd</a> and also <a href="GanttMain.htm#CGanttManual">GanttManual</a>, <a href="GanttRun.htm#CGanttRunManual">GanttRunManual</a> and Run box <a href="GanttRun.htm#RunManual">Manual</a> on right side.<br />
+It affects only dates that are rounded to the GanttLastUnit unit, other dates are unchanged.<br />
+<br />
+
+The most common value is '<b>d</b>' for adding one day to all ending dates that are in the whole days. It means the date represents the last day.<br />
+For example if <tt>GanttLastUnit='d'</tt>, the value <tt>GanttEnd='1/1/2000'</tt> will be displayed in chart as '1/2/2000', but <tt>GanttEnd='1/1/2000 10:00'</tt> will be displayed the same as '1/1/2000 10:00'<br />
+<br />
+
+<i>It replaces <a href="#CGanttEndLast">GanttEndLast</a>, value 2. Since 9.1. the default behavior changed, because prior to this version the GanttLastUnit as GanttEndLast was set to value of GanttDataUnits!</i><br />
+
+<!-- GanttEndLast -->
+<a name="CGanttEndLast"></a>
+<div class="DEL">
+   <u>new <b>6.3</b> deleted <b>9.1</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttEndLast</h4> <s>[1]</s>
+</div>
+<strong>Since 9.1 it was replaced by GanttLastUnit and default value and behavior changed!</strong><br />
+If set to <b>1</b>, ending date (<a href="GanttMain.htm#CGanttEnd">GanttEnd</a>, second date in Parts or <a href="GanttRun.htm">Run</a>) means the last included date.<br /> 
+<i>(Since 8.1)</i> If set to <b>2</b>, it is used also for <a href="#CGanttFinish">GanttFinish</a>, <a href="#CGanttMaxEnd">GanttMaxEnd</a> and <a href="#CGanttMinEnd">GanttMinEnd</a>.<br />
+It means the ending date is always increased for one <a href="#CGanttDataUnits">GanttDataUnits</a> unit for display and compute Gantt chart.<br />
+For example range "1/1/2000~1/3/2000" with units 'd' (days) will be <b>3</b> days for <tt>GanttEndLast='1'</tt> and <b>2</b> days for <tt>GanttEndLast='0'</tt>.<br />
+
+<!-----------------------------------------------------------------------  Defining dependencies  ------------------------------------------------->
+<a name="Dependencies"></a>
+<h2>Defining dependencies</h2>
+<p class="H2"><b>Dependencies between tasks</b> - <i>lines and arrows between <b>main bars</b> or <b>run bars</b></i></p>
+
+The dependencies are defined in <a href="#CGanttDescendants">GanttDescendants</a> as next dependencies or in <a href="#CGanttAncestors">GanttAncestors</a> as previous dependencies or in both (they are mirrored).<br />
+The dependencies can be assigned to Gantt tasks, the Gantt bars used as Gantt tasks are listed in <a href="GanttObjects.htm#CGanttTask">GanttTask</a>. By default the Gantt task is only the first main bar plan.<br />
+There are supported four <b>dependency types</b> (<b>fs</b> finish-start, <b>ss</b> start-start, <b>sf</b> start-finish, <b>ff</b> finish-finish).<br />
+If the dependency start is different from the dependency end (in time), the dependency can be marked as incorrect and shown in different color (usually in red), according to the <a href="#CGanttIncorrectDependencies">GanttIncorrectDependencies</a> setting.<br />
+The incorrect dependencies can be automatically corrected by moving the task to future. There is also available method to correct all incorrect dependencies in grid or for the specified task.<br />
+You can correct all incorrect dependencies automatically by setting <a href="#CGanttCorrectDependencies">GanttCorrectDependencies</a>.<br />
+Every dependency can have specified a <b>lag</b> - reserved time between dependency start and its end, the lag is used to check if the dependency is correct or not and when correcting dependencies.<br />
+Every dependency can have specified a <b>float</b> - maximal permitted time between dependency start+lag and its end , the float is used to check if the dependency is correct or not and when correcting dependencies.<br />
+<br />
+To <b>copy & paste</b> the Gantt dependencies it must be set <a href="CopyPaste.htm#CfgCopyPasteInternal">CopyPasteInternal</a> 
+or <i>since 13.3</i> there must be defined and copied column named "<b>id</b>" that contains the row ids 
+or <i>since 13.3</i> there must be copied column <b>IdNames</b> and <b>IdNames</b> must contain only one column and <b>FullId</b> must be <b>0</b>.<br />
+
+<!-- GanttDescendants -->
+<a name="CGanttDescendants"></a>
+<div class="XML">
+   <u>new <b>6.3</b> <i>upd <b>10.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttDescendants</h4> <s>Gantt source - column name or exact value</s>
+</div>
+A list of row ids of (next) dependent tasks, separated by semicolon. The dependencies are shown as arrows.<br />
+It can contain also information about dependency <b>type</b>, <b>lag</b>, <b>float</b> and <b>color</b>.<br /> 
+The complete format is <tt><b>from<strong>,</strong>to<strong>@</strong>idtype<strong>+</strong>/<strong>-</strong>lag<strong>!</strong>float<strong>#</strong>color</b></tt><br />
+The <b>from</b>, <b>to</b> and <b>id</b> strings must <u>not</u> contain the characters  <strong><b>, @ + - ! #</b></strong><br />
+<br />
+
+<i><b>Only Gantt bars listed in <a href="GanttObjects.htm#CGanttTask">GanttTask</a> can have dependencies!</b></i><br />
+
+<table>
+  <tr><td style="width:70px;"><b>from</b></td><td><i>(since 10.0)</i> is main bar plan (0,1,2...,X) or run box id or '-' for run bar, in the source row from that dependency starts. <i>It must end with</i> <strong><b>,</b></strong><br />It can be omitted for the first <a href="GanttObjects.htm#CGanttTask">GanttTask</a>, if it is <u>not</u> <b>Box</b>.</td></tr>
+  <tr><td><b>to</b></td><td><i>(since 10.0)</i> is main bar plan (0,1,2...,X) or run box id or '-' for run bar, in the destination row to that dependency ends. <i>It must end with</i> <strong><b>@</b></strong><br />It can be omitted for the first <a href="GanttObjects.htm#CGanttTask">GanttTask</a>, if it is <u>not</u> <b>Box</b>.</td></tr>
+  <tr><td><b>id</b></td><td>is a row id the line is connected to. In GanttAncestors it is a row id the line is connected from. <i>It is the only required part of the definition.</i></td></tr>
+  <tr><td><b>type</b></td><td>
+    sets edges of task connected. If missing, FS is used. Possible dependency types: <br />
+    <b>SS</b> (start->start), descendant can start after ancestor starts<br />
+    <b>SF</b> (start->end), descendant can finish after ancestor starts<br />
+    <b>FS</b> (end->start, default), descendant can start after ancestor finishes<br />
+    <b>FF</b> (end -> end), descendant can finish after ancestor finishes                        
+    </td></tr>
+  <tr><td><b>lag</b></td><td>is reserved time between ancestor/predecessor task edge (start or end) and dependency start, in <a href="#CGanttDataUnits">GanttDataUnits</a> or with time unit character like +3d is three days. <i>It must start with <strong>+</strong> or <strong>-</strong>.</i><br />
+The default value of lag is 0.<br /> 
+<i>Since 9.3</i> it can be also in percentage of task duration. 
+<i>Since 12.0</i> the percentage can be rounded by <a href="#CGanttLagRound">GanttLagRound</a>.</td></tr>  
+  <tr><td><b>float</b></td><td>is maximal permitted time between dependency start and dependency end, in <a href="#CGanttDataUnits">GanttDataUnits</a>. <i>It must start with <strong>!</strong></i><br />
+The dependencies that have the time between start and end larger than their float are marked as incorrect and the tasks should be corrected.<br />
+ If the value is missing (empty space after !), the float is unlimited. The default value of float is <b>empty</b> (unlimited) or <b>0</b> (strict), according to <a href="#CGanttIncorrectDependencies">GanttIncorrectDependencies</a> and <a href="#CGanttStrict">GanttStrict</a> setting.<br /> 
+<i>Since 9.3</i> it can be also in percentage of task duration.
+<i>Since 12.0</i> the percentage can be rounded by <a href="#CGanttLagRound">GanttLagRound</a>.
+</td></tr>
+  <tr><td><b>color</b></td><td><i>(since 10.0)</i> is a number of color and shape for the dependency line. <i>It must start with <strong>#</strong>.</I><br />
+There are ten colors: <b>0</b> - blue, <b>1</b> - green, <b>2</b> - orange, <b>3</b> - black, <b>4</b> - fuchsia, <b>5</b> - aqua, <b>6</b> - lime, <b>7</b> - yellow, <b>8</b> - silver, <b>9</b> - red, that are related to the some of the GanttClass and run <a href="GanttRun.htm#RunClass">Class</a> colors.<br />
+There are four tens of different shapes with above colors: 0 - 9 (thin outset line), 10 - 19 (thin inset line), 20 - 29 (thick outset line), 30 - 39 (thick inset line).<br />
+	The colors and other attributes can be redefined in Gantt.css for used style, by the five CSS classes GxGanttDepX, GxGanttDepXLag, GxGanttDepXIE, GxGanttDepArrowXLeft, GxGanttDepArrowXRight.<br />
+	If <u>not</u> set, <a href="#CGanttDependencyColor">GanttDependencyColor</a> is used.<br />
+	<i>The dependency color and shape can be changed due dependency state (e.g. incorrect, disabled, critical, etc.), see <a href="#Colors">dependency colors</a>.</i><br />
+<br />  
+Example: <tt>10; 11ss; 12+3; 13ff-1d; 14+22h!; 15sf-4!2#7</tt> means in full notation: <tt>10fs+0!0; 11ss+0!0; 12fs+3!0; 13ff-1d!0; 14fs+22h!; 15sf-4!2#7</tt><br />
+<br />
+<i>Since v6.3 replaces Dependencies, DependencyTypes and DependencyLags.</td></tr></i><br />        
+</table>
+
+<!-- GanttAncestors -->
+<a name="CGanttAncestors"></a>
+<div class="XML">
+   <u>new <b>6.3</b> <i>upd <b>10.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttAncestors</h4> <s>Gantt source - column name or exact value</s>
+</div>
+A list of row ids of previous tasks that this task depends on. The format is the same as <a href="#CGanttDescendants">GanttDescendants</a>.<br />
+One dependency between two tasks can be set in <b>GanttDescendants</b> of the first tasks or in <b>GanttAncestors</b> of the second tasks. <i>If in the grid there are both columns, they are mirrored, but it <b>slows down</b> the grid.</i><br />
+The ancestors settings have only changed the task id, all other settings (type,lag,float) are the same as if the dependency is defined in descendants.<br />
+
+<!-- GanttDependencies -->
+<a name="CGanttDependencies"></a>
+<div class="DEL">
+   <u>deleted <b>6.3</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttDependencies</h4> <s>Gantt source - column name or exact value</s>
+</div>
+<i>Replaced by <a href="#CGanttDescendants">GanttDescendants</a>.</i><br />
+A list of row ids of (next) dependent tasks, separated by semicolon. The dependencies are shown as arrows.<br /> 
+By default (depending on css style) are correct arrows in blue and incorrect arrows (start+lag > end) are in red.<br />
+Any task can be dependent on more others.<br />
+The arrows start from this task and points to the tasks specified by dependencies ids. See also <a href="#CGanttDependencyTypes">GanttDependencyTypes</a>.<br />
+
+<!-- GanttDependencyTypes -->
+<a name="CGanttDependencyTypes"></a>
+<div class="DEL">
+   <u>deleted <b>6.3</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttDependencyTypes</h4> <s>["fs"] Gantt source - column name or exact value</s>
+</div>
+<i>Replaced by <a href="#CGanttDescendants">GanttDescendants</a>.</i><br />
+A list of dependency types for individual <a href="#CGanttDependencies">GanttDependencies</a>, separated by semicolon, case insensitive<br />
+Possible dependency types: SF (start->start), <b>SF</b> (start->end) <b>FS</b> (end->start, default), <b>FF</b> (end -> end)<br />
+
+<!-- GanttDependencyLags -->
+<a name="CGanttDependencyLags"></a>
+<div class="DEL">
+   <u>deleted <b>6.3</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttDependencyLags</h4> <s>[0] Gantt source - column name or exact value</s>
+</div>
+<i>Replaced by <a href="#CGanttDescendants">GanttDescendants</a>.</i><br />
+A list of dependency lags for individual <a href="#CGanttDependencies">GanttDependencies</a>, separated by semicolon<br />
+The lag is reserved time between <a href="GanttMain.htm#CGanttEnd">GanttEnd</a> and dependency start, in <a href="#CGanttDataUnits">GanttDataUnits</a>. Can be column name or array of integers.<br />
+
+<!-- GanttMaxDependencies -->
+<a name="CGanttMaxDependencies"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttMaxDependencies</h4> <s>[100]</s>
+</div>
+Maximum of rendered crossing dependencies. When the maximum is reached, some crossing dependencies will be rendered partially.<br />
+For large tables and specific sorting or grouping there can be thousands of crossing dependencies and it can lock the grid because it will be too slow to render.<br />
+
+<!-- GanttShowDependencies -->
+<a name="CGanttShowDependencies"></a>
+<div class="XML">
+   <u>new <b>9.1</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttShowDependencies</h4> <s>[1]</s>
+</div>
+For <b>1</b> all dependency lines are shown, for 0 no dependency line is shown.<br />
+Affects only display, not calculations and correcting.<br /> 
+For <b>0</b> users are also able to delete the dependencies from menu, but not by clicking to the dependency line.<br />
+
+<!-- SetGanttShowDependencies -->
+<a name="SetGanttShowDependencies"></a>
+<div class="API">
+   <u>new <b>9.3</b></u> <b>API method</b> <i>void</i>
+   <h4>SetGanttShowDependencies</h4>
+   <s>(<i>bool</i> <b>value</b>, <i>bool</i> <b>show = 1</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Changes value of GanttShowDependencies dynamically. <b>value</b> is the new value to set.<br />
+
+<!-- GanttDependencyTip -->
+<a name="CGanttDependencyTip"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttDependencyTip</h4> <s>["*From* (*Start*) -> *To* (*End*) *Type* *Float*"]</s>
+</div>
+Tip string shown for dependency on mouse hover.<br />
+It can also show values from other cells in row, set by <b>*col*</b> where col is the column name.<br />
+It can show also the specials: <b>*Start*</b> - start date of the dependency, <b>*End*</b> - end date of the dependency.<br />
+<b>*From*</b> - row name the dependency comes from, <b>*FromBox*</b> - main bar plan number or run box id the dependency comes from<br />
+<b>*To*</b> - row name the dependency goes to, <b>*ToBox*</b> - main bar plan number or run box id the dependency goes to<br />
+<b>*Type*</b> - dependency type, fs, ff, sf, fs, <b>*Lag*</b> - dependency lag in GanttDataUnits, <b>*Float*</b> - End - Start + Lag in GanttDataUnits<br />
+To dynamically generate the tip text use <a href="GanttAPI.htm#OnGanttTip">OnGanttTip</a> API event.<br />
+
+<!-- GanttDependencyTipDateFormat -->
+<a name="CGanttDependencyTipDateFormat"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttDependencyTipDateFormat</h4> <s></s>
+</div>
+Date format for <a href="#CGanttDependencyTip">GanttDependencyTip</a> values *Start*, *End*<br />
+
+<!-- GanttAllDependencies -->
+<a name="CGanttAllDependencies"></a>
+<div class="XML">
+   <u style="width:170px;">new <b>6.6</b> chg <b>8.0</b> <i>upd <b>9.1</b></i></u> <b style="width:50px;">&lt;C></b> <i>int</i>
+   <h4>GanttAllDependencies</h4> <s>[2]</s>
+</div>
+<table>
+  <tr><td style="width:70px;"><b>0</b></td><td>Shows dependencies between <b>visible</b> tasks. <i>It was default and only setting in TreeGrid prior 6.6!</i><br />
+    Correcting dependencies affects also only visible tasks and ignores all hidden dependencies, so it will give different results for different filters.</td></tr>
+  <tr><td><b>1</b></td><td>Shows all dependencies. The dependency between visible and hidden task will be unconnected and also other visual distortions can be displayed.<br />
+    Correcting dependencies affects always all tasks, so it does not depend on filter settings.</td></tr>
+  <tr><td><b>2</b></td><td>Shows dependencies between <b>visible</b> tasks, but calculates and corrects always <b>all</b> dependencies and tasks. <i>Added and default value since 8.0</i></td></tr>
+  <tr><td><b>3</b></td><td><i>(new 9.0)</i> Like <b>2</b>, but shows (unconnected) dependencies if at least one dependent task is visible.</td></tr>
+  <tr><td><b>4</b></td><td><i>(new 9.0)</i> Like <b>2</b>, but hides dependencies between collapsed children. <i>Can remarkably slow down expanding / collapsing rows for larger grids.</i></td></tr>
+  <tr><td><b>5</b></td><td><i>(new 9.0)</i> Like <b>4</b>, but shows (unconnected) dependencies if at least one dependent task is visible (its parent is expanded). <i>Can remarkably slow down expanding / collapsing rows for larger grids.</i></td></tr>    
+</table>
+
+<!-- GanttAdjacentDependencies -->
+<a name="CGanttAdjacentDependencies"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttAdjacentDependencies</h4> <s>[1]</s>
+</div>
+How will be shown dependencies between adjacent boxes on the same level (the straight dependency line). Affects only dependencies without lag.<br />
+If there is no room for the straight dependency, the dependency line is shown around as rectangle.<br />
+<table>
+<tr><td style="width:70px;"><b>0</b></td><td>Reserves room for dependency stub and arrow</td></tr>
+<tr><td><b>1</b></td><td>Ignores width of the stub, reserves room only for dependency arrow</td></tr>
+<tr><td><b>2</b></td><td>Ignores width of the stub and arrow, shows the dependency always as straight</td></tr>
+</table>
+
+<!-- GanttBypassDependencies -->
+<a name="CGanttBypassDependencies"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttBypassDependencies</h4> <s>[0]</s>
+</div>
+How the dependencies will bypass bars when going through. Bit array. If set to <b>0</b>, it crosses the bars.<br />
+<table>
+<tr><td><b>1</b>. bit (&<b>1</b>)</td><td>If set, the dependency between rows goes horizontally always bottom the row (below the first box).</td></tr>
+<tr><td><b>2</b>. bit (&<b>2</b>)</td><td>If set, the dependency inside one row goes horizontally always bottom the row (below the first box).</td></tr>
+</table>
+
+<!-- GanttLagRound -->
+<a name="CGanttLagRound"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttLagRound</h4> <s>[0]</s>
+</div>
+If and how the dependency lag and span/float will be rounded to <a href="#CGanttDataUnits">GanttDataUnits</a>, if set in percent.<br />
+<b>0</b> - no, <b>1</b> - rounded, <b>2</b> - rounded up (ceil), <b>3</b> - rounded down (floor).<br />
+
+<!-- GanttLagDescendants -->
+<a name="CGanttLagDescendants"></a>
+<div class="XML">
+   <u>new <b>13.2</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttLagDescendants</h4> <s>[0]</s>
+</div>
+If set to 1, it calculates lag as negative delay of the descendant task. For 0 the lag is delay of ancestor task.<br />
+Useful especially if tasks have different calendars.<br />
+  	
+<!-- OnGetDependency -->
+<a name="OnGetDependency"></a>
+<div class="API">
+   <u>new <b>9.3</b> chg<b>10.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnGetDependency</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type[]</i> <b>dep</b>, <i>int</i> <b>start</b>, <i>int</i> <b>end</b>, <i>int</i> <b>dur</b>)</s>
+</div>
+Called to modify lag, span or color of parsed descendant dependency in array <b>dep</b>.<br />
+<tt><b>dep</b> = [0: id, 1: type, 2: lag, 3: span, 4: lagpercent, 5: spanpercent, 6: color, 7: boxfrom, 8: boxto],</tt>
+<div class="L1">
+  <b>id</b> <i>(read only)</i> is the id of the next task,<br />
+  <b>type</b> <i>(read only)</i> is ss,sf,fs,ss, <br />
+  <b>lag</b> is lag value (in GanttDataUnits without excluded units or if percentage in range 0-1 (or more than 1 too)),<br />
+  <b>span</b> is span value (units like lag),<br />
+  <b>lagpercent</b> / <b>spanpercent</b> is 1 if lag / span was set with %<br />
+  <b>color</b> <i>(since 10.0)</i> is number of color of the dependency<br />
+  <b>boxfrom</b> <i>(read only) (since 10.0)</i> is a main bar plan or run box id the dependency comes from<br />
+  <b>boxto</b> <i>(read only) (since 10.0)</i> is a main bar plan or run box id the dependency goes to<br />
+                      the <b>boxfrom</b> and <b>boxto</b> are always set, even if the dependency string does not contain them - in this case they are set to the first <a href="GanttObjects.htm#CGanttTask">GanttTask</a> like: run = '-', main = 0, main1 = 1, main2 = 2, ...<br />
+</div> 
+<b>start</b> is start date of the dependency, <b>end</b> is end date of the dependency, <b>dur</b> is <b>end</b> - <b>start</b> in milliseconds, but without excluded units.<br />
+
+<!-----------------------------------------------------------------------  Dependency colors and shapes  ------------------------------------------------->
+<a name="Colors"></a>
+<h2>Dependency colors and shapes</h2>
+Base dependency color and shape is defined by #color suffix in <a href="#CGanttDescendants">GanttDescendants</a> / <a href="#CGanttAncestors">GanttAncestors</a>.<br />
+
+<!-- GanttDependencyColor -->
+<a name="CGanttDependencyColor"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttDependencyColor</h4> <s>[0]</s>
+</div>
+The first (default) color assigned to dependencies for <a href="#CGanttAssignDependencies">GanttAssignDependencies</a>.<br />
+Can contain any color and shape, value in range 0 - 39.<br />
+
+<!-- GanttAssignDependencies -->
+<a name="CGanttAssignDependencies"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttAssignDependencies</h4> <s>[0]</s>
+</div>
+How will be color assigned to dependencies when the dependency has no color set or there are more same (colliding) colors assigned to dependencies to or from same box edge.<br />
+<b>0</b> - all dependencies without color get the <a href="#CGanttDependencyColor">GanttDependencyColor</a>.<br />
+<b>1</b> - all dependencies without color get the <a href="#CGanttDependencyColor">GanttDependencyColor</a> or if colliding, colors within the same shape (0-9).<br />
+For example if set <tt>GanttDependencyColor=15</tt>, incorrect color is 9 and disabled color is 8, the assigned colors will be 15,10,11,12,13,14,16,17,15,15,15,...<br />
+<b>2</b> - all dependencies without color get the <a href="#CGanttDependencyColor">GanttDependencyColor</a> or if colliding, colors within the same shape (0-9) and next shapes (but not previous).<br />
+For example if set <tt>GanttDependencyColor=15</tt>, incorrect color is 9 and disabled color is 8, the assigned colors will be 15,10,11,12,13,14,16,17,20,21,22,23,24,25,26,27,30,...,37,15,15,15.<br />
+<b>3</b> - all dependencies without color and dependencies with colliding color get the <a href="#CGanttDependencyColor">GanttDependencyColor</a> or if colliding, colors within the same shape (0-9).<br />
+<b>4</b> - all dependencies without color and dependencies with colliding color get the <a href="#CGanttDependencyColor">GanttDependencyColor</a> or if colliding, colors within the same shape (0-9) and next shapes (but not previous).<br />
+The error color defined by <a href="#CGanttColorIncorrectDependencies">GanttColorIncorrectDependencies</a> and disabled color defined by <a href="#CGanttColorDisabledDependencies">GanttColorDisabledDependencies</a> are never assigned.<br />
+If no color is available to set, the dependency gets the same color as it has already or the <a href="#CGanttDependencyColor">GanttDependencyColor</a>.<br />
+
+<!-- GanttDependencyIcons -->
+<a name="CGanttDependencyIcons"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttDependencyIcons</h4> <s>[3]</s>
+</div>
+Which dependency icons will be shown: <b>0</b> none, <b>1</b> - arrow, <b>2</b> - start, <b>3</b> both arrow and start.<br />
+
+<!-- GanttMarkIncorrectDependencies -->
+<a name="CGanttMarkIncorrectDependencies"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttMarkIncorrectDependencies</h4> <s>[2]</s>
+</div>
+If and how the incorrect dependencies will be marked by different color than normal dependencies.<br />
+<b>0</b> - never, (but the dependencies will be still used as incorrect)<br />
+<b>1</b> - only if no color is specified for the dependency. Mark is done by color 9, 19, 29, 39 (red by default).<br />
+<b>2</b> - regardless on the color specified for the dependency, the mark is done by color 9,19,29,39 (red by default).<br />
+<b>3</b> - by associated color, for error used sets 5-9, 15-19, 25-29, 35-39 (0 -> 5, 1->6, 2->7, 3->8, 4->9, ..., 10->15, ...). For this case only 0 - 4, 10 - 14, 20 - 24, 30 - 34 colors should be used for normal dependencies.<br />
+
+<!-- GanttColorIncorrectDependencies -->
+<a name="CGanttColorIncorrectDependencies"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttColorIncorrectDependencies</h4> <s>[9]</s>
+</div>
+Color or shape for incorrect dependencies, options 2 and 3 in <a href="#CGanttMarkIncorrectDependencies">GanttMarkIncorrectDependencies</a><br />
+<b>0</b> - <b>9</b> specifies color value (added is shape as 00, 10, 20, 30). For example if the color is set to 9 and dependency has color 23, the incorrect dependency color will be 20+9 = 29.<br />
+<b>10</b> - <b>13</b> specifies shape (10 => 00, 11 => 10, 12 => 20, 13 => 30, added is color as 0 - 9). For example if the color is set to 13 and dependency has color 23, the incorrect dependency color will be 30+3 = 33.<br />
+
+<!-- GanttMarkDisabledDependencies -->
+<a name="CGanttMarkDisabledDependencies"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttMarkDisabledDependencies</h4> <s>[2]</s>
+</div>
+If and how the dependencies between disabled tasks will be shown and marked by different color than normal dependencies.<br />
+The dependency is disabled if at least one of the linked tasks has set <a href="GanttMain.htm#CGanttDisabled">GanttDisabled</a> or its row is <a href="RowDelete.htm#IDeleted">Deleted</a>.<br />
+<b>0</b> - hide disabled dependencies<br />
+<b>1</b> - only if no color is specified for the dependency. Mark is done by color 8, 18, 28, 38 (red by default).<br />
+<b>2</b> - regardless on the color specified for the dependency, the mark is done by color 8, 18, 28, 38 (red by default).<br />
+<b>3</b> - by associated color, for disabled used sets 5-9, 15-19, 25-29, 35-39 (0 -> 5, 1->6, 2->7, 3->8, 4->9, ..., 10->15, ...). For this case only 0 - 4, 10 - 14, 20 - 24, 30 - 34 colors should be used for normal dependencies.<br />
+
+<!-- GanttColorDisabledDependencies -->
+<a name="CGanttColorDisabledDependencies"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttColorDisabledDependencies</h4> <s>[8]</s>
+</div>
+Color or shape for disabled dependencies, options 2 and 3 in <a href="#CGanttMarkDisabledDependencies">GanttMarkDisabledDependencies</a><br />
+<b>0</b> - <b>9</b> specifies color value (added is shape as 00, 10, 20, 30). For example if the color is set to 8 and dependency has color 23, the incorrect dependency color will be 20+8 = 28.<br />
+<b>10</b> - <b>13</b> specifies shape (10 => 00, 11 => 10, 12 => 20, 13 => 30, added is color as 0 - 9). For example if the color is set to 13 and dependency has color 23, the incorrect dependency color will be 30+3 = 33.<br />
+
+<!-----------------------------------------------------------------------  Changing dependencies  ------------------------------------------------->
+<a name="Changing"></a>
+<h2>Changing dependencies</h2>
+<p class="H2">Adding, deleting and modifying dependencies</p>
+
+<!-- GanttDeleteDependencies -->
+<a name="CGanttDeleteDependencies"></a>
+<div class="XML">
+   <u>new <b>6.7</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttDeleteDependencies</h4> <s>[0]</s>
+</div>
+If set to <b>1</b> and a user deletes row, all dependencies to and from the row task(s) will be deleted too.<br />
+
+<!-- GanttDragDependenciesAlways -->
+<a name="CGanttDragDependenciesAlways"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttDragDependenciesAlways</h4> <s>[0]</s>
+</div>
+For <b>1</b> when creating dependency by mouse dragging, it is possible to connect the dependency outside the bar(s), the dependency will be assigned to the nearest edge of the bar.<br />
+
+<!-- GanttDragDependenciesMove -->
+<a name="CGanttDragDependenciesMove"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttDragDependenciesMove</h4> <s>[1]</s>
+</div>
+If the dependency can be created during dragging bar inside row.<br />
+<b>0</b> - never, dependency can be created only by DragGanttDependency.<br />
+<b>1</b> - after mouse cursor leaves the row with the dragged bar. But only if the bar is already moved less than 50 pixels.<br />
+<b>2</b> - after mouse cursor leaves the row with the dragged bar.<br />
+
+<!-- GanttDragDependenciesMore -->
+<a name="CGanttDragDependenciesMore"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttDragDependenciesMore</h4> <s>[1]</s>
+</div>
+Which dependencies will be permitted between two bars.<br />
+<b>0</b> - only one dependency between two bars. Next dragged dependency replaces the old one.<br />
+<b>1</b> - only one dependency between two bars, or there can be two dependencies, one ss and one ff. Next dragged dependency replaces the old one or the old two.<br />
+<b>2</b> - more dependencies with different type between two bars. Next dragged dependency with the same type is refused.<br />
+<b>3</b> - more dependencies even with the same type between two bars. Next dragged dependency is always permitted and gets type with index, e.g. fs, fs1, fs2, ...<br />
+More options can be achieved by <a href="GanttAPI.htm#OnDragGanttDependency">OnDragGanttDependency</a> API event.
+
+<!-- GanttDragDependenciesBetween -->
+<a name="CGanttDragDependenciesMore"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttDragDependenciesBetween</h4> <s>[0]</s>
+</div>
+Which dependencies are permitted between different bars.<br />
+<b>0</b> - Only dependencies between main bars in the same plan are permitted.<br /> 
+<b>1</b> - Dependencies between main bars in different plans are permitted.<br /> 
+<b>2</b> - Dependencies between main bars in different plans are permitted. Also dependencies between main bar and run bar or box are permitted.<br />
+More options can be achieved by <a href="GanttAPI.htm#OnDragGanttDependency">OnDragGanttDependency</a> API event.<br />
+
+<!-- GanttCheckDependencies -->
+<a name="CGanttCheckDependencies"></a>
+<div class="XML">
+   <u>new <b>6.3</b> <i>upd <b>6.7</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttCheckDependencies</h4> <s>[2] Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='1'/></tt></s>
+</div>
+If and how will be checked circular dependencies between tasks.<br />
+If there is already some circular dependency among dependent tasks, the next one is always permitted.<br />
+<b>0</b> - don't check, <b>1</b> - restrict circular dependencies, <b>2</b> - ask user, <b>3</b> - (new 6.7) shows alert about the circular dependency<br />
+
+<!-- OnCheckDependencies -->
+<a name="OnCheckDependencies"></a>
+<div class="API">
+   <u>new <b>6.3</b> chg <b>10.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnCheckDependencies</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object[]</i> <b>Dependencies</b>)</s>
+</div>
+<i>Parameters changed in 10.0!</i><br />
+Called to check newly created dependency by dragging.<br />
+Return false to not create the dependency.<br />
+<b>Dependency</b> is array of new dependencies like returned by <a href="#GetDependencies">GetDependencies</a>, it usually contains only one dependency.<br />
+
+<!-- Action DragGanttDependency -->
+<a name="ActionsDragGanttDependency"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DragGanttDependency</h4>
+   <s>Attached to <b>OnDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+Connects Gantt chart bar with another bar by dependency line, by mouse dragging.<br />
+Connects always from the first bar to the second bar.<br />  
+When dependency types (ss,sf,fs,ff) are permitted by <a href="GanttObjects.htm#CGanttEdit">GanttEdit</a>, the left half of bar and the left side specifies 's', the right half of bar and right side specifies 'f'.<br />
+
+<!-- Action DeleteGanttDependency -->
+<a name="ActionsDeleteGanttDependency"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttDependency</h4>
+   <s>Attached to <b>OnCtrlClickGantt</b> event</s>
+</div>
+Deletes dependency line under mouse cursor.
+
+<!-- Action DeleteGanttDependencies -->
+<a name="ActionsDeleteGanttDependencies"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttDependencies <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Deletes all incoming and outgoing dependencies from actual or focused Gantt cell.<br />
+It fails if there is no dependency from and to the Gantt cell.<br />
+
+<!-- Action EditGanttDependencyLag -->
+<a name="ActionsEditGanttDependencyLag"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>EditGanttDependencyLag</h4>
+   <s>Attached to <b>OnDblClickGantt</b> event	new 6.0.</s>
+</div>
+It lets a user to edit lag value of dependency line under mouse cursor.<br />
+
+<!-- GetDependencies -->
+<a name="GetDependencies"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>object[ ]</i>
+   <h4>GetDependencies</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>boot</i> <b>ancestors</b> = null, <i>TRow</i> <b>row2</b> = null, <i>string</i> <b>type</b> = null, <i>string</i> <b>box</b> = null, <i>string</i> <b>box2</b> = null)</s>
+</div>
+Returns all or selected dependencies for given Gantt cell [<b>row</b>, <b>col</b>]. The <b>row</b> can be also string as row id.<br />
+If set <b>ancestors</b> = <b>0</b> returns only outgoing dependencies (descendants), for <b>ancestors</b> = <b>1</b> returns only incoming dependencies (ancestors). For <b>ancestors</b> = <b>null</b> returns both ancestors and descendants.<br />
+If set <b>row2</b>, returns only dependencies between <b>row</b> and <b>row2</b>. The <b>row2</b> can be also string as row id.<br />
+If set <b>type</b>, returns only dependencies with given type. Can be <b>ss</b>, <b>sf</b>, <b>fs</b> or <b>ff</b>. Can contain also any suffix to identify particular dependency if permitted more same dependencies.<br />
+If set <b>box</b>, returns only dependencies of given box (main bar plan or run box id). The <b>box</b> is in the [<b>row</b>, <b>col</b>] cell.<br />
+If set <b>box2</b>, returns only dependencies of given box (main bar plan or run box id). The <b>box2</b> is in the [<b>row2</b>, <b>col</b>] cell.<br />
+Returns two dimensional array of values as:<br /> 
+<tt>[ [0: idfrom, 1: idto, 2: type, 3: lag, 4: span, 5: color, 6: boxfrom, 7: boxto, 8: start, 9: end, 10: lagms, 11: spanms, 12: col], [idfrom2, idto2, ...], ... ]</tt><br />
+<table>
+  <tr><td style="width:70px;">where:</td><td><b>idfrom</b> is the row id the dependency comes from, <b>idto</b> is the row id the dependency goes to, <b>type</b> is ss, sf, fs or ff, </td></tr>
+  <tr><td></td><td><b>lag</b> is dependency lag in data units or in percentage ending by %, <b>span</b> is permitted dependency span in data units or in percentage ending by %, <b>color</b> is a number of line color and shape.</td></tr>
+  <tr><td></td><td><b>boxfrom</b> is a main bar plan or run box id the dependency comes from, <b>boxto</b> is a main bar plan or run box id the dependency goes to<br />
+- the <b>boxfrom</b> and <b>boxto</b> are always set, even if the dependency string does not contain them - in this case they are set to the first <a href="GanttObjects.htm#CGanttTask">GanttTask</a> like: run = '-', main = 0, main1 = 1, main2 = 2, ...
+</td></tr>
+  <tr><td></td><td><b>start</b> is dependency start date in milliseconds since 1/1/1970, <b>end</b> is dependency end date, <b>lagms</b> is dependency lag in milliseconds, <b>spanms</b> is permitted dependency span in milliseconds, col is Gantt column<br />
+- the <b>start</b>, <b>end</b>, <b>lagms</b> and <b>spanms</b> are calculated values and are not part of dependency definition.
+</td></tr>    
+</table>
+
+<!-- DeleteDependencies -->
+<a name="DeleteDependencies"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>void</i>
+   <h4>DeleteDependencies</h4>
+   <s>(<i>object[ ]</i> <b>Dependencies</b>)</s>
+</div>
+Deletes given dependencies from Gantt chart.<br />
+The <b>Dependencies</b> is two dimensional array as returned by <a href="#GetDependencies">GetDependencies</a>.
+If created the Dependencies array manually, the individual dependencies must have set array items: <b>idfrom</b>, <b>idto</b>, optionally also:  <b>type</b>, <b>boxfrom</b>, <b>boxto</b>, other items are ignored.<br />
+
+<!-- AddDependencies -->
+<a name="AddDependencies"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>void</i>
+   <h4>AddDependencies</h4>
+   <s>(<i>object[ ]</i> <b>Dependencies</b>)</s>
+</div>
+Add given dependencies to the Gantt chart.<br />
+The <b>Dependencies</b> is two dimensional array as returned by <a href="#GetDependencies">GetDependencies</a>.<br />
+If created the Dependencies array manually, the individual dependencies must have set array items: <b>idfrom</b>, <b>idto</b>, optionally also: <b>type</b>, <b>lag</b>, <b>span</b>, <b>color</b>, <b>boxfrom</b>, <b>boxto</b>, other items are ignored.<br />
+
+<!-- TestDependencies -->
+<a name="TestDependencies"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>TestDependencies</h4>
+   <s>(<i>object[ ]</i> <b>Dependencies</b>, <i>bool</i> <b>noalert</b> = 0)</s>
+</div>
+Tests circular dependencies when adding given dependencies to the Gantt chart.<br />
+The <b>Dependencies</b> is two dimensional array as returned by <a href="#GetDependencies">GetDependencies</a>.<br />
+<i>The <b>Dependencies</b> must be ancestors or descendants of one box only to work the function correctly!</i><br />
+If not set <b>noalert</b>, it alerts messages according to the <a href="#CGanttCheckDependencies">GanttCheckDependencies</a> value.<br />
+If set <tt><a href="#CGanttCheckDependencies">GanttCheckDependencies</a> = 0</tt>, it returns always true.<br />
+
+<!-- RemoveDeletedDependencies -->
+<a name="RemoveDeletedDependencies"></a>
+<div class="API">
+   <u>new <b>13.3</b></u> <b>API method</b> <i>void</i>
+   <h4>RemoveDeletedDependencies</h4>
+   <s>( )</s>
+</div>
+Removes dependencies from all deleted tasks.<br />
+Has sense only if not set <a href="#CGanttDeleteDependencies">GanttDeleteDependencies</a> and also not set AutoUpdate.<br />
+
+<!-- GetDependency -->
+<a name="GetDependency"></a>
+<div class="DEL">
+   <u>new<b>9.2</b> deleted <b>10.0</b></u> <b>API method</b> <i>object[ ]</i>
+   <h4>GetDependency</h4> <s>(<i>TRow</i> row, <i>string</i> <b>col</b>, <i>bool</i> <b>ancestors</b> = 0)</s>
+</div>
+Returns all dependencies for given task (Gantt cell).<br />
+For <tt><b>ancestors</b> = <b>0</b></tt> returns all outgoing dependencies (descendants), for <tt><b>ancestors</b> = <b>1</b></tt> returns all incoming dependencies (ancestors).<br />
+Returns two dimensional array of values as:<br /> 
+<tt>[ [id1,type1,lag1,span1],[id2,type2,lag2,span2],[id3....], ... ]</tt><br />
+where <b>id</b> is the row id in the other dependency end, <b>type</b> is ss, sf, fs or ff, <b>lag</b> is dependency lag in milliseconds, <b>span</b> is permitted dependency span in milliseconds.<br />
+
+<!-- SetDependency -->
+<a name="SetDependency"></a>
+<div class="DEL">
+   <u>new<b>9.2</b> deleted <b>10.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>SetDependency</h4> <s>(<i>TRow</i> row, <i>string</i> <b>col</b>, <i>type</i> <b>dependency</b>, <i>bool</i> <b>ancestors</b> = 0, <i>int</i> <b>check</b> = 0, <i>bool</i> <b>refresh</b> = 1)</s>
+</div>
+Sets all incoming (<tt><b>ancestors</b>=1</tt>) or outgoing (<tt><b>ancestors</b>=0</tt>) dependencies of given cell. All the previous (incoming or outgoing) dependencies will be cleared.<br />
+Updates all other dependency cells.  For <tt><b>refresh</b> = <b>1</b></tt> repaints the dependencies in chart. For <tt><b>refresh</b> = <b>0</b></tt> it will be required to call <tt>RefreshGantt(25)</tt> to repaint dependencies.<br />
+<b>dependency</b> can be two dimensional array as returned from <a href="#GetDependency">GetDependency</a> method or string as standard dependency format used in <a href="#CGanttDescendants">GanttDescendants</a> or GanttAncestors.<br />
+For <tt><b>check</b> = <b>1</b></tt> checks circular dependencies, for <tt><b>check</b> = <b>2</b></tt> shows confirm dialog for circular dependency to a user.<br />
+Returns true for success or false for error.<br />
+
+<!-----------------------------------------------------------------------  Correcting dependencies  ------------------------------------------------->
+<a name="Correcting"></a>
+<h2>Correcting dependencies</h2>
+
+<!-- GanttIncorrectDependencies -->
+<a name="CGanttIncorrectDependencies"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttIncorrectDependencies</h4> <s>[1]</s>
+</div>
+Which dependencies are marked as incorrect.<br />
+<b>0</b> - none<br />
+<b>1</b> - only dependencies with start <b>before</b> end (it means that default dependency <a href="#CGanttDescendants">float</a> is <b>empty</b> = unlimited), see also <a href="#CGanttStrict">GanttStrict</a>.<br />
+<b>2</b> - <b>also</b> dependencies with start <b>after</b> end (it means that default dependency dependency <a href="#CGanttDescendants">float</a> is <b>0</b> = strict).	<i>Incompatible with dependencies attached to summary tasks.</i><br />
+
+<!-- GanttStrict -->
+<a name="CGanttStrict"></a>
+<div class="XML">
+   <u>new <b>6.3</b> chg <b>10.00</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttStrict</h4> <s>[1] Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='1'/></tt></s>
+</div>
+<i>Since 10.0. the dependencies correcting algorithm has changed!</i><br />
+How it behaves when correcting dependencies, both ways, manual and automatic correcting.<br /> 
+<i>The behaviors are described for GanttDirection='0'. For opposite direction the mentioned move direction, constraints and dependencies are reversed.</i><br /> 
+<table>
+  <tr><td style="width:70px;"><b>0</b></td><td><i><b>Minimal move</b> (changed 10.0)</i> The first tasks (without incoming dependencies) are moved left as little as possible, only due this or next tasks constraints.<br />
+	The next tasks are moved left only to correct dependencies, the next tasks need <u>not</u> be close to their ancestors, except <a href="#CGanttIncorrectDependencies">GanttIncorrectDependencies</a> is '2' or '3'.
+</td></tr>
+  <tr><td><b>1</b></td><td><i><b>Strict move</b> (changed 10.0)</i> Forces all first tasks (without incoming dependencies) to start directly on <a href="#CGanttBase">GanttBase</a>, <a href="#CGanttMinStart">GanttMinStart</a> or end on <a href="#CGanttMinEnd">GanttMinEnd</a>.<br /> 
+If no such constraint is defined, the first task is moved left as little as possible, only due this or next tasks constraints.<br />
+All next tasks are moved left or right to be as close as possible to their ancestors and to not violate any dependency or constraint.
+</td></tr>
+  <tr><td><b>2</b></td><td><i>For backward compatibility only, since 10.0. use <a href="GanttMain.htm#CGanttManual">GanttManual</a> instead.</i><br />
+<i>(new 9.1)</i> Like <b>1</b>, but adds <a href="#CGanttMinStart">GanttMinStart</a> constraint before every task and moves it with the task when moved manually. Behavior similar to MS Project auto schedule.<br />
+It forces setting <a href="#CGanttUseConstraints">GanttUseConstraints</a> to at least 1, but always permits moving tasks before <a href="#CGanttMinStart">GanttMinStart</a> constraint.<br />
+It is <i>not</i> required to define the GanttMinStart column. It is possible also to hide the constraints by <tt><a href="#CGanttShowConstraints">GanttShowConstraints</a>='0'</tt>.<br />
+To not set up the min start constraint on start, set <tt>&lt;C <b>GanttMinStart</b>="" ... /></tt> to the Gantt column. In this case the min start will be set only on manual change of the task start.<br />
+You can also predefine the initial constraint only for particular task by <tt>&lt;I <b>xxxGanttMinStart</b>='...'/></tt>, where the xxx is the Gantt column name.
+</td></tr>
+  <tr><td><b>3</b></td><td><i><b>Minimal strict move</b> (new 10.0)</i> The first tasks (without incoming dependencies) are moved left as little as possible, only due this or next tasks constraints.<br />
+All next tasks are moved left or right to be as close as possible to their ancestors and to not violate any dependency or constraint.
+</td></tr>
+</table>
+
+<!-- GanttDirection -->
+<a name="CGanttDirection"></a>
+<div class="XML">
+   <u>new <b>10.00</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttDirection</h4> <s>[0] Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='1'/></tt></s>
+</div>
+If the tasks (moved when correcting dependencies) are scheduled to start on GanttBase or finish on GanttFinish.<br />
+<table>
+<tr><td style="width:70px;"><b>0</b></td><td>Schedule from project start (GanttBase). It moves the tasks to the left constraint and next moves them right to correct their dependencies.<br />
+	If there is no left constraint (GanttBase, GanttMinStart, GanttMinEnd, GanttManual), the task is not moved left, only right.</td></tr>
+<tr><td><b>1</b></td><td>Schedule from project finish (GanttFinish). It moves the tasks to the right constraint and next moves them left to correct their dependencies.<br />
+	If there is no right constraint (GanttFinish, GanttMaxStart, GanttMaxEnd, GanttManual), the task is not moved right, only left.</td></tr>
+</table>
+
+<!-- GanttCorrectDependencies -->
+<a name="CGanttCorrectDependencies"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttCorrectDependencies</h4> <s>[2] Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='1'/></tt></s>
+</div>
+If and how will be updated incorrect dependencies between tasks after task resize, move or dependency change.<br />
+The automatic correction moves the previous and next tasks, it never resizes tasks and never changes dependency.<br />
+If set and a user deletes task containing dependencies, they are deleted too.<br />
+<b>0</b> - no, <b>1</b> - automatic update all dependent tasks, <b>2</b> - ask user<br />
+If Gantt chart contains some dependency errors already on start, they are not affected by this setting, you can correct them in API event like:<br />
+<tt>Grids.OnReady = function(G){ G.ActionCorrectAllDependencies(); }</tt><br />
+
+<!-- GanttCorrectDependenciesButtons -->
+<a name="CGanttCorrectDependenciesButtons"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string[ ]</i>
+   <h4>GanttCorrectDependenciesButtons</h4> <s>["Yes,No,Always,Never"]</s>
+</div>
+Comma separated names of buttons in the dialog about correcting dependencies.<br />
+Can contain the keywords <b>Yes</b>, <b>No</b>, <b>Always</b>, <b>Never</b>, in any count and order. The button texts are defined in Text.xml.<br />
+<b>Yes</b> corrects the dependencies, <b>No</b> does nothing, <b>Always</b> correct dependencies and sets GanttCorrectDependencies='1' and <b>Never</b> only sets GanttCorrectDependencies='0'.<br />
+
+<!-- GanttCorrectDependenciesFixed -->
+<a name="CGanttCorrectDependenciesFixed"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttCorrectDependenciesFixed</h4> <s>[0] Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='1'/></tt></s>
+</div>
+When automatically correcting dependencies after a task is moved or resized, for <b>1</b> it never moves this task, rather moves all the other tasks instead to correct the dependencies.<br />
+For <b>0</b> it works the same as manual correcting dependencies and can also move the changed task.<br />
+
+<!-- GanttCorrectDependenciesCreate -->
+<a name="CGanttCorrectDependenciesCreate"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttCorrectDependenciesCreate</h4> <s>[2]</s>
+</div>
+Which task to fix if set GanttCorrectDependenciesFixed='1' and dependencies are automatically corrected after new dependency is created by dragging.<br />
+<b>0</b> - none, <b>1</b> - ancestor, <b>2</b> - descendant.<br />
+
+<!-- GanttFixComplete -->
+<a name="CGanttFixComplete"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttFixComplete</h4> <s>[0] Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='1'/></tt></s>
+</div>
+If set, only not yet started tasks will be automatically corrected. The tasks with Complete>0 will behave like with Early and Late Start constraints on its start date.<br />
+After change by API call GanttRefreshDependencies(<b>2</b>)<br />
+
+<!-- GanttCorrectExclude -->
+<a name="CGanttCorrectExclude"></a>
+<div class="XML">
+   <u>new <b>13.3</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttCorrectExclude</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, it schedules tasks on excluded dates more precisely, especially milestones on excluded edges. Can be slower than standard scheduling.<br />
+
+<!-- GanttRunCorrectBox -->
+<a name="CGanttRunCorrectBox"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunCorrectBox</h4> <s>[0]</s>
+</div>
+How will be moved individual Run boxes when correcting dependencies and <b><a href="GanttObjects.htm#CGanttTask">GanttTask</a> contains "Box"</b>,<br />
+<b>0</b> - the boxes will be moved independently on the others, the boxes can overlay as Error boxes.<br />
+<b>1</b> - the boxes will be moved independently on the others, but the boxes cannot overlay - if the boxes overlay, the other boxes are moved.<br />
+<b>2</b> - the boxes cannot change their order, if the box is moved, all other boxes in its way are moved too. Empty spaces are <u>not</u> preserved. Like Adjust <b>Shrink</b>. Note, here the wrong box order can cause the dependencies cannot be corrected.<br />
+
+<!-- GanttRunCorrectFixed -->
+<a name="CGanttRunCorrectFixed"></a>
+<div class="XML">
+   <u>new <b>7.0</b> chg <b>10.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttRunCorrectFixed</h4> <s>[1]</s>
+</div>
+Used when correcting dependencies. For <b>1</b> it will check the run box moving possibility (fixed boxes) like any other constraints.<br />
+<i>Since 10.0</i> the default value is <b>1</b>.<br /> 
+Set it to <b>0</b> if you use long runs without fixed boxes and the whole run is Gantt task, just to speed up the correcting.<br />
+
+<!-- GanttMaxCorrectingLoops -->
+<a name="CGanttMaxCorrectingLoops"></a>
+<div class="XML">
+   <u>new <b>9.1</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttMaxCorrectingLoops</h4> <s>[40]</s>
+</div>
+Maximal count of loops when correcting dependencies.<br />
+Increase this value if the Gantt chart does not correct the dependencies even if there are no circular dependencies and restricting constraints.<br />
+Decrease this value if the Gantt chart is slow when correcting dependencies when contains circular dependencies or restricting constraints that prevent correcting.<br />
+
+<!-- GanttRunMaxCorrectingLoops -->
+<a name="CGanttRunMaxCorrectingLoops"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttRunMaxCorrectingLoops</h4> <s>[5]</s>
+</div>
+Maximal count of loops when correcting dependencies for <a href="#CGanttRunCorrectBox">GanttRunCorrectBox</a> <b>1</b> or <b>2</b>.<br />
+
+<!-- SortRanges -->
+<a name="CfgSortRanges"></a>
+<div class="XML">
+   <u>new <b>9.2</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SortRanges</h4> <s>[0]</s>
+</div>
+<i>Cfg attribute!</i> If set to <b>1</b>, it sorts all Range cell values when changed. It ensures the dependency values will be always in the same order and the same dependency will not be marked as changed when modified.<br />
+If set to <b>2</b>, it sorts also the original value of range cells, only for comparing if changed.<br />
+To use it for dependencies, set also the GanttDescendants / GanttAncestors columns with <tt>Range='1'</tt>.<br />
+
+<!-- GanttDependencyObjects -->
+<a name="CGanttDependencyObjects"></a>
+<div class="DEL">
+   <u>deleted <b>6.4</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttDependencyObjects</h4> <s>["Main"]</s>
+</div>
+Replaced by <a href="GanttObjects.htm#CGanttTask">GanttTask</a>.<br />
+Comma separated list of Gantt objects where can be attached dependencies (and the objects can be also moved to correct them). Case insensitive.<br />
+Permitted objects are <b>Main</b>, <b>Run</b>.<br />
+If cell contains more of these objects, the first existing one from this list will be used.<br />
+
+<!-- CorrectDependencies -->
+<a name="CorrectDependencies"></a>
+<div class="API">
+   <u>new <b>6.3</b> <i>upd <b>10.0</b></i></u> <b>API method</b> <i>void</i>
+   <h4>CorrectDependencies</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>bar</b> = null)</s>
+</div>
+Corrects all dependencies related to the given Gantt task.<br /> 
+<b>bar</b> <i>(since 10.0)</i> is main bar plan or run box id or '-' for run bar. If it is null, checks all tasks in the cell.<br />
+Only when set <a href="#CGanttCorrectDependencies">GanttCorrectDependencies</a> (shows also confirm message for value 2).<br />
+Call it after some Gantt source that affects dependencies is changed in another way than direct user interaction or edit.<br />
+                                                 
+<!-- GetIncorrectDependencies -->
+<a name="GetIncorrectDependencies"></a>
+<div class="API">
+   <u>new <b>6.4</b> chg <b>10.0</b></i></u> <b>API method</b> <i>object[ ]</i>
+   <h4>GetIncorrectDependencies</h4>
+   <s>(<i>string</i> <b>col</b> = null)</s>
+</div>
+<strong>Since 10.0 the returned array structure remarkably changed!</strong><br />
+Returns array of all incorrect dependencies in grid. <b>col</b> is Gantt column.<br />
+The array items are also arrays with these items [source_row, dest_row, shift, source_bar, dest_bar].<br /> 
+The <b>shift</b> is required shift of the destination task, positive to right, negative to left.<br />
+The <b>_bar</b> is the main bar plan or run box id or '-' for run bar.<br />
+
+<!-- GetTasksToSchedule -->
+<a name="GetTasksToSchedule"></a>
+<div class="API">
+   <u>new <b>7.1</b> chg <b>10.0</b></i></u> <b>API method</b> <i>object[id]</i>
+   <h4>GetTasksToSchedule</h4>
+   <s>(<i>TRow</i> <b>row</b> = null, <i>string</i> <b>col</b> = null, <i>type</i> <b>bar</b> = null, <i>type[][]</i> <b>tasks</b> = null)</s>
+</div>
+<strong>Since 10.0 the returned array structure remarkably changed!</strong><br />
+Returns array of tasks to be scheduled (moved) to satisfy the dependencies and constraints.<br />
+The returned array has such structure: <tt>{ id1: [row1,bar1,move1,left1,left1], id2: [row2,bar2,move2,left2,left2], ... }</tt><br />
+<div class="L1">
+   <b>idX</b> is the id of the bar and row as "bar@rowid"; where bar is main bar plan (0 for the first), or run box id or '-' for run bar.<br />
+   <b>rowX</b> is the row object<br />
+   <b>baxX</b> is the main bar plan or run box id or '-' for run.<br />
+   <b>moveX</b> is the expected move of the task in milliseconds, negative to the left, positive to the right. The holidays are excluded.<br />
+   <b>minX</b> is the maximal possible move due left constraints, negative to the left, positive to the right. The holidays are excluded.<br />
+   <b>maxX</b> is the maximal possible move due right constraints, negative to the left, positive to the right. The holidays are excluded.<br />
+</div>
+It returns the tasks according to the actual scheduling settings (<a href="#CGanttDirection">GanttDirection</a>, <a href="#CGanttStrict">GanttStrict</a>, <a href="#CGanttIncorrectDependencies">GanttIncorrectDependencies</a> (only 0 vs. 1/2/3), <a href="#CGanttFixComplete">GanttFixComplete</a>, <a href="#CGanttBase">GanttBase</a>, <a href="#CGanttBasePreferred">GanttBasePreferred</a>, <a href="#CGanttUseConstraints">GanttUseConstraints</a>),<br /> 
+<div class="L1">you can temporary change these settings to get differently scheduled tasks.</div>
+<i>It is <u>not</u> possible to temporary change the individual task dates, constraints or dependencies to change behavior of this method.</i><br />
+If set <b>row</b> (and optionally <b>bar</b>) and <a href="#CGanttCorrectDependenciesFixed">GanttCorrectDependenciesFixed</a> = 1, this tasks is scheduled to not move (to move all other dependent tasks instead).<br />
+The <b>col</b> is the Gantt column, if not set, it is the first Gantt column in the chart.<br />
+The <b>tasks</b> is an array of tasks to schedule as <tt>[[row1,bar1],[row2,bar2],...]</tt>. If not set and <b>row</b> is set, it schedules all tasks dependent on the <b>row</b>. If set neither <b>row</b> nor <b>tasks</b>, it schedules all tasks in the chart.<br />
+
+<!-- OnCorrectDependencies -->
+<a name="OnCorrectDependencies"></a>
+<div class="API">
+   <u>new <b>6.7</b> chg <b>11.0</b></i></u> <b>API event</b> <i>int</i>
+   <h4>OnCorrectDependencies</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object[<b>id</b>]</i> <b>A</b>, <i>TRow[]</i> <b>R</b>, <i>int</i> <b>error</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>bool</i> <b>slack</b>)</s>
+</div>
+<strong>Since 10.0 the parameters and array structure remarkably changed!</strong><br />
+Called when dependencies are being corrected.<br />
+<b>A</b> is array of objects with expected (but not yet done) move, it has such structure: <tt>A = { id1: [row1,bar1,move1,left1,right1], id2: [row2,bar2,move2,left2,right2], ... }</tt><br />
+<div class="L1">
+   <b>idX</b> is the id of the bar and row as "bar@rowid"; where bar is main bar plan (0 for the first), or run box id or '-' for run bar.<br />
+   <b>rowX</b> is the row object.<br />
+   <b>baxX</b> is the main bar plan or run box id or '-' for run.<br />
+   <b>moveX</b> is the expected move of the task in milliseconds, negative to the left, positive to the right. The holidays are excluded.<br />
+   <b>minX</b> is the maximal possible move due left constraints, negative to the left, positive to the right. The holidays are excluded.<br />
+   <b>maxX</b> is the maximal possible move due right constraints, negative to the left, positive to the right. The holidays are excluded.<br />
+</div>
+It is possible to delete old or add new items into the <b>A</b>, to move another tasks.<br />
+The <b>R</b> is array of all row objects that are checked in the group: <tt>R = [[row1,bar1],[row2,bar2],...]</tt>. Do <u>not</u> modify this array.<br />
+<i>(Since 11.0)</i> The <b>slack</b> is set when calculating critical path.<br />
+<b>error</b> is <b>null</b> if the dependencies cannot be corrected due circular relation.<br />
+<div class="L1">
+  <b>1</b> if there are some tasks to move to correct dependencies or constraints.<br />
+  <b>2</b> if some dependencies cannot be corrected due constraints.<br />
+</div>
+Return the <b>error</b> or new error value. <i>Since 11.0.</i> return <b>undefined</b> to ignore the event handler.<br />
+
+<!-- OnCorrectDependenciesStart -->
+<a name="OnCorrectDependenciesStart"></a>
+<div class="API">
+   <u>new <b>7.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnCorrectDependenciesStart</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object[<b>id</b>]</i> <b>A</b>)</s>
+</div>
+<strong>Since 10.0 the parameter array structure remarkably changed!</strong><br />
+Called before the dependencies are corrected.<br />
+Return true to cancel the correcting.<br />
+The <b>A</b> is array with all errors to correct, see <a href="#OnCorrectDependencies">OnCorrectDependencies</a>.<br />
+
+<!-- OnCorrectDependenciesFinish -->
+<a name="OnCorrectDependenciesFinish"></a>
+<div class="API">
+   <u>new <b>7.1</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnCorrectDependenciesFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object[<b>id</b>]</i> <b>A</b>, <i>bool</i> <b>deperr</b>, <i>bool</i> <b>consterr</b>)</s>
+</div>
+<strong>Since 10.0 the parameter array structure remarkably changed!</strong><br />
+Called after the dependencies are corrected.<br />
+Return true to <u>not</u> show any message when set <b>deperr</b> or <b>consterr</b>.<br />
+<b>deperr</b> is set if there are some dependency errors that cannot be corrected due circular relation, <b>consterr</b> is set when there are constraint errors that cannot be corrected.<br />
+The <b>A</b> is array with all errors to correct, see <a href="#OnCorrectDependencies">OnCorrectDependencies</a>.<br />
+
+<!-- ganttdependencyerrors -->
+<a name="ganttdependencyerrors"></a>
+<div class="ACT">
+   <u>new <b>6.3</b></u> <b>formula</b> <i>int</i>
+   <h4>ganttdependencyerrors</h4>
+   <s>(<i>string</i> <b>ganttcol</b>, <i>bool</i> text = 0)</s>
+</div>
+Returns count of all incorrect dependencies in chart.<br />
+For <tt>text = 1</tt> returns the whole text like "3 incorrect dependencies".<br />
+
+<!-- Action CorrectAllDependencies -->
+<a name="ActionsCorrectAllDependencies"></a>
+<div class="ACT">
+   <u>new <b>6.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CorrectAllDependencies</h4>
+   <s>Not attached to any event</s>
+</div>
+Corrects all incorrect dependencies by moving the task to future or to past.<br />
+The dependency is incorrect if the source date plus lag is after the destination date or before the destination date plus float.<br />
+The result of the call should be Gantt chart without any incorrect dependencies (all in blue).<br />
+This method does not solve circular dependencies, in this case some dependencies can be left incorrect.<br />
+
+<!-- Action CorrectDependencies -->
+<a name="ActionsCorrectDependencies"></a>
+<div class="ACT">
+   <u>new <b>6.3</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CorrectDependencies <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Corrects dependencies related to the actual or focused row. It can move all the tasks except the actual or focused one.<br />
+
+<!---------------------------------------------------  Schedule algorithm for correcting dependencies  ------------------------------------------------->
+<a name="Algorithm"></a>
+<h2>Schedule algorithm for correcting dependencies</h2>
+<i><strong>The algorithm changed since 10.0.</strong></i><br />
+<br />
+
+The correcting routine moves tasks to satisfy their dependencies and constraints. The tasks are never resized. The dependencies and constraints are never modified. The tasks are always moved as little as possible.<br />
+<br />
+
+The correcting dependencies can be run:<br />
+<div class="L1">
+  automatically after a user change in the Gantt chart (according to <a href="#CGanttCorrectDependencies">GanttCorrectDependencies</a> value)<br />
+  manually by clicking to <b>Correct</b> dependencies icon on toolbar (first icon)<br />
+  manually from right click <a href="GanttMenu.htm">GanttMenu</a>, items CorrectRelatedDependencie and CorrectAllDependencies<br />
+  by assigned action <a href="#ActionsCorrectDependencies">CorrectDependencies</a> or <a href="#ActionsCorrectAllDependencies">CorrectAllDependencies</a> to some event<br />
+  by API method <a href="#CorrectDependencies">CorrectDependencies</a><br />
+</div>
+Both the ways (automatic & manual) should lead to the same results except with settings <tt><a href="#CGanttCorrectDependenciesFixed">GanttCorrectDependenciesFixed</a>='<b>1</b>'</tt>, because automatic schedule does not move the actual task in this case.<br />
+The automatic correcting is run only for the group of tasks where the change happened, see point <b>1</b>.<br />
+<br />
+
+<b>1)</b> The tasks are split to groups according to their dependencies. All tasks in group are dependent only on tasks in this group.<br /> 
+The correcting is run independently for the individual groups.<br />
+If some group cannot be corrected because of circular dependencies, the whole group is remain unchanged, but the other groups are corrected normally.<br />
+<br />
+
+<b>2)</b> All the tasks are moved to satisfy constraints:<br />
+<div class="L1">
+  the task constraints (<a href="#CGanttMinStart">GanttMinStart</a>, <a href="#CGanttMaxStart">GanttMaxStart</a>, <a href="#CGanttMinEnd">GanttMinEnd</a>, <a href="#CGanttMaxEnd">GanttMaxEnd</a>),<br />
+  project constraints (<a href="#CGanttBase">GanttBase</a>, <a href="#CGanttFinish">GanttFinish</a>),<br />
+  special constraints (<a href="GanttMain.htm#CGanttManual">GanttManual</a>, <a href="GanttMain.htm#CGanttDisabled">GanttDisabled</a>, Run box <a href="GanttRun.htm#RunType">Type</a> if set <tt><a href="GanttRun.htm#CGanttRunCorrectFixed">GanttRunCorrectFixed</a>='1'</tt>, actual task if set <tt><a href="#CGanttCorrectDependenciesFixed">GanttCorrectDependenciesFixed</a>='1'</tt>)<br />
+</div>
+If set <tt><a href="#CGanttStrict">GanttStrict</a>='<b>0</b>'</tt>, the tasks are moved as little as possible to satisfy their constraints.<br />
+If set <tt><a href="#CGanttStrict">GanttStrict</a>='<b>1</b>'</tt> and <tt><a href="#CGanttDirection">GanttDirection</a>='<b>0</b>'</tt>, all tasks are moved to start on <a href="#CGanttMinStart">GanttMinStart</a>, <a href="#CGanttBase">GanttBase</a> or <a href="GanttMain.htm#CGanttManual">GanttManual</a> or to end on <a href="#CGanttMinEnd">GanttMinEnd</a>.<br />
+If set <tt><a href="#CGanttStrict">GanttStrict=</a>'<b>1</b>'</tt> and <tt><a href="#CGanttDirection">GanttDirection</a>='<b>1</b>'</tt>, all tasks are moved to end on <a href="#CGanttMaxEnd">GanttMaxEnd</a>, <a href="#CGanttFinish">GanttFinish</a> or <a href="GanttMain.htm#CGanttManual">GanttManual</a> or to start on <a href="#CGanttMaxStart">GanttMaxStart</a>.<br />
+If set <tt><a href="#CGanttStrict">GanttStrict</a>='<b>3</b>'</tt> and <tt><a href="#CGanttDirection">GanttDirection</a>='<b>0</b>'</tt>, the first tasks (without incoming dependencies) are moved to start on <a href="#CGanttMinStart">GanttMinStart</a>, <a href="#CGanttBase">GanttBase</a> or <a href="GanttMain.htm#CGanttManual">GanttManual</a> or to end on <a href="#CGanttMinEnd">GanttMinEnd</a>. Other tasks are moved as little as possible to satisfy their constraints.<br />
+If set <tt><a href="#CGanttStrict">GanttStrict</a>='<b>3</b>'</tt> and <tt><a href="#CGanttDirection">GanttDirection</a>='<b>1</b>'</tt>, the last tasks (without outgoing dependencies) are moved to end on <a href="#CGanttMaxEnd">GanttMaxEnd</a>, <a href="#CGanttFinish">GanttFinish</a> or <a href="GanttMain.htm#CGanttManual">GanttManual</a> or to start on <a href="#CGanttMaxStart">GanttMaxStart</a>. Other tasks are moved as little as possible to satisfy their constraints.<br />
+
+If the task cannot satisfy all its constraints, the constraints are used in this order:<br />
+<div class="L1">
+  if set <tt><a href="#CGanttDirection">GanttDirection</a>='0'</tt>: <a href="GanttMain.htm#CGanttDisabled">GanttDisabled</a>, <a href="#CGanttBase">GanttBase</a> (if <tt><a href="#CGanttBasePreferred">GanttBasePreferred</a>='1'</tt>), <a href="#CGanttFinish">GanttFinish</a> (if <tt><a href="#CGanttFinishPreferred">GanttFinishPreferred</a>='1'</tt>), <a href="#CGanttMinStart">GanttMinStart</a>, <a href="#CGanttMaxEnd">GanttMaxEnd</a>, <a href="#CGanttMaxStart">GanttMaxStart</a>, <a href="#CGanttMinEnd">GanttMinEnd</a>, <a href="GanttMain.htm#CGanttManual">GanttManual</a>, <a href="#CGanttBase">GanttBase</a>, <a href="#CGanttFinish">GanttFinish</a>.<br />
+  if set <tt><a href="#CGanttDirection">GanttDirection</a>='1'</tt>: <a href="GanttMain.htm#CGanttDisabled">GanttDisabled</a>, <a href="#CGanttFinish">GanttFinish</a> (if <tt><a href="#CGanttFinishPreferred">GanttFinishPreferred</a>='1'</tt>) , <a href="#CGanttBase">GanttBase</a> (if <tt><a href="#CGanttBasePreferred">GanttBasePreferred</a>='1'</tt>) , <a href="#CGanttMaxEnd">GanttMaxEnd</a>, <a href="#CGanttMinStart">GanttMinStart</a>, <a href="#CGanttMinEnd">GanttMinEnd</a>, <a href="#CGanttMaxStart">GanttMaxStart</a>, <a href="GanttMain.htm#CGanttManual">GanttManual</a>, <a href="#CGanttFinish">GanttFinish</a>, <a href="#CGanttBase">GanttBase</a>.<br />
+</div>
+<br />
+
+Setting <a href="#CGanttMinStart">GanttMinStart</a> and <a href="#CGanttMaxStart">GanttMaxStart</a> to the same date will create <b>mandatory start</b> and it forces the task to start at this date except it violates another more preferred constraint.<br />
+Setting <a href="#CGanttMinEnd">GanttMinEnd</a> and <a href="#CGanttMaxEnd">GanttMaxEnd</a> to the same date will create <b>mandatory end</b> and it forces the task to start at this date except it violates another more preferred constraint.<br />
+<br />
+
+<b>3)</b> Tasks are moved in one direction to satisfy their dependencies.<br />
+If set <tt><a href="#CGanttDirection">GanttDirection</a>='<b>0</b>'</tt>, all descendant tasks are moved <b>right</b>.<br /> 
+If set <tt><a href="#CGanttDirection">GanttDirection</a>='<b>1</b>'</tt>, all ancestor tasks are moved <b>left</b>.<br />
+All the applicable constraints are tested and never violated. The dependencies that cannot be satisfied due constraint are left unchanged.<br />
+The dependency is satisfied if its <b>start</b> + <b>lag</b> >= <b>end</b> AND <b>start</b> + <b>lag</b> + <b>float</b> <= <b>end</b>. If the dependency float is not set in the dependency definition, it is controlled by <a href="#CGanttIncorrectDependencies">GanttIncorrectDependencies</a> value.<br />
+<br />
+
+<b>4)</b> Tasks are moved in opposite direction than in point <b>3</b> to satisfy remaining dependencies.<br />
+If set <tt><a href="#CGanttDirection">GanttDirection</a>='<b>0</b>'</tt>, all ancestor tasks are moved <b>left</b>.<br /> 
+If set <tt><a href="#CGanttDirection">GanttDirection</a>='<b>1</b>'</tt>, all descendant tasks are moved <b>right</b>.<br />
+All the applicable constraints are still tested and never violated. The dependencies that cannot be satisfied due constraint are left unchanged.<br />
+<br />
+
+If there is found circular dependency relation, all changes are rolled back and the group is marked as wrong. There is shown alert "It is not possible to correct the dependencies!".<br />
+If there is left any incorrect dependency after schedule, there is shown alert "Not all dependencies were corrected due constraints!"<br />
+
+<!---------------------------------------------------  Project date constraints  ------------------------------------------------->
+<a name="ProjectConstraints"></a>
+<h2>Project date constraints</h2>
+
+Here are described project constraints <b>(base) start date</b> and <b>finish date</b> that can be changed by a user and are used in dependency and slack calculations.<br />
+For maximal and minimal bounds in the whole chart see <a href="GanttZoom.htm#Size">Chart size limits</a> - especially <a href="GanttZoom.htm#CGanttChartMinStart">GanttChartMinStart</a> and <a href="GanttZoom.htm#CGanttChartMaxEnd">GanttChartMaxEnd</a><br />.
+
+<!-- GanttBase -->
+<a name="CGanttBase"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttBase</h4> <s>Can be uploaded to server</s>
+</div>
+Start date of the whole project. The tasks should not start before this date.<br />
+Can be set to date string in English notation or to count of milliseconds. For API is always converted to count of milliseconds since 1/1/1970.<br />
+
+<!-- GanttFinish -->
+<a name="CGanttFinish"></a>
+<div class="XML">
+   <u>new <b>6.6</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttFinish</h4> <s>Can be uploaded to server</s>
+</div>
+Finish date of the whole project.<br />
+When not set (by default) the finish date is the finish date of the most right task.<br />
+It is used to calculate tasks slack.<br />
+The end date can be last date or last unit, depending on <a href="#CGanttLastUnit">GanttLastUnit</a> <i>(new in 8.1)</i>.<br />
+
+<!-- GanttBaseProof -->
+<a name="CGanttBaseProof"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttBaseProof</h4> <s>Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='1'/></tt></s>
+</div>
+If set to <b>1</b>, the tasks or constraints cannot be moved or created before <a href="#CGanttBase">GanttBase</a>.<br />
+
+<!-- GanttFinishProof -->
+<a name="CGanttFinishProof"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttFinishProof</h4> <s>Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='1'/></tt></s>
+</div>
+If set to <b>1</b>, the tasks or constraints cannot be moved or created after <a href="#CGanttFinish">GanttFinish</a>.<br />
+
+<!-- GanttBasePreferred -->
+<a name="CGanttBasePreferred"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttBasePreferred</h4> <s>Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='1'/></tt></s>
+</div>
+Used when <a href="#CGanttBase">GanttBase</a> conflicts with task constraints. For <b>0</b> it has less priority, for <b>1</b> it has higher priority than all task constraints.<br />
+
+<!-- GanttFinishPreferred -->
+<a name="CGanttFinishPreferred"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttFinishPreferred</h4> <s>Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='1'/></tt></s>
+</div>
+Used when <a href="#CGanttFinish">GanttFinish</a> conflicts with task constraints. For <b>0</b> it has less priority, for <b>1</b> it has higher priority than all task constraints.<br />
+
+<!-- GanttCorrectOutsideBounds -->
+<a name="CGanttCorrectOutsideBounds"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttCorrectOutsideBounds</h4> <s>Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='1'/></tt></s>
+</div>
+If set, permits moving tasks outside <a href="#CGanttFinish">GanttFinish</a> or <a href="#CGanttBase">GanttBase</a> during scheduling tasks to correct their dependencies.<br />
+Ignored if set <a href="#CGanttFinishProof">GanttFinishProof</a> or <a href="#CGanttBaseProof">GanttBaseProof</a> for given scheduling direction.<br />
+
+<!-- GanttBaseCanEdit -->
+<a name="CGanttBaseCanEdit"></a>
+<div class="XML">
+   <u>new <b>6.6</b> <i>upd <b>10.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttBaseCanEdit</h4> <s>[1]</s>
+</div>
+If the project start date can be changed by a user.<br />
+<i>(Since 10.0)</i> If set to 3, the date is editable and can be set also to excluded dates.<br />
+
+<!-- GanttFinishCanEdit -->
+<a name="CGanttFinishCanEdit"></a>
+<div class="XML">
+   <u>new <b>6.6</b> <i>upd <b>10.0</b></i></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttFinishCanEdit</h4> <s>[1]</s>
+</div>
+If the project finish date can be changed by a user.<br />
+<i>(Since 10.0)</i> If set to 3, the date is editable and can be set also to excluded dates.<br />
+
+<!-- GanttShowBounds -->
+<a name="CGanttShowBounds"></a>
+<div class="XML">
+   <u>new <b>6.6</b> chg <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttShowBounds</h4> <s>[1/2]</s>
+</div>
+If the project start date and finish date will be shown in the chart as vertical line.<br />
+Default value is <b>1</b> if the Gantt contains GanttDescendants or GanttAncestors or <b>2</b> <i>(since 10.0)</i> if not.<br />
+<table>
+  <tr><td style="width:70px;"><b>0</b></td><td>none</td></tr>
+  <tr><td><b>1</b></td><td>it shows <a href="#CGanttBase">GanttBase</a> and <a href="#CGanttFinish">GanttFinish</a> and if they are not set, it shows automatically calculated bounds in gray.</td></tr>
+  <tr><td><b>2</b></td><td><i>(new 10.0)</i> it shows <a href="#CGanttBase">GanttBase</a> and <a href="#CGanttFinish">GanttFinish</a> if defined</td></tr>  
+</table>
+
+<!-- GanttUseConstraints -->
+<a name="CGanttUseConstraints"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttUseConstraints</h4> <s>[2]</s>
+</div>
+If and when the constraints and bounds will be used.<br />
+<b>0</b> - Completely ignored, use to temporary disable the constraints, but let them to be still displayed<br /> 
+<b>1</b> - Used only when moving objects while correcting dependencies<br />
+<b>2</b> - Used also when moving, adding and resizing Gantt task listed in <a href="GanttObjects.htm#CGanttTask">GanttTask</a>.<br />
+<b>3</b> - Used also when moving, adding and resizing any object (main bar, milestone, run, flag, point). The MaxStart and MinEnd are ignored for other objects than main bar.<br />
+
+<!-- GanttBaseTip -->
+<a name="CGanttBaseTip"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttBaseTip</h4> <s></s>
+</div>
+Tip string shown for the GanttBase line. It can show also the specials: <b>*Start*</b> - start date of the line, <b>*End*</b> - end date of the line, if any.<br />
+To dynamically generate the tip text use <a href="GanttAPI.htm#OnGanttTip">OnGanttTip</a> API event.<br />
+
+<!-- GanttBaseAutoTip -->
+<a name="CGanttBaseAutoTip"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttBaseAutoTip</h4> <s></s>
+</div>
+Tip string shown for the project auto start line if not defined GanttBase. It can show also the specials: <b>*Start*</b> - start date of the line, <b>*End*</b> - end date of the line, if any.<br />
+To dynamically generate the tip text use <a href="GanttAPI.htm#OnGanttTip">OnGanttTip</a> API event.<br />
+
+<!-- GanttFinishTip -->
+<a name="CGanttFinishTip"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttFinishTip</h4> <s></s>
+</div>
+Tip string shown for the GanttFinish line. It can show also the specials: <b>*Start*</b> - start date of the line, <b>*End*</b> - end date of the line, if any.<br />
+To dynamically generate the tip text use <a href="GanttAPI.htm#OnGanttTip">OnGanttTip</a> API event.<br />
+
+<!-- GanttFinishAutoTip -->
+<a name="CGanttFinishAutoTip"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttFinishAutoTip</h4> <s></s>
+</div>
+Tip string shown for the project auto finish line if not defined GanttFinish. It can show also the specials: <b>*Start*</b> - start date of the line, <b>*End*</b> - end date of the line, if any.<br />
+To dynamically generate the tip text use <a href="GanttAPI.htm#OnGanttTip">OnGanttTip</a> API event.<br />
+
+<!-- GetGanttBase -->
+<a name="GetGanttBase"></a>
+<div class="API">
+   <u>new <b>6.6</b></u> <b>API method</b> <i>int</i>
+   <h4>GetGanttBase</h4>
+   <s>( )</s>
+</div>
+Returns <a href="#CGanttBase">GanttBase</a> if set, otherwise returns automatically calculated start date as the start of the most left task.<br />
+
+<!-- SetGanttBase -->
+<a name="CSetGanttBase"></a>
+<div class="API">
+   <u>new <b>6.3</b> chg <b>7.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>SetGanttBase</h4>
+   <s>(<i>type</i> <b>date</b>, <i>int</i> <b>action</b> = 2, <i>string</i> <b>col</b> = null)</s>
+</div>
+Changes the <a href="#CGanttBase">GanttBase</a> date. The <b>date</b> can be date string in English notation, Date object or count of milliseconds.<br />
+The <b>col</b> is Gantt column, if missing, it used the first Gantt column in grid.<br />
+<i>Since 7.0</i> it does <u>not</u> change the GanttBase if it is outside chart constraints and returns false for the error.<br />
+<b>action</b> is action done after change:<br /> 
+<table>
+  <tr><td style="width:70px;"><b>1</b></td><td>only visually changes the project start</td></tr>
+  <tr><td><b>2</b></td><td>corrects positions of all tasks to be consistent with the new GanttBase (it corrects also all other dependency errors)</td></tr>
+  <tr><td><b>3</b></td><td>moves all tasks for the exact difference between old and new date, does not preserve any constraints or dependencies</td></tr>  
+</table>
+
+<!-- GetGanttFinish -->
+<a name="GetGanttFinish"></a>
+<div class="API">
+   <u>new <b>6.6</b></u> <b>API method</b> <i>int</i>
+   <h4>GetGanttFinish</h4>
+   <s>( )</s>
+</div>
+Returns <a href="#CGanttFinish">GanttFinish</a> if set, otherwise returns automatically calculated finish date as the end of the most right task.<br />
+
+<!-- SetGanttFinish -->
+<a name="SetGanttFinish"></a>
+<div class="API">
+   <u>new <b>6.6</b> chg <b>7.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>SetGanttFinish</h4>
+   <s>(<i>type</i> <b>date</b>, <i>string</i> <b>col</b> = null)</s>
+</div>
+Changes the <a href="#CGanttFinish">GanttFinish</a> date. The <b>date</b> can be date string in English notation, Date object or count of milliseconds.<br />
+The <b>col</b> is Gantt column, if missing, it used the first Gantt column in grid.<br />
+Recalculates slacks and critical path<br />
+<i>Since 7.0</i> it does <u>not</u> change the finish if it is outside chart constraints and returns false for the error.<br />
+
+<!-- OnGanttLineChange -->
+<a name="OnGanttLineChange"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnGanttLineChange</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>index</b>, <i>int</i> <b>date1</b>, <i>int</i> <b>date2</b>, <i>string</i> <b>class</b>, <i>bool</i> <b>edit</b>, <i>int</i> <b>odate1</b>, <i>int</i> <b>odate2</b>, <i>string</i> <b>oclass</b>, <i>bool</i> <b>oedit</b>)</s>
+</div>
+Called before change of any Gantt line. Called from <a href="GanttDisplay.htm#SetGanttLine">SetGanttLine</a> method.<br />
+<b>index</b> is line position from 0 in <a href="GanttDisplay.htm#CGanttLines">GanttLines</a>,<br /> 
+<b>date1</b> and <b>date2</b> are line new dates as count of milliseconds since 1/1/1970. <b>class</b> and <b>edit</b> are new line values.<br />
+<b>odate1</b>, <b>odate2</b>, <b>oclass</b> and <b>oedit</b> are actual values of the line.<br />
+It is called also for change of <a href="#CGanttBase">GanttBase</a> with <b>index</b> = <b>-1</b> and for <a href="#CGanttFinish">GanttFinish</a> with <b>index</b> = <b>-2</b>.<br />
+Return <b>true</b> to suppress the change.<br />
+
+<!-- OnGanttLineChanged -->
+<a name="OnGanttLineChanged"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnGanttLineChanged</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>index</b>, <i>int</i> <b>date1</b>, <i>int</i> <b>date2</b>, <i>string</i> <b>class</b>, <i>bool</i> <b>edit</b>, <i>int</i> <b>odate1</b>, <i>int</i> <b>odate2</b>, <i>string</i> <b>oclass</b>, <i>bool</i> <b>oedit</b>)</s>
+</div>
+Called after change of any Gantt line. Called from <a href="GanttDisplay.htm#SetGanttLine">SetGanttLine</a> method. See parameters in <a href="#OnGanttLineChange">OnGanttLineChange</a>.<br />
+
+<!-- Action MoveGanttLine -->
+<a name="ActionsMoveGanttLine"></a>
+<div class="ACT">
+   <u>new <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>MoveGanttLine</h4>
+   <s>Attached to <b>OnDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+Moves Gantt line under mouse cursor by mouse dragging. Used for <a href="GanttDisplay.htm#CGanttLines">GanttLines</a>, <a href="#CGanttBase">GanttBase</a> and <a href="#CGanttFinish">GanttFinish</a> lines.<br />
+
+<!-- MoveGanttBase -->
+<a name="ActionsMoveGanttBase"></a>
+<div class="DEL">
+   <u>new <b>7.0</b> deleted <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>MoveGanttBase</h4> <s></s>
+</div>
+Replaced by <a href="#ActionsMoveGanttLine">MoveGanttLine</a>.<br />
+
+<!-- MoveGanttFinish -->
+<a name="ActionsMoveGanttFinish"></a>
+<div class="DEL">
+   <u>new <b>7.0</b> deleted <b>10.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>MoveGanttFinish</h4> <s></s>
+</div>
+Replaced by <a href="#ActionsMoveGanttLine">MoveGanttLine</a>.<br />
+
+<!-- Action DeleteGanttBase -->
+<a name="ActionsDeleteGanttBase"></a>
+<div class="ACT">
+   <u>new <b>6.6</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttBase</h4>
+   <s>Attached to <b>OnCtrlClickGantt</b> event</s>
+</div>
+Deletes or undeletes/sets <a href="GanttCompute.htm#CGanttBase">GanttBase</a> when clicked above the line.<br />
+Undelete means setting it to automatically calculated value.<br />
+
+<!-- Action DeleteGanttFinish -->
+<a name="ActionsDeleteGanttFinish"></a>
+<div class="ACT">
+   <u>new <b>6.6</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttFinish</h4>
+   <s>Attached to <b>OnCtrlClickGantt</b> event</s>
+</div>
+Deletes or undeletes/sets <a href="GanttCompute.htm#CGanttFinish">GanttFinish</a> when clicked above the line.<br />
+Undelete means setting it to automatically calculated value.<br />
+
+<!---------------------------------------------------  Task date constraints  ------------------------------------------------->
+<a name="TaskConstraints"></a>
+<h2>Task date constraints</h2>
+
+Top position of the constraint icon is calculated as (<a href="GanttMain.htm#CGanttHeight">GanttHeight</a> - constraintheight) + <a href="GanttMain.htm#CGanttTop">GanttTop</a>, where constraintheight is defined in Grid.css.<br />
+
+<!-- GanttMinStart -->
+<a name="CGanttMinStart"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttMinStart</h4> <s>Gantt source - column name or exact value</s>
+</div>
+<b>Early start.</b> The first possible start date of the task, affects main bar, run bar, flags, points.<br />
+The task must not be started before this date.<br />
+If the task has no incoming dependency and is set <tt><a href="#CGanttStrict">GanttStrict</a>='1'</tt>, it should start on this date.<br />
+Defining both early and late start on the same date will cause <b>mandatory start</b>.<br />
+
+<!-- GanttMaxStart -->
+<a name="CGanttMaxStart"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttMaxStart</h4> <s>Gantt source - column name or exact value</s>
+</div>
+<b>Late start.</b> The last possible start date of the task, affects <b>only main bar</b>.<br />
+The task must not be started after this date.<br />
+
+<!-- GanttMinEnd -->
+<a name="CGanttMinEnd"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttMinEnd</h4> <s>Gantt source - column name or exact value</s>
+</div>
+<b>Early finish.</b> The first possible end date of the task, affects <b>only main bar</b>.<br />
+The task must not be finished before this date.<br />
+Defining both early and late end on the same date will cause <b>mandatory end</b>.<br />
+The end date can be last date or last unit, depending on <a href="#CGanttLastUnit">GanttLastUnit</a> setting <i>(new in 8.1)</i>.<br />
+
+<!-- GanttMaxEnd -->
+<a name="CGanttMaxEnd"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttMaxEnd</h4> <s>Gantt source - column name or exact value</s>
+</div>
+<b>Late finish.</b> The last possible end date of the task, affects main bar, run bar, flags, points.<br />
+The task must not be finished after this date.<br />
+The end date can be last date or last unit, depending on <a href="#CGanttLastUnit">GanttLastUnit</a> setting <i>(new in 8.1)</i>.<br />
+
+<!-- GanttConstraintsTip -->
+<a name="CGanttConstraintsTip"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttConstraintsTip</h4> <s></s>
+</div>
+Tip shown on mouse hover the constraint. It can contain HTML code.<br />
+It can also show values from other cells in row, set by <b>*col*</b> where col is the column name.<br />
+It can show also the special: <b>*Text*</b> - show the original constraints tip.<br />
+To dynamically generate the tip text use <a href="GanttAPI.htm#OnGanttTip">OnGanttTip</a> API event.<br />
+
+<!-- GanttShowConstraints -->
+<a name="CGanttShowConstraints"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttShowConstraints</h4> <s>[1]</s>
+</div>
+If the constraints will be displayed in chart as icons.<br />
+For <b>0</b> the constraints will be hidden and cannot be changed by a user, but can be controlled by API.<br />
+For <b>1</b> the constraints will be shown and interactive, but the chart will not resize to show them.<br />
+For <b>2</b> the constraints will be shown and interactive and the chart will resize to show them if required, like for the other Gantt objects.<br />
+
+<!-- GanttUseConstraints -->
+<a name="CGanttUseConstraints"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttUseConstraints</h4> <s>[2]</s>
+</div>
+If and when the constraints and bounds will be used.<br />
+<b>0</b> - Completely ignored, use to temporary disable the constraints, but let them to be still displayed<br /> 
+<b>1</b> - Used only when moving objects while correcting dependencies<br />
+<b>2</b> - Used also when moving, adding and resizing Gantt tasks listed in <a href="GanttObjects.htm#CGanttTask">GanttTask</a><br />
+<b>3</b> - Used also when moving, adding and resizing any object (main bar, milestone, run, flag, point). The MaxStart and MinEnd are ignored for other objects than main bar.<br />
+
+<!-- GanttConstraintTipFormat -->
+<a name="CGanttConstraintTipFormat"></a>
+<div class="XML">
+   <u>new <b>9.1</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttConstraintTipFormat</h4> <s>[ ]</s>
+</div>
+Date format for tip for constraints.<br />
+If not set, used format for the constraint column.<br />
+Useful especially for constraints created by <tt><a href="#CGanttStrict">GanttStrict</a>='2'</tt>, because they don't have the column.<br />
+
+<!-- GanttConstraintsIcons -->
+<a name="CGanttConstraintsIcons"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string[ ]</i>
+   <h4>GanttConstraintsIcons</h4> <s></s>
+</div>
+A list of four custom icons for the constraints. In order MinStart, MaxStart, MinEnd, MaxEnd.<br />
+Separated by semicolon. The icons are the exact urls of the icon.<br />
+The icon can be empty to show default constraint icon.<br />
+Hover icons can be set <a href="GanttObjects.htm#CGanttHoverIcons">GanttHoverIcons</a>.<br />
+
+<!-- GanttConstraintsTop -->
+<a name="CGanttConstraintsTop"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttConstraintsTop</h4> <s></s>
+</div>
+Vertical position of all constraints in the cell, in pixels.<br />
+If not set, the constraints positions are centered to the first <a href="GanttObjects.htm#CGanttTask">GanttTask</a>.<br />
+
+<!-- GanttConstraintsAll -->
+<a name="CGanttConstraintsAll"></a>
+<div class="DEL">
+   <u>deleted <b>7.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttConstraintsAll</h4> <s>[0]</s>
+</div>
+Replaced by <a href="#CGanttUseConstraints">GanttUseConstraints</a>.<br />
+If set to <b>0</b>, only Gantt tasks listed in <a href="GanttObjects.htm#CGanttTask">GanttTask</a> cannot be moved outside their constraints.<br />
+If set to <b>1</b>, all objects except run (main bar, milestone, flag, point) cannot be moved outside their constraints.<br />
+
+<!-- OnTestConstraints -->
+<a name="OnTestConstraints"></a>
+<div class="API">
+   <u>new <b>7.1</b></u> <b>API event</b> <i>int</i>
+   <h4>OnTestConstraints</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>type</b>, <i>int</i> <b>change</b>, <i>int</i> <b>d1</b>, <i>int</i> <b>d2</b>)</s>
+</div>
+Called to test constraints while moving or resizing some Gantt object except Run. It is <u>not</u> called while correcting dependencies.<br />
+The <b>type</b> is the object type, lowercase: main, flags, points, constraints, base, finish.<br />
+The <b>change</b> is required change (in milliseconds) due actual constraints (GanttBase, GanttFinish, GanttMinStart, GanttMaxStart, GanttMinEnd, GanttMaxEnd).<br />
+The <b>d1</b> and <b>d2</b> are start and end date of the object (in milliseconds), they can be null for some objects.<br />
+Return new change to do due the constraints or the <b>change</b> or 0 to ignore all constraints.<br />
+
+<!-- GetIncorrectConstraints -->
+<a name="GetIncorrectConstraints"></a>
+<div class="API">
+   <u>new <b>6.4</b> chg <b>10.0</b></u> <b>API method</b> <i>object[ ]</i>
+   <h4>GetIncorrectConstraints</h4>
+   <s>(<i>string</i> <b>col</b>, <i>int</i> <b>all</b> = 0)</s>
+</div>
+Returns array of all tasks violate their constraints. <b>col</b> is Gantt column.<br />
+<b>all</b> is <b>0</b> to return only incorrect tasks (<b>req</b> is not zero), <b>1</b> to return strictly incorrect tasks (<b>strict</b> is not zero), <b>2</b> to return all tasks.<br />
+The returned array items are also arrays with these items [row, strict, req, min, max, bar].<br /> 
+<table>
+  <tr><td style="width:70px;"><b>row</b></td><td>is the TRow object</td></tr>
+  <tr><td><b>strict</b></td><td><i>(chg 10.0)</i> is expected shift in ms in actual GanttStrict mode to start/end on the constraint</td></tr>
+  <tr><td><b>req</b></td><td><i>(chg 10.0)</i> is required shift to satisfy the constraints</td></tr>
+  <tr><td><b>min</b></td><td><i>(new 10.0)</i> is negative maximal possible left shift to not violate constraints</td></tr>
+  <tr><td><b>max</b></td><td><i>(new 10.0)</i> is maximal possible right shift to not violate constraints</td></tr>
+  <tr><td><b>bar</b></td><td><i>(new 10.0)</i> is the main bar plan or run box id or '-' for run.</td></tr>          
+</table>
+
+<!-- DeleteConstraints -->
+<a name="DeleteConstraints"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API method</b> <i>void</i>
+   <h4>DeleteConstraints</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Deletes all constraints in given Gantt cell.<br />
+
+<!-- Action MoveGanttConstraint -->
+<a name="ActionsMoveGanttConstraint"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>MoveGanttConstraint</h4>
+   <s>Attached to <b>OnDragGantt</b>, cannot be attached anywhere else</s>
+</div>
+Moves constraint by mouse dragging.<br />
+Fails, if mouse is not above constraint or the constraint cannot be moved.<br />
+
+<!-- Action NewGanttConstraint -->
+<a name="ActionsNewGanttConstraint"></a>
+<div class="ACT">
+   <u>new <b>6.3</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>NewGanttConstraint</h4>
+   <s>Not attached to any event</s>
+</div>
+Adds new constraint on mouse position.<br />
+It adds the first possible constraint to the place. Tests them in order MaxEnd, MinStart, MinEnd, MaxStart.<br />
+
+<!-- Action DeleteGanttConstraint -->
+<a name="ActionsDeleteGanttConstraint"></a>
+<div class="ACT">
+   <u>new <b>6.3</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttConstraint</h4>
+   <s>Attached to OnCtrlClickGantt event</s>
+</div>
+Deletes the constraint under mouse cursor.<br />
+It fails if there is no constraint under mouse cursor.<br />
+
+<!-- Action DeleteGanttConstraints -->
+<a name="ActionsDeleteGanttConstraints"></a>
+<div class="ACT">
+   <u>new <b>6.3</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>DeleteGanttConstraints</h4>
+   <s>Not attached to any event</s>
+</div>
+Deletes all constraint in the actual row.<br />
+It fails if there is no constraint in the row.<br />
+
+<!---------------------------------------------------  Critical path - Slack (Float)  ------------------------------------------------->
+<a name="Critical"></a>
+<h2>Critical path - Slack (Float)</h2>
+
+TreeGrid can fill for every tasks its <b>slack</b> value - how much can be task moved to future (delayed) to not affect project finish date.<br />
+The tasks that cannot be moved at all are <b>critical</b> and lay on <b>critical path</b>.<br />
+The critical tasks are colored in different color and it is also possible to filter by them to show only the critical path.<br />
+The finish date is end date of the most right task or can be defined by <a href="#CGanttFinish">GanttFinish</a>.<br />
+If set <tt><a href="#CGanttDirection">GanttDirection</a>='1'</tt>, the slack is calculated in reversed direction against project start date (<a href="#CGanttBase">GanttBase</a>).<br />
+
+<!-- GanttSlack -->
+<a name="CGanttSlack"></a>
+<div class="XML">
+   <u>new <b>6.6</b> chg <b>10.0</b></u> <b>&lt;C></b> <i>type</i>
+   <h4>GanttSlack</h4> <s>[0]</s>
+</div>
+<i>(Since 10.0)</i> Set it to <b>1</b> to calculate the slack value and critical path for all tasks in chart (tasks of bars defined in <a href="GanttObjects.htm#CGanttTask">GanttTask</a>).<br />
+It can be set to column name to calculate the slack and show it in this column. If there are more bars in the row, the minimal slack value is shown in the column.<br />
+When the row's slack value is less or equal to <a href="#CGanttMinSlack">GanttMinSlack</a>, the not completed main bar is colored in different color as critical task.<br />
+The rows can be also filtered by this value or the value can be used as source for formulas.<br />
+The slack is calculated in <a href="#CGanttDataUnits">GanttDataUnits</a>.<br />
+
+<!-- GanttMinSlack -->
+<a name="CGanttMinSlack"></a>
+<div class="XML">
+   <u>new <b>6.6</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttMinSlack</h4> <s>[0] Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='1'/></tt></s>
+</div>
+When the row's slack value is less or <u>equal</u> to GanttMinSlack, the not completed main bar is colored in different color as critical task.<br />
+
+<!-- GanttErrSlack -->
+<a name="CGanttErrSlack"></a>
+<div class="XML">
+   <u>new <b>6.6</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttErrSlack</h4> <s>[0] Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='1'/></tt></s>
+</div>
+When the row's slack value is less than GanttErrSlack, the not completed main bar is colored in different color as error task.<br />
+
+<!-- GanttSeparateSlack -->
+<a name="CGanttSeparateSlack"></a>
+<div class="XML">
+   <u>new <b>6.6</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttSeparateSlack</h4> <s>[0] Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='1'/></tt></s>
+</div>
+If set to 1, calculates finish date and slacks separately for every independent group of related tasks. In this case the <a href="#CGanttFinish">GanttFinish</a> / <a href="#CGanttBase">GanttBase</a> is ignored.<br />
+
+<!-- RefreshGanttSlack -->
+<a name="RefreshGanttSlack"></a>
+<div class="API">
+   <u>new <b>7.0</b></u> <b>API method</b> <i>void</i>
+   <h4>RefreshGanttSlack</h4>
+   <s>(<i>bool</i> <b>show</b> = 1, <i>int</i> <b>min</b> = null, <i>int</i> <b>err</b> = null)</s>
+</div>
+Recalculates Slack for all cells and recolors critical path.<br />
+<b>min</b> is optionally new value for <a href="#CGanttMinSlack">GanttMinSlack</a>. <b>err</b> is optionally new value for <a href="#CGanttErrSlack">GanttErrSlack</a>.<br />
+
+<!-- GetGanttSlack -->
+<a name="GetGanttSlack"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>int</i>
+   <h4>GetGanttSlack</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>bar</b>)</s>
+</div>
+Returns Slack value for given Gantt cell and bar, as main bar plan or Run box id or '-' for Run. Returned value is in milliseconds.<br />
+<i>This function cannot be used in Formula, because the Slack is calculated after the Formulas are calculated. To set Slack to some cell use OnGanttSlack instead.</i><br />
+
+<!-- OnGanttSlack -->
+<a name="OnGanttSlack"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API event</b> <i>int</i>
+   <h4>OnGanttSlack</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>bar</b>, <i>int</i> <b>value</b>, <i>int</i> <b>old</b>, <i>bool</i> <b>show</b>)</s>
+</div>
+Called after every change of calculated slack value.<br />
+<b>row</b>, <b>col</b> is the Gantt cell, <b>bar</b> main bar plan or Run box id or '-' for Run.<br />
+<b>value</b> is new slack value in milliseconds, <b>old</b> is previous slack value in milliseconds.<br />
+<b>show</b> is <b>1</b> if expected to refresh the slack cell, if used to write to value to some cell.<br />
+Return new value to change the slack or null for default value.<br />
+It is possible to use this event to show the Slack value in some cell. For example fill the main bar plans 0 and 1 to columns named 'SLACK' and 'SLACK1':<br />
+<tt>
+Grids.OnGanttSlack = function(G,row,col,bar,val,old,show){<br />
+if(bar==0) { row.SLACK = val/G.GanttUnitsDuration(); if(show) G.RefreshCell(row,"SLACK"); }<br />
+if(bar==1) { row.SLACK1 = val/G.GanttUnitsDuration(); if(show) G.RefreshCell(row,"SLACK1"); }<br />
+}
+</tt><br />
+
+
+
+
+
+
+
+
+</div>
+</body>	
+</html>

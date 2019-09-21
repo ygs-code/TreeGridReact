@@ -1,0 +1,76 @@
+<html>
+<head>
+<SCRIPT src="../Grid/GridE.js"> </SCRIPT>
+<title>TreeGrid documentation search</title>
+</head>
+<body>
+<style>
+.SearchAttr { height:400px; }
+@media (min-height:500px){ .SearchAttr { height:400px; } }
+@media (min-height:600px){ .SearchAttr { height:500px; } }
+@media (min-height:700px){ .SearchAttr { height:600px; } }
+@media (min-height:800px){ .SearchAttr { height:600px; } }
+@media (min-height:900px){ .SearchAttr { height:650px; } }
+@media (min-height:1000px){ .SearchAttr { height:750px; } }
+@media (min-height:1100px){ .SearchAttr { height:850px; } }
+.TSClassNoFocus { color:#586980; }
+</style>
+<center style='font:normal 30px Arial;margin-top:10px; margin-bottom:30px;'>TreeGrid attribute list and search</center>
+<div class="SearchAttr" style='width:100%;'>
+<bdo Layout_Url='SearchDef.xml' Data_Url="SearchData.xml" Upload_Tag='Info' Upload_Xml='1' Upload_Type='Body' Upload_Attrs='F,C,S,P,T,N,D,R,V'></bdo>
+</div>
+<style>
+   .Place { color:Red; font-weight:bold; }   
+   .Type { font-style:italic; }
+   .Name { font-weight:bold; }
+</style>
+
+<script>
+var W = null; // The window with documentation
+
+// --- Click to cell, opens the link ---
+Grids.OnClick = function(G,row,col){
+if(row.Fixed || row.Def.Group) return;
+var L = row.F+"#";
+if(row.P && row.P.charAt(0)=='<' && row.P.indexOf('bdo')<0) L += row.P.slice(1).replace(/\>.*|\s+/g,"").replace(/ICell/i,"Cell").replace("cell","Cell").replace("DXMLevent","XML").replace("XMLevent","");
+else if(row.P && row.P.charAt(0)=='T') L += row.P;
+L += row.N.replace(/\.\..*$|[\<\>]|\,.*$/g,"");
+L = L.replace(/\s+/g,"");
+L = "../Doc/"+L;
+if(W) W.close();
+W = window.open(L,"Search");
+setTimeout(function(){
+   W.scrollBy(0,-20);
+   },10);
+}
+
+Grids.OnGetColor = function(G,row,col){
+if(col!="N" || row.Fixed || row.Def.Group || !row.P) return null;
+if(row.P=="<Actions>" || row.P.indexOf("XML event")>=0 || row.P.indexOf("formula")>=0) return "#CFC";
+if(row.P.charAt(0)!='<') return "CFF";
+}
+
+Grids.OnShowDefaults = function(G,row,col,M){
+if(row.Kind!="Filter"||col!="V") return;
+var N = {"new":5,"chg":4,"upd":3,"renamed":2,"deleted":1}, I = M.Items[1].Items;
+I.sort(function(A,B){
+   var a = A.Name.split(" "); a.reverse(); if(a[0]<10||a[0]=="6.0.33") a[0] = "0"+a[0]; if(N[a[1]]) a[1] = N[a[1]]; a = a.join(" ");
+   var b = B.Name.split(" "); b.reverse(); if(b[0]<10||b[0]=="6.0.33") b[0] = "0"+b[0]; if(N[b[1]]) b[1] = N[b[1]]; b = b.join(" ");
+   return a<b ? 1 : (a>b ? -1 : 0);
+   });
+for(var i=1;i<I.length;i++){
+   var a = I[i].Name.split(" "); a = a[1] ? parseInt(a[1]) : 0;
+   var b = I[i-1].Name.split(" "); b = b[1] ? parseInt(b[1]) : 0;
+   if(a!=b) I.splice(i++,0,{Name:"-"});
+   }
+if(!I[I.length-1].Name) I[I.length-1].Text = "1.0 - 5.9";
+M.Items.splice(1,0,{Name:"-"});
+}
+
+Grids.OnLoaded = function(G){
+if(window.innerWidth<750) { G.NoVScroll = 1; G.NoHScroll = 1; }
+}
+
+</script>
+</body>
+</html>

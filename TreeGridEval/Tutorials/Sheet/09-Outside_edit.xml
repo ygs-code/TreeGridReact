@@ -1,0 +1,82 @@
+<Grid>
+   <Cfg id="OutsideEdit" SuppressCfg="1" Sorting="0"/> <!-- Suppresses configuration and sorting -->
+   <Cfg SuppressMessage="3"/> <!-- Suppresses all messages, including page messages -->
+   <Cfg AutoIdPrefix=""/> <!-- Prefix for automatically generated row id, here set empty instead of AR -->
+
+   <Cfg StaticCursor="1"/> <!-- Does not hide cursor on click outside grid -->
+
+   <!-- Automatic column and row pages -->   
+   <Cfg Paging="2" AutoPages="1" PageLength="10" MaxPages="3" RemoveUnusedFixed="0" RemoveAutoPages="1"/> <!-- Defines automatic row pages -->
+   <Pager Visible="0"/> <!-- Hides the side pager that is shown for paging by default -->
+   <Cfg ColPaging="2" AutoColPages="1" ColPageLength="10" ColPageMin="0" MaxColPages="3" ColPagingFixed="0" RemoveAutoColPages="1"/> <!-- Defines automatic column pages -->
+
+   <!-- Defines row and column indexes -->
+   <Cfg RowIndex="Index" RowIndexType="6"/> <!-- Creates number RowIndex with all variable rows except deleted -->
+   <Cfg ColIndex="Header" ColIndexType="6" ColIndexChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ"/> <!-- Creates letter ColIndex with all variable columns except deleted  -->
+
+   <!-- Cell popup menu to manipulate cells and their styles -->
+   <Cfg Menu=""/>
+   <Cfg ShowMenuSingle="1"/> <!-- shows menu also with single option instead of doing it immediately -->
+   <Cfg HideMenuUnused="1"/> <!-- Hide unused child items, disable parent items with no child items -->
+   <Actions OnRightClick="ShowPopupMenu OR ShowNoMenu"/> <!-- Shows the popup menu for any right click to the grid -->
+
+   <!-- Other settings often set in the sheets -->
+   <Cfg Undo="79"/> <!-- Permits undoing all actions, including scroll -->
+   <Cfg EnterMode="1"/> <!-- Enter moves cursor down -->
+   <Cfg FocusRect="31"/> <!-- Permits focusing cell range, shows the corner, hides focused cursor for the whole row, shows relative color for focused cell, permits move and copy the focused range by dragging. -->
+   <Cfg SelectingCells="3"/> <!-- Permits selecting cells and row/columns independently -->
+   <Cfg SelectingFocus="1"/> <!-- Automatically selects the focused cells and clears all other selected cells on focus change -->
+   <Cfg AutoFillType="31"/>  <!-- Permits auto filling numbers and strings, also from one cell, shrinking range clears the rest -->
+   <Actions OnDel="ClearSelectedCellsF OR ClearCellF"/> <!-- Clears the selected cells -->
+   <Cfg EditAttrs=",EFormula,Span,RowSpan,Type,Format,EditFormat"/> <!-- What will be affected by mass change like clear or move focus; the first empty item means value -->
+   <Cfg DynamicSpan="2"/> <!-- Permits dynamic spanning and splitting spanned cells -->
+   <Cfg DynamicFormat="2"/> <!-- Permits dynamic format and choosing type according to cell value -->
+   <Cfg AcceptEnters="6"/> <!-- When editing, Enter finishes editing and Ctrl/Shift/Alt puts new line (LF) into text -->
+   <Cfg CopyCols="0" PasteCols="5" PasteFocused="11" ExcludeClear="1"/> <!-- Copy & paste focused cells instead of rows -->
+   
+   <!--- Formula editing -->
+   <Cfg FormulaEditing="1"/> <!-- Permits formula editing; Uploads the formula in the cell value, not in EFormula attribute -->
+   <Cfg FormulaChanges="0"/> <!-- Does not mark values calculated by formula as Changed -->
+   <Cfg FormulaType="0"/> <!-- Does not calculate deleted, filtered and hidden rows and columns -->
+   <Cfg DragEdit="2" /> <!-- Permits dragging during editing to choose cell ranges in formula -->
+   <Cfg FormulaRelative="1"/> <!-- Cell references can be absolute or relative. Cell references in formulas in data xml in/out are in standard notation -->
+   <Cfg FormulaLocal="0"/> <!-- Formula names in xml in/out are not localized English format -->
+   <Cfg FormulaResults="31"/> <!-- Cells with error formulas are marked red and error message is shown; the formula results are checked against cell restrictions; the null and NaN results are not permitted  -->
+   <Cfg FormulaCircular="6"/> <!-- Circular cell references in formulas are restricted with error message -->
+   <Cfg EditErrorsMessageTime="1000"/> <!-- How long the formula and edit error message will be shown -->
+   <Cfg FormulaAddParenthesis="1"/> <!-- Tries to adds ')' to the end of formula when editing resulted to incorrect formula -->
+   <DefCols> <D Name="Auto" FormulaSuggest="6"/> </DefCols>  <!-- For every column generates suggest list of all available formula functions to use in formula editing -->
+   <Actions OnDragHeader="ChooseColsReplaceAll OR ColMoveSelected OR ColMove" OnCtrlDragHeader="ChooseColsInsert OR ColCopySelected OR ColCopy"/> <!-- Dragging header during formula edit will choose the columns to the range -->
+
+   <!-- The fixed rows and column - indexes -->
+   <Panel Visible="0"/> <!-- Hides row panel, its features are not demonstrated here -->
+   <DefCols> 
+      <D Name="Auto" Type="Lines" Width="40" VarHeight="1"/>  <!-- Default type and width of all column -->
+      <D Name="Auto" Edit="{OnChange:CellChanged}"/> <!-- When editing, calls the CellChanged custom function after every change in the input text -->
+   </DefCols>
+   <Header Align="Center" Index=""/> <!-- Centers the column captions -->
+
+   <!-- The top bar with focus and edit cell -->
+   <Solid>
+      <Topbar id="OUT" Cells="FOCUS,EDIT" Space="-1" MaxHeight="26" Height="34" CanResize="2" CanFocus="2" CanPrint="0"
+         OnDblClick="1" OnMouseOverEditable="CursorText,1"
+         FOCUSType="Text" FOCUSOnClick="AcceptEdit,StartEditCellEmpty,1"
+         EDITType="Lines" EDITRelWidth="1" EDITLeft="24" EDITOnClick="AcceptEdit,StartEditCell,1" EDITEdit="{OnChange:EditChanged,AutoSelect:0}" EDITResizing="1" EDITFormulaSuggest="6"
+         />
+   </Solid>
+
+   <!-- Sample data -->
+   <Cfg AutoCols="20"/>
+   <Cfg FocusedRect="3,C,7,I"/>
+   <Body>
+      <B>
+         <I/>
+         <I/>
+         <I C="C3" D="D3" E="E3" F="F3" G="G3" H="H3" I="START ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890 abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890 abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890 abcdefghijklmnopqrstuvwxyz END" IWrap="0"/>
+         <I C="C4" D="D4" E="E4" F="F4" G="G4" H="H4" DSpan="3" DRowSpan="2"/>
+         <I C="C5" D="D5" E="E5" F="F5" G="G5" H="H5"/>
+         <I C="C6" D="D6" E="=D5+' '+E5+' '+F5+' '+G5+' '+H5" F="F6" G="G6" GCanEdit="0" H="H6" HCanEdit="2"/>
+         <I C="C7 XXXX&#x0a;AAAA BBBB" Wrap="1" D="D7" E="E7" F="F7" G="G7" H="H7"/>
+      </B>
+   </Body>
+   </Grid>

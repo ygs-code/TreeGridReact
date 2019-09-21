@@ -1,0 +1,100 @@
+<Grid>
+   <Cfg id="RunBarSync" IdChars="0123456789" NumberId="1" Undo="1" FastGantt="0"/>
+   <Cfg DefaultDate="1/1/2010"/>
+   <Actions OnDblClickGantt="SetGanttRunPercent OR NewGanttRunMilestone"/>
+   <LeftCols>
+      <C Name="id" Type="Int" CanEdit="0" CanSort="0"/>
+      <C Name="START" Type="Date" Format="dddddd" Width="60"/>
+      <C Name="END" Type="Date" Format="dddddd" Width="62"/>
+      <C Name="EMPTYLEFT" ConstWidth="1" RelWidthType="1"/>
+   </LeftCols>
+   <Cols>
+      <C Name="DUR" Type="Float" Width="40" CanEmpty="1"/>
+      <C Name="COMP" Type="Float" Width="35" CanEmpty="1"/>
+      <C Name="RUN" Width="40"/>
+      <C Name="TIP" Width="200"/>
+      <C Name="EMPTYMID" ConstWidth="1" RelWidthType="1"/>
+   </Cols>
+   <RightCols>
+      <C Name="GANTT" Type="Gantt"
+         GanttDataUnits="d" GanttLastUnit="d"
+         GanttRun="RUN"
+         GanttRunStart="START" GanttRunEnd="END" GanttRunDuration="DUR" GanttRunComplete="COMP" GanttRunText="TIP"
+         GanttLeft="1" GanttRight="1" GanttRoundComplete="1"
+         GanttRunTip="*id*. *RunText*&lt;br>*Text*"
+         GanttTask="Run"
+         GanttRunSave="4"
+         GanttRunAdjustRight="slip" GanttRunAdjustCtrl="error" GanttRunAdjustCtrlRight="shrink" GanttRunError="sort,merge"
+         GanttRunMoveShift="move" GanttRunMoveShiftRight="move,entire,all"
+         />
+      <C Name="GANTT" GanttHeaderId1="x" GanttHeaderId2="x" GanttHeaderId3="x" GanttHeaderId4="x" GanttHeaderId5="x"/> <!-- Hides the Gantt header -->
+   </RightCols>
+   <Header Height="18" PREV="&lt;" NEXT=">" GANTT="" GANTTTip="It is possible hide the Gantt header in some of the synchronized grids"/>
+   <Toolbar Visible="0"/>
+   <Body>
+      <B>
+         <I id="0"/>
+         <I id="1"
+            START="1/15/2010" 
+            RUN="8" 
+            TIP="Continuous task set by run"
+            />
+         <I id="2"
+            START="1/18/2010"
+            RUN="4;2,;4;1,;5"
+            TIP="Discrete task"
+            />
+         <I id="3"
+            START="1/20/2010"
+            RUN="2;3,;6;1,;4"
+            COMP="50" TIP="Incomplete discrete task"
+            />
+         <I id="4"
+            START="1/28/2010"
+            RUN="0,milestone"
+            TIP="Incomplete milestone"
+            />
+         <I id="5"
+            START="1/28/2010"
+            RUN="0,box"
+            TIP="Zero length task"
+            />
+         <I id="6"
+            START="1/17/2010"
+            RUN="2,,box 1;1,;0,milestone,,,Tip for the milestone;4,;6,,box 2 with tip,,This is the tip for the box 2;1,;4,,box 3;1,;0,milestone" 
+            COMP="76" TIP="Task with box captions and tooltips"
+            />
+         <I id="7"
+            START="1/17/2010"
+            RUN="2,,box 1;1,;0,milestone,,,Tip for the milestone;4,;6,,box 2 with tip,,This is the tip for the box 2;1,;4,,box 3;1,;0,milestone"
+            COMP="76" TIP="Disabled task" GANTTGanttRunDisabled="1"
+            />
+         <I id="8"
+            START="1/17/2010"
+            RUN="2,,box 1;1,;0,milestone,,,Tip for the milestone;4,;6,,box 2 with tip,,This is the tip for the box 2;1,;4,,box 3;1,;0,milestone"
+            COMP="76" TIP="Locked task" GANTTGanttRunDisabled="2"
+            />
+         <I id="9"
+            START="1/17/2010"
+            RUN="2,,box 1;1,;0,milestone,,,Tip for the milestone;4,;6,,box 2 with tip,,This is the tip for the box 2;1,;4,,box 3;1,;0,milestone"
+            COMP="76" TIP="Not editable task" GANTTGanttEdit="" STARTCanEdit="0" ENDCanEdit="0" DURCanEdit="0" COMPCanEdit="0" RUNCanEdit="0" TIPCanEdit="0"
+            />
+         <I id="10"
+            START="1/17/2010"
+            RUN="2,end,start;;2,,box 1;1,;0,milestone,,,Tip for the milestone;2,;6,,box 2 with tip,,This is the tip for the box 2;1,;4,,box 3;1,;0,milestone;;2,end,end"
+            COMP="24" TIP="Task with start and end"
+            />
+         <I id="11"
+            START="1/17/2010"
+            RUN="2,,box 1;3,;0,milestone;3,;3,,box 2;3,;4,,box 3" GANTTGanttRunHtmlLeft="*Start*" GANTTGanttRunHtmlLeftEdge="1" GANTTGanttRunHtmlDateFormat="M/d"
+            COMP="76" TIP="Task with side text"
+            />
+         <I id="12"
+            START="1/18/2010"
+            RUN="2,,red,Red;1,;4,,green,Green;2,;0,milestone,Red.svg,Yellow.svg;1,;2,,blue,Blue;1,;2,,,Yellow;1,;0,milestone,Green.svg,Yellow.svg;1,;0,milestone,,Yellow"
+            TIP="Task with box custom classes"
+            />
+      </B>
+   </Body>
+   <Header id="id" COMP="%" SortIcons="2"/>
+</Grid>

@@ -1,0 +1,87 @@
+﻿<Grid>
+   <!-- Translations to other languages -->
+
+   <!-- German -->
+
+   <TextDE>
+      <Set Row='Toolbar,Toolbar2' WinLabelRight='Fenster scrollen' WinTip='Scrollbalken des Grids deaktivieren und die der Webseite verwenden'/>
+      <ReplaceText Col='Menu'
+         Display='Anzeigen' Manipulate='Bearbeiten'
+         Edit='Eingabebereitschaft' Clear='Löschen' Format='Format' Span='Verbinden' Border='Rahmen' Style='Stil' Font='Schrift' Color='Farbe' Shadow='Schatten' Align='Ausrichtung' Direction='Drehung/Umbruch'
+         />
+   </TextDE>
+
+
+   <!-- Brazilian Portuguese -->
+
+   <TextBR>
+      <Set Row='Toolbar,Toolbar2' WinLabelRight='Janela de rolagem' WinTip='Desativar barras de rolagem da grade e usar barras de rolagem da página'/>
+      <ReplaceText Col='Menu'
+         Display='Tela' Manipulate='Manipular'
+         Edit='Editar' Clear='Limpar' Format='Formatar' Span='Span' Border='Borda' Style='Estilo' Font='Fonte' Color='Cor' Shadow='Sombra' Align='Alinhamento' Direction='Direção'
+         />
+   </TextBR>
+
+
+   <!-- Czech -->
+
+   <TextCS>
+      <Set Row='Toolbar,Toolbar2' WinLabelRight='Posun okna' WinTip='Neposunovat tabulku, ale celé okno'/>
+      <ReplaceText Col='Menu'
+         Display='Zobrazit' Manipulate='Uspořádat'
+         Edit='Úpravy' Clear='Vymazat' Format='Formát' Span='Sloučit' Border='Okraje' Style='Styl' Font='Font' Color='Barva' Shadow='Stínování' Align='Zarovnání' Direction='Směr'
+         />
+   </TextCS>
+
+
+   <!-- Russian -->
+
+   <TextRU>
+      <Set Row='Toolbar,Toolbar2' WinLabelRight='Прокрутка окна' WinTip='Отключить полосы прокрутки сетки и использовать полосы прокрутки страницы'/>
+      <ReplaceText Col='Menu'
+         Display='Дисплей' Manipulate='Управлять'
+         Edit='Редактировать' Clear='Очистить' Format='Формат' Span='Объединить' Border='Граница' Style='Стиль' Font='Шрифт' Color='Цвэт' Shadow='Тень' Align='Выровнять' Direction='Направление'
+         />
+   </TextRU>
+
+   <!-- Persian -->
+
+   <TextFA>
+      <Set Row='Toolbar,Toolbar2' WinLabelRight='اسكرول' WinTip='غير فعال سازي اسكرول و فعال سازي اسكرول صفحه&lt;br>در این حالت غیر فعال میشود چون راست به چپ نیازمند راست به چپ شدن کل صفحه میباشد'/>
+      <ReplaceText Col='Menu'
+         Display='نمايش' Manipulate='دستكاري'
+         Edit='ويرايش' Clear='پاك كردن' Format='فرمت' Span='اتصال' Border='حاشيه' Style='استايل' Font='فونت' Color='رنگ' Shadow='سايه' Align='تراز' Direction='جهت'
+         />
+   </TextFA>
+   <Media>
+      <M Language='FA'>
+         <Rows>
+            <I id="Toolbar" WinCanEdit="0"/>
+         </Rows>
+      </M>
+   </Media>
+
+
+   <!-- Japanese -->
+
+   <TextJP>
+      <Set Row='Toolbar,Toolbar2' WinLabelRight='ウィンドウ スクロール' WinTip='グリッドのスクロール バーを無効にしてページのスクロール バーを使用します。'/>
+      <ReplaceText Col='Menu'
+         Display='表示' Manipulate='操作'
+         Edit='編集' Clear='クリア' Format='書式' Span='スパン' Border='罫線' Style='スタイル' Font='フォント' Color='色' Shadow='影' Align='配置' Direction='方向'
+         />
+   </TextJP>
+
+
+   <!-- Framework for translations, English to English -->
+   <!-- To use it, rename the XX to your language code and add the language code also to the ...Def.xml to Languages Code and translate the texts !...! -->
+   <!-- Optionally extend Media tag (with Language set to your language code) to change sizes of cells and columns if translated text have different widths -->
+
+   <TextXX>
+      <Set Row='Toolbar,Toolbar2' WinLabelRight='!Window scroll!' WinTip='!Disable grid scrollbars and use page scrollbars!'/>
+      <ReplaceText Col='Menu'
+         Display='!Display!' Manipulate='!Manipulate!'
+         Edit='!Edit!' Clear='!Clear!' Format='!Format!' Span='!Span!' Border='!Border!' Style='!Style!' Font='!Font!' Color='!Color!' Shadow='!Shadow!' Align='!Align!' Direction='!Direction!'
+         />
+   </TextXX>
+</Grid>

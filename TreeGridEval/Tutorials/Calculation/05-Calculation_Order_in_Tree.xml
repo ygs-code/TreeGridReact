@@ -1,0 +1,50 @@
+<Grid>
+   <Cfg id='CalcOrderTree' MainCol='Node' Sorting='0' Dragging='0' Adding='0' NoVScroll="1" NoHScroll="1"/>
+   <Cols>
+      <C Name='Node' Type='Text'/>
+      <C Name='Active' Type='Bool'/>
+      <C Name='Cost' Type='Float'/>
+      <C Name='Total' Type='Float'/>
+      <C Name='Quantity' Type='Int'/>
+      <C Name='Tmp' Type='Float'/>
+      <C Name='PerParent' Type='Int' Format='0%'/>
+      <C Name='PerTotal' Type='Int' Format='0%'/>
+   </Cols>
+   <Header 
+      Active=' Active' Cost=' Local&#x0a;&#160;cost' Total=' Total&#x0a;&#160;cost'
+      Quantity=' Total&#x0a;&#160;quantity' Tmp=' Tmp cost&#x0a;&#160;(hidden)'
+      PerParent=' Percent of&#x0a;&#160;parent cost' PerTotal=' Percent of&#x0a;&#160;total cost' />
+   <Def>
+      <D Name='R' Calculated='1' Recalc='256' CanExpand='0'
+         TotalFormula='Cost+sum("Tmp")' 
+         TmpFormula='Active*Total*Quantity' 
+         CalcOrder='*,Total,Tmp' 
+         CalcOrder1='PerParent,PerTotal,*1'
+         PerParentFormula='Tmp/Parent.Total'
+         PerTotalFormula='PerParent*Parent.PerTotal'
+         />
+      <D Name='FirstLevel'
+         PerParentFormula='Root.Total?Tmp/Root.Total:0' PerTotalFormula='PerParent'
+         />
+   </Def>
+   <Body>
+      <B>
+         <I Def='FirstLevel' Node='1' Active='1' Cost='125' Quantity='4'>
+	         <I Node='1-1' Active='1' Cost='25' Quantity='3'/>
+	         <I Node='1-2' Active='1' Cost='4' Quantity='4'>
+	            <I Node='1-2-1' Active='0' Cost='20' Quantity='8'/>
+	            <I Node='1-2-2' Active='1' Cost='5' Quantity='2'/>
+	         </I>
+	         <I Node='1-3' Active='0' Cost='122' Quantity='12'/>
+         </I>
+         <I Def='FirstLevel' Node='2' Active='1' Cost='21' Quantity='3'>
+	         <I Node='2-1' Active='1' Cost='28' Quantity='4'/>
+         </I>
+      </B>
+   </Body>
+   <Foot>
+      <I id='Root' CalcOrder='*,Total,Tmp,*1' 
+         Node='Root' CanEdit='0' ActiveType='Text' CostType='Text' QuantityType='Text' TmpFormula='""' TmpType='Text' 
+         TotalFormula='sum("Tmp")' PerParentVisible='0' PerTotal='1'/>
+   </Foot>
+</Grid>

@@ -1,0 +1,117 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>3. Schedule tasks</h1>
+   <h2>Automatic and manual correcting of dependencies by moving related tasks</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='03-Schedule_tasks.xml'>03-Schedule_tasks.xml</a> &nbsp; <i>Main bar and Run bar as task</i></div>
+      <div class="Main" style='width:100%; height:798px;'>
+         <bdo Debug='check' Data_Url='03-Schedule_tasks.xml'></bdo>
+      </div>
+      <br /> <br />
+      <div class="Xml">Source: <a href='03-Schedule_boxes.xml'>03-Schedule_boxes.xml</a> &nbsp; <i>Run box as task</i> &nbsp; <span style="font-size:11px;">(move box between rows by right mouse button)</span></div>
+      <div class="Main" style='width:100%; height:622px;'>
+         <bdo Debug='check' Data_Url='03-Schedule_boxes.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li>
+         See documentation for <b><a href="../../Doc/GanttCompute.htm#Correcting">Correcting dependencies</a></b> and <b><a href="../../Doc/GanttCompute.htm#Algorithm">Algorithm for correcting dependencies</a></b>.
+      </li>
+      <li>
+         The correct dependencies are shown blue, the incorrect dependencies in red. The colors can be changed, see tutorial <a href="02-Dependencies.html">02-Dependencies</a>
+      </li>
+      <li>
+         Attribute <h3>GanttIncorrectDependencies</h3> controls which dependencies will be marked as incorrect.<br />
+         For 1 will be marked as incorrect only dependencies that start (+lag) before they end.<br />
+         For 2 will be marked as incorrect all dependencies that don't start (+lag) and end on the same date.<br />
+         For individual dependency it can be changed by <b>float</b> value in the dependency definition (after the !).<br />
+     </li>
+     <li>
+      The dependencies are corrected by moving the related tasks. The tasks are never resized in this action. 
+      The tasks are never moved to violate their constraints.<br />
+      When moving task that consists from more parts, all the parts are moved together, preserving space (in worktime) between parts.<br />
+      Only Gantt objects defined in <b>GanttTask</b> can have dependencies. 
+     </li>
+     <li>
+      The dependencies can be corrected <b>manually</b> by clicking to the first button (Correct) on toolbar. <br />
+      Or by choosing item "Correct all dependencies" or "Correct related dependencies" in the Gantt popup menu.<br />
+      Or by calling the action <b>CorrectAllDependencies</b> or <b>CorrectDependencies</b> by API or assigned to some event.
+     </li>
+     <li>
+      The dependencies can be corrected <b>automatically</b> (or by user confirmation) after any change in the chart (task move, resize, delete, create, constraint change or dependency change), according to <h3>GanttCorrectDependencies</h3> attribute value.<br />
+      The one changed task can be also automatically corrected or it can be fixed and all other tasks are moved to correct the dependencies, it is controlled by <b>GanttCorrectDependenciesFixed</b> attribute. It affects task or dependency change, but not constraints change.
+     </li>
+     <li>
+      There are <h4>three methods of correcting dependencies</h4>, chosen by <h3>GanttStrict</h3> attribute.<br />
+      By default (for <b>1</b>) are all tasks moved as close to project start / end date as possible.<br />
+      For <b>0</b> are the tasks moved as little as possible to only correct the dependencies.<br />
+      For <b>2</b> are all descendant tasks moved as close as possible to their ancestors.
+      See documentation for <a href="../../Doc/GanttCompute.htm#Algorithm">Algorithm for correcting dependencies</a>.
+     </li>
+     <li>
+      A user can move the task manually and preserve this position when moving the task for correcting dependencies. The task is never moved before this manual date.<br /> 
+      It is controlled by <b>GanttManual<i>X</i></b> and <b>GanttManualChange</b> for main bar and <b>GanttRunManual</b> and <b>GanttRunManualChange</b> for run bar.
+     </li>
+     <li>
+      It is possible to schedule the tasks from project start or project finish, it is set by <h3>GanttDirection</h3>.<br />
+     </li>
+     <li>
+      <h4>Circular dependencies</h4> checking is controlled by <h3>GanttCheckDependencies</h3>, it is possible to restrict, permit or ask the creating.<br />
+      The tasks containing circular dependencies are usually impossible to correct.<br />
+     </li>
+     <li>
+      By attribute <h3>GanttFixComplete</h3> is possible to fix all already started tasks (with Complete>0) and move only not yet started tasks (Complete=0).<br />
+      In this case dependency between two already started tasks is always marked correct.
+     </li>
+     <li>
+     <b>Disabled</b> and <b>locked</b> task is never moved when scheduling. <br />
+     <b>Disabled</b> task has also disabled dependencies, they are not used when correcting dependencies.<br />
+     </li>
+     <li>
+      If scheduling <b>Run box</b>, it is possible to move the box freely or preserve the box order or to not overlay the boxes by <b>GanttRunCorrectBox</b>.<br />
+     </li>
+     <li>
+      In large charts when some dependencies still remain incorrect after correcting dependencies increase value of <b>GanttMaxCorrectingLoops</b>.<br />
+      Increasing it can slow down correcting especially if the dependencies cannot be corrected due constraints or circular dependencies.<br />
+     </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialGantt\s*=\s*(\d+)/), TGIndex = 8;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridDependencies3", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGantt="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

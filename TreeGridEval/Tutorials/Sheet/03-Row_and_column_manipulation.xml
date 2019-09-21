@@ -1,0 +1,81 @@
+<Grid>
+   <Cfg id="Manipulation" SuppressCfg="1" Sorting="0"/> <!-- Suppresses configuration and sorting -->
+   <Cfg SuppressMessage="3"/> <!-- Suppresses all messages, including page messages -->
+   <Cfg AutoIdPrefix="R"/> <!-- Prefix for automatically generated row id, here set R instead of AR -->
+
+   <!-- Automatic column and row pages -->   
+   <Cfg Paging="2" AutoPages="1" PageLength="10" MaxPages="3" RemoveUnusedFixed="0" RemoveAutoPages="1"/> <!-- Defines automatic row pages -->
+   <Pager Visible="0"/> <!-- Hides the side pager that is shown for paging by default -->
+   <Cfg ColPaging="2" AutoColPages="1" ColPageLength="10" ColPageMin="0" MaxColPages="3" ColPagingFixed="0" RemoveAutoColPages="1"/> <!-- Defines automatic column pages -->
+
+   <!-- Defines row and column indexes -->
+   <Cfg RowIndex="Index" RowIndexType="6"/> <!-- Creates number RowIndex with all variable rows except deleted -->
+   <Cfg ColIndex="Header" ColIndexType="6" ColIndexChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ"/> <!-- Creates letter ColIndex with all variable columns except deleted  -->
+
+   <!-- Permits manipulation -->
+   <Cfg ColAdding="1"/> <!-- Permits adding new columns. Adding and copying rows and copying columns is permitted by default -->
+   <Cfg ColDeleting="1"/> <!-- Permits deleting columns. Deleting rows is permitted by default -->
+   <Cfg SelectingCols="1"/> <!-- Permits selecting the whole columns. Selecting rows is permitted by default -->
+   <Cfg SelectAllType="31"/> <!-- Makes the SelectAll button on panels a switch; it is changed also when the row/column is selected/unselected; the added rows/columns are automatically selected if it is on -->
+
+   <!-- Cell popup menu to manipulate rows and columns -->
+   <Cfg Menu="{Head:'Actions',Items:[
+         {Name:'Rows',Caption:1},
+         {Name:'Select',Menu:1,Items:'|SelectRow|DeselectRow|SelectFocusedRows@2|DeselectFocusedRows@2|-|SelectAll|DeselectAll|InvertAll'},
+         {Name:'Show',Menu:1,Items:'|ShowRowAbove|ShowRowBelow|ShowRows|ShowAllRows|-|ShowHeader|ShowPanelRow|ShowNames|ShowToolbar'},
+         {Name:'Hide',Menu:1,Items:'|HideRow|HideRows@2|HideSelectedRows@2|-|HideHeader|HidePanelRow|HideNames|HideToolbar'},
+         {Name:'Add',Menu:1,Items:'|AddRow|AddRows@2|AddSelected@2'},
+         {Name:'Copy',Menu:1,Items:'|CopyRow|CopyRows|CopySelected'},
+         {Name:'Delete',Menu:1,Items:'|DeleteRow|UndeleteRow|DeleteRows|UndeleteRows|DeleteSelected|UndeleteSelected|-|RemoveRow|RemoveRows|RemoveSelected'},
+         {Name:'-'},
+         {Name:'Columns',Caption:1},
+         {Name:'Select',Menu:1,Items:'|SelectCol|DeselectCol|SelectFocusedCols@2|DeselectFocusedCols@2|-|SelectAllCols|DeselectAllCols'},
+         {Name:'Show',Menu:1,Items:'|ShowColLeft|ShowColRight|ShowCols|ShowAllCols|-|ShowIndex|ShowPanel|ShowIds'},
+         {Name:'Hide',Menu:1,Items:'|HideCol|HideCols@2|HideSelectedCols@2|-|HideIndex|HidePanel|HideIds'},
+         {Name:'Add',Menu:1,Items:'|AddCol|AddCols@2|AddSelectedCols@2'},
+         {Name:'Copy',Menu:1,Items:'|CopyCol|CopyCols|CopySelectedCols'},
+         {Name:'Delete',Menu:1,Items:'|DeleteCol|UndeleteCol|DeleteCols|UndeleteCols|DeleteSelectedCols|UndeleteSelectedCols|-|RemoveCol|RemoveCols|RemoveSelectedCols'}
+      ]}"/>
+   <Lang>
+      <MenuCell 
+         ShowHeader="Show header" HideHeader="Hide header"
+         ShowPanelRow="Show panel" HidePanelRow="Hide panel"
+         ShowNames="Show names" HideNames="Hide names"
+         ShowToolbar="Show toolbar" HideToolbar="Hide toolbar"
+         ShowIndex="Show index" HideIndex="Hide index"
+         ShowPanel="Show panel" HidePanel="Hide panel"
+         ShowIds="Show ids" HideIds="Hide ids"
+         />
+   </Lang>
+   <Cfg ShowMenuSingle="1"/> <!-- shows menu also with single option instead of doing it immediately -->
+   <Cfg HideMenuUnused="1"/> <!-- Hide unused child items, disable parent items with no child items -->
+   <Actions OnRightClick="ShowPopupMenu OR ShowNoMenu"/> <!-- Shows the popup menu for any right click to the grid -->
+
+   <!-- Other settings often set in the sheets -->
+   <Cfg Undo="79"/> <!-- Permits undoing all actions, including scroll -->
+   <Cfg EnterMode="1"/> <!-- Enter moves cursor down -->
+   <Cfg FocusRect="5"/> <!-- Permits focusing cell range and hides focused cursor for the whole row. Does not show the corner and does not move and copy the focused range by dragging. -->
+   <Cfg CopyCols="0" PasteCols="5" PasteFocused="11" ExcludeClear="1"/> <!-- Copy & paste focused cells instead of rows -->
+
+   <!-- The fixed rows and column - panels, indexes and ids -->
+   <Head>
+      <Header id="Header" Index="Index" Align="Center" idVisible="0" CanHide="1"/> <!-- Centers all cells in header -->
+      <Panel id="Panel" Panel="Panel" PanelType="Text" idVisible="0"/> <!-- Adds panel for columns -->
+      <Panel id="Panel" Index="ColSelectAll,ColDeleteAll,ColCopyAll"/> <!-- Defines group column actions for the left index panel -->
+      <Panel id="Panel" OnClickPanelColDelete="ShowMenu OR ShowNoMenu" PanelColDeleteMenu="|ShowColLeft|ShowColRight|HideCol|-|DeleteCol|UndeleteCol|-|RemoveCol"/> <!-- Defines menu for the column delete button -->
+      <Panel id="Panel" OnClickPanelColDeleteAll="ShowMenu OR ShowNoMenu" PanelColDeleteAllMenu="|ShowColsF|ShowAllCols|HideColsF|HideSelectedColsF|-|DeleteColsF|UndeleteColsF|DeleteSelectedColsF|UndeleteSelectedColsF|-|RemoveColsF|RemoveSelectedColsF"/> <!-- Defines menu for the column delete all button -->
+   </Head>
+   <Foot>
+      <I id="ID" Index=" " PanelType="Text" Panel="Name" ShowColNames="1" CanFocus="0"/> <!-- Informational bottom row with column names -->
+   </Foot>
+   <LeftCols>
+      <C Name="Index" Def="Index" Width="60" Resizing="1"/> <!-- Defines with of the Index column and lets resizing rows by it -->
+      <Panel Name="Panel" Copy="1"/> <!-- Places the panel right side to Index and shows add/copy button on it -->
+      <Panel Name="Panel" OnClickPanelDelete="ShowMenu OR ShowNoMenu" PanelDeleteMenu="|ShowRowAbove|ShowRowBelow|HideRow|-|DeleteRow|UndeleteRow|-|RemoveRow"/> <!-- Defines menu for the row delete button -->
+      <Panel Name="Panel" OnClickPanelDeleteAll="ShowMenu OR ShowNoMenu" PanelDeleteAllMenu="|ShowRowsF|ShowAllRows|HideRowsF|HideSelectedRowsF|-|DeleteRowsF|UndeleteRowsF|DeleteSelectedF|UndeleteSelectedF|-|RemoveRowsF|RemoveSelectedF"/> <!-- Defines menu for the row delete all button -->
+   </LeftCols>
+   <RightCols>
+      <C Name="id" Width="40" CanFocus="0" CanSelect="0" CanDelete="0" MenuName="ids"/> <!-- Informational right column with row ids -->
+   </RightCols>
+   <Toolbar CanHide="1"/> <!-- Permits showing and hiding bottom toolbar from popup menu -->
+</Grid>

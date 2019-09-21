@@ -1,0 +1,215 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Row height and resizing</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Row height</h1>
+<p>TreeGrid documentation</p>
+
+Every row is as high as its highest cell.<br /> 
+Any row can have set minimal height by <a href="#IHeight">Height</a> (or global <a href="#CfgMinRowHeight">MinRowHeight</a>) and maximal height by <a href="#IMaxHeight">MaxHeight</a>. Fixed and Space rows can have computed relative height to completely fill the main tag by ratio, set by <a href="#IRelHeight">RelHeight</a>.<br /><br />
+
+Every standard (non Space) row has up to three independent sections (left, mid, right) and these sections must have the same height to not break grid layout. If cells in the row have different height, the height of the row and its sections must be updated by script (row by row). It can slow down grid, if there are many rows, so if you know the height of the highest cell, specify row <a href="#IHeight">Height</a> or global <a href="#CfgMinRowHeight">MinRowHeight</a> attributes.<br />
+
+<!-- MinRowHeight -->
+<a name="CfgMinRowHeight"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MinRowHeight</h4> <s></s>
+</div>
+Base minimal row height in pixels. It overrides the base row height set in CSS style by G_RowHeight class and is used if the row has not its <a href="#IHeight">Height</a> attribute set.<br />
+It specifies minimal height of standard (non space) row. But the row is always at least as high as its content - cannot overflow its content.<br />
+Set the RowHeight if most or all your rows' contents are higher than usual, to speed up row measurement. Or set it if you want to have rows higher than their content.<br />
+This height is used also in <b>server paging</b> when computing height of not yet loaded page or child page, the resulted height is page.Count * grid.MinRowHeight.<br />
+
+<!-- MinSpaceRowHeight -->
+<a name="CfgMinSpaceRowHeight"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MinSpaceRowHeight</h4> <s></s>
+</div>
+Base minimal space row height in pixels. It overrides the base space row height set in CSS style by G_SpaceRowHeight class and is used if the row has not its <a href="#IHeight">Height</a> attribute set.<br />
+The minimal height of row is at least as high as its content. This height is without space row margin, border and padding, just height of the cell.<br />
+Set it if you want have space rows higher than their content. Be careful, in some styles setting the space row height can break down the style.<br />
+
+<!-- Height -->
+<a name="IHeight"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b style="margin-left:-20px;margin-right:20px;">&lt;I>&lt;Space>&lt;B></b> <i>int</i>
+   <h4>Height</h4> <s></s>
+</div>
+<u><b>Minimal</b></u> row height in pixels. Used only if its content is smaller. It is height of the row, including cell border and padding (see difference to <a href="#IMaxHeight">MaxHeight</a>).<br />
+Set the row Height if you know the maximal height of the row content to speed up row measurement.<br />
+Or set it if you want to have the row higher than its content. The row is always as high as its highest cell or minimally as Height.<br />
+This height is used also in <b>client paging</b> when computing height of not yet rendered page or child page.<br />
+<i>Since 11.0</i> it can be changed by a user when set dragging edge of cell with <tt><a href="#CResizing">Resizing</a> = 1</tt>.
+
+<!-- MaxHeight -->
+<a name="IMaxHeight"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;I>&lt;Space></b> <i>int</i>
+   <h4>MaxHeight</h4> <s></s>
+</div>
+Maximal height of row cells in pixels. By default in variable rows it affects and overflows only <u>multiline</u> Type cells: <b>Lines</b>, <b>Html</b>, <b>Radio</b>, <b>Img</b>, <b>List</b>, see <a href="#IMaxHeightAll">MaxHeightAll</a>.<br />
+It is the height of the cell content, without cell border and padding (see difference to minimal <a href="#IHeight">Height</a>).<br />
+<i>Since 11.0</i> it affects also resizing row by a user by <tt><a href="#CResizing">Resizing</a> = 1</tt> cell.<br />
+Setting to 0 disables the attribute usage.<br /> 
+<i>It does <u>not</u> affect <a href="#IRelHeight">RelHeight</a> row.</i><br />
+
+<!-- MaxEditHeight -->
+<a name="CMaxEditHeight"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>int</i>
+   <h4>MaxEditHeight</h4> <s></s>
+</div>
+Maximal height in pixels of multiline cell while editing.<br />
+If not set, the <a href="#IMaxHeight">MaxHeight</a> is used.<br />
+
+<!-- MaxHeightAll -->
+<a name="IMaxHeightAll"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;I>&lt;Space></b> <i>bool</i>
+   <h4>MaxHeightAll</h4> <s>[0/1]</s>
+</div>
+If the <a href="#IMaxHeight">MaxHeight</a> attribute is applied for all cells or for only multiline.<br />
+By default it is 0 for variable rows and 1 for fixed and space rows.<br /> 
+Setting to 1 for all variable rows can slightly slow down the grid rendering, because it adds one new &lt;DIV> tag to every cell.<br />
+If set to 0, the <a href="#IMaxHeight">MaxHeight</a> is applied only to <u>multiline</u> Type cells: <b>Lines</b>, <b>Html</b>, <b>Radio</b>, <b>Img</b>, <b>List</b>.<br />
+
+<!-- RelHeight -->
+<a name="IRelHeight"></a>
+<div class="XML">
+   <u></u> <b>&lt;I>&lt;Space></b> <i>int</i>
+   <h4>RelHeight</h4> <s></s>
+</div>
+If set, the row height is automatically computed to fill all the remaining space in <b>main tag</b>.<br /> 
+The height is automatically recalculated whenever the height of the main tag or its content changes.<br />
+If there are more RelHeight rows in grid, their height is computed as ratio of their RelHeight values.<br />
+The RelHeight rows together fill the remaining vertical space in main tag, so the grid has always constant height of the main tag.<br />
+<i>Can be set only for fixed or Space rows. Ignored when set &lt;Cfg <a href="GridSize.htm#CfgNoVScroll">NoVScroll</a> or <a href="GridSize.htm#CfgMaxVScroll">MaxVScroll</a> or <a href="GridSize.htm#CfgNoScroll">NoScroll</a> /> attributes.</i><br />
+You can set row <a href="#IMinHeight">MinHeight</a> attribute to specify minimal height of the row. For standard (not Space) rows the MinHeight cannot be set to 0.<br />
+<i>The result height of the RelHeight row can exceed MaxHeight bound!</i><br />
+
+<!-- MinHeight -->
+<a name="IMinHeight"></a>
+<div class="XML">
+   <u></u> <b>&lt;I>&lt;Space></b> <i>int</i>
+   <h4>MinHeight</h4> <s></s>
+</div>
+Minimal height of <a href="#IRelHeight">RelHeight</a> row in pixels.<br /> 
+For standard (non Space) rows it cannot be lower than the row's content. If the row shows only custom HTML by LeftHtml, MidHtml and RightHtml, the minimal MinHeight value is 1.<br />
+For Space rows it can be also 0.<br />
+It has different meaning and usage than <a href="#IHeight">Height</a> attribute and is related only to <a href="#IRelHeight">RelHeight</a>.<br />
+<i>Since 11.0</i> it affects also resizing row by a user by <tt><a href="#CResizing">Resizing</a> = 1</tt> cell.<br />
+
+<!-- CanResize -->
+<a name="ICanResize"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;I></b> <i>int</i>
+   <h4>CanResize</h4> <s>[1]</s>
+</div>
+If the row height can be resized by mouse dragging. Cannot be used in Space rows.<br />
+In such row there should be set also some cell with <tt><a href="#CResizing">Resizing</a>='<b>1</b>'</tt> to resize the row by dragging the cell edge.<br />
+<b>0</b> - no, <b>1</b> = between <a href="#IMinHeight">MinHeight</a> and <a href="#IMaxHeight">MaxHeight</a>, <b>2</b> - without limits<br />
+
+<!-- Resizing -->
+<a name="CResizing"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>Resizing</h4> <s>[0/2]</s>
+</div>
+If the cell checks its edges for mouse actions, bit array.<br /> 
+Default value is <b>2</b> for Header rows and <b>0</b> for other rows.<br />
+<b>0</b> - no edge<br />
+<b>1</b> - top and bottom edge for row resizing, event target is HeaderTop and HeaderBottom<br />
+<b>2</b> - left and right edge for column resizing, event target is HeaderLeft and HeaderRight. Cannot be set for Space cell.<br />
+<b>3</b> - both vertical and horizontal edges.<br />
+
+<!-- Resized -->
+<a name="IResized"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;I></b> <i>bool</i>
+   <h4>Resized</h4> <s>[0] &nbsp; Uploaded to server, supports Undo</s>
+</div>
+If the row height has been changed by a user.<br />
+It is uploaded to server if Upload_Type contains <b>Resized</b> flag.<br />
+
+<!-- Resizing -->
+<a name="CfgResizing"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Resizing</h4> <s>[1]</s>
+</div>
+If row resizing is permitted.<br />
+
+<!-- UpdateHeightsTimeout -->
+<a name="CfgUpdateHeightsTimeout"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>UpdateHeightsTimeout</h4> <s>[0]</s>
+</div>
+How often synchronizes row heights in column sections.<br />
+By default it is not required to synchronize row heights in the sections, 
+but if rows have different heights and the sections sometimes become not synchronized, 
+due too complex layout, set UpdateHeightsTimeout.<br />
+Value is in 200ms. 0 means never. For example value 5 means 5*200ms = every 1s.<br />
+Smaller value slows down the grid and browser, bigger value causes longer delay before the sections are synchronized.<br />
+
+<!-- GetRowHeight -->
+<a name="GetRowHeight"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>int</i>
+   <h4>GetRowHeight</h4> <s>(<i>TRow</i> <b>row</b>)</s>
+</div>
+It returns height of the row in pixels. For already rendered rows returns its exact height, for not rendered rows returns its Height or MinRowHeight.<br />
+It can be called also for page and it returns height of all its rows.<br />
+
+<!-- UpdateRowHeight -->
+<a name="UpdateRowHeight"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>bool</i>
+   <h4>UpdateRowHeight</h4> <s>(<i>TRow</i> <b>row</b>, <i>bool</i> <b>callUpdate</b>)</s>
+</div>
+Updates height of all row sections to be the same and also shrinks the row to its minimal possible height.<br />
+Call it to immediately correct the layout if the row content height was changed externally.<br />
+If set <i>callUpdate</i>, calls <b>Update</b> method after change.<br />
+Returns true if the layout is correct and false if it could not be corrected and the section still have different height - the layout is broken.<br />
+
+<!-- UpdateHeights -->
+<a name="UpdateHeights"></a>
+<div class="API">
+   <u>new <b>6.0</b> <i>upd <b>9.0</b></i></u> <b>API method</b> <i>bool</i>
+   <h4>UpdateHeights</h4> <s>(<i>int</i> <b>always</b> = 0)</s>
+</div>
+Immediately corrects grid layout, updates height of all sections to be the same. This method is called in interval to preserve layout break.<br />
+Call it after expected change of layout to correct the layout immediately and do not wait for the interval. This method checks first if there is some problem and if not, it returns.<br />
+It calls also <b>Update</b> method if there has been any change in layout.<br />
+<i>(new 9.0)</i> If set <tt><b>always</b> = <b>1</b></tt>, it iterates, checks and corrects always all rows in grid. It can be very slow. Call it if the layout is still broken down even after calling UpdateHeights(0).<br />
+    <div class="L2">
+    If set <tt><b>always</b> = <b>2</b></tt>, it does the action in timeout, after actual script finishes. It can be called more times in the actual script and will be done only once.
+    </div>
+
+<!-- OnRowResize -->
+<a name="OnRowResize"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API method</b> <i>int</i>
+   <h4>OnRowResize</h4> <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>int</i> <b>newheight</b>, <i>int</i> <b>oldheight</b>)</s>
+</div>
+Called before the <b>row</b> is resized from <b>oldheight</b> to <b>newheight</b>, in pixels.<br />
+Return <b>0</b> to cancel action, <b>null</b> to continue, <b>integer</b> for new <b>newheight</b>.<br />
+
+<!-- ResizeRow -->
+<a name="ResizeRow"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ResizeRow</h4> <s>(<i>TRow</i> <b>row</b>, <i>int</i> <b>height</b>)</s>
+</div>
+Changes row height. Sets <a href="#IResized">Resized</a> attribute to 0 or 1 depending on the new height is equal to original height. Calls also OnRowResize.<br />    
+
+</div>
+</body>	
+</html>

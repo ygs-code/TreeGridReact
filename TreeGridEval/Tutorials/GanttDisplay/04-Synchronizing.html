@@ -1,0 +1,94 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+
+
+      /* Classes for Next and Prev buttons */
+      .Prev, .Next { cursor:pointer; padding-left:3px; padding-right:3px; }
+
+      /* Styles special for this example (Flags data) */
+      .Red { background:red; color:white; border-color:blue; }
+      .Green { background:#7F7; color:black; }
+      .Blue { background:blue; color:white; border-color:green; }
+   </style>
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>4. Synchronizing more Gantts</h1>
+   <h2>Synchronizing zoom, widths and scroll position among more Gantt charts</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='04-Synchronizing_1.xml'>04-Synchronizing_1.xml</a> &nbsp; <a href='04-Synchronizing_Zoom.xml'>04-Synchronizing_Zoom.xml</a></div>
+      <div class="Main" style='width:100%; height:270px;'>
+         <bdo Debug='check' Layout_Url="04-Synchronizing_Zoom.xml" Data_Url='04-Synchronizing_1.xml'></bdo>
+      </div>
+      <div class="Xml">Source: <a href='04-Synchronizing_2.xml'>04-Synchronizing_2.xml</a> &nbsp; <a href='04-Synchronizing_Zoom.xml'>04-Synchronizing_Zoom.xml</a></div>
+      <div class="Main" style='width:100%; height:190px;'>
+         <bdo Debug='check' Layout_Url="04-Synchronizing_Zoom.xml" Data_Url='04-Synchronizing_2.xml'></bdo>
+      </div>
+      <div class="Xml">Source: <a href='04-Synchronizing_3.xml'>04-Synchronizing_3.xml</a> &nbsp; <a href='04-Synchronizing_Zoom.xml'>04-Synchronizing_Zoom.xml</a></div>
+      <div class="Main" style='width:100%; height:240px;'>
+         <bdo Debug='check' Layout_Url="04-Synchronizing_Zoom.xml" Data_Url='04-Synchronizing_3.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li>See documentation for <a href="../../Doc/GridSize.htm#Synchronize">Synchronize sections widths among more grids</a></li>
+      <li>
+         Set <b>&lt;Cfg></b> <h3>Sync</h3> attribute, add here flags "<b>sec</b>" (synchronize the section widths and resizing), "<b>style</b>" (synchronize chosen CSS style), 
+         "<b>zoom</b>" (synchronize Gantt zoom level), "<b>horz</b>" (synchronize horizontal scrollbar position). <br />
+         It is possible to use flags "<b>horz1</b>", "<b>horz2</b>" or "<b>horz3</b>" to synchronize only given column sections.<br />
+         If the grids have completely the same columns, you can add flag "<b>cols</b>" to synchronize the column widths.
+      </li>
+      <li>
+         Set the same values for <b>&lt;Cfg></b> attributes <b>LeftWidth</b>, <b>MidWidth</b>, <b>RightWidth</b>, <b>MinLeftWidth</b>, <b>MinMidWidth</b>, <b>MinRightWidth</b>, <b>SectionShrinkOrder</b> in all the grids.<br />
+         Optionally set &lt;Cfg <b>LeftCanResize</b>='<b>4</b>' <b>RightCanResize</b>='<b>4</b>'/> to permit resizing also sections without scrollbars.<br />
+      </li>
+      <li>
+         To all used and resizable column sections add new column as &lt;C Name='...' <b>ConstWidth</b>='1' <b>RelWidthType</b>='1'/>. This column fills empty space of the column section, if any.<br />
+      </li>
+      <li>
+         The Gantt section should be placed as the first one in <b>SectionShringOrder</b>, e.g. if the Gantt is in RightCols, set SectionShringOrder='right,mid,left'.<br />
+         It is possible to set high value to the Gantt section width, e.g. if the Gantt is in right section, set <b>RightWidth</b>='2000' to let the right section to fill all the available space.<br />
+         In this case set <b>RelWidthType</b>='<b>3</b>' or '<b>7</b>' instead of 1 to the new empty column added in the Gantt section, to be the column shrunk if its space is required for other sections.<br />
+         Or set <b>RelWidthType</b>='<b>9</b>' to resize the Gantt section always to the whole main tag width.<br />
+      </li>
+      <li>
+         Set &lt;Cfg> attribute <b>ShowVScroll</b>='1' or <b>NoVScroll</b>='1' to ensure all grids show or don't show the vertical scrollbar.<br />
+      </li>
+      <li>
+         Ensure that all main tags have the same width, usually set in the standard style attribute.
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialGantt\s*=\s*(\d+)/), TGIndex = 256;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridDisplay4", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialGantt="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

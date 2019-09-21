@@ -1,0 +1,115 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>4. Cell manipulation</h1>
+   <h2>Filling, copying, clearing, moving individual and groups of cells</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='04-Cell_manipulation.xml' target="_blank">04-Cell_manipulation.xml</a></div>
+      <div class="Main" style='width:770px; height:500px;'>
+         <bdo Debug='check' Data_Url='04-Cell_manipulation.xml'></bdo>
+      </div>
+   </center>
+   <ul>
+      <li> 
+         <h4>Focus cells</h4><br />
+         One cell can be focused by mouse click to the cell. Default behavior set in Defaults.xml by &lt;Actions> <b>OnClickCell</b>="<b>FocusEdit</b>".<br />
+         Cell range can be focused by mouse dragging by left button. Set by &lt;Cfg> <h3>FocusRect</h3>, 1. bit (value <b>1</b>)<br />
+         The focused cell or cell range is automatically selected. It also clears all previous selected ranges. Set by &lt;Cfg> <b>SelectingFocus</b>='<b>1</b>'<br />
+      </li>
+      <li>
+         <h4>Select cells</h4><br />
+         Selecting cells and row/columns are independent. Set by &lt;Cfg> <h3>SelectingCells</h3>='<b>3</b>'<br />
+         One cell can be selected by Ctrl + mouse click. Default behavior set in Defaults.xml by &lt;Actions <b>OnCtrlClickCell</b>="<b>DeselectCell</b> OR <b>SelectCell</b>".<br />
+         Cell range can be selected by mouse dragging by Ctrl + left button. Default behavior set in Defaults.xml by &lt;Actions <b>OnCtrlDragRow</b>="<b>InvertCellsFirst</b>".<br />
+      </li>
+      <li>
+         <h4>Clear cells</h4><br />
+         Selected cells values and styles can be cleared by pressing <b>del</b> key. It is set by &lt;Actions> <b>OnDel</b>="<b>ClearSelectedCellsF</b>".<br />
+         Here it clears cell values and styles as span and border. It is set by &lt;Cfg> <h3>EditAttrs</h3>=",Span,RowSpan,BorderTop,BorderRight,BorderBottom,BorderLeft", the first empty item means value.<br />
+         More ways of clearing cells can be done from right click popup menu. It is set by &lt;Cfg> <b>Menu</b>="...".<br />
+         The whole row or column can be cleared by click to row or column panel button red <b>X</b>.<br />
+      </li>
+      <li><h4>Move and copy cells</h4><br />
+         The focused cell or cell range can be moved by mouse dragging by left button the focused border line. It is set by &lt;Cfg> <h3>FocusRect</h3>, 5.bit (value <b>16</b>).<br />
+         Copying instead of moving can be done by dragging with Ctrl.<br />
+         It moves or copies cell values and styles. It is set by &lt;Cfg> <h3>EditAttrs</h3>=",Span,RowSpan,BorderTop,BorderRight,BorderBottom,BorderLeft".<br />
+      </li>
+      <li><h4>Auto fill cells</h4><br />
+         Cells can be auto filled by mouse dragging by left button the bottom right corner of focused border. The corner is shown by &lt;Cfg> <h3>FocusRect</h3>, 2. bit (value <b>2</b>)<br /> 
+         It fills cell values and styles. It is set by &lt;Cfg> <h3>EditAttrs</h3>=",Span,RowSpan,BorderTop,BorderRight,BorderBottom,BorderLeft".<br />
+         The auto filling increases the numbers in its direction. It clears values if the cell range is shrunk. It is set by &lt;Cfg> <b>AutoFillType</b>='<b>31</b>'.<br />
+      </li>
+      <li><h4>Copy &amp; paste cells</h4><br />
+         Focused cell or cell range can be copied to clipboard by Ctrl+C. Copying only focused cells is set by &lt;Cfg> <b>CopyCols</b>='<b>0</b>'.<br />
+         Focused cell or cell range can be copied and cleared by Ctrl+X. Clearing cell values is set by &lt;Cfg> <b>ExcludeClear</b>='<b>1</b>'<br />
+         Copied cell or cell range can be pasted to grid by Ctrl+V. It is pasted to focused cell range or if only one cell is focused to next right and bottom cells. 
+         It is set by &lt;Cfg> <b>PasteCols</b>=<b>5</b> and <b>PasteFocused</b>='<b>11</b>'.<br />
+         If copied and pasted inside grid, it copies also cell styles like border and span as set by &lt;Cfg> <h3>EditAttrs</h3>=",Span,RowSpan,BorderTop,BorderRight,BorderBottom,BorderLeft". If copied or pasted outside grid, e.g. to MS Excel, it copies and pastes only cell values.<br />
+      </li>
+      <li><h4>Other features</h4><br />
+         <ul>
+            <li>
+            Rows can be hidden, shown, deleted or undeleted on click to the left panel button red <b>X</b>.<br />
+            New rows can be added or copied on click to the left panel green <b style="color:green">+</b> or to click to toolbar button green <b style="color:green">+</b>.<br />
+            All focused rows together can be hidden, shown, deleted, undeleted, copied or added from header panel.<br />
+            </li>
+            <li>
+            Columns can be hidden, shown, deleted or undeleted on click to the top panel button red <b>X</b>.<br />
+            New columns can be added or copied on click to the top panel green <b style="color:green">+</b> or to click to toolbar second button green <b style="color:green">+</b>.<br />
+            All focused columns together can be hidden, shown, deleted, undeleted, copied or added from left index panel.<br />
+            </li>
+            <li>
+            Selected cells can be spanned on click to toolbar button Span or from right click popup menu.<br />
+            Spanned cell or selected cells can be split on click to toolbar button Split or from right click popup menu.<br />
+            It is set &lt;Cfg> <b>DynamicSpan</b>='<b>2</b>'.<br /> 
+            </li>
+            <li>
+            Cell border or border of selected cells can be set or cleared from right click popup menu. <br />
+            In this sample there are hardcoded two borders, outer 3px solid black and inner 1px solid black.<br />
+            It is set by &lt;Cfg> <b>DynamicBorder</b>='<b>1</b>'.<br />
+            </li>
+            <li>
+            Last action can be undone by clicking to toolbar button Undo or by Ctrl+Z. <br />
+            Last undone action can be redone by clicking to toolbar button Redo or by Ctrl+Y. <br />
+            The undo is for all actions, including focus, select and scroll. It is set by &lt;Cfg> <b>Undo</b>='<b>79</b>'.<br />
+            </li>
+         </ul>
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialSheet\s*=\s*(\d+)/), TGIndex = 8;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialSheet4", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialSheet="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

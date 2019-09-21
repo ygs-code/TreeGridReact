@@ -1,0 +1,1172 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Focus</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Grid cursor - focused cell and row</h1>
+<p>TreeGrid documentation</p>
+
+By default there can be only one focused cell and only the focused cell can be edited. The focused cell is accessible for API by <a href="#FRow">FRow</a> and <a href="#FCol">FCol</a>.<br /><br />
+
+To permit focusing cell range by mouse dragging, attach <a href="#ActionsFocusCells">FocusCells</a> action to some drag event, e.g. <tt>&lt;Actions OnDragRow="FocusCells"/></tt>. The range is accessible to API by <a href="#FRect">FRect</a>.<br /><br />
+
+To show <b>bottom right corner</b> in the border cursor, add <b>Corner</b> flag to row <a href="Cursor.htm#IFocusCell">FocusCell</a> attribute, e.g. <tt>&lt;Def>&lt;D Name="R" FocusCell="Border,Color,Class,Corner"/>&lt;/Def></tt><br /><br />
+
+To permit <b>editing different cell</b> than the focused one, attach <a href="CellEdit.htm#ActionsStartEditCell">StartEditCell</a> or <a href="CellEdit.htm#ActionsStartEditCellEmpty">StartEditCellEmpty</a> action to some event, e.g. <tt>&lt;Actions OnCtrlClickCell="StartEditCell"/></tt>. The edited cell is accessible for API by <a href="#ERow">ERow</a> and <a href="#ECol">ECol</a>.<br /><br />
+
+Note, focused cell is <u>not</u> <b>selected</b> cell. For selecting cells or rows see <a href="RowSelect.htm">Selecting rows and cells</a>. Focused cells can be automatically selected by setting <tt>&lt;Cfg <a href="#CfgSelectingFocus">SelectingFocus</a>='2'/></tt><br />
+
+<!-- StaticCursor -->
+<a name="CfgStaticCursor"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>StaticCursor</h4><s>[0]</s>
+</div>
+If set to <b>1</b>, grid does not delete cursor when it looses focus - after click outside grid.<br />
+After click outside the grid, it looses focus and the cursor cannot be changed by keys.<br /><br /> 
+
+To not let grid loosing its focus after click outside, you can suppress the action by <tt>&lt;<b>Actions OnClickOutside='0'</b>/></tt> instead of setting StaticCursor.<br />
+In this case the arrow keys will control the grid cursor even if user edits some other input on page - you need to cancel bubbling of onkeydown in such input.<br />
+
+<!-- FocusWholeRow -->
+<a name="CfgFocusWholeRow"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FocusWholeRow</h4><s>[0]</s>
+</div>
+If set, does not show cursor for the cell, only for row.<br /> 
+For this case should be set also <tt>&lt;Cfg Editing='0'/></tt>.<br />
+
+<!-- CanFocus -->
+<a name="CCanFocus"></a>
+<div class="XML">
+   <u><i>upd <b>7.0</b></i></u> <b>&lt;C>&lt;I>&lt;cell></b> <i>int</i>
+   <h4>CanFocus</h4><s>[0/1]</s>
+</div>
+If row or cell can be focused - the grid cursor can be placed to this place.<br />
+The not focusable cell cannot be edited except Bool and Radio types.<br />
+If user clicks to not focusable row, the cursor position is not changed at all.<br />
+If user click to not focusable cell in focusable row, it is focused the clicked row and the cell in previously focused column.<br />
+When user moves cursor by arrow keys, the not focusable cells are skipped.<br /> 
+<i>Since 7.0</i> arrow keys skip also cells with <tt>CanFocus='<b>2</b>'</tt>.<br /><br />
+
+The routine to find out if the cell is focusable checks these points in this order:<br />
+1) Checks <u>cell</u> CanFocus, if it set, returns it<br />
+2) Checks <u>row</u> CanFocus, if it set, returns it<br />
+3) Checks <u>column</u> CanFocus, if it set, returns it<br />
+4) Returns <b>0</b> for cell types Panel, Button and Select, for other types returns <b>1</b>.<br />
+
+<!-- CanFocus -->
+<a name="CanFocus"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>int</i>
+   <h4>CanFocus</h4><s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+If cell can be focused. Tests all <a href="#CCanFocus">CanFocus</a> attributes.<br />
+
+<!-- Focused -->
+<a name="CfgFocused"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>Focused</h4><s></s>
+</div>
+An <b>id</b> of focused row to focus it on start on or reload.<br />
+When used server paging, it can be id or position of page with focused row and <a href="#CfgFocusedPos">FocusedPos</a> is set to the row position.<br />
+This attribute is also sent to server in request for data to change the focused row from server and contains actual <a href="#FRow">FRow</a>.<br />
+
+<!-- FocusedCol -->
+<a name="CfgFocusedCol"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>FocusedCol</h4><s></s>
+</div>
+Name of focused column to focus it on start on or reload.<br />
+This attribute is also sent to server in request for data to change the focused row from server and contains actual <a href="#FCol">FCol</a>.<br />
+
+<!-- FocusedPos -->
+<a name="CfgFocusedPos"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FocusedPos</h4><s></s>
+</div>
+Specifies position (from 0) of focused row at page when used <a href="#CfgFocused">Focused</a> attribute with server paging.<br />
+In tree it includes all expanded rows' children.<br />
+This attribute is also sent to server in request for data to change the focused row from server and contains actual <a href="#FPagePos">FPagePos</a>.<br />
+
+<!-- FocusedType -->
+<a name="CfgFocusedType"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FocusedType</h4><s>[0]</s>
+</div>
+Flags to control Focused attribute. Bit array.<br />
+<b>1</b>. bit, &amp;<b>1</b> - If set, does not scroll to focused area on start.
+
+<!-- IgnoreFocused -->
+<a name="CfgIgnoreFocused"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>IgnoreFocused</h4><s></s>
+</div>
+Ignores attribute <a href="#CfgFocused">Focused</a> sent from server. Has sense especially when used TreeGrid server library.<br />
+
+<!-- SelectingFocus -->
+<a name="CfgSelectingFocus"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SelectingFocus</h4><s>[0]</s>
+</div>
+If set, automatically selects focused area. If set to <b>2</b> it also selects focused single cell.<br />
+After every focused cell / focused area change clears all selected cells in grid.<br />
+Must be set also <a href="RowSelect.htm#CfgSelecting">Selecting</a> and <a href="RowSelect.htm#CfgSelectingCells">SelectingCells</a>.<br />
+
+<!-- FRow -->
+<a name="FRow"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>TRow</i>
+   <h4>FRow</h4><s>read only</s>
+</div>
+Actually focused row in grid or null. The grid cursor.<br />
+It can be a page when there is focused row on not yet loaded page in server paging.<br />
+
+<!-- FCol -->
+<a name="FCol"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>string</i>
+   <h4>FCol</h4><s>read only</s>
+</div>
+Actually focused column in grid or null. The grid cursor.<br />
+
+<!-- FPagePos -->
+<a name="FPagePos"></a>
+<div class="API">
+   <u></u> <b>API variable</b> <i>int</i>
+   <h4>FPagePos</h4><s>read only</s>
+</div>
+If <a href="#FRow">FRow</a> is not yet rendered page in server paging, there is index (from 0) of focused row on this page.<br />
+In tree it includes all expanded rows' children.<br />
+
+<!-- ERow -->
+<a name="ERow"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API variable</b> <i>TRow</i>
+   <h4>ERow</h4><s>read only</s>
+</div>
+Actually edited row in grid or null. It is usually the same as <a href="#FRow">FRow</a>.<br />
+
+<!-- ECol -->
+<a name="ECol"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API variable</b> <i>string</i>
+   <h4>ECol</h4><s>read only</s>
+</div>
+Actually edited column in grid or null. It is usually the same as <a href="#FCol">FCol</a>.<br />
+
+<!-- OnFocus -->
+<a name="XMLOnFocus"></a>
+<div class="ACT">
+   <u></u> <b style="margin-left:-20px;width:115px;">&lt;XML Event></b> <i>void</i>
+   <h4>OnFocus</h4>
+   <s>(<i>TGrid</i> <b>Grid</b>, <i>TRow</i> <b>Row</b>, <i>string</i> <b>Col</b>, <i>TEvent</i> <b>Event</b>)</s>
+</div>
+Called as &lt;Actions> or cell event when the cell is focused.<br />
+Attach the action or any JavaScript code to the cell to be run on focus, like <tt>&lt;I ... Col1OnFocus='alert("focused!" )' ... /></tt><br />
+
+<!-- OnFocus -->
+<a name="OnFocus"></a>
+<div class="API">
+   <u><i>upd <b>11.0</b></i></u> <b>API event</b> <i>void</i>
+   <h4>OnFocus</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>TRow</i> <b>orow</b>, <i>string</i> <b>ocol</b>, <i>int</i> <b>pagepos</b>, <i>type[ ]</i> <b>rect</b>, <i>type[ ]</i> <b>orect</b>)</s>
+</div>
+Called when cell is focused, <b>row</b>, <b>col</b> is actual (new) focused cell.<br />
+<b>orow</b>, <b>ocol</b> is previously focused cell. All rows and cols parameters can be nulls.<br /> 
+<b>pagepos</b> is not null if row is not rendered page or row with children, in this case it is position on the page. If server paging is not used, it is always null.<br /> 
+<b>rect</b> <i>(since 11.0)</i> is new focused rectangle, if focused more cells. <b>orect</b> <i>(since 11.0)</i> is previously focused rectangle.<br />
+Focusing is moving cursor to row's cell. By mouse click or by arrow keys or by tab key. Don't confuse <i>selecting</i> and <i>focusing</i> row.<br />
+
+<!-- OnBlur -->
+<a name="OnBlur"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnBlur</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>orow</b>, <i>string</i> <b>ocol</b>, <i>type[ ]</i> <b>orect</b>)</s>
+</div>
+Called when grid loses focus.<br />
+<b>orow</b>, <b>ocol</b> is previously focused cell. <b>orect</b> is previously focused rectangle.<br />
+
+<!-- Focus -->
+<a name="Focus"></a>
+<div class="API">
+   <u>chg <b>11.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>Focus</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>pagepos</b> = null, <i>type[ ]</i> <b>rect</b> = null, <i>int</i> <b>type</b> = 0)</s>
+</div>
+Focuses the cell or cell range.<br />
+If grid was in edit mode, saves changed value in the edited cell.<br /> 
+Returns <b>true</b>, if cell or cell range has been focused. Returns <b>false</b> if the cell or cell range is already focused. Returns <b>null</b> if the cell cannot be focused. For cell range it checks if can be focused only the two corner cells.<br />
+If <b>row</b> is page, focuses cell on page on <b>pagepos</b> position after page renders (asynchronously). If server paging is not used, <b>pagepos</b> is ignored.<br />
+If <b>row</b> is null, defocuses grid. If <b>col</b> is null, focuses the whole row.<br />
+<i>(new 11.0)</i> <b>rect</b> can be an rectangle area as [<i>TRow</i> toprow, <i>string</i> <b>leftcol</b>, <i>TRow</i> <b>bottomrow</b>, <i>string</i> <b>rightcol</b>, <i>int</i> <b>toppagepos</b>, <i>int</i> <b>bottompagepos</b>] to focus it, as <a href="#FRect">FRect</a>. This area must contain the <b>row</b>, <b>col</b> cell.<br />
+<i>(new 11.0)</i> <b>type</b> is bit array to control the function behavior.<br />
+  <div class="L1">
+  <table>
+  <tr><td style="width:50px;"><b>1</b>. bit</td><td style="width:50px;">&amp;<b>1</b></td><td style="width:80px;">show</td><td>if it is true, expands all parents to show the <b>row</b>. <i>Like if set <tt>rect = 1</tt> parameter prior to 11.0</i></td></tr>
+  <tr><td><b>2</b>. bit</td><td>&amp;<b>2</b></td><td>no reset</td><td>if it is true, does <u>not</u> reset position for key navigation. <i>Prior to 11.0 the key position was never reset, since 11.0 the key position is reset by default!</i></td></tr>
+  <tr><td><b>3</b>. bit</td><td>&amp;<b>4</b></td><td>no undo</td><td>if it is true, does <u>not</u> save the change to undo if set Undo&amp;4</td></tr>
+  <tr><td><b>4</b>. bit</td><td>&amp;<b>8</b></td><td>no scroll	</td><td>if it is true, does <u>not</u> scroll the cell into view</td></tr>
+  <tr><td><b>5</b>. bit</td><td>&amp;<b>16</b></td><td>no span</td><td>if it is true, does <u>not</u> resize the <b>rect</b> to spanned cells</td></tr>
+  <tr><td><b>6</b>. bit</td><td>&amp;<b>32</b></td><td>no select</td><td>if it is true, does <u>not</u> select the focused area if set SelectFocus</td></tr>
+  </table>
+  </div>  
+<i>Remember, if you will call the Focus method from onclick event of some external button, you need to call it in setTimeout or cancel the click event, otherwise grid loses focus due the click to button.</i><br />
+
+<!-- Grids.Focused -->
+<a name="Focused"></a>
+<div class="API">
+   <u></u> <b>global prop.</b> <i>TGrid</i>
+   <h4><i>Grids</i>.Focused</h4><s></s>
+</div>
+Actually focused grid. This grid catches key events.<br /> 
+If you want to process key events in other controls, set it to null.<br />
+
+<!-- Action Focus -->
+<a name="ActionsFocus"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>Focus</h4>
+   <s>Attached to <span style="text-decoration:underline;">many</span> events</s>
+</div>
+Focuses actual cell => moves cursor to cell under mouse cursor.<br /> 
+The grid will receive key events.<br />
+It fails if cell cannot be focused.<br />
+By default it is attached to events OnClickCell, OnClickEditEnum, OnDblClickCell,<br /> 
+OnClickSideDefaults, OnClickSideDate, OnClickSideFilter, OnClickExpand, OnClickEditBool, OnjClickEditRadio, OnClickLink<br />
+
+<!-- Action FocusEdit -->
+<a name="ActionsFocusEdit"></a>
+<div class="ACT">
+   <u>new <b>6.7</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusEdit</h4>
+   <s>Attached to event <b>OnClickCell</b></s>
+</div>
+Focuses actual cell => moves cursor to cell under mouse cursor. The grid will receive key events.<br />
+And starts editing according to <a href="CellEdit.htm#CfgInEditMode">InEditMode</a> setting.<br />
+It fails if the focus cannot be changed or start edit the cell. It also fails if cell is already focused or cannot be focused.<br />
+<i>To only start editing cell without focusing it use <a href="CellEdit.htm#ActionsStartEditCell">StartEditCell</a>.</i><br />
+
+<!-- Action FocusAndEdit -->
+<a name="ActionsFocusAndEdit"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusAndEdit</h4>
+   <s>Not attached to any event</s>
+</div>
+Focuses actual cell => moves cursor to cell under mouse cursor. The grid will receive key events.<br />
+And starts editing the cell <u>regardless</u> on the EditMode settings.<br />
+It fails if the focus cannot be changed or start edit the cell. It also fails if cell is already focused or cannot be focused.<br />
+
+<!-- Action ChangeFocus -->
+<a name="ActionsChangeFocus"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChangeFocus</h4>
+   <s>Not attached to any event</s>
+</div>
+Focuses actual cell => moves cursor to cell under mouse cursor.<br /> 
+The grid will receive key events.<br />
+It fails if cell is already focused or cannot be focused.<br />
+
+<!-- Action ChangeFocusRow -->
+<a name="ActionsChangeFocusRow"></a>
+<div class="ACT">
+   <u>chg <b>7.0</b> renamed <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChangeFocusRow</h4>
+   <s>Attached to event <b>OnClickNoFocus</b></s>
+</div>
+Focuses cell in actual row and focused column. If the cell cannot be focused, focuses only row.<br /> 
+The grid will receive key events.<br />
+It fails if the row cannot be focused.<br />
+<i>Since 7.0 whole Space rows cannot be focused, only their cells.</i><br />
+
+<!-- Action ChangeFocusCol -->
+<a name="ActionsChangeFocusCol"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChangeFocusCol</h4>
+   <s>Attached to event <b>OnClickNoFocus</b></s>
+</div>
+Focuses cell in focused row and actual column.<br />
+The grid will receive key events.<br />
+It fails if the cell cannot be focused or the focused or actual row Space row.<br />
+
+<!-- Action Blur -->
+<a name="ActionsBlur"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>Blur</h4>
+   <s>Attached to event <b>OnClickOutside</b></s>
+</div>
+Defocuses grid and hides cursor if it is <u>not</u> set as <a href="#CfgStaticCursor">StaticCursor</a>.<br />
+The grid will <u>not</u> receive key events.<br />
+
+<!-- Action BlurFocused -->
+<a name="ActionsBlurFocused"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>BlurFocused</h4>
+   <s>Not attached to any event</s>
+</div>
+Defocuses grid and hides cursor if it is <u>not</u> set as <a href="#CfgStaticCursor">StaticCursor</a>.<br />
+The grid will <u>not</u> receive key events.<br />
+Fails, if the actual cell is not focused.<br />
+
+<!----------------------------------------------------------------- Focused cell range -------------------------------------------------------------->
+<a name="Range"></a>
+<h2>Focused cell range</h2>
+
+To permit focusing cell range by mouse dragging, attach <a href="#ActionsFocusCells">FocusCells</a> action to some drag event, e.g. <tt>&lt;Actions OnDragRow="FocusCells"/></tt>. The range is accessible to API by <a href="#FRect">FRect</a>.<br />
+To show <b>bottom right corner</b> in the border cursor, add <b>Corner</b> flag to row <a href="Cursor.htm#IFocusCell">FocusCell</a> attribute, e.g. <tt>&lt;Def>&lt;D Name="R" FocusCell="Border,Color,Class,Corner"/>&lt;/Def></tt><br />
+
+<!-- FocusRect -->
+<a name="CfgFocusRect"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>FocusRect</h4><s>[0]</s>
+</div>
+If and how it is possible to focus and modify more cells. Bit array.<br />
+<table>  
+<tr><td style="width:50px;"><b>1</b>. bit</td><td style="width:50px;">&amp;<b>1</b></td><td>Permits focusing cell range.</td></tr>
+<tr><td><b>2</b>. bit</td><td>&amp;<b>2</b></td><td>Shows the right bottom corner in the focus cursor, for auto fill. Adds the "<b>Corner</b>" to all <a href="Cursor.htm#IFocusCell">FocusCell</a> attributes.</td></tr>
+<tr><td><b>3</b>. bit</td><td>&amp;<b>4</b></td><td>Does not show focus cursor for the whole row. Sets <a href="Cursor.htm#IFocusRow">FocusRow</a> = "" for all cells.</td></tr>
+<tr><td><b>4</b>. bit</td><td>&amp;<b>8</b></td><td>Shows the focused cell cursor with relative color instead of absolute to not hide the cell background.</td></tr>
+<tr><td><b>8</b>. bit</td><td>&amp;<b>16</b></td><td>
+   Assigns <a href="#ActionsMoveFocus">MoveFocus</a>, <a href="#ActionsMoveFocusValues">MoveFocusValues</a> ,
+   <a href="#ActionsCopyFocus">CopyFocus</a> and <a href="#ActionsCopyFocusValues">CopyFocusValues</a>
+   actions for dragging the focus border. Sets: <br /><tt>
+   &lt;Actions OnDragLeftEdge="MoveFocus" OnDragRightEdge="MoveFocus" OnDragTopEdge="MoveFocus" OnDragBottomEdge="MoveFocus"/> 
+   &lt;Actions OnCtrlDragLeftEdge="CopyFocus" OnCtrlDragRightEdge="CopyFocus" OnCtrlDragTopEdge="CopyFocus" OnCtrlDragBottomEdge="CopyFocus"/> 
+   &lt;Actions OnShiftDragLeftEdge="MoveFocusValues" OnShiftDragRightEdge="MoveFocusValues" OnShiftDragTopEdge="MoveFocusValues" OnShiftDragBottomEdge="MoveFocusValues"/> 
+   &lt;Actions OnShiftCtrlDragLeftEdge="CopyFocusValues" OnShiftCtrlDragRightEdge="CopyFocusValues" OnShiftCtrlDragTopEdge="CopyFocusValues" OnShiftCtrlDragBottomEdge="CopyFocusValues"/> 
+
+   </tt></td></tr>
+</table>
+
+
+<!-- FocusedRect -->
+<a name="CfgFocusedRect"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>FocusedRect</h4><s></s>
+</div>
+Focused area set to <a href="#FRect">FRect</a> as "<b>toprowid</b>,<b>leftcol</b>,<b>bottomrowid</b>,<b>bottomcol</b>,<b>toppagepos</b>,<b>bottompagepos</b>"<br />
+
+<!-- FRect -->
+<a name="FRect"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API variable</b> <i>type[ ]</i>
+   <h4>FRect</h4><s>read only</s>
+</div>
+Focused rectangle of cells, if there are more cells focused.<br />
+It is array as [<i>TRow</i> <b>toprow</b>, <i>string</i> <b>leftcol</b>, <i>TRow</i> <b>bottomrow</b>, <i>string</i> <b>rightcol</b>, <i>int</i> <b>toppagepos</b>, <i>int</i> <b>bottompagepos</b>]<br />
+The FRect area always includes the <a href="#FRow">FRow</a>, <a href="#FCol">FCol</a> cell.<br />
+To permit focusing more cells by dragging, set e.g. <tt>&lt;Actions OnDragRow="FocusCells"/></tt><br />
+
+<!-- GetFocusedRows -->
+<a name="GetFocusedRows"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>TRow[ ]</i>
+   <h4>GetFocusedRows</h4>
+   <s>(<i>int</i> <b>type</b> = 0, <i>string</i> <b>attr</b> = null)</s>
+</div>
+Returns all actually focused rows, <b>type</b> is bit array as:<br />
+<tt><b>type = &amp;1</b></tt> with collapsed children, <tt><b>&amp;2</b></tt> from the same page as the first focused row, <tt><b>&amp;4</b></tt> from the same tree level as the first focused row.<br />
+If set <b>attr</b>, returns only rows with this attribute set, e.g. "CanDelete"<br />
+
+<!-- GetFocusedCols -->
+<a name="GetFocusedCols"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>string[ ]</i>
+   <h4>GetFocusedCols</h4><s>( )</s>
+</div>
+Returns all actually focused columns.<br />
+
+<!-- IsFocused -->
+<a name="IsFocused"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>IsFocused</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Returns true if the cell is focused.<br />
+
+<!-- Actions FocusCells -->
+<a name="ActionsFocusCells"></a>
+<div class="ACT">
+   <u>new <b>11.0</b> chg <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusCells</h4>
+   <s>Attached to <b>OnDragRow</b> event, can be attached only to <b>OnDrag...</b> event</s>
+</div>
+Focuses actual cell and starts resizing the focus cursor to rectangle area of cells.<br />
+<i>Since 12.0</i> it fails if <a href="#CfgFocusRect">FocusRect</a> is <u>not</u> set.<br />
+
+<!-- Actions FocusRow -->
+<a name="ActionsFocusRow"></a>
+<div class="ACT">
+   <u>new <b>11.0</b> chg <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusRow</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> event</s>
+</div>
+Focuses actual cell and starts resizing the focus cursor horizontally to more cells in the focused row.<br />
+<i>In versions prior 11.0 was FocusRow action with different meaning, now renamed to <a href="#ActionsChangeFocusRow">ChangeFocusRow</a>. The FocusRow still works in this way if attached in non OnDrag event.</i><br />
+<i>Since 12.0</i> it fails if <a href="#CfgFocusRect">FocusRect</a> is <u>not</u> set.<br />
+
+<!-- Actions FocusCol -->
+<a name="ActionsFocusCol"></a>
+<div class="ACT">
+   <u>new <b>11.0</b> chg <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusCol</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> event</s>
+</div>
+Focuses actual cell and starts resizing the focus cursor vertically to more cells in the focused column.<br />
+<i>Since 12.0</i> it fails if <a href="#CfgFocusRect">FocusRect</a> is <u>not</u> set.<br />
+
+<!-- Actions FocusRowCol -->
+<a name="ActionsFocusRowCol"></a>
+<div class="ACT">
+   <u>new <b>11.0</b> chg <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusRowCol</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> event</s>
+</div>
+Focuses actual cell and starts resizing the focus cursor horizontally or vertically to rectangle area of cells. The direction is chosen by the larger destination from the source point.<br />
+<i>Since 12.0</i> it fails if <a href="#CfgFocusRect">FocusRect</a> is <u>not</u> set.<br />
+
+<!-- Action FocusCellRange -->
+<a name="ActionsFocusCellRange"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusCellRange</h4>
+   <s>Attached to <b>OnShiftClick</b> event</s>
+</div>
+Focuses cell range between actual and focused cell.<br />
+
+<!-- Action FocusWholeRow ...F -->
+<a name="ActionsFocusWholeRow"></a>
+<div class="ACT">
+   <u>new <b>11.0</b> chg <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusWholeRow <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Focuses all cells in the actual or focused row. <i>Since 12.0</i> added the F suffix.<br />
+<i>Since 12.0</i> it fails if <a href="#CfgFocusRect">FocusRect</a> is <u>not</u> set.<br />
+
+<!-- Action FocusWholeCol ...F -->
+<a name="ActionsFocusWholeCol"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusWholeCol <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Focuses all cells in the actual or focused column. It fails if <a href="#CfgFocusRect">FocusRect</a> is <u>not</u> set.<br />
+
+<!-- Action FocusWholeGrid -->
+<a name="ActionsFocusWholeGrid"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusWholeGrid</h4>
+   <s>Not attached to any event</s>
+</div>
+Focuses all cells in the grid. 
+It fails if <a href="#CfgFocusRect">FocusRect</a> is <u>not</u> set.<br />
+
+<!-- Action FocusDown -->
+<a name="ActionsFocusDown"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusDown</h4>
+   <s>Attached to event <b>OnShiftDown</b></s>
+</div>
+Extends the focused range to the first focusable cell below the actually focused cell.<br />
+It fails if there is no next focusable cell below.<br />
+
+<!-- Action FocusUp -->
+<a name="ActionsFocusUp"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusUp</h4>
+   <s>Attached to event <b>OnShiftUp</b></s>
+</div>
+Extends the focused range to the first focusable cell above the actually focused cell.<br />
+It fails if there is no next focusable cell above.<br />
+
+<!-- Action FocusRight -->
+<a name="ActionsFocusRight"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusRight</h4>
+   <s>Attached to event <b>OnShiftRight</b></s>
+</div>
+Extends the focused range to the first focusable cell right to the actually focused cell.<br />
+It fails if there is no next focusable cell or no row is focused.<br />
+
+<!-- Action FocusLeft -->
+<a name="ActionsFocusLeft"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusLeft</h4>
+   <s>Attached to event <b>OnShiftLeft</b></s>
+</div>
+Extends the focused range to the first focusable cell left to the actually focused cell.<br />
+It fails if there is no previous focusable cell or no row is focused.<br />
+
+<!----------------------------------------------------------------- Move and copy focused cells -------------------------------------------------------------->
+<a name="Move"></a>
+<h2>Move and copy focused cells</h2>
+
+To move or copy focused cell or cell range by dragging, set such or similar event handlers:<br />
+  <div class="L1">
+  <tt>&lt;Actions OnDragLeftEdge="MoveFocus" OnDragRightEdge="MoveFocus" OnDragTopEdge="MoveFocus" OnDragBottomEdge="MoveFocus"/></tt><br />
+  <tt>&lt;Actions OnCtrlDragLeftEdge="CopyFocus" OnCtrlDragRightEdge="CopyFocus" OnCtrlDragTopEdge="CopyFocus" OnCtrlDragBottomEdge="CopyFocus"/></tt><br />
+  </div>
+  
+<!-- MoveFocusType -->
+<a name="CfgMoveFocusType"></a>
+<div class="XML">
+   <u>new <b>11.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MoveFocusType</h4><s>[3]</s>
+</div>
+How the MoveFocus will move the cell values. Bit array.<br />
+<table>  
+<tr><td style="width:50px;"><b>1</b>. bit</td><td style="width:50px;">&amp;<b>1</b></td><td>Fills the destination focused area by source cells' values.</td></tr>
+<tr><td><b>2</b>. bit</td><td>&amp;<b>2</b></td><td>Clears the source cells.</td></tr>
+<tr><td><b>3</b>. bit</td><td>&amp;<b>4</b></td><td>Does <u>not</u> move focus of single cell.</td></tr>
+<tr><td><b>4</b>. bit</td><td>&amp;<b>8</b></td><td>Fills only empty cells.</td></tr>
+<tr><td><b>5</b>. bit</td><td>&amp;<b>16</b></td><td><i>(new 12.0)</i>Ignore span during move.</td></tr>
+</table>
+
+<!-- Action MoveFocus -->
+<a name="ActionsMoveFocus"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>MoveFocus</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> events</s>
+</div>
+Moves focused cell or focused area to new location by mouse. Preserves count of rows and column in the focused area. Moves cell attributes listed in <a href="CellEdit.htm#CfgEditAttrs">EditAttrs</a>.<br />
+Usually attached to OnDragLeftEdge / OnDragRightEdge / OnDragTopEdge / OnDragBottomEdge events to move the focus by dragging its edge like in MS Excel.
+It is attached automatically, if set <a href="#CfgFocusRect">FocusRect</a> & <b>8</b><br />
+You can set also <tt>&lt;Cfg <a href="Cursor.htm#CfgFocusCellBorderCursor">FocusCellBorderCursor</a>='1'/></tt> to show move mouse cursor above the focused cell border.<br />
+
+<!-- Action MoveFocusValues -->
+<a name="ActionsMoveFocusValues"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>MoveFocusValues</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> events</s>
+</div>
+Moves focused cell or focused area to new location by mouse. <br />
+Like <a href="#ActionsMoveFocus">MoveFocus</a>, 
+but moves only values and EFormula or attributes listed in <a href="CellEdit.htm#CfgEditAttrsValue">EditAttrsValue</a>.<br />
+
+<!-- Action MoveFocusStyles -->
+<a name="ActionsMoveFocusStyles"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>MoveFocusStyles</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> events</s>
+</div>
+Moves focused cell or focused area to new location by mouse. <br />
+Like <a href="#ActionsMoveFocus">MoveFocus</a>, 
+but moves only cell attributes except value and EFormula or attributes listed in <a href="CellEdit.htm#CfgEditAttrsStyle">EditAttrsStyle</a>.<br />
+
+<!-- Action CopyFocus -->
+<a name="ActionsCopyFocus"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CopyFocus</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> events</s>
+</div>
+Copies focused cell or focused area to new location by mouse. The same as <a href="#ActionsMoveFocus">MoveFocus</a> with <a href="#CfgMoveFocusType">MoveFocusType</a> without 2.<br />
+It is attached automatically for dragging with Ctrl, if set <a href="#CfgFocusRect">FocusRect</a> & <b>8</b><br />
+
+<!-- Action CopyFocusValues -->
+<a name="ActionsCopyFocusValues"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CopyFocusValues</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> events</s>
+</div>
+Copies focused cell or focused area to new location by mouse. <br />
+Like <a href="#ActionsCopyFocus">CopyFocus</a>, 
+but copies only values and EFormula or attributes listed in <a href="CellEdit.htm#CfgEditAttrsValue">EditAttrsValue</a>.<br />
+
+<!-- Action CopyFocusStyles -->
+<a name="ActionsCopyFocusStyles"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CopyFocusStyles</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> events</s>
+</div>
+Copies focused cell or focused area to new location by mouse. <br />
+Like <a href="#ActionsCopyFocus">CopyFocus</a>, 
+but copies only cell attributes except value and EFormula or attributes listed in <a href="CellEdit.htm#CfgEditAttrsStyle">EditAttrsStyle</a>.<br />
+
+<!-- CopyRange -->
+<a name="CopyRange"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>void</i>
+   <h4>CopyRange</h4>
+   <s>(<i>type[ ]</i> <b>destination</b>, <i>type[ ]</i> <b>source</b>, <i>bool</i> <b>clear</b> = 0)</s>
+</div>
+Copies given <b>source</b> range to <b>destination</b> range. If set clear, clears the <b>source</b> range.<br />
+The range is [TRow row1, string col1, TRow row2, string col2]<br />
+
+<!-- OnMoveFocus -->
+<a name="OnMoveFocus"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API event</b> <i>type</i>
+   <h4>OnMoveFocus</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>type[ ]</i> <b>rect</b>, <i>type[ ]</i> <b>orect</b>, <i>type[ ][ ]</i> <b>Values</b>, <i>TRow[ ]</i> <b>Rows</b>, <i>string[ ]</i> <b>Cols</b>, <i>TRow[ ]</i> <b>SourceRows</b>, <i>string[ ]</i> <b>SourceCols</b>)</s>
+</div>
+Called after moving focus is finished and before <a href="#CfgMoveFocusType">MoveFocusType</a> action is applied.<br />
+Return <b>true</b> to restore original focus and cancel the action.<br />
+Return <b>integer</b> to be used instead of <a href="#CfgMoveFocusType">MoveFocusType</a> action and continue.<br />
+Return <b>null</b> to continue.<br />
+<b>rect</b> is new focused rect, the same as <a href="#FRect">FRect</a>. For single cell it is [FRow,FCol,FRow,FCol]<br />
+<b>orect</b> is original focused rect, the original value of <a href="#FRect">FRect</a>. For single cell it is [FRow,FCol,FRow,FCol] from original values.<br />
+<b>Values</b> is array of values of source cells to be filled to into destination cells if set <a href="#CfgMoveFocusType">MoveFocusType</a>&amp;1. The <b>values</b> can be changed in this event.<br />
+<b>Rows</b>, <b>Cols</b> are destination cells, <b>SourceRows</b>, <b>SourceCols</b> are source cells.<br />
+
+<!-- OnMoveFocusValue -->
+<a name="OnMoveFocusValue"></a>
+<div class="API">
+   <u>new <b>11.0</b> <i>upd <b>12.0</b></i></u> <b>API event</b> <i>type</i>
+   <h4>OnMoveFocusValue</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>TRow</i> <b>orow</b>, <i>string</i> <b>ocol</b>, <i>type</i> <b>value</b>, <i>type</i> <b>oldvalue</b>, <i>type[ ]</i> <b>attrvalues</b>, <i>string[ ]</i> <b>attrnames</b>, <i>object</i> <b>errors</b>)</s>
+</div>
+Called for every cell in moved area when moving focus, depending on <a href="#CfgMoveFocusType">MoveFocusType</a>.<br />
+It is called when copying the destination cell from [<b>orow</b>,<b>ocol</b>] to [<b>row</b>,<b>col</b>].<br />
+It is called for source cell when clearing it (the <b>orow</b> and <b>ocol</b> are nulls in this case).<br />
+If the cell is in both source and destination areas, it is called only for copying. For copying it is called before for clearing.<br />
+Return value to fill or <b>value</b>. Or <i>since 12.0</i> return <b>oldvalue</b> as original value to <u>not</u> set the <b>value</b> to the cell.<br />
+<i>Since 12.0</i>, <b>attrvalues</b> are values that will be set to cell attributes their names are in <b>attrnames</b>. It is possible to modify the values in <b>attrvalues</b>, but <u>not</u> in <b>attrnames</b>.<br />
+<i>Since 12.0</i>, for <b>errors</b> see <a href="CellEdit.htm#OnEditErrors">OnEditErrors</a> API event.<br />
+
+<!-- OnMoveFocusFinish -->
+<a name="OnMoveFocusFinish"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnMoveFocusFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>type[ ]</i> <b>rect</b>, <i>type[ ]</i> <b>orect</b>, <i>type[ ][ ]</i> <b>Values</b>, <i>TRow[ ]</i> <b>Rows</b>, <i>string[ ]</i> <b>Cols</b>, <i>TRow[ ]</i> <b>SourceRows</b>, <i>string[ ]</i> <b>SourceCols</b>)</s>
+</div>
+Called after move focus, after the cells are moved or cleared.<br />
+Parameters are the same as in <a href="#OnMoveFocus">OnMoveFocus</a>, but it is useless to change them here.<br />
+
+<!----------------------------------------------------------------- Fill cell values by dragging -------------------------------------------------------------->
+<a name="Fill"></a>
+<h2>Fill cell values by dragging</h2>
+
+A user can fill cell values by mouse dragging.<br />
+To show <b>bottom right corner</b> in the border cursor, add <b>Corner</b> flag to row <a href="Cursor.htm#IFocusCell">FocusCell</a> attribute, e.g. <tt>&lt;Def>&lt;D Name="R" FocusCell="Border,Color,Class,Corner"/>&lt;/Def></tt><br />
+Or set <tt>&lt;Actions OnDragCell='FillCells'/></tt> or similarly to different drag action, e.g <tt>&lt;Actions OnCtrlDragCells='FillCells'/></tt> to fill by the first cell only.<br />
+By default the value of the source cells are just copied to the other cells. You can change this behavior by <a href="#CfgAutoFillType">AutoFillType</a> or use <a href="#OnAutoFillValues">OnAutoFileValues</a> or <a href="#OnAutoFillValue">OnAutoFillValue</a> event.<br />
+
+<!-- AutoFillType -->
+<a name="CfgAutoFillType"></a>
+<div class="XML">
+   <u>new <b>11.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>AutoFillType</h4><s>[5]</s>
+</div>
+Flags how the auto fill actions will fill the cells, bit array.<br />
+<table>
+<tr><td style="width:50px;"><b>1</b>. bit</td><td style="width:50px;">&amp;<b>1</b></td><td>If set, the source cell values will be copied in the filling direction.</td></tr>
+<tr><td><b>2</b>. bit</td><td>&amp;<b>2</b></td><td>If set, the filled numbers can be calculated as in numeric sequence. Only if there is constant increase/decrease.</td></tr>
+<tr><td></td><td></td><td>Only if filled in one direction. Only if the source area contains at least two cells in the filling direction.</td></tr>
+<tr><td><b>3</b>. bit</td><td>&amp;<b>4</b></td><td>If set and the fill area is smaller than source area, the rest of source area will be cleared.</td></tr>
+<tr><td><b>4</b>. bit</td><td>&amp;<b>8</b></td><td><i>(new 12.0)</i> If set, permits calculated filling also from one cell in the filling direction by step 1.</td></tr>
+<tr><td><b>5</b>. bit</td><td>&amp;<b>16</b></td><td><i>(new 12.0)</i> If set, permits calculated filling also string values ending by number, increasing that number.</td></tr>
+</table>    
+
+<!-- Action FocusFillRowCol -->
+<a name="ActionsFocusFillRowCol"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusFillRowCol</h4>
+   <s>Attached to <b>OnDragCorner</b> event, can be attached only to <b>OnDrag...</b> event</s>
+</div>
+Starts filling cell values by the focused cell or focused cell range. It fills only horizontally or vertically, the direction is chosen by the larger destination from the source point, like in MS Excel.<br />
+The cell focus corner like in MS Excel can be shown by adding <b>Corner</b> flag to the <a href="Cursor.htm#IFocusCell">FocusCell</a>.<br />
+
+<!-- Action FocusFillCells -->
+<a name="ActionsFocusFillCells"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusFillCells</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> event</s>
+</div>
+Starts filling cell values by the focused cell or focused cell range. It fills to all cells the focused cell value or values in focused cell range repeatedly.<br />
+The cell focus corner like in MS Excel can be shown by adding <b>Corner</b> flag to the <a href="Cursor.htm#IFocusCell">FocusCell</a>.<br />
+
+<!-- Action FocusFillRow -->
+<a name="ActionsFocusFillRow"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusFillRow</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> event</s>
+</div>
+Starts filling cell values by the focused cell or focused cell range. It fills only horizontally.<br />
+
+<!-- Action FocusFillCol -->
+<a name="ActionsFocusFillCol"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>FocusFillCol</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> event</s>
+</div>
+Starts filling cell values by the focused cell or focused cell range. It fills only vertically.<br />
+
+<!-- Action FillCells -->
+<a name="ActionsFillCells"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>FillCells</h4>
+   <s>Attached to <b>OnShiftDragRow</b> event, can be attached only to <b>OnDrag...</b> event</s>
+</div>
+Starts filling cell values by the actual cell value. It fills to all cells the actual cell value.<br />
+
+<!-- Action FillCol -->
+<a name="ActionsFillCol"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>FillCol</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> event</s>
+</div>
+Starts filling cell values by the actual cell value. It fills only vertically.<br />
+
+<!-- Action FillRow -->
+<a name="ActionsFillRow"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>FillRow</h4>
+   <s>Not attached to any event, can be attached only to <b>OnDrag...</b> event</s>
+</div>
+Starts filling cell values by the actual cell value. It fills only horizontally.<br />
+
+<!-- FillRange -->
+<a name="FillRange"></a>
+<div class="API">
+   <u>new <b>12.0</b></u> <b>API method</b> <i>void</i>
+   <h4>FillRange</h4>
+   <s>(<i>type[ ]</i> <b>destination</b>, <i>type[ ]</i> <b>source</b>, <i>int</i> <b>type</b> = <a href="#CfgAutoFillType">AutoFillType</a>)</s>
+</div>
+Fills <b>destination</b> range according to the <b>source</b> range according to the <b>type</b>, see <a href="#CfgAutoFillType">AutoFillType</a>.<br /> 
+The <b>destination</b> range must contain the <b>source</b> range or vice versa.<br />
+
+<!-- OnAutoFillValues -->
+<a name="OnAutoFillValues"></a>
+<div class="API">
+   <u>new <b>11.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnAutoFillValues</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>type[ ][ ]</i> <b>Values</b>, <i>TRow[ ]</i> <b>Rows</b>, <i>string[ ]</i> <b>Cols</b>, <i>int</i> <b>orcnt</b>, <i>int</i> <b>occnt</b>, <i>int</i> <b>rcnt</b>, <i>int</i> <b>ccnt</b>, <i>bool</i> <b>rdir</b>, <i>bool</i> <b>cdir</b>)</s>
+</div>
+Called after cell range is selected by used in action <b>FillCells</b>/<b>Row</b>/<b>Col</b> and <b>FocusFillCells</b>/<b>Row</b>/<b>Col</b>, before the standard filling is done.<br />
+It is called directly before <a href="#OnAutoFill">OnAutoFill</a> event. <i>Since 11.0 it is preferred to use instead of <a href="#OnAutoFill">OnAutoFill</a> event.</i><br />
+<b>Values</b> is two dimensional array as <b>Values</b>[rowidx][colidx] of values to be set to cells in <b>Rows</b>[rowidx],<b>Cols</b>[colidx].<br />
+<b>Values</b> contain already calculated values. They can be changed in this event to fill different values.<br />
+The direction of <b>Values</b>/<b>Rows</b>/<b>Cols</b> is in the direction of filling - they can are reversed to position in grid if <b>rdir</b> or <b>cdir</b> is true.<br />
+<b>orcnt</b> / <b>ocnt</b> is size of source area. Source area is always in beginning of <b>Values</b>/<b>Rows</b>/<b>Cols</b>.<br />
+<b>rnct</b> / <b>ccnt</b> is size of filling area including source area. If set <a href="#CfgAutoFillType">AutoFillType</a>&amp;2, it can be even smaller than source area.<br />
+<b>rdir</b> is vertical direction - <b>0</b> go down, <b>1</b> go up; <b>cdir</b> is horizontal direction - <b>0</b> go right, <b>1</b> go left.<br />
+Return <b>true</b> to cancel the action - no filling will be done.<br />
+
+<!-- OnAutoFill -->
+<a name="OnAutoFill"></a>
+<div class="API">
+   <u><i>upd <b>11.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnAutoFill</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>r1</b>, <i>string</i> <b>c1</b>, <i>TRow</i> <b>r2</b>, <i>string</i> <b>c2</b>, <i>bool</i> <b>rdir</b>, <i>bool</i> <b>cdir</b>, <i>TRow</i> <b>ro</b>, <i>string</i> <b>co</b>)</s>
+</div>
+Called after cell range is selected by used in action <b>FillCells</b>/<b>Row</b>/<b>Col</b> and <b>FocusFillCells</b>/<b>Row</b>/<b>Col</b>, before the standard filling is done.<br />
+It is called directly after <a href="#OnAutoFillValues">OnAutoFillValues</a> event. <i>Since 11.0 it is preferred to use <a href="#OnAutoFillValues">OnAutoFillValues</a> event instead.</i><br />
+<b>r1</b>, <b>c1</b>, <b>r2</b>, <b>c2</b> is the selected cell range. <b>r1</b>,<b>c1</b> is always the firstly clicked cell.<br /> 
+<b>rdir</b> is vertical direction - <b>0</b> when <b>r2</b> is under <b>r1</b> and <b>1</b> if <b>r2</b> is above <b>r1</b>.<br /> 
+<b>cdir</b> is horizontal direction - <b>0</b> when <b>c2</b> is right from <b>c1</b> and <b>1</b> when <b>c2</b> is left from <b>c1</b>.<br />
+<b>r1</b>, <b>c1</b>, <b>ro</b>, <b>co</b> <i>(new 11.0)</i> is the originally selected range, often only one cell.<br /><br />
+
+For example if original focused rectangle was [R2,C5 - R3, C7] and it was extended to fill the rectangle [R2,C5 - R8,C12], the OnAutoFill will be called as:<br />
+	   <div class="L2">
+     <tt>OnAutoFill(Grid,R2,C5,R8,C12,0,0,[[&#123;R2,C5},&#123;R2,C6},&#123;R2,C7}],[&#123;R3,C5},&#123;R3,C6},&#123;R3,C7}]],R3,C7)</tt> 
+    </div><br /><br />
+    
+This function can be used to do to any operation in cell range created by dragging.<br />
+Return true to suppress default behavior. If returns true, the <a href="#OnAutoFillValue">OnAutoFillValue</a> and <a href="#OnAutoFillFinish">OnAutoFillFinish</a> are <u>not</u> called.<br />    
+
+<!-- OnAutoFillFinish -->
+<a name="OnAutoFillFinish"></a>
+<div class="API">
+   <u>new <b>8.0</b> <i>upd <b>11.0</b></i></u> <b>API event</b> <i>void</i>
+   <h4>OnAutoFillFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>r1</b>, <i>string</i> <b>c1</b>, <i>TRow</i> <b>r2</b>, <i>string</i> <b>c2</b>, <i>bool</i> <b>rdir</b>, <i>bool</i> <b>cdir</b>, <i>TRow</i> <b>ro</b>, <i>string</i> <b>co</b>)</s>
+</div>
+Called after filling is finished. The arguments are the same as in <a href="#OnAutoFill">OnAutoFill</a>.<br />
+
+<!-- OnAutoFillValue -->
+<a name="OnAutoFillValue"></a>
+<div class="API">
+   <u><i>upd <b>12.0</b></i></u> <b>API event</b> <i>type</i>
+   <h4>OnAutoFillValue</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>TRow</i> <b>orow</b>, <i>string</i> <b>ocol</b>, <i>type</i> <b>val</b>, <i>type</i> <b>prevval</b>, <i>int</i> <b>rowpos</b>, <i>int</i> <b>colpos</b>, <i>TRow</i> <b>orow2</b>, <i>string</i> <b>ocol2</b>, <i>type</i> <b>oldval</b>, <i>type[ ]</i> <b>attrvalues</b>, <i>string[ ]</i> <b>attrnames</b>, <i>object</i> <b>errors</b>)</s>
+</div>
+Called when automatically filling cell values selected by dragging in action <b>FillCells</b>/<b>Row</b>/<b>Col</b> and <b>FocusFillCells</b>/<b>Row</b>/<b>Col</b>, like in Excel.<br />
+It is called for every cell in the range to get its new value.<br />
+<b>row</b>, <b>col</b> is cell to fill; <b>orow</b>, <b>ocol</b> is base cell (the first cell dragged); <b>val</b> is predefined value to be filled.<br /> 
+<b>prevval</b> is previously filled (returned) value, for the base cell is null.<br />
+<b>rowpos</b>, <b>colpos</b> is distance from the actual cell from the base <tt>cell = base</tt> cell has 0,0. <b>rowpos</b> is negative when filling up and <b>colpos</b> when filling left.<br />
+<b>orow</b>, <b>ocol</b>, <b>orow2</b>, <b>ocol2</b> <i>(new 11.0)</i> is the base selected cell range, often only one cell.<br />
+Return new value or <b>val</b>. Or <i>since 12.0</i> return <b>oldval</b> as original value to <u>not</u> set the <b>val</b> to the cell.<br />
+For example: <tt>Grids.OnAutoFillValue=function(G,row,col,orow,ocol,val,old,ri,ci)&#123;return val+ri+ci;}</tt> - fills with increased values right down and decreased top left.<br />
+<i>Since 12.0</i>, <b>attrvalues</b> are values that will be set to cell attributes their names are in <b>attrnames</b>. It is possible to modify the values in <b>attrvalues</b>, but <u>not</u> in <b>attrnames</b>.<br />
+<i>Since 12.0</i>, for <b>errors</b> see <a href="CellEdit.htm#OnEditErrors">OnEditErrors</a> API event.<br />
+
+<!----------------------------------------------------------------- Tabulator navigation -------------------------------------------------------------->
+<a name="Tab"></a>
+<h2>Tabulator navigation</h2>
+
+TreeGrid supports tabulator navigation (tab & shift+tab) inside grid and also from another control to grid and from grid to another control.<br />
+
+<!-- TabStop -->
+<a name="CfgTabStop"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>TabStop</h4><s>[1]</s>
+</div>
+If and how the grid is included in page tab order.<br /> 
+If set, the grid is accessible by tab key from other inputs on page - the first or the last cell in grid becomes focused.<br />
+If set to <b>1</b>, the cell is just focused, if set to <b>2</b>, it also starts editing the cell.<br />
+
+<!-- TabIndex -->
+<a name="CfgTabIndex"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>TabIndex</h4><s></s>
+</div>
+If set <a href="#CfgTabStop">TabStop</a>, you can also set the exact <b>TabIndex</b> to place the grid into specific position in the page tab order. Similar to HTML <b>tabindex</b> attribute.<br />
+
+<!-- Action TabLeft -->
+<a name="ActionsTabLeft"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>TabLeft</h4>
+   <s>Attached to event <b>OnShiftTab</b></s>
+</div>
+Focuses the first focusable cell left to the actual focused cell. If there is none in the row, continues up, from right.<br /> 
+If there is no focused cell in grid, it focuses the first bottom right focusable cell.<br />
+Returns false if there is no previous cell to focus.<br />
+If returns false and is set <a href="#CfgTabStop">TabStop</a>, it focuses the previous control above the grid.<br />
+Remember, if you want to focus the previous control, the <b>OnShiftTab</b> event must return 0, otherwise it should return 1.<br />
+If set <a href="#FRect">FRect</a>, it navigates only inside this area.<br />
+
+<!-- Action TabRight -->
+<a name="ActionsTabRight"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>TabRight</h4>
+   <s>Attached to event <b>OnTab</b></s>
+</div>
+Focuses the first focusable cell right to the actual focused cell. If there is none in the row, continues down, from left.<br /> 
+If there is no focused cell in grid, it focuses the first top left focusable cell.<br />
+Returns false if there is no next cell to focus.<br />
+If returns false and is set <a href="#CfgTabStop">TabStop</a>, it focuses the next control below the grid.<br />
+Remember, if you want to focus the previous control, the <b>OnTab</b> event must return 0, otherwise it should return 1.<br />
+If set <a href="#FRect">FRect</a>, it navigates only inside this area.<br />
+
+<!-- Action TabRightAdd -->
+<a name="ActionsTabRightAdd"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>TabRightAdd</h4>
+   <s>Not attached to any event</s>
+</div>
+The same as <a href="#ActionsTabRight">TabRight</a>, but adds new row if no next variable row is available.<br />
+
+<!-- Action TabLeftEdit -->
+<a name="ActionsTabLeftEdit"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>TabLeftEdit</h4>
+   <s>Attached to events <b>OnShiftTabEdit</b> and <b>OnShiftTabEnum</b></s>
+</div>
+The same as <a href="#ActionsTabLeft">TabLeft</a> but goes to the <u>editable</u> cell.<br />
+
+<!-- Action TabRightEdit -->
+<a name="ActionsTabRightEdit"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>TabRightEdit</h4>
+   <s>Attached to events <b>OnTabEdit</b> and <b>OnTabEnum</b></s>
+</div>
+The same as <a href="#ActionsTabRight">TabRight</a> but goes to the <u>editable</u> cell.<br />
+
+<!-- Action TabRightEditAdd -->
+<a name="ActionsTabRightEditAdd"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>TabRightEditAdd</h4>
+   <s>Not attached to any event</s>
+</div>
+The same as <a href="#ActionsTabRight">TabRight</a> but goes to the <u>editable</u> cell and adds new row if no next variable row is available.<br />
+
+<!-- Action TabUp -->
+<a name="ActionsTabUp"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>TabUp</h4>
+   <s>Not attached to any event</s>
+</div>
+Focuses the first focusable cell above the actual focused cell. If there is none in the column, continues left, from bottom.<br /> 
+If there is no focused cell in grid, it focuses the first bottom right focusable cell.<br />
+Returns false if there is no previous cell to focus.<br />
+If set <a href="#FRect">FRect</a>, it navigates only inside this area.<br />
+<i>Note, the <a href="#CfgTabStop">TabStop</a> is not used in this event.</i><br />
+
+<!-- Action TabDown -->
+<a name="ActionsTabDown"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>TabDown</h4>
+   <s>Not attached to any event</s>
+</div>
+Focuses the first focusable cell below the actual focused cell. If there is none in the column, continues right, from top.<br /> 
+If there is no focused cell in grid, it focuses the first top left focusable cell.<br />
+<i>Behaves like Enter in MS Excel.</i><br />
+Returns false if there is no previous cell to focus.<br />
+If set <a href="#FRect">FRect</a>, it navigates only inside this area.<br />
+<i>Note, the <a href="#CfgTabStop">TabStop</a> is not used in this event.</i><br />
+
+<!-- Action TabUpEdit -->
+<a name="ActionsTabUpEdit"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>TabUpEdit</h4>
+   <s>Not attached to any event</s>
+</div>
+The same as <a href="#ActionsTabUp">TabUp</a> but goes to the <u>editable</u> cell.<br />
+
+<!-- Action TabDownEdit -->
+<a name="ActionsTabDownEdit"></a>
+<div class="ACT">
+   <u>new <b>11.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>TabDownEdit</h4>
+   <s>Not attached to any event</s>
+</div>
+The same as <a href="#ActionsTabDown">TabDown</a> but goes to the <u>editable</u> cell.<br />
+
+<!----------------------------------------------------------------- Key navigation -------------------------------------------------------------->
+<a name="Key"></a>
+<h2>Key navigation</h2>
+
+TreeGrid supports key navigation inside the grid by arrows, PageUp / PageDown, Home / End.<br /> 
+Behavior of any key can be changed by attaching chosen event handler in &lt;Actions/> tag.<br />
+
+<!-- Action OnKeyDown -->
+<a name="OnKeyDown"></a>
+<div class="API">
+   <u><i>upd <b>6.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnKeyDown</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>char</i> <b>key</b>, <i>Event</i> <b>event</b>, <i>string</i> <b>name</b>, <i>string</i> <b>prefix</b>)</s>
+</div>
+Called when a user hold down key in focused grid.<br /> 
+It is called for every key, <u>even</u> for all functional keys like ESC or arrow keys.<br />
+<b>key</b> is Unicode code of the character key pressed or key code for functional key.<br />
+<b>event</b> is JavaScript key event generated in onkeydown.<br />
+<b>name</b> is key name set in &lt;Actions> tag, e.g. "A", "F2", "Esc" or "Right".<br />
+<b>prefix</b> is shift key prefix - "Shift", "Alt", "Ctrl", "ShiftAlt", "ShiftCtrl", "CtrlAlt", "ShiftCtrlAlt".<br />
+Return true to suppress default action.<br />
+
+<!-- Action OnKeyPress -->
+<a name="OnKeyPress"></a>
+<div class="API">
+   <u><i>upd <b>6.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnKeyPress</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>char</i> <b>key</b>, <i>Event</i> <b>event</b>, <i>string</i> <b>name</b>, <i>string</i> <b>prefix</b>)</s>
+</div>
+Called when a user presses key in focused grid.<br /> 
+It is called after <a href="#OnKeyDown">OnKeyDown</a>, see the parameters here.<br />
+In some browsers (IE, Safari) it is called only for character keys, in other browsers (Mozilla, Opera) it is called for all keys.<br />
+Return true to suppress default action.<br />
+
+<!-- Action OnKeyUp -->
+<a name="OnKeyUp"></a>
+<div class="API">
+   <u>new <b>6.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnKeyUp</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>char</i> <b>key</b>, <i>Event</i> <b>event</b>, <i>string</i> <b>name</b>, <i>string</i> <b>prefix</b>)</s>
+</div>
+Called when a user releases key in focused grid.<br /> 
+See the parameters in <a href="#OnKeyDown">OnKeyDown</a>,<br />
+Return true to suppress default action.<br />
+
+<!-- Action GoDown -->
+<a name="ActionsGoDown"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GoDown</h4>
+   <s>Attached to event <b>OnDown</b></s>
+</div>
+Focuses the first focusable cell below the actually focused cell. If there is no focused cell, focuses the first left top cell.<br />
+It fails if there is no next focusable cell below.<br />
+
+<!-- Action GoDownAdd -->
+<a name="ActionsGoDownAdd"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GoDownAdd</h4>
+   <s>Not attached to any event</s>
+</div>
+Focuses the first focusable cell below the actually focused cell. If there is no focused cell, focuses the first left top cell.<br />
+If there is no next focusable cell below in variable row it adds new row and moves focus here.<br />
+
+<!-- Action GoUp -->
+<a name="ActionsGoUp"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GoUp</h4>
+   <s>Attached to event <b>OnUp</b></s>
+</div>
+Focuses the first focusable cell above the actually focused cell. If there is no focused cell, focuses the first left bottom cell.<br />
+It fails if there is no next focusable cell above.<br />
+
+<!-- Action GoRight -->
+<a name="ActionsGoRight"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GoRight</h4>
+   <s>Attached to event <b>OnRight</b></s>
+</div>
+Focuses the first focusable cell right to the actually focused cell.<br />
+It fails if there is no next focusable cell or no row is focused.<br />
+
+<!-- Action GoLeft -->
+<a name="ActionsGoLeft"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GoLeft</h4>
+   <s>Attached to event <b>OnLeft</b></s>
+</div>
+Focuses the first focusable cell left to the actually focused cell.<br />
+It fails if there is no previous focusable cell or no row is focused.<br />
+
+<!-- Action GoFirst -->
+<a name="ActionsGoFirst"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GoFirst</h4>
+   <s>Attached to event <b>OnHome</b></s>
+</div>
+Focuses the first focusable variable row in actually focused column.
+
+<!-- Action GoLast -->
+<a name="ActionsGoLast"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GoLast</h4>
+   <s>Attached to event <b>OnEnd</b></s>
+</div>
+Focuses the last focusable variable row in actually focused column.<br />
+
+<!-- Action PageDown -->
+<a name="ActionsPageDown"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>PageDown</h4>
+   <s>Attached to event <b>OnPageDown</b></s>
+</div>
+Focuses the same row on the next page or the last row. It does not change focused column except the cell in the new row is not focusable.<br />
+When one page is visible (<tt>&lt;Cfg AllPages='0'/></tt>) just focuses to the next page on the same position.<br />
+When all pages are visible or no paging is set, it scrolls down for the count of visible rows.<br />
+
+<!-- Action PageUp -->
+<a name="ActionsPageUp"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>PageUp</h4>
+   <s>Attached to event <b>OnPageUp</b></s>
+</div>
+Focuses the same row on the previous page or the first row. It does not change focused column except the cell in the new row is not focusable.<br />
+When one page is visible (<tt>&lt;Cfg AllPages='0'/></tt>) just focuses to the previous page on the same position.<br />
+When all pages are visible or no paging is set, it scrolls up for the count of visible rows.<br />
+
+<!-- Action PageDownFull -->
+<a name="ActionsPageDownFull"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PageDownFull</h4>
+   <s>Not attached to any event</s>
+</div>
+Like <a href="#ActionsPageDown">PageDown</a>, but preserves the focused row relative to the page - it does <u>not</u> focus last row on last page as the last step.<br />
+
+<!-- Action PageUpFull -->
+<a name="ActionsPageUpFull"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>PageUpFull</h4>
+   <s>Not attached to any event</s>
+</div>
+Like <a href="#ActionsPageUp">PageUp</a>, but preserves the focused row relative to the page - it does <u>not</u> focus first row on first page as the last step.<br />
+
+<!-- Action GoDownEdit -->
+<a name="ActionsGoDownEdit"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GoDownEdit</h4>
+   <s>Attached to event <b>OnDownEdit</b></s>
+</div>
+Focuses the first editable cell below the actually focused cell. If there is no focused cell, focuses the first left top cell.<br />
+It fails if there is no next editable cell below.<br />
+
+<!-- Action GoDownEditAdd -->
+<a name="ActionsGoDownEditAdd"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GoDownEditAdd</h4>
+   <s>Not attached to any event</s>
+</div>
+Focuses the first editable cell below the actually focused cell. If there is no focused cell, focuses the first left top cell.<br />
+If there is no next editable cell below in variable row it adds new row and moves focus here.<br />
+
+<!-- Action GoUpEdit -->
+<a name="ActionsGoUpEdit"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GoUpEdit</h4>
+   <s>Attached to event <b>OnUpEdit</b></s>
+</div>
+Focuses the first editable cell above the actually focused cell. If there is no focused cell, focuses the first left bottom cell.<br />
+It fails if there is no next editable cell below.<br />
+
+<!-- Action GoRightEdit -->
+<a name="ActionsGoRightEdit"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GoRightEdit</h4>
+   <s>Not attached to any event</s>
+</div>
+Focuses the first editable cell right to the actually focused cell.<br />
+It fails if there is no next editable cell or no row is focused.<br />
+
+<!-- Action GoLeftEdit -->
+<a name="ActionsGoLeftEdit"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>GoLeftEdit</h4>
+   <s>Not attached to any event</s>
+</div>
+Focuses the first editable cell left to the actually focused cell.<br />
+It fails if there is no previous editable cell or no row is focused.<br />
+
+</div>
+</body>	
+</html>

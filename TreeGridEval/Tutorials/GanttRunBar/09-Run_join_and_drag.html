@@ -1,0 +1,164 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+
+      /* Styles special for this example */
+      .Result { color:brown; font-weight:bold; }
+      .ResultLabel { color:brown; }
+      .Small { font-size:8px; line-height:12px; }
+      .Info { padding-top:1px!important; line-height:9px; font-size:9px; } /* Style for top right Info tag on tabber */
+      .InfoLabel { font-weight:bold; padding-left:10px; }
+   </style>
+   <script>
+
+// Adds box Group name to the box Text to display
+Grids.OnGetGanttRunText = function(G,row,col,run,idx,text,width,left,max){
+if(run[idx][6]) text += "-" + run[idx][6];
+return text;
+}
+
+function SetBool(attr,name,val){
+var G = Grids.RunJoin, C = G.Cols.GANTT; if(attr.indexOf("Gantt")<0) attr = "GanttRun"+attr;
+if(name==null) { C[attr] = val-0 ? val-0 : 0; return; }
+C[attr] = C[attr] ? (C[attr]+"").toLowerCase() : ""; name = name.toLowerCase();
+C[attr] = val ? C[attr]+(C[attr]?",":"")+name : C[attr].replace(new RegExp(","+name+","),",").replace(new RegExp("(,|\\b)"+name+"(,|\\b)"),"");
+}
+
+function GetBool(attr,name){
+if(attr.indexOf("Gantt")<0) attr = "GanttRun"+attr;
+var val = Grids.RunJoin.Cols.GANTT[attr];
+if(name==null) return val?val:0;
+return (val+"").search(new RegExp("\\b"+name+"\\b","i"))>=0;
+}
+
+function SetCombo(row,col,attr,val){
+var G = Grids.RunJoin, C = G.Cols.GANTT; if(attr.indexOf("Gantt")<0) attr = "GanttRun"+attr;
+C[attr] = C[attr] ? (C[attr]+"").toLowerCase() : ""; name = name.toLowerCase();
+var D = row[col+"Defaults"]; D = D.slice(1).split(D.charAt(0));
+var K = row[col+"Keys"], eq = K&&K.indexOf(";")>=0; K = K ? K.toLowerCase().slice(1).split(K.charAt(0)) : D;
+if(C[attr]-0||C[attr]=="0") C[attr] = 0;
+else if(eq) C[attr] = "";
+else for(var i=0;i<K.length;i++) if(K[i]) C[attr] = C[attr].replace(new RegExp(","+K[i]+","),",").replace(new RegExp("(,|\\b)"+K[i]+"(,|\\b)"),"");
+if(val) {
+   val = val.split(";");
+   for(var i=0;i<D.length;i++) {
+      for(var j=0;j<val.length;j++){
+         if(D[i]==val[j]) { 
+            if(K[i]-0||K[i]=="0") C[attr] = (C[attr] ? C[attr]-0 : 0) + (K[i]-0);
+            else if(K[i]) C[attr] += (C[attr]?",":"")+K[i];
+            }
+         }
+      }
+   }
+if(attr=="GanttRunJoinedNbsp" || attr == "GanttRunJoined") { C["GanttRunJoinedNbsp"] &= C["GanttRunJoined"]; G.Recalculate(row,"JNBSP",1); } // GanttRunJoinedNbsp can contain only bits set in GanttRunJoined
+}
+
+function GetCombo(row,col,attr,bitarray){
+var G = Grids.RunJoin, C = G.Cols.GANTT; if(attr.indexOf("Gantt")<0) attr = "GanttRun"+attr;
+var D = row[col+"Defaults"]; D = D.slice(1).split(D.charAt(0));
+var K = row[col+"Keys"], eq = K&&K.indexOf(";")>=0; K = K ? K.toLowerCase().slice(1).split(K.charAt(0)) : D;
+var val = Grids.RunJoin.Cols.GANTT[attr]+""; if(eq) val = val.toLowerCase();
+var ret = "";
+for(var i=0;i<K.length;i++) if(bitarray ? val&K[i] : (eq ? K[i]==val : K[i]&&val.search(new RegExp("\\b"+K[i]+"\\b","i"))>=0)) ret += (ret ? ";":"") + D[i];
+if(!ret) for(var i=0;i<K.length;i++) if(!K[i]) return D[i];
+return ret;
+}
+
+   </script>
+
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>9. Run join and drag</h1>
+   <h2>Joining and selecting run boxes and manipulating them together</h2>
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='09-Run_join_and_drag.xml'>09-Run_join_and_drag.xml</a></div>
+      <div class="Main" style='min-width:920px; height:935px;'>
+         <bdo Debug='check' debugcheckignore="Keys" Data_Url='09-Run_join_and_drag.xml'></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li>
+         See documentation for <b><a href="../../Doc/GanttRun.htm">Gantt Run</a></b>.
+      </li>
+      <li>
+         The run boxes can be <b>moved</b> inside and outside its cell, <b>copied</b>, <b>resized</b>, <b>deleted</b>, <b>created</b>, <b>disabled</b>, <b>locked</b> and <b>edited</b> / <b>changed</b>.<br />
+         The creating and resizing is done always only for one box. Although they can behave differently if the box or other boxes are <b>joined</b> or not.<br />
+         The other actions can be done for <b>one</b> box, for more <b>joined</b> boxes, for more <b>selected</b> boxes and for more boxes in the same <b>group</b>.
+      </li>
+      <li>
+         <h4>Joined boxes</h4><br />
+         Boxes can be joined <h4>directly</h4>, if there is no empty box between them and <h4>by Nbsp</h4> type box between them.<br />
+         Both the join types can be controlled differently, but note the <b>direct</b> join is more tight join than the <b>Nbsp</b> join, so some actions permitted for direct join are automatically applicable fo Nbsp join, but not vice versa.<br />
+         Attributes:
+         <b>GanttRun</b>, item 1. Type, keywords Nbsp and Empty,
+         <b>GanttRunMove</b>, flags Single, Next, Prev, Nbsp, Selected, Group,
+         <b>GanttRunResize</b>, flag Nbsp,
+         <b>GanttRunAdjust</b>, flags Append, AppendNbsp, Nbsp, Single, ResizeNbsp,
+         <b>GanttRunJoined</b>, <b>GanttRunJoinedNbsp</b>, <b>GanttRunJoinedHover</b>, <b>GanttRunNbspHover</b>.<br />
+         Actions: <b>JoinSelectedGanttRun</b>, <b>SplitJoinedGanttRun</b>, <b>JoinAdjacentGanttRun</b> and <b>SplitAdjacentGanttRun</b>.<br />
+         GanttMenu items: <b>JoinGanttRunSelected</b>, <b>SplitGanttRunJoined</b>, <b>JoinGanttRunAdjacent</b>, <b>SplitGanttRunAdjacent</b>.<br />
+      </li>
+      <li>
+         <h4>Selected boxes</h4><br />
+         There can be one or more boxes in grid selected and handled together.<br />
+         The boxes can be selected individually (by default by double click) or by dragging rectangle (by default by right mouse button, in this example by shift + left button).<br /> 
+         The selected boxes can be handled all together or only all selected boxes from one (actual) row.<br />
+         Attributes:
+         <b>GanttRun</b>, item 7. State, 3. bit (value 4) or keyword Selected, <b>GanttRunSelect</b>, <b>GanttRunClearSelected</b>, 
+         <b>GanttRunJoined</b>, 3. bit (value 4), <b>GanttRunJoinedNbsp</b>, 3. bit (value 4),
+         <b>GanttRunMove</b>, flags Selected, SelectedSingle, Clear, Entire.<br />
+         Actions:
+         <b>SelectGanttRun</b>, <b>SelectGanttRunRect</b>, <b>DeselectGanttRunAll</b>, <b>DeleteGanttRunSelected</b>, <b>ChooseGanttRunSelectedType</b>, <b>JoinSelectedGanttRun</b><br />
+         GanttMenu items:
+         <b>SelectGanttRunPart</b>, <b>SelectGanttRun</b>, <b>UnselectGanttRun</b>, <b>JoinGanttRunSelected</b>, <b>DelGanttRunSelected</b>, <b>ChooseGanttRunSelectedType</b>.<br />
+         API:
+         <b>OnGanttRunSelect</b>, <b>SelectGanttRunBox</b>, <b>SelectGanttRunRect</b>, <b>GetGanttRunSelectedBoxes</b>, <b>GetGanttRunSelectedCount</b>.<br />
+      </li>
+      <li>
+         <h4>Box groups</h4><br />
+         Every box can belong to one group of boxes according to its Group attribute value. If the Group attribute is empty, the box does not belong to any group.<br />
+         The boxes in the same group can be handled all together or only boxes in one (selected) row.<br />
+         Attributes:
+         <b>GanttRun</b>, item 6. Group, <b>GanttRunGroupHover</b>, <b>GanttRunMove</b>, flags Group, GroupSingle, Entire.<br />
+         Actions:
+         <b>DeleteGanttGroup</b>, <b>DeletedGanttGroupAll</b>, <b>ChooseGanttRunGroupType</b>, <b>ChooseGanttRunGroupAllType</b>.<br />
+         GanttMenu items:
+         <b>DelGanttRunGroup</b>, <b>DelGanttRunGroupAll</b>, <b>ChooseGanttRunGroupType</b>, <b>ChooseGanttRunGroupAllType</b>.<br />
+
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialRun\s*=\s*(\d+)/), TGIndex = 256;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialGridRun9", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialRun="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>

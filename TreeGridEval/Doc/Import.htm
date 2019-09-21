@@ -1,0 +1,337 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Import from Excel</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Import from Excel</h1>
+<p>TreeGrid documentation</p>
+
+Loading <b>xlsx</b> files, handling more sheets.<br />
+Supported in all browsers except <b>IE9</b> and older.<br />
+<strong>Included only in <b>SpreadSheet</b> component.</strong>
+
+<!-----------------------------------------------------------------------  Basic settings  ------------------------------------------------->
+<a name="Basic"></a><a name="XLS"></a>
+<h2>Basic settings</h2>
+
+<!-- ImportAction -->
+<a name="CfgImportAction"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>ImportAction</h4> <s>[0/3]</s>
+</div>
+If and how the grid can open <b>xlsx</b> files, bit array.<br />
+1. bit <b>&1</b> - If shows the <b>Import</b> button on toolbar. The Import button has assigned <a href="#ActionsImport">Import</a> action.<br />
+2. bit <b>&2</b> - If the xlsx file can be dropped to the grid to open it.<br />
+By default it is <b>3</b> if grid data source is <b>xlsx</b> file. Otherwise it is <b>0</b> and can be changed only if defined <a href="#CfgImportExt">ImportExt</a> and <a href="#OnImportText">OnImportText</a>.<br />
+
+<!-- ImportExt -->
+<a name="CfgImportExt"></a>
+<div class="XML">
+   <u>new <b>14.0</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+   <h4>ImportExt</h4> <s>["xlsx"]</s>
+</div>
+Comma separated list of permitted file extensions for both import actions.<br />
+Use with <a href="#OnImportText">OnImportText</a> for <b>custom import</b> of any textual file.<br />
+
+<!-- ImportWidths -->
+<a name="CfgImportWidths"></a>
+<div class="XML">
+    <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>bool</i>
+    <h4>ImportWidths</h4> <s>[1]</s>
+</div>
+If column widths will be imported from xlsx.
+
+<!-- ImportHeader -->
+<a name="CfgImportHeader"></a>
+<div class="XML">
+    <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+    <h4>ImportHeader</h4> <s>[0]</s>
+</div>
+Count of first rows in xlsx set as <b>Header</b> rows in Head section.
+
+<!-- ImportHead -->
+<a name="CfgImportHead"></a>
+<div class="XML">
+    <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+    <h4>ImportHead</h4> <s>[0]</s>
+</div>
+Count of first rows in xlsx assigned to the <b>Head</b> section (evaluated after <a href="#CfgImportHeader">ImportHeader</a>).
+
+<!-- ImportFoot -->
+<a name="CfgImportFoot"></a>
+<div class="XML">
+    <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+    <h4>ImportFoot</h4> <s>[0]</s>
+</div>
+Count of last rows in xlsx assigned to the <b>Foot</b> section.
+
+<!-- ImportLeftCols -->
+<a name="CfgImportLeftCols"></a>
+<div class="XML">
+    <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+    <h4>ImportLeftCols</h4> <s>[0]</s>
+</div>
+Count of first columns in xlsx assigned to the <b>LeftCols</b> section.
+
+<!-- ImportRightCols -->
+<a name="CfgImportRightCols"></a>
+<div class="XML">
+    <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+    <h4>ImportRightCols</h4> <s>[0]</s>
+</div>
+Count of last columns in xlsx assigned to the <b>RightCols</b> section.
+
+<!-- ImportAttrs -->
+<a name="CfgImportAttrs"></a>
+<div class="XML">
+    <u>new <b>13.0</b></u> <b>&lt;Cfg></b> <i>string[]</i>
+    <h4>ImportAttrs</h4> <s>["all"]</s>
+</div>
+Comma separated list of attribute names which will be recognized/applied during the import (if present where relevant).
+The default is <b>"all"</b>, i.e. all the supported attributes.<br/>
+For example: <tt>ExportAttrs="Value,Align,Color,EFormula"</tt>
+
+<!-- Import -->
+<a name="ActionsImport"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>Import</h4> <s>Attached to event <b>OnClickButtonImport</b></s>
+</div>
+Shows open dialog and lets a user to choose xlsx file to open it in grid.
+It asks a user to merge the files or discard the old file.
+<br />
+
+<!-- ImportAdd -->
+<a name="ActionsImportAdd"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ImportAdd</h4> <s>Not attached to any event</s>
+</div>
+Shows open dialog and lets a user to choose xlsx file to open it in grid. It merges the old and new files.
+
+<!-- ImportDiscard -->
+<a name="ActionsImportDiscard"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ImportDiscard</h4> <s>Not attached to any event</s>
+</div>
+Shows open dialog and lets a user to choose xlsx file to open it in grid. It discards the old file.
+
+<!-- OnImportText -->
+<a name="OnImportText"></a>
+<div class="API">
+   <u>new <b>14.0</b></u> <b>API event</b> <i>void</i>
+   <h4>OnImportText</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>data</b>, <i>object</i> <b>file</b>, <i>int</i> <b>type</b>)</s>
+</div>
+It is called when defined <a href="#CfgImportExt">ImportExt</a>, for both import actions.<br />
+Use if for <b>custom import</b> of any textual file, this event handler must parse the input data and pass it to TreeGrid, for example:<br />
+<tt>Grids.OnImportText = function(G,csv){ var json = CsvToJson(G,csv); /* Custom parse function */ G.Source.Data.Url = null; G.Source.Data.Data = json; G.ReloadBody(); }</tt><br />
+<b>data</b> is the <b>file</b> content in string<br />
+<b>file</b> is JavaScript <b>File</b> object if loaded from dropped or opened file. It has set e.g. the <b>name</b> property as the file name.<br />
+<b>type</b> is <b>1</b> to merge files or <b>2</b> to discard the old file.<br />
+
+
+<!-- OnImportData -->
+<a name="OnImportData"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnImportData</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object</i> <b>file</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Called before the xlsx <b>file</b> is opened in grid, return true to not open it.<br /> 
+<i>It is called only if the file is dropped or opened in grid, not if the file is loaded from Data_Url.</i><br />
+<b>file</b> is JavaScript <b>File</b> object. It has set e.g. the <b>name</b> property as the file name.<br />
+<b>type</b> is <b>1</b> to merge files or <b>2</b> to discard the old file.<br />
+
+<!-- OnImportedData -->
+<a name="OnImportedData"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnImportedData</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>object</i> <b>file</b>, <i>object</i> <b>buffer</b>, <i>int</i> <b>type</b>)</s>
+</div>
+Called after the xlsx <b>file</b> is opened and set to grid data source grid.Source.Data.File. It is called before the grid is reloaded from this data.<br /> 
+<b>file</b> is JavaScript <b>File</b> object if loaded from dropped or opened file. It has set e.g. the <b>name</b> property as the file name.<br />
+<b>file</b> is string url if loaded from Data_Url.<br />
+<b>buffer</b> is JavaScript <b>ArrayBuffer</b> object with raw data loaded from <b>file</b>.<br />
+<b>type</b> is <b>1</b> to merge files or <b>2</b> to discard the old file or <b>0</b> if loaded directly from Data_Url.<br />
+
+<!-- OnImportDataError -->
+<a name="OnImportDataError"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnImportDataError</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>int</i> <b>error</b>, <i>string</i> <b>message</b>, <i>object</i> <b>file</b>, <i>object</i> <b>data</b>)</s>
+</div>
+Called if the xlsx <b>file</b> cannot be opened in grid.<br /> 
+<b>error</b> is error number:<br />
+<b>-1</b> - Missing TreeGrid module Import - the module Import is included in <b>Sheet</b> component only.<br />
+<b>-2</b> - Unknown or incorrect file format.<br />
+<b>-3</b> - Missing TreeGrid external module JSZip. By default it is located in Grid/External/jszip.min.js.<br />
+<b>-4</b> - Error parsing file. <b>message</b> contains more information about the error.<br />
+<b>-5</b> - Error loading file. <b>message</b> and <b>data</b> contain more information about the error.<br />
+<b>message</b> is string error message for the error.<br />
+<b>file</b> is JavaScript <b>File</b> object if loaded from dropped or opened file. It has set e.g. the <b>name</b> property as the file name.<br />
+<b>file</b> is string url if loaded from Data_Url.<br />
+<b>data</b> is JavaScript <b>ArrayBuffer</b> object with raw data loaded from <b>file</b>. Or it is error object, if the file cannot be loaded. Or it is null if missing TreeGrid module.<br />
+
+<!-- ImportData -->
+<a name="ImportData"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ImportData</h4>
+   <s>(<i>object</i> <b>file</b>, <i>bool</i> <b>nomessage</b>)</s>
+</div>
+Loads given xlsx <b>file</b> to grid. <b>file</b> is JavaScript <b>File</b> object.<br />
+If set <b>nomessage</b>, it does not ask user about discarding last data.<br />
+
+<!-----------------------------------------------------------------------  Sheet manipulation  ------------------------------------------------->
+<a name="Sheets"></a>
+<h2>Sheet manipulation</h2>
+
+<!-- Type -->
+<a name="SpaceCellType"></a>
+<a name="Sheets"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>Type</h4> <s>Type="<h4>Sheets</h4>"</s>
+</div>
+Shows list of sheet names in actually opened xlsx.<br />
+It creates one space cell for every sheet. 
+The sheets can be moved, copied and deleted by default, the tabs have predefined 
+CanEdit="1" CanFocus="2" FocusCell="" CanCopy="1" CanDelete="1" and it presets also <a href="TypeButton.htm#IDragTab">DragTab</a> if not defined.<br />
+If the cell value is <b>2</b>, it creates one combo with popup list with all sheets and the sheets cannot be moved or deleted in the combo.<br />
+To add new sheets defined new button like <tt>&lt;Tabber Space="-1" Cells="Sheets,New" SheetsType="Sheets" SheetsWidth="50" NewButtonText="+" NewOnClick="AddSheet"/></tt><br />
+The tabs with sheets can be controlled also as standard tabs, as described at <a href="TypeButton.htm#Radio">Radio / tab button</a> .<br />
+
+<!-- ShowHidden -->
+<a name="SpaceCellShowHidden"></a>
+<div class="XML">
+   <u>new <b>13.0</b></u> <b>&lt;Space cell></b> <i>bool</i>
+   <h4>ShowHidden</h4> <s>[0]</s>
+</div>
+If the Sheets Type cell will display also hidden sheets.<br />
+
+<!-- AddSheet -->
+<a name="ActionsAddSheet"></a>
+<div class="ACT">
+   <u>new <b>13.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>AddSheet</h4> <s>Not attached to any event</s>
+</div>
+Adds new empty sheet to the end of sheets and shows it in grid.<br />
+
+<!-- OnLoadSheet -->
+<a name="OnLoadSheet"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API event</b> <i>bool</i>
+   <h4>OnLoadSheet</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>name</b>)</s>
+</div>
+Called before given sheet is shown in grid. Return true to not load the sheet.<br />
+Showing sheet reloads the whole grid by <a href="Create.htm#Reload">Reload</a> method, therefore the <b>grid</b> object cannot be used later.<br />
+
+<!-- LoadSheet -->
+<a name="LoadSheet"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>LoadSheet</h4>
+   <s>(<i>string</i> <b>name</b>, <i>bool</i> <b>save</b>)</s>
+</div>
+Loads given sheet into grid. If <b>save</b> is true, saves all changes done in grid to actual sheet.<br />
+Showing sheet reloads the whole grid by <a href="Create.htm#Reload">Reload</a> method, therefore the <b>grid</b> object cannot be used later.<br />
+Returns true if reloading started successfully. The reloading is asynchronous, the sheet is not loaded in grid when function returns.<br />
+
+<!-- LoadSheetHidden -->
+<a name="LoadSheetHidden"></a>
+<div class="API">
+   <u>new <b>13.3</b></u> <b>API method</b> <i>TGrid</i>
+   <h4>LoadSheetHidden</h4>
+   <s>(<i>string</i> <b>name</b>)</s>
+</div>
+Loads given sheet synchronously without rendering it and returns the created grid.<br />
+If the sheet is already loaded, just returns its grid object. The grid object is normally placed to Grids array.<br />
+All the hidden sheets are deleted when reloading the active sheet.<br />
+It can be used to access data on other sheets than the actual one.<br />
+<br />
+For example to upload data from all sheets in xlsx at once to server:<br />
+<tt>
+Grids.OnUpload = function(G,xml,row,auto){<br />
+if(row||auto) return;<br />
+var S = G.GetSheets(), A = [];<br />
+for(var i=0;i&lt;S.length;i++) A[A.length] = "&lt;Grid id='"+S[i]+"'>" + G.LoadSheetHidden(S[i]).GetXmlData("Body,NoGrid") + "&lt;/Grid>";<br />
+return "&lt;Grids>"+A.join("")+"&lt;/Grids>";<br />
+}
+</tt>
+<!-- GetSheets -->
+<a name="GetSheets"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>string[]</i>
+   <h4>GetSheets</h4>
+   <s>(<i>bool</i> <b>hidden</b> = 0)</s>
+</div>
+Returns list of sheet names in actual opened xlsx. If set <b>hidden</b>, it returns also hidden sheets.<br />
+
+<!-- HasSheet -->
+<a name="HasSheet"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>bool</i>
+   <h4>HasSheet</h4>
+   <s>(<i>string</i> <b>name</b>, <i>bool</i> <b>hidden</b> = 0)</s>
+</div>
+Returns if given sheet exists in actual xlsx. If set <b>hidden</b>, checks also hidden sheets.<br />
+
+<!-- GetActiveSheet -->
+<a name="GetActiveSheet"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>string</i>
+   <h4>GetActiveSheet</h4>
+   <s>( )</s>
+</div>
+Returns name of active sheet in actual opened xlsx.
+
+<!-- GetUniqueSheet -->
+<a name="GetUniqueSheet"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>string</i>
+   <h4>GetUniqueSheet</h4>
+   <s>(<i>string</i> <b>name</b>)</s>
+</div>
+Changes and returns given sheet name to be unique in actual opened xlsx.
+
+<!-- DeleteSheet -->
+<a name="DeleteSheet"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>void</i>
+   <h4>DeleteSheet</h4>
+   <s>(<i>string</i> <b>name</b>)</s>
+</div>
+Deletes given sheet. If the sheet is active, loads next sheet or for only sheet it loads new empty sheet.<br />
+
+<!-- RenameSheet -->
+<a name="RenameSheet"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>string</i>
+   <h4>RenameSheet</h4>
+   <s>(<i>string</i> <b>name</b>,<i>string</i> <b>newname</b>)</s>
+</div>
+Renames sheet <b>name</b> to <b>newname</b>. If the <b>newname</b> already exists in grid, changes it to be unique.<br />
+Returns the name that was set to sheet.<br />
+
+<!-- MoveSheet -->
+<a name="MoveSheet"></a>
+<div class="API">
+   <u>new <b>13.0</b></u> <b>API method</b> <i>void</i>
+   <h4>MoveSheet</h4>
+   <s>(<i>string</i> <b>name</b>,<i>string</i> <b>next</b>, <i>bool</i> <b>copy</b>)</s>
+</div>
+Moves or copies the sheet <b>name</b> left side to the sheet <b>next</b>. If <b>next</b> is null, moves or copies the sheet as the last sheet.<br />
+If copied actual sheet, it activates the new copied sheet.<br />
+</div>
+</body>	
+</html> 

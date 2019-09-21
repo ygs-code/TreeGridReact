@@ -1,0 +1,17 @@
+<html>
+   <head>
+      <script src="../../../Grid/GridE.js"> </script>
+   </head>
+   <body>
+      <div style="width:100%;height:90%;" id='GRID'>   
+         <script>
+
+// Url parameters: ?cfg_file&dpi&page_width_mm&page_height_mm&horizontal_margin_mm&vertical_margin_mm&fit_page
+var param = location.search.slice(1).split("&");
+var bonus = param[0] ? AjaxCall(param[0]) : null; // Reads grid configuration and changes from temporary file
+PrintTreeGrid({Layout:{Url:"PagingDef.xml",Bonus:bonus}, Data:{Url:"PagingData.xml",Method:"Get"},Page:{Url:"PagingPage*Pos.xml",Method:"Get"}},"GRID",null,{Dpi:param[1],Width:param[2],Height:param[3],MarginWidth:param[4],MarginHeight:param[5],FitPage:param[6]});
+
+         </script>
+      </div>
+   </body>
+</html>

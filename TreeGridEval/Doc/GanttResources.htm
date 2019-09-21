@@ -1,0 +1,1027 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Gantt resource charts</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Gantt resources</h1>
+<p>TreeGrid documentation</p>
+
+The resource list is defined globally for whole chart in &lt;Resources> root tag.<br />
+The individual resources can be assigned to tasks to compute their price.<br />
+The tasks can filtered according to the assigned resources.<br />
+TreeGrid provides various calculations for resources and prices.<br />
+
+<!-----------------------------------------------------------------------  Resources list ------------------------------------------------->
+<a name="List"></a>
+<h2>Resources list</h2>
+
+Resources are defined globally for the whole project in root tag &lt;<b>Resources</b>>, individual resources are defined in nested &lt;<b>R</b>> tags.<br />
+<br />
+
+For example simple definition can be:<br />
+<tt>
+&lt;Grid>
+<div class="L1">...</div>
+<div class="L1">&lt;Resources></div>
+<div class="L2">
+   &lt;R Name='Resource1' Price='100'/><br />
+   &lt;R Name='Resource2' Price='200'/><br />
+</div>
+<div class="L1">&lt;/Resources></div>
+&lt;/Grid>
+</tt>
+
+<!-- <R> -->
+<a name="ResourcesR"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Resources></b> <i></i>
+   <h4>&lt;R></h4> <s></s>
+</div>
+One resource definition. It can be placed only in root &lt;Resources> tag.<br />
+
+<!-- Name -->
+<a name="RName"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;R></b> <i>string</i>
+   <h4>Name</h4> <s></s>
+</div>
+Unique name of the resource.<br />
+
+<!-- Text -->
+<a name="RText"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;R></b> <i>string</i>
+   <h4>Text</h4> <s></s>
+</div>
+Text displayed for the resource in the popup menu for assigning resources to the task.<br />
+If not set, the <a href="#RName">Name</a> is used.<br />
+
+<!-- Type -->
+<a name="RType"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;R></b> <i>int</i>
+   <h4>Type</h4> <s>[1]</s>
+</div>
+Type of the resource.<br />
+<b>1 - Work</b>, <u>not</u> consumed resource. The <a href="#RAvailability">Availability</a> is the maximal count per time unit.<br />
+<b>2 - Material</b>, consumed resource. The <a href="#RAvailability">Availability</a> is calculated from start and consumed per every used time unit.<br />
+
+<!-- Consume -->
+<a name="RConsume"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;R></b> <i>int</i>
+   <h4>Consume</h4> <s>[0]</s>
+</div>
+How the Material type resource is consumed.<br />
+<b>0</b> - a part per every used time unit<br />
+<b>1</b> - all on start<br />
+<b>2</b> - all on end<br />
+<b>3</b> - all on middle<br />
+
+<!-- Price -->
+<a name="RPrice"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;R></b> <i>float</i>
+   <h4>Price</h4> <s></s>
+</div>
+Price per one resource unit.<br /> 
+The resource units are set by <a href="GanttCompute.htm#CGanttDataUnits">GanttDataUnits</a>.<br />
+
+<!-- Availability -->
+<a name="RAvailability"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;R></b> <i>string</i>
+   <h4>Availability</h4> <s></s>
+</div>
+Resource <b>availability</b>. Maximal summary count of resource units assigned to all tasks at one time unit (<tt><a href="#RType">Type</a>=1</tt>) or for whole project (<tt><a href="#RType">Type</a>=2</tt>).<br />
+<i>Since 7.0</i> it can contain more values for given date ranges, in format: <b>repeater1<strong>#</strong>date1a<strong>~</strong>date1b<strong>#</strong>count1<strong>;</strong>repeater2<strong>#</strong>date2a<strong>~</strong>date2b<strong>#</strong>count2<strong>;</strong></b>....<br />
+The possible values of <b>repeater</b> are the same as <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a>, e.g. "w", "d", "h" or "1", "0.5", "2", ... If the <b>repeater</b> is not present, the date range is not repeated<br />
+The <b>date</b> range is range where the <b>count</b> of resources is available. The date range can be periodically repeated by the <b>repeater</b>.<br />
+For <b>Material</b> <a href="#RType">Type</a> resources is used only the first date from <b>date</b> range as date when the <b>count</b> of resources arrives.<br />
+If some date ranges are overlapped, the <b>count</b> values are summed. The <b>count</b> can be also negative to reduce the count for some range.<br />
+For example "3<strong>;</strong>w<strong>#</strong>1/3/2011<strong>~</strong>1/4/2011<strong>#</strong>-1" - The resource count is 3 except Mondays when is 2.<br />
+It is possible to limit the repeating - when the <b>date</b> range is wider than the <b>repeater</b>, the range is rounded to the <b>repeater</b> range and repeated only between the <b>dates</b>.<br />
+For example 'w<strong>#</strong>1/5/2008<strong>~</strong>12/29/2008<strong>#</strong>1' marks all weekends, but only in year 2008.<br />
+The availability can be easily edited by users in dialog for <a href="TypeDate.htm#Dates">Dates</a> type Button.<br />
+
+<!-- MaxCount -->
+<a name="RMaxCount"></a>
+<div class="DEL">
+   <u>new <b>6.4</b> deleted <b>7.0</b></u> <b>&lt;R></b> <i>float</i>
+   <h4>MaxCount</h4> <s></s>
+</div>
+Renamed to Availability<br />
+
+<!-- Resources -->
+<a name="Resources"></a>
+<div class="API">
+   <u>new <b>6.4</b></u> <b>API variable</b> <i>object[ ]</i>
+   <h4>Resources</h4>
+   <s></s>
+</div>
+The array of all resources in grid, accessible by its name.<br /> 
+The resource objects contain all the XML attributes like Price or Availability.<br />
+Example: <tt>Grid.Resources.Worker.Price = 150;</tt><br />
+
+<!-----------------------------------------------------------------------  Resources assign ------------------------------------------------->
+<a name="Assign"></a>
+<h2>Resources assign</h2>
+
+Every task can have assigned one or more resources from global &lt;Resources> list. It can have also specified how many resource units it uses.<br />
+
+<!-- GanttResourcesX -->
+<a name="CGanttResources"></a>
+<div class="XML">
+   <u>chg <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttResources<span style="color:#00B0F0">X</span></h4> <s>Gantt source - column name or exact value</s>
+</div>
+The resources assigned to the main bar task. It can be column name or string.<br />
+<b>It is used only for Gantt tasks listed in</b> <a href="GanttObjects.htm#CGanttTask">GanttTask</a> (by default it is only the first main bar plan)<br />
+<i>Since 10.0</i> it is <u>not</u> used for run, for run bar use <a href="#CGanttRunResources">GanttRunResources</a>, for run box use <a href="GanttRun.htm#RunResources">Resources</a>.<br />
+The <b><i>X</i></b> is main bar plan, for the first main plan is empty (GanttResources, GanttResources1, GanttResources2, ...). See <a href="GanttMain.htm#CGanttCount">GanttCount</a>.<br />
+It is in format: <b>name1<strong>*</strong>amount1<strong>+</strong>extra1<strong>;</strong>name2<strong>*</strong>amount2<strong>+</strong>extra2<strong>;</strong>...</b><br /> 
+Resources are separated by semicolon (defined by &lt;Format ValueSeparator/>) <i>(note, in Run box <a href="GanttRun.htm#RunResources">Resources</a> is used '#' instead of the semicolon)</i><br />
+The <b>name</b> and <b>amount</b> are separated by asterisk (defined by &lt;Format CountSeparator/>)<br />
+The <b>extra</b> is separated by plus (defined by &lt;Format AddSeparator/>)<br />
+The <b>name</b> is resource <a href="#RName">Name</a>.<br />
+The <b>amount</b> is amount of resource units per task data unit. The <b>amount</b> can be omitted if it is <b>1</b> and <b>extra</b> is not defined. Or is <b>0</b> and <b>extra</b> is defined.<br />
+The <b>extra</b> is extra amount of resource units independent on the task duration. The <b>extra</b> can be omitted if it is <b>0</b>. <i>This item changed its meaning in 7.0!</i><br />
+If the <b>name</b> and <b>amount</b> are both omitted, the <b>extra</b> is extra price for the task independent on resources and task duration. There should be only one such extra price per task.<br />
+The GanttResources can be also just plain text to display it next to task, without filtering and pricing functionality.<br />
+
+<!-- GanttRunResources -->
+<a name="CGanttRunResources"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttRunResources</h4> <s>Gantt source - column name or exact value</s>
+</div>
+Resources assigned to run bar task, only if set <b>Run</b> in <a href="GanttObjects.htm#CGanttTask">GanttTask</a>.<br />
+For resources added to run box use box <a href="GanttRun.htm#RunResources">Resources</a> instead.<br />
+Format is the same as <a href="#CGanttResources">GanttResources</a>.<br />
+
+<!-- GanttResourcesAssign -->
+<a name="CGanttResourcesAssign"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttResourcesAssign</h4> <s>[4]</s>
+</div>
+How the resources can be assigned to the task, affects the menu for assigning resources.<br />
+The behavior can be more modified also by <a href="#CGanttResourcesMenu">GanttResourcesMenu</a>.<br />
+<b>0</b> - Only one resource can be assigned to the task, the menu is clickable. The Extra prices are <u>not</u> shown.<br />
+<b>1</b> - The resources can be assigned only as 0/1, the checkboxes are shown - set <tt>Default: { Bool:1 }</tt><br />
+<b>2</b> - The resources can be assigned as 0 - 10, the enums are shown - set <tt>Default: { Enum:1, Width:22, Items:["","1","2","3","4","5","6","7","8","9","10"] }</tt><br />
+<b>3</b> - The resources can be assigned as integers, the edits are shown - set <tt>Default: { Edit:1, Width:40, Type:”Int”, Size:5 }</tt><br />
+<b>4</b> - The resources can be assigned as floats, the edits are shown -<br /> 
+set <tt>Default: { Edit:1, Width:60, Type:"Float", Format:"0.##;;", DisplayFormat:"0.00;;", EditMask:"^\\d{0,5}(\\.\\d{0,2})?$"}</tt><br />
+<b>5</b> - Only extra price and resource units permitted by <a href="#CGanttResourcesExtra">GanttResourcesExtra</a> are shown.<br />
+
+<!-- GanttResourcesExtra -->
+<a name="CGanttResourcesExtra"></a>
+<div class="XML">
+   <u>new <b>6.4</b> chg <b>7.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttResourcesExtra</h4> <s>[0]</s>
+</div>
+If and how will be possible to add extra prices and resource units to tasks when editing resources from menu.<br />
+<b>0</b> - no extra price possible.<br />
+<b>1</b> - one extra price per whole task<br />
+<b>2</b> - extra resource units per task<br />
+<b>3</b> - both extra price and extra units<br />
+<i>If set to 1 or 3, the resource names should <u>not</u> be numbers.</i><br />
+
+<!-- GanttResourcesMenu -->
+<a name="CGanttResourcesMenu"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttResourcesMenu</h4> <s></s>
+</div>
+Optional menu to assign the resources to the task. Here is possible to specify which resources and how can be assigned to the individual task.<br />
+It is standard <a href="Menu.htm">TreeGrid menu</a>.<br />
+The items must be named (Name attribute) as resource names to be correctly assigned.<br />
+The Name of the extra task price item must be "Extra", the names of extra resource units must be name+"Extra"<br />
+
+<!-- Action EditGanttResource -->
+<a name="ActionsEditGanttResource"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>EditGanttResource</h4>
+   <s>Attached to <b>OnDblClickGantt</b> event</s>
+</div>
+Lets a user to assign resources for the task in popup menu<br />
+
+<!-----------------------------------------------------------------------  Resources filter ------------------------------------------------->
+<a name="Filter"></a>
+<h2>Resources filter</h2>
+
+The tasks can be easily filtered according to assigned resources.<br />
+User interface for filtering by resources can be added to grid by cell Type='SelectGanttResources'<br />
+
+<!-- Type -->
+<a name="SpaceCellType"></a>
+<div class="XML">
+   <u>new <b>6.3</b></u> <b>&lt;Space cell></b> <i>string</i>
+   <h4>Type</h4> <s>Type="<h4>SelectGanttResources</h4>"</s>
+</div>
+Special combo box to choose resources to display in grid. It hides all rows that do not contain any selected resources.<br />
+It presets these cell attribute: <tt>Type="Html" Button="Defaults" Defaults= "|*None|-|*RowsVariableCol"+<i>resource col</i>+"*"</tt><br /> 
+<tt>OnChange= "Grid.FilterTextRange('"+ <i>resource col</i> +"',Value);" Range="1"</tt><br />
+<i>Requires <a href="#CGanttResources">GanttResources</a> to be defined in &lt;C> tag.</i><br />
+
+<!-- GanttResourcesFilter -->
+<a name="CGanttResourcesFilter"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttResourcesFilter</h4> <s>Saved to cookies, to avoid it set <tt>&lt;<b>Cfg GanttLap</b>='<b>1</b>'/></tt></s>
+</div>
+Predefined filter for the resources, contains the resource names separated by semicolon.<br />
+The grid will show only tasks containing these resources.<br />
+
+<!-----------------------------------------------------------------------  Resources calculations  ------------------------------------------------->
+<a name="Calculations"></a>
+<h2>Resources calculations</h2>
+
+<!-- GetGanttPrice -->
+<a name="GetGanttPrice"></a>
+<div class="API">
+   <u>new <b>6.4</b> chg <b>10.0</b></u> <b>API method</b> <i>float</i>
+   <h4>GetGanttPrice</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>plan</b> = null)</s>
+</div>
+Returns price of the bar according to its duration and assigned resources.<br />
+<i><b>plan</b> meaning changed in 10.0.</i><br />
+<b>plan</b> is main bar plan or run box id or '-' for run bar.<br /> 
+If <b>plan</b> is null, calculates sum of all prices of all main bar plans and run boxes/bar in <a href="GanttObjects.htm#CGanttTask">GanttTask</a>.<br /> 
+If <b>plan</b> is '-' calculates the whole run bar if <a href="GanttObjects.htm#CGanttTask">GanttTask</a> is 'Run', or calculates sum of all prices of all run boxes if <a href="GanttObjects.htm#CGanttTask">GanttTask</a> is 'Box'.<br />
+In Formula it can be called as <tt>Grid.GetGanttPrice(Row,"XXX")</tt> where XXX is Gantt column name.<br />
+
+<!-- GetGanttResourceCount -->
+<a name="GetGanttResourceCount"></a>
+<div class="API">
+   <u>new <b>6.4</b></u> <b>API method</b> <i>float</i>
+   <h4>GetGanttResourceCount</h4>
+   <s>(<i>string</i> <b>res</b>, <i>int</i> <b>start</b>, <i>int</i> <b>end</b>, <i>int</i> <b>type</b>, <i>string</i> <b>col</b>, <i>string</i> <b>def</b>)</s>
+</div>
+Returns information about the resource <b>res</b> usage between dates <b>start</b> and <b>end</b>.<br /> 
+The <b>start</b> and <b>end</b> can be Date object, number of milliseconds or date string in English.<br />
+<b>def</b> - name of default row (Def attribute). Only variable rows with this default will be iterated. If not set, all variable rows are iterated.<br />
+<b>col</b> - gantt column to use, if not set, the first gantt column in grid will be used.<br />
+<b>type</b> = <b>0</b> - returns <b>Peak</b> - Maximum count of the resource in the range at the same time<br />
+<b>type</b> = <b>1</b> - returns <b>Total</b> - Sum of all resource units used in the range<br />
+<b>type</b> = <b>2</b> - returns <b>Average</b> - Average usage of the resource in the range<br />
+
+<!-- GetResourceErrors -->
+<a name="GetResourceErrors"></a>
+<div class="API">
+   <u>new <b>8.0</b></u> <b>API method</b> <i>type[ ][ ]</i>
+   <h4>GetResourceErrors</h4>
+   <s>(<i>string</i> <b>name</b>, <i>int</i> <b>type</b> = 6)</s>
+</div>
+Returns all errors or usage in grid for the resource <b>name</b>.<br />
+Returns two dimensional array <tt>[[Start1,End1,Count1], [Start2,End2,Count2], [Start3,End3,Count3],...]</tt><br />
+In date range Start-End there is resource available Count. Negative Count means resource error.<br />
+<table>
+<tr><td style="width:70px;"><b>type</b> <b>=</b></td><td><b>1</b> - resources usage (only usage)</td></tr>
+<tr><td></td><td><b>3</b> - resource availability (only availability),</td></tr>
+<tr><td></td><td><b>5</b> - free resources (availability - usage),</td></tr> 
+<tr><td></td><td><b>6</b> - only resource errors (availability - usage, only negative Count),</td></tr> 
+<tr><td></td><td><i>Other values reserved.</i></td></tr>
+</table>
+
+<!-- GetResourceUsage -->
+<a name="GetResourceUsage"></a>
+<div class="API">
+   <u>new <b>8.0</b> chg <b>11.0</b></u> <b>API method</b> <i>string</i>
+   <h4>GetResourceUsage</h4>
+   <s>(<i>string</i> <b>name</b>, <i>int</i> <b>type</b>, <i>int</i> <b>consume</b>, <i>TRow</i> <b>row</b>, <i>int</i> <b>opt</b>, <i>string</i> <b>def</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Returns <a href="#CGanttAvailability">Availability</a> string as usage of given resource in chart.<br />
+Use it in formulas for own calculation and showing Availability chart.<br />
+The returned string can differ from standard availability format, but it is supported in availability chart and in negav.<br />
+<b>name</b> is the name of the resource. It does <u>not</u> need to be defined by &lt;R> tag, it just checks the GanttResource attribute values of given tasks.<br />
+<b>type</b> is type of the resource, <b>1</b> - work, <b>2</b> - material.<br />
+<b>consume</b> <i>(new 11.0)</i> is consume type of material type resource, <b>0</b> per time unit, <b>1</b> all on start, <b>2</b> all on end, <b>3</b> all in the middle.<br />
+<b>opt</b> specifies which rows will be iterated: <b>0</b> - only the <b>row</b>, or the bit array:<br />
+<div class="L1">
+   1.bit (<b>&1</b>) - children of the row, 2.bit (<b>&2</b>) - deep (all nested children in tree), 3.bit (<b>&4</b>) - all siblings of the row, 4.bit (<b>&8</b>) - the row itself<br />
+   5.bit (&16) - <i>(since 9.2)</i> including hidden rows <i>(prior 9.2 the hidden rows were calculated by default)</i><br />
+</div>
+<b>def</b> if set, only rows with Def attribute named <b>def</b> will be iterated<br />
+<b>col</b> the Gantt column<br />
+
+<!-- OnGetResourceUsageRow -->
+<a name="OnGetResourceUsageRow"></a>
+<div class="API">
+   <u>new <b>9.2</b></u> <b>API event</b> <i>type</i>
+   <h4>OnGetResourceUsageRow</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>bool</i> <b>use</b>, <i>string</i> <b>def</b>)</s>
+</div>
+Called for every source row if its data will be added to the resource usage chart. It is called for every iterated rows (hidden, deleted, with different default).<br />
+<b>use</b> is true if the row would be added to the resource usage chart if this event would not be defined.<br />
+<b>def</b> is expected row def name, set in resource usage chart definition.<br />
+return true to use this row, false to ignore it or another row to be used instead.<br />
+
+<!-- GetGanttRunResourcesString -->
+<a name="GetGanttRunResourcesString"></a>
+<div class="API">
+   <u>new <b>10.0</b></u> <b>API method</b> <i>string</i>
+   <h4>GetGanttRunResourcesString</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b> = null)</s>
+</div>
+Returns semicolon separated all resources used in the GanttRun in the <b>row</b> when GanttTask contains Box. <b>col</b> is Gantt column.<br />
+Usable to filter the row by this string in resources filter.<br />
+
+<!-- GetGanttResourcesUsage -->
+<a name="GetGanttResourcesUsage"></a>
+<div class="DEL">
+   <u>new <b>6.4</b> deleted <b>8.0</b></u> <b>API method</b> <i>float[ ][ ]</i>
+   <h4>GetGanttResourcesUsage</h4>
+   <s>(<i>string</i> <b>def</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>string</i> <b>units</b>, <i>int</i> <b>bar</b>, <i>bool</i> <b>notmp</b>)</s>
+</div>
+Removed, replaced by <a href="#GetResourceErrors">GetResourceErrors</a>.<br />
+
+<!-- GetGanttResourceAvailability -->
+<a name="GetGanttResourceAvailability"></a>
+<div class="DEL">
+   <u>new <b>7.0</b> deleted <b>8.0</b></u> <b>API method</b> <i>float[ ]</i>
+   <h4>GetGanttResourceAvailability</h4>
+   <s>(<i>string</i> <b>resource</b>, <i>string</i> <b>col</b>)</s>
+</div>
+Removed, replaced by <a href="#GetResourceErrors">GetResourceErrors</a>.<br />
+
+<!-- ganttresourcepeak -->
+<a name="ganttresourcepeak"></a>
+<div class="ACT">
+   <u>new <b>6.4</b></u> <b>formula</b> <i>float</i>
+   <h4>ganttresourcepeak</h4>
+   <s>(<i>string</i> <b>resource</b>, <i>string</i> <b>def</b>)</s>
+</div>
+Returns maximal count of the resource used in grid at one time.<br />
+resource is <a href="#RName">Name</a> of the resource.<br />
+<b>def</b> is name of default row (Def attribute). Only variable rows with this default will be iterated. If not set, all variable rows are iterated.<br />
+
+<!-- ganttresourceunits -->
+<a name="ganttresourceunits"></a>
+<div class="ACT">
+   <u>new <b>6.4</b></u> <b>formula</b> <i>float</i>
+   <h4>ganttresourceunits</h4>
+   <s>(<i>string</i> <b>resource</b>, <i>string</i> <b>def</b>)</s>
+</div>
+Returns count of all allocated units for given resource in the whole grid.<br />
+If the value is multiplied by resource price, you will get the summary cost of the resource in the project.<br />
+<b>def</b> is name of default row (Def attribute). Only variable rows with this default will be iterated. If not set, all variable rows are iterated.<br />
+
+<!-- ganttresourcesextra -->
+<a name="ganttresourcesextra"></a>
+<div class="ACT">
+   <u>new <b>7.0</b></u> <b>formula</b> <i>float</i>
+   <h4>ganttresourcesextra</h4>
+   <s>(<i>string</i> <b>def</b>)</s>
+</div>
+Returns summary of extra prices assigned to all tasks.<br />
+<b>def</b> is name of default row (Def attribute). Only variable rows with this default will be iterated. If not set, all variable rows are iterated.<br />
+
+<!-- ganttresourceextra -->
+<a name="ganttresourceextra"></a>
+<div class="DEL">
+   <u>deleted <b>7.0</b></u> <b>formula</b> <i>float</i>
+   <h4>ganttresourceextra</h4>
+   <s>(<i>string</i> <b>resource</b>, <i>string</i> <b>def</b>)</s>
+</div>
+Since 7.0 version there are no extra prices per resource, only per task.<br />
+
+<!-------------------------------------------------  Availability chart  ------------------------------------------------->
+<a name="Availability"></a>
+<h2>Availability chart</h2>
+
+Universal chart to show availability or usage of normal or custom/not defined resource.<br />
+
+<!-- GanttAvailability -->
+<a name="CGanttAvailability"></a>
+<div class="XML">
+   <u>new <b>8.0</b> <i>upd <b>11.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttAvailability</h4> <s></s>
+</div>
+Defines the Availability chart sources.<br />
+Comma separated column (or row attribute) names, every value represents one chart.<br />
+For example GanttAvailability='A,B,C' shows three availability charts according to cell values in A, B and C column.<br />
+<br />
+
+The Availability format (in the individual sources, e.g. in the cells A, B and C):<br />
+<b>repeater</b>1<strong>#</strong><b>date</b>1a<strong>~</strong><b>date</b>1b<strong>#</strong><b>count</b>1<strong>;</strong><b>repeater</b>2<strong>#</strong><b>date</b>2a<strong>~</strong><b>date</b>2b<strong>#</strong><b>count</b>2<strong>;</strong>...<br />
+The possible values of <b>repeater</b> are the same as <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a>, e.g. "w", "d", "h" or "1", "0.5", "2", ... If the <b>repeater</b> is not present, the date range is not repeated.<br />
+The <b>date</b> range is range where the <b>count</b> of resources is available. The date range can be periodically repeated by the <b>repeater</b>.<br />
+For <b>Material</b> type resources is used only the first date from <b>date</b> range as date when the <b>count</b> of resources arrives.<br />
+If some date ranges are overlapped, the <b>count</b> values are summed. The <b>count</b> can be also negative to reduce the count for some range.<br />
+<i>(Since 11.0)</i> If <b>count</b> starts with '=', it resets the value in the range exactly to the <b>count</b>. For material it sets actual resource amount to the <b>count</b>. It affects only availability ranges before (in the Availability string).<br />
+If <b>count</b> is missing, it is 1.<br />
+<i>All possible format combinations:</i><br />
+<table>
+<tr>
+   <td style="width:70px;">a)</td>
+   <td>Set <b>repeater</b>, <b>date1</b>, <b>date2</b> and the date range is <b>less</b> than repeater range</td>
+   <td>e.g. "w#1/2/2016~1/4/2016#10", note 1/2/2016 is Saturday</td></tr>
+</tr>
+<tr>
+   <td align="right">Work:</td>
+   <td>The date12 range is periodically repeated in the whole chart</td>
+   <td>e.g. the count 10 is available on all weekends in the chart, on all workdays is 0</td>
+</tr>
+<tr>
+   <td align="right">Material:</td>
+   <td>The material arrives on every date1, periodically repeated, date2 is ignored, the first batch arrives before or on the chart start</td>
+   <td>e.g. the count 10 arrives every Saturday in chart</td>
+</tr>
+<tr>
+   <td>b)</td>
+   <td>Set <b>repeater</b>, <b>date1</b>, <b>date2</b> and the date range is <b>greater</b> than or <b>equal</b> to the repeater range</td>
+   <td>e.g. "w#1/2/2016~1/18/2016#10", note 1/2/2016 is Saturday, 1/18/2016 is Monday</td>
+</tr>
+<tr>
+   <td align="right">Work:</td>
+   <td>The date12 range is rounded to the repeater range and repeated only between the dates</td>
+   <td>e.g. the count 10 is available on three weekends (1/2, 1/9 and 1/16), on other weekends and all workdays is 0</td>
+</tr>
+<tr>
+   <td align="right">Material:</td>
+   <td>The material arrives on date1 and next dates periodically repeated, until it reaches date2.<br />The date1 can be even less than chart start.</td>
+   <td>e.g. the count 10 arrives three times, on Saturdays 1/2, 1/9 and 1/16</td>
+</tr>
+<tr>
+   <td>c)</td>
+   <td>Set <b>repeater</b> and <b>date1</b> (date2 is missing)</td>
+   <td>e.g. "w#1/2/2016#10", note 1/2/2016 is Saturday</td>
+</tr>
+<tr>
+   <td align="right">Work:</td>
+   <td>It is not repeated range starting on date1 and lasting one repeater unit</td>
+   <td>e.g. the count 10 is available on one week 1/2/2016 - 1/11/2016</td>
+</tr>
+<tr>
+   <td align="right">Material:</td>
+   <td>The material arrives on the date1 and every next repeated date till chart end/td>
+   <td>e.g. the count 10 arrives on 1/2/2016 and every next Saturday</td>
+</tr>
+<tr>
+   <td>d)</td>
+   <td>Set <b>date1</b> and <b>date2</b> (repeater is missing)</td>
+   <td>e.g. "1/2/2016~1/4/2016#10", note 1/2/2016 is Saturday</td>
+</tr>
+<tr>
+   <td align="right">Work:</td>
+   <td>It is not repeated range between the dates</td>
+   <td>e.g. the count 10 is available on one weekend 1/2/2016 - 1/4/2016</td>
+</tr>
+<tr>
+   <td align="right">Material:</td>
+   <td>The material arrives once on the date1, the date2 is ignored</td>
+   <td>e.g. the count 10 arrives once on 1/2/2016</td>
+</tr>
+<tr>
+   <td>e)</td>
+   <td>Set <b>date1</b> (repeater and date2 is missing)</td>
+   <td>e.g. "1/2/2016#10", note 1/2/2016 is Saturday</td>
+</tr>
+<tr>
+   <td align="right">Work:</td>
+   <td>It is not repeated range from date1 to chart end</td>
+   <td>e.g. the count 10 is available since 1/2/2016 to chart end</td>
+</tr>
+<tr>
+   <td align="right">Material:</td>
+   <td>The material arrives once on the date1</td>
+   <td>e.g. the count 10 arrives once on 1/2/2016</td>
+</tr>
+<tr>
+   <td>f)</td>
+   <td>Set <b>repeater</b> (date1 and date2 is missing)</td>
+   <td>e.g. "w##10"</td>
+</tr>
+<tr>
+   <td align="right">Work:</td>
+   <td>The repeater is ignored, the count is available in the whole chart.<br />It has sense only if set <a href="#CGanttAvailabilityDivide">GanttAvailabilityDivide</a>, to use the repeater as the range length for dividing by.</td>
+   <td>e.g. the count 10 is available in the whole chart</td>
+</tr>
+<tr>
+   <td align="right">Material:</td>
+   <td>The material arrives on start of every repeated range in chart, the first batch arrives before or on the chart start</td>
+   <td>e.g. if the chart starts on 1/1/2016 the count 10 arrives on Sundays 12/27/2015, 1/3/2016, 1/10/2016 and so on</td>
+</tr>
+<tr>
+   <td>g)</td>
+   <td>Set <b>nothing</b> (only number as count)</td>
+   <td></td>
+</tr>
+<tr>
+   <td align="right">Work:</td>
+   <td>The count is available in the whole chart</td>
+   <td>e.g. the count 10 is available in the whole chart</td>
+</tr>
+<tr>
+   <td align="right">Material:</td>
+   <td>The material arrives once on the chart start</td>
+   <td>e.g. if the chart starts on 1/1/2016 the count 10 arrives on 1/1/2016</td>
+</tr>
+</table>
+<br />
+There are special settings to display global resource (defined in &lt;<a href="#ResourcesR">R</a>> tags) usage and availability charts. 
+The resources are assigned to the Gantt tasks defined by <a href="GanttObjects.htm#CGanttTask">GanttTask</a> (main bar by default).<br />
+Instead of the column name use: <b>resource_name<strong>#</strong>chart_type<strong>#</strong>def_name</b>. It is possible to mix the resource and standard availability charts.<br />
+For example <tt>"R1#3,CellR2#1,A,B"</tt> it shows four charts, two for the resources R1 and R2 and two for the availability definition in cells A and B.<br />
+The <b>resource_name</b> can be direct resource name or column name where the resource name is stored.<br />
+The <b>chart_type</b> is:<br /> 
+<div class="L1">
+   <b>1</b> - resource usage by the tasks in chart. Uses Green class by default.<br />
+   <b>2</b> - resource usage, for Work is the same as 1, for Material shows constant usage, not incremental. Uses Green class by default.<br />
+   <b>3</b> - availability chart, shows chart for the resource <a href="#RAvailability">Availability</a> value. Uses Yellow Class by default.<br />
+   <b>4</b> - actual availability at given times, for Work it is the same as 3, for Material is similar to 5, but shifted by one GanttDataUnit. Uses Yellow Class by default.<br />
+   <b>5</b> - free resources chart (availability minus usage). Uses default (blue/red) class by default.<br />
+   <b>6</b> - resource errors (availability minus usage, only negative values). Uses Red class by default.<br />
+   <b>7</b> - resource errors, positive (availability minus usage, only negative values as positive values). Uses Red class by default.<br />
+   <b>8</b> - resource errors, full (availability minus usage, only negative values as full usage at given time). Uses Red class by default.<br />
+</div>
+<br />
+
+The <b>def_name</b> is optional and if set, the resource usage chart iterates only rows with given Def name.<br />
+The resource usage for fixed row it counts all tasks in chart, for variable row it counts only children.<br />
+
+<!-- GanttAvailabilityGroups -->
+<a name="CGanttAvailabilityGroups"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>string []</i>
+   <h4>GanttAvailabilityGroups</h4> <s>["Availability"]</s>
+</div>
+List of availability groups, comma separated. The groups are rendered in the specified order.<br />
+By default there is one availability group called "Availability". 
+It is possible to define more separated groups of availability charts, every the group can contain also more individual charts.<br />
+The item in the list sets the part of every availability attribute name, it replaces the word "Availability" in the names.<br />
+<i>For example, if set GanttAvailabilityGroups="A1,A2", there will be read the GanttAvailability attribute as GanttA1 and GanttA2. And similarly GanttAvailabilityType as GanttA1Type and GanttA2Type and so on.</i><br />
+
+<!-- GanttAvailabilityGroupsSpread -->
+<a name="CGanttAvailabilityGroupsSpread"></a>
+<div class="XML">
+   <u>new <b>12.1</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttAvailabilityGroupsSpread</h4> <s>[0]</s>
+</div>
+If set, stacks the availability groups horizontally.<br />
+If set to <b>2</b>, it uses / calculates the GanttAvailabilityMax / GanttAvailabilityMin from the first availability group.<br />
+<i>The availability groups must be defined / joined or split to the same Gantt units to show correct charts, see <a href="#CGanttAvailabilitySplit">GanttAvailabilitySplit</a>.</i><br />
+The individual availability groups can be also horizontally or vertically stacked by <a href="#CGanttAvailabilityStack">GanttAvailabilityStack</a>.<br />
+The GanttAvailabilityGroupsStack is defined for all availability groups together. <br />
+
+<!-- GanttAvailabilityType -->
+<a name="CGanttAvailabilityType"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttAvailabilityType</h4> <s>[1]</s>
+</div>
+Type of the resource.<br />
+<b>1</b> - <b>Work</b>, <u>not</u> consumed resource. Work resource is available only in defined range. It can be defined absolute (e.g. workers) or per range (e.g. budget), see <a href="#CGanttAvailabilityDivide">GanttAvailabilityDivide</a><br /> 
+<b>2</b> - <b>Material</b>, consumed resource. Material resource arrives on defined date and is available forever.<br />
+It can be:
+<div class="L1">
+   a) one number as type for all Availability charts,<br />
+   b) comma separated numbers (the same count as the Availability definition), one number per availability chart<br />
+   c) column or attribute name. This cell or attribute contains the one or more numbers as type definition.<br />
+</div>
+
+<!-- GanttAvailabilityClass -->
+<a name="CGanttAvailabilityClass"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttAvailabilityClass</h4> <s>[ ]</s>
+</div>
+Name of custom CSS class to be used for the availability chart(s). To this name is added prefix <b>G</b>x<b>GanttAvailability</b>, where Gx is grid style prefix, e.g. GW.<br />
+There are predefined color classes: <b>Aqua</b>, <b>Black</b>, <b>Blue</b>, <b>Fuchsia</b>, <b>Gray</b>, <b>Green</b>, <b>Lime</b>, <b>Maroon</b>, <b>Navy</b>, <b>Olive</b>, <b>Orange</b>, <b>Purple</b>, <b>Red</b>, <b>Silver</b>, <b>Teal</b>, <b>White</b>, <b>Yellow</b>.<br />
+If no Class is defined, the chart is blue for positive numbers and red for negative number. These color classes provide the same color for both positive and negative numbers.<br />
+It can be:<br />
+<div class="L1">
+   a) one string as class for all Availability charts<br />
+   b) comma separated strings (the same count as the Availability definition), one class name per availability chart<br />
+   c) column or attribute name. This cell or attribute contains the one or more strings as class name<br />
+</div>
+
+<!-- OnGetAvailabilityClass -->
+<a name="OnGetAvailabilityClass"></a>
+<div class="API">
+   <u>new <b>8.0</b></u> <b>API event</b> <i>string</i>
+   <h4>OnGetAvailabilityClass</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>value</b>, <i>string</i> <b>src</b>, <i>string</i> <b>cls</b>, <i>string</i> <b>group</b>)</s>
+</div>
+Called to compute Availability CSS class dynamically according to the value.<br />
+<b>value</b> is the value to be shown in the chart, <b>cls</b> is predefined class.<br /> 
+<b>src</b> is source column, one part from <a href="#CGanttAvailability">GanttAvailability</a>.<br />
+<b>group</b> <i>(since 12.0)</i> is actual item from <a href="#CGanttAvailabilityGroups">GanttAvailabilityGroups</a>.<br />
+Return new CSS class to be used as full class name including all prefixes, e.g. "GWGanttAvailabilityRed"<br />
+
+<!-- OnGetAvailability  -->
+<a name="OnGetAvailability"></a>
+<div class="API">
+   <u>new <b>11.0</b> <i>upd <b>12.0</b></i></u> <b>API event</b> <i>bool</i>
+   <h4>OnGetAvailability</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>int</i> <b>value</b>, <i>string</i> <b>src</b>, <i>type[]</i> <b>Values</b>, <i>int</i> <b>start</b>, <i>int</i> <b>end</b>, <i>int</i> <b>min</b>, <i>int</i> <b>max</b>, <i>string</i> <b>group</b>)</s>
+</div>
+Called to modify one Availability rectangle or value in Values array.<br />
+<b>Values</b> is a JavaScript array of [<i>string</i> <b>text</b>, <i>int</i> <b>y</b>, <i>int</i> <b>left</b>, <i>int</i> <b>width</b>, <i>string</i> <b>cls</b>]. It is possible to modify one or more of the values in <b>Values</b> array.<br />
+<div class="L1">
+   <b>0</b> - <b>text</b> is actual value text shown on the rectangle, it is already formatted according to the GanttAvailabilityFormat. It can contain HTML code.<br />
+   <b>1</b> - <b>y</b> is the height above x axis (or negative below x axis). In pixels.<br />
+   <b>2</b> - <b>left</b> is left position from the chart start. In pixels.<br />
+   <b>3</b> - <b>width</b> is width of the rectangle in pixels.<br />
+   <b>4</b> - <b>cls</b> is class prefix, like "Red". Like in GanttAvailabilityClass.<br />
+</div>
+<b>row</b>, <b>col</b> is actual Gantt cell.<br />
+<b>value</b> is the number from that is calculated the y and shown in <b>text</b>.<br />
+<b>src</b> is source column, one part from <a href="#CGanttAvailability">GanttAvailability</a>.<br />
+<b>start</b> is start date of the rectangle, <b>end</b> is end date of the rectangle. In milliseconds.<br />
+<b>min</b> is minimal value permitted for the y. Usually negative or zero. In pixels.<br />
+<b>max</b> is maximal value permitted for the y. Usually positive or zero. In pixels.<br />
+<b>group</b> <i>(since 12.0)</i> is actual item from <a href="#CGanttAvailabilityGroups">GanttAvailabilityGroups</a>.<br />
+Return <b>false</b> to not display the rectangle at all.<br />
+
+<!-- GanttAvailabilityExclude -->
+<a name="CGanttAvailabilityExclude"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttAvailabilityExclude</h4> <s>[1]</s>
+</div>
+How the GanttExclude in the target row will be applied to the chart.<br />
+<div class="L1">
+   <b>0</b> - Ignore, the charts will be shown as defined, the chart boxes can start or end on excluded dates.<br />
+   <b>1</b> - Apply only to bounds, the chart boxes will <u>not</u> start and end on excluded dates, but can contain exclude dates.<br />
+   <b>2</b> - Apply everywhere, the chart boxes will be shown only on <u>not</u> excluded dates, they will be split to these ranges.<br />
+</div>
+It can be: a) one number as value for all Availability charts, b) comma separated numbers (the same count as the Availability definition), one value per availability chart.<br />
+<i>Ignored for Material resources.</i><br />
+
+<!-- GanttAvailabilityFormat -->
+<a name="CGanttAvailabilityFormat"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttAvailabilityFormat</h4> <s>[ ]</s>
+</div>
+Format of the numbers shown in the availability chart.<br />
+The same as <a href="TypeNumber.htm#CFormat">TreeGrid number format</a>.<br />
+It can be: a) one number as value for all Availability charts, b) comma separated numbers (the same count as the Availability definition), one value per availability chart<br />
+
+<!-- GanttAvailabilityTextWidth -->
+<a name="CGanttAvailabilityTextWidth"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;C> &lt;cell></b> <i>type</i>
+   <h4>GanttAvailabilityTextWidth</h4> <s>[15]</s>
+</div>
+Approximate width of one text label in the chart, in pixels.<br />
+Controls how many text values (the numbers), will be show in chart, the bigger value, the less texts.<br />
+It can be: a) one number as value for all Availability charts, b) comma separated numbers (the same count as the Availability definition), one value per availability chart<br />
+
+<!-- GanttAvailabilityShift -->
+<a name="CGanttAvailabilityShift"></a>
+<div class="XML">
+   <u>new <b>8.0</b> <i>upd <b>12.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttAvailabilityShift</h4> <s>[ ]</s>
+</div>
+Vertical position of the individual Availability charts, in pixels. Similar to <b>GanttTop</b>.<br />
+It can be: a) one number as value for all Availability charts, b) <i>since 12.0</i> comma separated numbers (the same count as the Availability definition), one value per availability chart<br />
+
+<!-- GanttAvailabilityHeight -->
+<a name="CGanttAvailabilityHeight"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttAvailabilityHeight</h4> <s>[ ]</s>
+</div>
+Height of every the availability chart, in pixels. If not set it set as row height minus the biggest GanttAvailabilityShift value.<br />
+The charts are <b>not</b> overflowed to this space, it is used just to calculate height of the charts.<br />
+
+<!-- GanttAvailabilityStack -->
+<a name="CGanttAvailabilityStack"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttAvailabilityStack</h4> <s>[0]</s>
+</div>
+If and how the charts will be stacked to one bar.
+<b>0</b> no, <b>1</b> vertically, <b>2</b> horizontally.<br />
+If stacked, all the charts are automatically split to the smallest parts among the charts.<br />
+To display summary label for vertically stacked chart, define another availability chart that sums all the charts and set its <a href="#CGanttAvailabilityVPos">GanttAvailabilityVPos</a> to 16 to show only its label.<br />
+To stack some charts vertically and some horizontally, define more <a href="#CGanttAvailabilityGroups">GanttAvailabilityGroups</a> and set <a href="#CGanttAvailabilityGroupsSpread">GanttAvailabilityGroupsSpread</a> for horizontal stacking.<br />
+
+<!-- GanttAvailabilityVPos -->
+<a name="CGanttAvailabilityVPos"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttAvailabilityVPos</h4> <s>[0]</s>
+</div>
+How the text will be vertically positioned. Bit array.<br />
+It can be: a) one number as value for all Availability charts, b) comma separated numbers (the same count as the Availability definition), one value per availability chart<br />
+<table>
+<tr><td style="width:80px;"><b>1.-3.</b> bit (<b>&7</b>)</td><td>Vertical position of the text regarding to the bar.</td></tr>
+<tr><td></td><td><b>0</b> above, <b>1</b> top, <b>2</b> center, <b>3</b> bottom, <b>4</b> below</td></tr>
+<tr><td><b>4.</b> bit (<b>&8</b>)</td><td>If set, permits text showing outside the availability height</td></tr>
+<tr><td><b>5.</b> bit (<b>&16</b>)</td><td>If set, does not show the bar, only the text. For stacked bars it takes the bar height as zero.</td></tr>
+</table>
+It can be: a) one number as value for all Availability charts, b) comma separated numbers (the same count as the Availability definition), one value per availability chart<br />
+<!-- GanttAvailabilityHPos -->
+<a name="CGanttAvailabilityHPos"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttAvailabilityHPos</h4> <s>[0]</s>
+</div>
+How the text will be horizontally positioned.
+<b>0</b> center, <b>1</b> left, <b>2</b> right, <b>3</b> center left half, <b>4</b> center right half<br />
+It can be: a) one number as value for all Availability charts, b) comma separated numbers (the same count as the Availability definition), one value per availability chart<br />
+
+<!-- GanttAvailabilityTextClass -->
+<a name="CGanttAvailabilityTextClass"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttAvailabilityTextClass</h4> <s>[ ]</s>
+</div>
+Color class of the texts. If not set, it is used bar color set by <a href="#CGanttAvailabilityClass">GanttAvailabilityClass</a>.<br />
+
+<!-- GanttAvailabilityTextRepeat -->
+<a name="CGanttAvailabilityTextRepeat"></a>
+<div class="XML">
+   <u>new <b>12.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttAvailabilityTextRepeat</h4> <s>[500]</s>
+</div>
+If set, it will repeat the text label every given pixels in large chart parts.<br />
+
+<!-- GanttAvailabilityZero -->
+<a name="CGanttAvailabilityZero"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttAvailabilityZero</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, the zero values will be shown in chart too, as small positive boxes.<br />
+
+<!-- GanttAvailabilityJoin -->
+<a name="CGanttAvailabilityJoin"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;C></b> <i>bool</i>
+   <h4>GanttAvailabilityJoin</h4> <s>[1]</s>
+</div>
+If set to <b>0</b>, it can display adjacent ranges with the same value.<br />
+If set to <b>1</b>, the adjacent ranges with the same value will be joined to longer range.<br />
+
+<!-- GanttAvailabilitySplit -->
+<a name="CGanttAvailabilitySplit"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttAvailabilitySplit</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, all the ranges will be split to <a href="#CGanttAvailabilityUnits">GanttAvailabilityUnits</a>.<br />
+If set to <b>2</b>, it works like <b>1</b> and also the adjacent ranges inside one <a href="#CGanttAvailabilityUnits">GanttAvailabilityUnits</a> unit will be joined. 
+The resulted value will be summary or maximum according to the <a href="#CGanttAvailabilitySum">GanttAvailabilitySum</a>.<br />
+
+<!-- GanttAvailabilitySum -->
+<a name="CGanttAvailabilitySum"></a>
+<div class="XML">
+   <u style="width:160px;">new <b>9.3</b> chg <b>10.0</b> <i>upd <b>11.0</b></i></u> <b style="width:60px;">&lt;C></b> <i>type</i>
+   <h4>GanttAvailabilitySum</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, all the values shown on the chart will be multiplied by the length of the range in units set by <a href="#CGanttAvailabilityUnits">GanttAvailabilityUnits</a>.<br />
+If set to <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a> value, all the values shown on the chart will be multiplied by the length of the range in these units.<br />
+<i>Since 11.0</i> it can be: a) one value as value for all Availability charts, b) comma separated values (the same count as the Availability definition), one value per availability chart<br />
+
+<!-- GanttAvailabilitySumBars -->
+<a name="CGanttAvailabilitySumBars"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C></b> <i>type</i>
+   <h4>GanttAvailabilitySumBars</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, all the bars' heights on the chart will be multiplied by the length of the range in units set by <a href="#CGanttAvailabilityUnits">GanttAvailabilityUnits</a>.<br />
+If set to <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a> value, all the bars' heights on the chart will be multiplied by the length of the range in these units.<br />
+It can be: a) one value as value for all Availability charts, b) comma separated values (the same count as the Availability definition), one value per availability chart<br />
+
+<!-- GanttAvailabilityDivide -->
+<a name="CGanttAvailabilityDivide"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C></b> <i>type</i>
+   <h4>GanttAvailabilityDivide</h4> <s>[0]</s>
+</div>
+If set to <b>1</b>, all the counts in the availability string are divided by the date range length in <a href="#CGanttAvailabilityUnits">GanttAvailabilityUnits</a>. <br />
+If set to <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a> value, all the counts in the availability string are divided by the date range length in these units.<br />
+So it shows ratio counts instead of absolute counts. It affects both the availability bars and texts.<br />
+<i>Can be used only for <b>work</b> type resource. It defines range resource like <b>budget</b></i>.<br />
+The divided values can be summed back in the same or different ranges by <a href="#CGanttAvailabilitySum">GanttAvailabilitySum</a> (values) and / or by <a href="#CGanttAvailabilitySumBars">GanttAvailabilitySumBars</a> (bars).<br />
+It can be: a) one value as value for all Availability charts, b) comma separated values (the same count as the Availability definition), one value per availability chart<br />
+
+<!-- GanttAvailabilityUnits -->
+<a name="CGanttAvailabilityUnits"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>string</i>
+   <h4>GanttAvailabilityUnits</h4> <s>[""]</s>
+</div>
+Units (like <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a>) used for <a href="#CGanttAvailabilitySplit">GanttAvailabilitySplit</a>, 
+<a href="#CGanttAvailabilityDivide">GanttAvailabilityDivide</a> and <a href="#CGanttAvailabilitySum">GanttAvailabilitySum</a>.<br />
+If not set, it is <a href="GanttCompute.htm#CGanttDataUnits">GanttDataUnits</a> value. If set to "0", it is <a href="GanttZoom.htm#CGanttUnits">GanttUnits</a> value.<br />
+
+<!-- GanttAvailabilityTransparent -->
+<a name="CGanttAvailabilityTransparent"></a>
+<div class="XML">
+   <u>new <b>9.3</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttAvailabilityTransparent</h4> <s>[1]</s>
+</div>
+If the second and next level bars will be transparent to show also the bars under.<br />
+<i>Showing many tags with opacity in Firefox can remarkably slow down the page.</i><br />
+<b>0</b> - no, <b>1</b> - in all browsers except Firefox, <b>2</b> - in all browser<br />
+
+<!-- GanttAvailabilityShow -->
+<a name="CGanttAvailabilityShow"></a>
+<div class="XML">
+   <u>new <b>10.0</b></u> <b>&lt;C></b> <i>int</i>
+   <h4>GanttAvailabilityShow</h4> <s>[3]</s>
+</div>
+What will be shown in the chart: <b>0</b> - nothing, <b>1</b> - only bars, <b>2</b> - only texts, <b>3</b> - both bars and texts.<br />
+
+<!-- GanttAvailabilityMin -->
+<a name="CGanttAvailabilityMin"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttAvailabilityMin</h4> <s>[ ]</s>
+</div>
+Minimal value in the chart, specifies height of the chart, lower limit. Lower values will be displayed as high as this limit, their size label will be unchanged.<br />
+If not set, the lower limit will be calculated as the smallest value in all the Availability charts in the row.<br />
+
+<!-- GanttAvailabilityMax -->
+<a name="CGanttAvailabilityMax"></a>
+<div class="XML">
+   <u>new <b>8.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttAvailabilityMax</h4> <s>[ ]</s>
+</div>
+Maximal value in the chart, specifies height of the chart, upper limit. Higher values will be displayed as high as this limit, their size label will be unchanged.<br />
+If not set, the upper limit will be calculated as the biggest value in all the Availability charts in the row.<br />
+
+<!-- negav -->
+<a name="negav"></a>
+<div class="ACT">
+   <u>new <b>8.0</b></u> <b>formula</b> <i>string</i>
+   <h4>negav</h4>
+   <s>(<i>string</i> <b>availability</b>)</s>
+</div>
+Negates the Availability definition, just changes sign of all counts in the definition.<br />
+Use it in formulas to subtract Availability values.<br />
+<i>Don't forget to add the ';' when summing or subtracting the Availability values!</i><br />
+For example <tt>Formula = " Col1 + ';' + Col2 + ";" + negav(Col3) "</tt>, all three columns contain the Availability definitions.<br />
+
+<!-------------------------------------------------  Resource usage chart  ------------------------------------------------->
+<a name="Usage"></a>
+<h2>Resource usage chart</h2>
+
+<b>Replaced by <a href="#CGanttAvailability">GanttAvailability</a> with special resource format string.</b><br />
+<br />
+
+The usage of individual resource in grid can be shown in row in gantt <b>Chart</b> object of type "Resources".<br /> 
+Set attribute GanttChart="Resources".<br />
+The resources usage chart can be combined also with other Gantt objects.<br />
+
+<!-- GanttChart -->
+<a name="CGanttChart"></a>
+<div class="DEL">
+   <u>new <b>6.4</b> deleted <b>8.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttChart</h4> <s>GanttChart = "<b>Resources</b>"</s>
+</div>
+Shows the resource usage chart in the Gantt cell<br />
+
+<!-- GanttChartResource -->
+<a name="CGanttChartResource"></a>
+<div class="DEL">
+   <u>new <b>6.4</b> deleted <b>8.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttChartResource</h4> <s></s>
+</div>
+<a href="#RName">Name</a> of the resource to show in the resource usage chart.<br />
+
+<!-- GanttChartResourceType -->
+<a name="CGanttChartResourceType"></a>
+<div class="DEL">
+   <u>new <b>7.0</b> deleted <b>8.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>GanttChartResourceType</h4> <s>[3]</s>
+</div>
+What chart will be shown.<br /> 
+<b>1</b> - resource usage, <b>2</b> - resource availability, <b>3</b> - both resource usage and availability<br />
+<b>4</b> - resource errors, <b>6</b> - both resource errors and availability<br /> 
+The values 5 and 7 are also possible, but it has not sense to show both resource errors and usage charts.<br />
+
+<!-- GanttChartResourceDef -->
+<a name="CGanttChartResourceDef"></a>
+<div class="DEL">
+   <u>new <b>6.4</b> deleted <b>8.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttChartResourceDef</h4> <s></s>
+</div>
+If set, only rows with the given default name (Def attribute) are iterated for the resource usage.<br />
+
+<!-- GanttChartResourceFormat -->
+<a name="CGanttChartResourceFormat"></a>
+<div class="DEL">
+   <u>new <b>6.4</b> deleted <b>8.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>GanttChartResourceFormat</h4> <s></s>
+</div>
+Format of the number shown in the resource chart.<br />
+The same as <a href="TypeNumber.htm#CFormat">TreeGrid number format</a>.<br />
+
+<!-------------------------------------------------  Automatically generated resource usage chart  ------------------------------------------------->
+<a name="Auto"></a>
+<h2>Automatically generated resource usage chart</h2>
+
+The resource usage chart can be automatically generated from another (even invisible) grid.<br />
+The resources list can be modified, the resources can be added, deleted, changed or renamed.<br />
+<br />
+
+There are must be two grids on page, <b>master</b> and <b>detail</b>.<br />
+<br />
+
+<b>Detail</b> grid is the grid displaying the resources usage chart.<br /> 
+It should have defined only layout XML source.<br /> 
+The body rows are automatically generated from master's &lt;Resources> list. This way is defined by detail's attributes &lt;Cfg GanttResources... /> attributes.<br />
+The detail grid can contain Gantt column to show the resources usage from the master grid. Use the attributes for <a href="#Usage">Resources usage chart</a>.<br />
+The detail's Gantt column reads these attributes from master's Gantt column:<br /> 
+&nbsp;&nbsp;DataUnits,LastUnit,Exclude,Include,MaxExclude,HeaderTrim,Background,Zoom,SmoothZoom,ZoomList,Width,Units and the &lt;Zoom> tag<br />
+Changes in the resources list should be uploaded from <b>detail</b> grid as normal changes in data rows.<br />
+<br />
+
+<b>Master</b> grid is the source grid.<br />
+The master grid must contain standard Gantt chart with tasks with assigned resources and global resources list in &lt;Resources>.<br />
+The master's &lt;Resources> list is automatically updated after any change (add, deleted, modify, rename) in the detail grid.<br />
+The master grid be displayed and recalculated according to the changes in resources.<br /> 
+The resources assigned to tasks are not automatically changed after resource is renamed or deleted and should be done manually in some API event.<br />
+Or the master grid can be hidden (<tt>&lt;treegrid Hidden='1'</tt>) and used only as resources list source<br /> 
+
+<!-- GanttResourcesMaster -->
+<a name="CGanttAvailabilityMax"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>GanttResourcesMaster</h4> <s></s>
+</div>
+Base attribute in automatically generated resource usage chart.<br />
+Specifies id of the master grid from where this detail grid's resource chart will be calculated.<br />
+
+<!-- GanttResourcesName -->
+<a name="CfgGanttResourcesName"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>GanttResourcesName</h4> <s>["Name"]</s>
+</div>
+Name of column in detail grid where the resource <b>Name</b> will be displayed and edited<br />
+
+<!-- GanttResourcesType -->
+<a name="CfgGanttResourcesType"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>GanttResourcesType</h4> <s>["Type"]</s>
+</div>
+Name of column in detail grid where the resource <b>Type</b> will be displayed and edited<br /> 
+
+<!-- GanttResourcesPrice -->
+<a name="CfgGanttResourcesPrice"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>GanttResourcesPrice</h4> <s>["Price"]</s>
+</div>
+Name of column in detail grid where the resource <b>Price</b> will be displayed and edited<br />
+
+<!-- GanttResourcesAvailability -->
+<a name="CfgGanttResourcesAvailability"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>GanttResourcesAvailability</h4> <s>["Availability"]</s>
+</div>
+Name of column in detail grid where the resource <b>Availability</b> will be displayed and edited<br />
+
+<!-- GanttResourcesMaxCount -->
+<a name="CfgGanttResourcesMaxCount"></a>
+<div class="DEL">
+   <u>new <b>6.4</b> deleted <b>7.0</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>GanttResourcesMaxCount</h4> <s>["MaxCount"]</s>
+</div>
+Renamed to GanttResourcesAvailability<br />
+
+<!-- GanttResourcesGantt -->
+<a name="CfgGanttResourcesGantt"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>GanttResourcesGantt</h4> <s>[first Gantt column in master grid]</s>
+</div>
+The Gantt column in master grid where to read the resources usage (this attribute is still set in detail grid).<br />
+
+<!-- GanttResourcesChart -->
+<a name="CfgGanttResourcesChart"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>GanttResourcesChart</h4> <s>[first Gantt column in detail grid]</s>
+</div>
+The Gantt column in detail grid where to display the resources chart<br />
+
+<!-- Hidden -->
+<a name="treegridHidden"></a>
+<div class="XML">
+   <u style="width:105px;">new <b>6.4</b></u> <b style="width:115px;">&lt;treegrid,bdo></b> <i>bool</i>
+   <h4>Hidden</h4> <s>[0]</s>
+</div>
+If set to <b>1</b> the grid is never rendered and can be used as invisible data source for other grids or other page components.<br />
+The hidden grid has <u>not</u> set <a href="Create.htm#MainTag">MainTag</a> and cannot be shown at all.<br />
+It can be set in <b>master</b> grid to use it just as data source.<br />
+
+</div>
+</body>
+</html>

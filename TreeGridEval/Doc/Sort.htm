@@ -1,0 +1,479 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Sorting rows</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Sorting rows</h1>
+<p>TreeGrid documentation</p>
+
+Rows in TreeGrid can be sorted by one or more columns. Up to three columns are supported by defaults.<br />
+Only variable body rows can be sorted.<br />
+The values can be sorted as numbers or as strings, see <a href="#CNumberSort">NumberSort</a>.<br />
+Strings can be sorted case sensitive or insensitive. Can be also sorted according to actual browser language or by special settings. See <a href="#Strings">comparing strings</a>.<br /><br />
+
+Sorting can be changed by a user by click to header, see also <a href="#CfgSortIcons">SortIcons</a>.<br />
+Sorting can be preset by &lt;Cfg <a href="#CfgSort">Sort</a> /> attributes. This attribute is saved to cookies.<br />
+Sorting can be changed by API method <a href="#ChangeSort">ChangeSort</a>.<br />
+
+<!-- Sorting -->
+<a name="CfgSorting"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Sorting</h4> <s>[1]</s>
+</div>
+If rows in grid can be sorted.<br />
+If set to <b>0</b>, a user cannot sort grid, also the sort icons in header are hidden.<br />
+
+<!-- Sorted -->
+<a name="CfgSorted"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>Sorted</h4> <s>[1] Saved to cookies, to not load it, set <tt><b>SortedLap</b>='1'</tt></s>
+</div>
+If sorting is enabled by a user.<br />
+A user can enable / disable sorting by click to sort icon on toolbar (Button named Sort).<br />
+ 
+<!-- CanSort -->
+<a name="CCanSort"></a>
+<div class="XML">
+   <u></u> <b>&lt;C></b> <i>bool</i>
+   <h4>CanSort</h4> <s>[1]</s>
+</div>
+If a user can sort rows according to this column.<br />
+If set to 0, the column can be still set to <a href="#CfgSort">Sort</a> by API, but its sorting icon is not visible.<br />
+
+<!-- SortCol -->
+<a name="CellSortCol"></a>
+<div class="XML">
+   <u>new <b>14.1</b></u> <b>&lt;cell></b> <i>string</i>
+   <h4>SortCol</h4> <s></s>
+</div>
+Specifies column that will be sorted when sorting action is called for this cell.<br />
+Useful for spanned header cells to sort another column than the main spanned cell.<br />
+
+<!-- Sort -->
+<a name="CfgSort"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;Cfg></b> <i>string[ ]</i>
+   <h4>Sort</h4> <s>[""] Saved to cookies, to not load it, set <tt><b>SortLap</b>='1'</tt></s>
+</div>
+Predefined or actual sorting.<br />
+Array of column names (comma separated), according to them are rows sorted, in this order.<br />
+By default are column sorted ascending, <span style="color:red;">to sort by column <b>descending</b></span>, list its name with <b style="color:red;">minus</b> sign, e.g. <tt><b>Sort</b>='Col1,-Col2,Col3'</tt> - the second column is sorted descending.<br />
+If the first column(s) in this array have set <tt><a href="ColVisibility.htm#CVisible">Visible</a>=0</tt> and <tt><a href="ColVisibility.htm#CCanHide">CanHide</a>=0</tt>, a user cannot change sorting for these columns and they will stay the first forever - use this case to predefine some sorting behavior.<br />
+
+<!-- DefaultSort -->
+<a name="CfgDefaultSort"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b> <i>upd <b>13.0</b></i></u> <b>&lt;Cfg></b> <i>string</i>
+   <h4>DefaultSort</h4> <s></s>
+</div>
+A column according to that is grid sorted when no other sorting is set or as the last sort column to pre-set row positions to some default state.<br />
+This column can be hidden (<tt>Visible='0'</tt> <tt>CanHide='0'</tt>). When it is visible, only two columns (see <a href="#CfgMaxSort">MaxSort</a>) for sorting are available, this default column is always as the third.<br />
+<i>Since 13.0</i> It can be set to <b>1</b> or to not existing column name to create new hidden column (named "_DefaultSort" for 1) with actual rows positions to restore initial sort position. 
+New rows are sorted on end, copied rows by their source rows.<br />
+
+<!-- MaxSort -->
+<a name="CfgMaxSort"></a>
+<div class="XML">
+   <u>renamed <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>MaxSort</h4> <s>[3]</s>
+</div>
+Maximal count of columns according to grid can be sorted. The more columns the slower sorting.<br />
+Different icons are only for first three sorting columns, next columns have the same icon as the third column.<br />
+In this count are <u>not</u> included invisible columns (<tt>Visible=0</tt> and <tt>CanHide=0</tt>).<br />
+
+<!-- SortIcons -->
+<a name="CfgSortIcons"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>SortIcons</h4> <s>[1] Saved to cookies, to not load it, set <tt><b>SortIconsLap</b>='1'</tt></s>
+</div>
+How a user can set sorting and icons are displayed in all headers<br />
+<b>0</b> - hides icons and sorts ascent by click to cell, descent by double click,<br /> 
+<b>1</b> - shows icons and sorts ascent by click to cell, descent by double click,<br /> 
+<b>2</b> - sorts by click to icon only, bottom icon ascent, upper icon descent,<br /> 
+<b>3</b> - sorts by click to cell, bottom part ascent, upper part descent,<br />
+To change direction meaning set <a href="#CfgReversedSortIcons">ReversedSortIcons</a> attribute.<br />
+
+<!-- SortIcons -->
+<a name="HeaderSortIcons"></a>
+<div class="XML">
+   <u>new <b>6.4</b></u> <b>&lt;Header></b> <i>int</i>
+   <h4>SortIcons</h4> <s>[1]</s>
+</div>
+If and which sort icons will be shown on the header.<br /> 
+<div class="L1">
+<table>
+<tr><td style="width:50px;"><b>0</b></td><td>the sort icons are hidden and the caption is inactive, columns cannot be sorted by clicking</td></tr>
+<tr><td><b>1</b></td><td>all sorting icons are shown and captions are active</td></tr>
+<tr><td><b>2</b></td><td>shows only icons for sorted columns, but all captions are active</td></tr>
+</table>
+</div>
+
+<!-- ReversedSortIcons -->
+<a name="CfgReversedSortIcons"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ReversedSortIcons</h4> <s></s>
+</div>
+If set to <b>1</b>, the sort icons for ascending and descending sorting are swapped.<br />
+
+<!-- AutoSort -->
+<a name="CfgAutoSort"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>AutoSort</h4> <s>Saved to cookies, to not load it, set <tt><b>AutoSortLap</b>='1'</tt></s>
+</div>
+If set to1, row is automatically sorted (moved) after value is changed by user's edit.<br />
+<i>Row can be moved only inside its page.</i><br />
+
+<!-- ReSort -->
+<a name="CfgReSort"></a>
+<div class="XML">
+   <u></u> <b>&lt;Cfg></b> <i>bool</i>
+   <h4>ReSort</h4> <s>Server paging, output attribute only</s>
+</div>
+This attribute is filled in <a href="PagingServer.htm#DataRequest">Request XML</a> as request for re-sorting grid after sorting has been permitted by user.<br />
+
+<!----------------------------------------------------------------------  Controlling sort position  -------------------------------------------------->
+<a name="Position"></a>
+<h2>Controlling sort position</h2>
+
+<!-- CanSort -->
+<a name="ICanSort"></a>
+<div class="XML">
+   <u></u> <b>&lt;I> &lt;Root></b> <i>bool</i>
+   <h4>CanSort</h4> <s>[1]</s>
+</div>
+If row's immediate <u><b>children</b></u> can be sorted (to suppress sorting for root rows, you can set this parameter in &lt;<b>Root</b>> tag).<br />
+
+<!-- SortPos -->
+<a name="ISortPos"></a>
+<div class="XML">
+   <u></u> <b>&lt;I></b> <i>int</i>
+   <h4>SortPos</h4> <s></s>
+</div>
+If set, suppresses sorting of this row and places it always to specified position independently on sorting state.<br />
+Positive number places the row from beginning, negative number places the row from end.<br />
+Therefore rows with SortPos will be placed in this way: 1,2,3, ... ,all sorted rows without SortPos, ... , -3, -2, -1<br />
+If more rows have the same SortPos, they will be sorted inside the group only.<br />
+
+<!-- NumberSort -->
+<a name="CNumberSort"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>NumberSort</h4> <s>[null]</s>
+</div>
+Set it to <b>0</b> to always sort root rows or row's children according to the column values as strings.<br />
+Set it to <b>1</b> to always sort root rows or row's children according to the column values as numbers.<br /> 
+If not set, the number sort is chosen for columns of types Int, Float and Date and for all the others is used string sort.<br />
+Set it to <b>1</b> for Bool type if you want to distinguish between 0 and "", when CanEmpty is set to support three states Bool.<br />
+
+<!-- RawSort -->
+<a name="CRawSort"></a>
+<div class="XML">
+   <u>new <b>7.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>RawSort</h4> <s>[0]</s>
+</div>
+By default for <b>0</b> it sorts values formatted according to its Type and Format.<br />
+Set it to <b>1</b> to sort directly by the unformatted cell value. For Enum with and set by EnumKeys it sorts by the key name.<br />
+Set it to <b>2</b> for Enum type to sort it by position in Enum / EnumKeys array. It is slower than setting Enum values by index and sorting them as numbers (with <tt><a href="#CNumberSort">NumberSort</a>='1'</tt>).
+
+<!-- SortValue -->
+<a name="CellSortValue"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;cell></b> <i>string</i>
+   <h4>SortValue</h4> <s></s>
+</div>
+Value used for compare when <b>sorting</b> and <b>grouping</b> instead of cell value.<br /> 
+Useful for special non editable cells like Html, Icon, List.<br />
+
+<!-- SortDescValue -->
+<a name="CellSortDescValue"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;cell></b> <i>string</i>
+   <h4>SortDescValue</h4> <s></s>
+</div>
+Value used for compare when done <b>descending sorting</b> instead of cell value.<br /> 
+Useful to set if you want to preserve row position when sorting by the column.<br />
+
+<!-- OnGetSortValue -->
+<a name="OnGetSortValue"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>string</i>
+   <h4>OnGetSortValue</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>val</b>, <i>bool</i> <b>desc</b>, <i>bool</i> <b>group</b>)</s>
+</div>
+Called to get value for <b>sorting</b> and <b>grouping</b>, val is predefined value, returns val or new value.<br />
+desc is true for descending sorting, group is true when called while grouping.<br />
+
+<!----------------------------------------------------------------------  Comparing strings  -------------------------------------------------->
+<a name="Strings"></a>
+<h2>Comparing strings</h2>
+
+You can also specify these settings for whole grid in default column <tt>&lt;Def>&lt;D Name='C'/>&lt;/Def></tt>.<br />
+
+<!-- LocaleCompare -->
+<a name="CLocaleCompare"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>LocaleCompare</h4> <s>[0]</s>
+</div>
+If strings are compared according to browser's locale settings. For sorting, filtering and grouping.<br />
+It is done only for first <b>1920</b> Unicode characters.<br />
+For higher Unicode characters like Chinese, Korean or Japanese you must define <a href="#CCharCodes">CharCodes</a> instead.<br />
+<i>If set to row cell, it affects row's children for sorting and grouping. For filter it can be set only to Filter cell and affects also all values in the column.</i><br />
+
+<!-- CaseSensitive -->
+<a name="CCaseSensitive"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>CaseSensitive</h4> <s>[1]</s>
+</div>
+If strings are compared case sensitive. For sorting, filtering and grouping.<br />
+<i>If set to row cell, it affects row's children for sorting and grouping. For filter it can be set only to Filter cell and affects also all values in the column.</i><br />
+
+<!-- WhiteChars -->
+<a name="CWhiteChars"></a>
+<div class="XML">
+   <u>chg <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>WhiteChars</h4> <s></s>
+</div>
+List of characters to ignore when sorting, filtering or grouping.<br /> 
+It can be set for example to " " (space) to ignore spaces (it means that for example "a b   c" and "abc" strings are the same.<br />
+<i>Setting this attribute can slow down sorting, grouping and filtering.</i><br />
+<i>If set to row cell, it affects row's children for sorting and grouping. For filter it can be set only to Filter cell and affects also all values in the column.</i><br />
+
+<!-- CharCodes -->
+<a name="CCharCodes"></a>
+<div class="XML">
+   <u><i>upd <b>6.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>string[*]</i>
+   <h4>CharCodes</h4> <s></s>
+</div>
+It changes characters in comparing strings for sorting, filtering and grouping.<br />
+It is first character separated array of pair of characters to replace the first character by the second when comparing strings.<br />
+For example <tt>"|y|i|Y|I|.|,"</tt> - replaces 'y' by 'i', 'Y' by 'I' and '.' by ','<br /> 
+<div class="L1">- it means that when comparing strings does not differ between letter 'y' and 'i', both cases and also does not differ between comma and point.</div>
+The first character must be one letter, but the second in fact can be any letter or string or even empty string, like <tt>"|a|xxx|b||c|ff"</tt><br />
+If you use <a href="DLL.htm">TreeGrid server</a> DLL/SO, there must be the second character one letter only too.<br />
+<i>Setting this attribute can slow down sorting, grouping and filtering.</i><br />
+<i>If set to row cell, it affects row's children for sorting and grouping. For filter it can be set only to Filter cell and affects also all values in the column.</i><br />
+
+<!----------------------------------------------------------------------  Sorting actions  -------------------------------------------------->
+<a name="Actions"></a>
+<h2>Sorting actions</h2>
+
+<b>By default</b> TreeGrid sorts according to the last clicked column as the first, the default settings are:<br />
+  <div class="L1"><tt>&lt;Actions OnClickSort=<b>"SortAsc</b> OR <b>SortDesc"</b> OnClickSortUp=<b>"SortAsc"</b> OnClickSortDown=<b>"SortDesc"</b>/></tt></div><br />
+  
+<b>To reverse the sorting order</b> to have the first clicked column as the first sorting column set<br /> 
+When there are more than two seconds between clicks, the sorting is cleared and starts with clicked column<br />  
+  <div class="L1"><tt>&lt;Actions OnClickSort=<b>"SortAscAdd</b> OR <b>SortDescAdd"</b> OnClickSortUp=<b>"SortAscAdd"</b> OnClickSortDown=<b>"SortDescAdd"</b>/></tt></div><br />
+  
+To have the same sorting behavior as <b>MS Outlook or Excel</b>, set<br />
+On click sorts only by one column, on shift click adds the column to the end of sorting<br />  
+<div class="L1"><tt>
+&lt;Actions OnClickSort=<b>"SortAscOne</b> OR <b>SortDescOne"</b> OnClickSortUp=<b>"SortAscOne"</b> OnClickSortDown=<b>"SortDescOne"</b>/><br />
+&lt;Actions OnShiftClickSort=<b>"SortAscAppend</b> OR <b>SortDescAppend"</b> OnShiftClickSortUp=<b>"SortAscAppend"</b> OnShiftClickSortDown=<b>"SortDescAppend"</b>/><br />
+</tt></div>
+
+<!-- Action SortAsc -->
+<a name="ActionsSortAsc"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SortAsc <i>...F</i></h4>
+   <s>Attached to events <b>OnClickSort</b> and <b>OnClickSortUp</b></s>
+</div>
+Sorts according to actual or focused column ascending - adds the column as the first to sorting.<br /> 
+Returns false if the column is already the first column and is sorted ascending otherwise sorts it ascending.<br />
+
+<!-- Action SortDesc -->
+<a name="ActionsSortDesc"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SortDesc <i>...F</i></h4>
+   <s>Attached to events <b>OnClickSort</b> and <b>OnClickSortDown</b></s>
+</div>
+Sorts according to actual or focused column descending - adds the column as the first to sorting.<br />
+Returns false if the column is already the first column and is sorted descending otherwise sorts it descending.<br />
+
+<!-- Action SortAscOne -->
+<a name="ActionsSortAscOne"></a>
+<div class="ACT">
+   <u>new <b>6.1</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SortAscOne <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sorts according to actual or focused column only.<br />
+Returns false if the column is already the first column and is sorted ascending otherwise sorts it ascending.<br />
+
+<!-- Action SortDescOne -->
+<a name="ActionsSortDescOne"></a>
+<div class="ACT">
+   <u>new <b>6.1</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SortDescOne <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sorts according to actual or focused column only.<br />
+Returns false if the column is already the first column and is sorted descending otherwise sorts it descending.<br />
+
+<!-- Action SortAscAdd -->
+<a name="ActionsSortAscAdd"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SortAscAdd <i>...F</i></h4>
+   <s>Attached to events <b>OnCtrlClickSort</b>, <b>OnCtrlClickSortUp</b></s>
+</div>
+Adds the actual or focused column to sorting to the end and sorts it ascending.<br />
+If the column is already sorted, returns false if it is sorted ascending otherwise sorts it ascending, but does not change its position in sorting.<br />
+If there are already three columns sorted, it returns false.<br />
+When between clicks are more than two seconds or a user clicks also outside header, it clears sorting and starts from first column again.<br />
+
+<!-- Action SortDescAdd -->
+<a name="ActionsSortDescAdd"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SortDescAdd <i>...F</i></h4>
+   <s>Attached to events <b>OnCtrlClickSort</b>, <b>OnCtrlClickSortDown</b></s>
+</div>
+Adds the actual or focused column to sorting to the end and sorts it descending, see the <b>SortAscAdd</b>.<br />
+
+<!-- Action SortAscAppend -->
+<a name="ActionsSortAscAppend"></a>
+<div class="ACT">
+   <u>new <b>6.1</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SortAscAppend <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Adds the actual or focused column to sorting to the end and sorts it ascending.<br />
+If the column is already sorted, returns false if it is sorted ascending otherwise sorts it ascending, but does not change its position in sorting.<br />
+If there are already three columns sorted, it returns false.<br />
+<i>The same as SortAscAdd, but without the two second limit.</i><br />
+
+<!-- Action SortDescAppend -->
+<a name="ActionsSortDescAppend"></a>
+<div class="ACT">
+   <u>new <b>6.1</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>SortDescAppend <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Adds the actual or focused column to sorting to the end and sorts it descending, see the <b>SortAscAppend</b>.<br />
+<i>The same as SortDescAdd, but without the two second limit.</i><br />
+
+<!-- Action NoSort -->
+<a name="ActionsNoSort"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>NoSort <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Removes the actual or focused column from sorting and re-sorts grid.<br />
+
+<!-- Action DefaultSort -->
+<a name="ActionsDefaultSort"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>DefaultSort</h4>
+   <s>Not attached to any event</s>
+</div>
+Restores the sorting settings set in input XML data.<br />
+If no <a href="#CfgSort">Sort</a> attribute was set in input XML, it does <u>not</u> do anything.<br />
+
+<!-- Action SortOn -->
+<a name="ActionsSortOn"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SortOn</h4>
+   <s>Attached to event <b>OnClickButtonSort</b></s>
+</div>
+Enables sorting in grid and re-sorts grid. It fails if sorting is already enabled.<br />
+
+<!-- Action SortOff -->
+<a name="ActionsSortOff"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>SortOff</h4>
+   <s>Attached to event <b>OnClickButtonSort</b></s>
+</div>
+Disables sorting in grid. It fails if sorting is already disabled.<br />
+
+<!----------------------------------------------------------------------  Sorting API  -------------------------------------------------->
+<a name="API"></a>
+<h2>Sorting API</h2>
+
+<!-- OnSort -->
+<a name="OnSort"></a>
+<div class="API">
+   <u><i>upd <b>6.1</b></i></u> <b>API event</b> <i>int</i>
+   <h4>OnSort</h4>
+   <s>(<i>TGrid</i> <b>grid</b>, <i>string</i> <b>col</b>, <i>string</i> <b>sort</b>)</s>
+</div>
+Called when user clicks to header for sort, before grid is sorted by the column.<br />
+Return -<b>1</b> to suppress the action completely.<br />
+Return <b>1</b> to suppress sorting, provide your own sorting and let change sort icon.<br />
+<b>col</b> is clicked column that will be added to sorting, can be null if it was called from control panel (from <a href="#ActionsSortOn">SortOn</a> action).<br /> 
+<b>sort</b> is the resulted <a href="#CfgSort">Sort</a> after the <b>col</b> will be added to the actual <i>(added in 6.1)</i>.<br />
+Here you can call <a href="#ChangeSort">ChangeSort</a> to modify sorting (in this case you have to return -<b>1</b>).<br /><br />
+
+For example this code always sorts according to column named 'B' as second column:<br />
+<tt>Grids.OnSort = function (G,col)&#123; if(col!='B') &#123; G.ChangeSort((G.Sort.indexOf(col)==0?"-":"")+col+",B"); return -1; } }</tt><br />
+
+<!-- OnSortFinish -->
+<a name="OnSortFinish"></a>
+<div class="API">
+   <u></u> <b>API event</b> <i>void</i>
+   <h4>OnSortFinish</h4>
+   <s>(<i>TGrid</i> <b>grid</b>)</s>
+</div>
+Called after grid was re-sorted, all changes are already displayed.<br />
+Called only for sorting on client, not for server paging.<br />
+
+<!-- ChangeSort -->
+<a name="ChangeSort"></a>
+<div class="API">
+   <u>chg <b>6.0</b></u> <b>API method</b> <i>void</i>
+   <h4>ChangeSort</h4>
+   <s>(<i>string</i> <b>sortcols</b>)</s>
+</div>
+Sorts grid according to given columns. sortcols is new value for <a href="#CfgSort">Sort</a>.<br />
+If it is called from <a href="#OnSort">OnSort</a> event, the event handler must return -1 for proper sort.<br />
+
+<!-- SortClick -->
+<a name="SortClick"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>SortClick</h4>
+   <s>(<i>string</i> <b>col</b>, <i>bool</i> <b>desc</b> = null)</s>
+</div>
+Simulates click to sort icon in the given column.<br />
+<b>desc</b> can be 0 for ascending and 1 for descending sorting.<br />
+
+<!-- SortRow -->
+<a name="SortRow"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>SortRow</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b> = null, <i>bool</i> <b>show</b> = false)</s>
+</div>
+Sorts (and moves) one row by actual sort settings.<br /> 
+If <b>col</b> is set, test only this sorting column for changes.<br />
+<i>It is ignored when <a href="#CfgAutoSort">AutoSort</a> is 0.</i><br />
+
+<!-- SortRows -->
+<a name="SortRows"></a>
+<div class="API">
+   <u></u> <b>API method</b> <i>void</i>
+   <h4>SortRows</h4>
+   <s>( )</s>
+</div>
+Sorts all rows, according to sort settings and paging type, asynchronous.<br />
+Shows all changes.<br />
+
+</div>
+</body>	
+</html>

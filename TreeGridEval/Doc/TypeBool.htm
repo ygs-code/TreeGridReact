@@ -1,0 +1,154 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="Doc.css" rel="stylesheet"/>
+<title>TreeGrid - Type Bool</title>
+</head>
+<body>
+<div class="Doc">
+
+
+<h1>Checkbox - Bool type</h1>
+<p>TreeGrid documentation</p>
+
+Bool is boolean type contains only two values <b>0</b> and <b>1</b>.<br />
+Or it is possible to show three states ("", <b>0</b>, <b>1</b>) when set <tt><a href="TypeBool.htm#CCanEmpty">CanEmpty</a>='1'</tt>.<br />
+It is shown as checkbox or radio button.<br />
+It supports radio groups - only one radio inside group can be checked.<br />
+Filter cell Bool type button automatically hides operator menu and sets <tt><a href="TypeBool.htm#CCanEmpty">CanEmpty</a>='1'</tt> to have filter off option.<br />
+
+<!-- Type -->
+<a name="CType"></a>
+<div class="XML">
+   <u></u> <b>&lt;C> &lt;cell></b> <i>string</i>
+   <h4>Type</h4> <s>["Text"] <tt>Type = "Bool"</tt></s>
+</div>
+To define Bool type, set column or cell attribute Type to "<b>Bool</b>".<br />
+
+<!-- CanEmpty -->
+<a name="CCanEmpty"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>9.3</b></i></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>CanEmpty</h4> <s>[0]</s>
+</div>
+If the Bool cell can be empty.<br />
+If set, the Bool cell supports three states: "", 0, 1.<br />
+The states are cycled on click - for <tt>CanEmpty = <b>1</b></tt> is ("",1,0,"",1,0,...), for <b>2</b> is ("",0,1,"",0,1) and <i>(since 9.3)</i> for <b>3</b> is ("",1,0,1,0,...) and for <b>4</b> is ("",0,1,0,1,...)<br />
+CanEmpty is supported only by <tt><a href="TypeBool.htm#CBoolIcon">BoolIcon</a> = 0</tt> or 2 and ignores <a href="TypeBool.htm#CBoolGroup">BoolGroup</a>.<br />
+If set, filter shows operator menu to let a use filter according to all three values.<br />
+
+<!-- BoolIcon -->
+<a name="CBoolIcon"></a>
+<div class="XML">
+   <u>new <b>6.0</b> <i>upd <b>11.0</b></i></u> <b>&lt;C> &lt;cell></b> <i>type</i>
+   <h4>BoolIcon</h4> <s>[0]</s>
+</div>
+Which icon will displayed in the cell.<br />
+<i>Since 11.0</i> it can be also first character separated array of strings as icon files for 0, 1 and empty value, e.g. <tt>BoolIcon="|Off.gif|On.gif|Empty.gif"</tt><br />
+There can be also three more icons for <tt>CanEdit='0'</tt> state, e.g. <tt>BoolIcon="|Off.gif|On.gif|Empty.gif|OffRO.gif|OnRO.gif|EmptyRO.gif"</tt><br />
+<b>0</b> - Checkbox image<br />
+<b>1</b> - Radio button image<br />
+<b>2</b> - Checkbox image vertically centered, slightly slower than 0<br />
+<b>3</b> - Radio button image vertically centered, slightly slower than 0<br />
+<b>4</b> - <tt>&lt;input type='checkbox'></tt>, it is faster than icons especially in IE, use it when many Bools are rendered in grid (500+).<br />
+<b>5</b> - <tt>&lt;input type='radio'></tt>, it is faster than icons especially in IE, use it when many Bools are rendered in grid (500+).<br />
+<b>6</b> - <span style='border:solid windowtext 1.0pt;padding:0cm'>&nbsp;X </span> or <span style='border:solid windowtext 1.0pt;padding:0cm'>&nbsp; &nbsp; </span>, it is faster than icons especially in IE strict mode, use it when many Bools are rendered in grid (500+).<br />
+
+<!-- BoolIconWidth -->
+<a name="CBoolIconWidth"></a>
+<div class="XML">
+   <u>new <b>11.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>BoolIconWidth</h4> <s>[18]</s>
+</div>
+Width in pixels of custom icons in BoolIcon (if <a href="TypeBool.htm#CBoolIcon">BoolIcon</a> is set to array of strings).<br />
+
+<!-- BoolChars -->
+<a name="CfgBoolChars"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;Cfg></b> <i>int</i>
+   <h4>BoolChars</h4> <s>["X?"]</s>
+</div>
+Three characters to show in Bool type cell with <tt><a href="TypeBool.htm#CBoolIcon">BoolIcon</a>='<b>6</b>'</tt>.<br />
+In order for 0, 1, empty.<br />
+
+<!-- BoolGroup -->
+<a name="CBoolGroup"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>BoolGroup</h4> <s>[0]</s>
+</div>
+An index of radio group of Bool cells in <u>column</u>.<br />
+Only one cell in the group of rows (with the same BoolGroup) can be checked.<br />
+When a user checks some radio, the previously checked radio in the group is unchecked.<br />
+
+<!-- Radio -->
+<a name="CRadio"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>int</i>
+   <h4>Radio</h4> <s>[0]</s>
+</div>
+An index of radio group of Bool cells in <u>row</u>.<br />
+Only one cell in the group of cells (with the same Radio) can be checked.<br />
+When a user checks some radio, the previously checked radio in the group is unchecked.<br />
+
+<!-- Uncheck -->
+<a name="CUncheck"></a>
+<div class="XML">
+   <u>new <b>6.0</b></u> <b>&lt;C> &lt;cell></b> <i>bool</i>
+   <h4>Uncheck</h4> <s>[1]</s>
+</div>
+If all the checkboxes with the same <a href="TypeBool.htm#CBoolGroup">BoolGroup</a> or <a href="TypeBool.htm#CRadio">Radio</a> can be empty - a user can uncheck the checked radio.<br />
+
+<!-- SetBool -->
+<a name="SetBool"></a>
+<div class="API">
+   <u>new 12.0</u> <b>API method</b> <i>bool</i>
+   <h4>SetBool</h4>
+   <s>(<i>TRow</i> <b>row</b>, <i>string</i> <b>col</b>, <i>type</i> <b>value</b> = null, <i>bool</i> <b>test</b> = 0)</s>
+</div>
+Sets the Bool cell value to <b>value</b>. It is affected by <a href="#CBoolGroup">BoolGroup</a>, <a href="#CRadio">Radio</a> and <a href="#CUncheck">Uncheck</a> attributes.<br />
+<b>value</b> can be <b>1</b> for on, <b>0</b> for off, empty string for clear and null for change.<br />
+If set <b>test</b>, does not change anything, just checks the change possibility.<br />
+Returns true for change, otherwise false.<br />
+<br />
+
+<!-- Action ChangeBool -->
+<a name="ActionsChangeBool"></a>
+<div class="ACT">
+   <u></u> <b>&lt;Actions></b> <i></i>
+   <h4>ChangeBool <i>...F</i></h4>
+   <s>Attached to events <b>OnEnter</b>, <b>OnSpaceEdit</b>, <b>OnClickEditBool</b></s>
+</div>
+Changes the Bool value.<br />
+
+<!-- Action CheckBool -->
+<a name="ActionsCheckBool"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>CheckBool <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets the Bool value to 1.<br />
+
+<!-- Action UncheckBool -->
+<a name="ActionsUncheckBool"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>UncheckBool <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets the Bool value to 0.<br />
+
+<!-- Action ClearBool -->
+<a name="ActionsClearBool"></a>
+<div class="ACT">
+   <u>new <b>12.0</b></u> <b>&lt;Actions></b> <i></i>
+   <h4>ClearBool <i>...F</i></h4>
+   <s>Not attached to any event</s>
+</div>
+Sets the Bool value to empty string, if <a href="#CCanEmpty">CanEmpty</a>=1.<br />
+
+
+</div>
+</body>
+</html>
+                                                                             

@@ -1,0 +1,92 @@
+<html>
+<head>
+   <script src="../../Grid/GridE.js"> </script>
+</head>
+<body class="Tutorial">
+   <style>
+      /* Tutorial shared styles */
+      .Tutorial h1 { font:30px Arial; padding:5px 0px 5px 0px; margin:0px; text-align:center; }
+      .Tutorial h2 { font:15px Arial; padding:0px; margin:0px 0px 10px 0px; text-align:center; color:#757575; }
+      .Tutorial h3,.Tutorial h4 { display:inline-block; font:bold 15px Arial; padding:0px 5px 0px 5px; border-radius:2px; color:black; margin:2px; font-style:normal; color:#333; }
+      .Tutorial h3 { background:#EE9; border:1px solid #DD8; }
+      .Tutorial h4 { background:#BDE; border:1px solid #ACD; }
+      .Tutorial a { text-decoration:underline; }      
+      .Tutorial li { padding-bottom:8px; }
+      .Tutorial ul { margin:6px 0px 0px 20px; font:13px Arial; }
+      .Tutorial > ul { margin-left:0px; padding-left:15px; clear:both; }
+      .Tutorial ul b { color:#0585B9; }
+      .Tutorial .Path { font:normal 12px Arial; color:#0585B9; }
+      .Tutorial .Path b { color:#D73938; }
+      .Tutorial .Path u { text-decoration:none; color:black; font-weight:bold; padding:0px 2px 0px 2px; }
+      .Tutorial .Xml { margin-bottom:6px; font-size:12px; color:#757575; }
+      .Tutorial .Border { border:1px solid #dfdfdf; padding:10px 20px 10px 20px; margin:0px 8px 20px 0px; min-width:100%; box-sizing:border-box; }
+      .Tutorial .Main { }
+   </style>
+   <script>
+// -----------------------------------------------------------------------------------
+// Custom formula function, reverses given string
+function reversestring(str){
+return (str+"").split("").reverse().join("");
+}
+// -----------------------------------------------------------------------------------
+// Custom formula function, calls TreeGrid global function DateToString
+datetostring = DateToString;
+// -----------------------------------------------------------------------------------
+
+   </script>
+   <center class="Path"><script>document.write(location.href.replace(/(.*)(\/Tutorials\/)([^\/]+)\/([^\/]+)$/,"$2<b>$3</b>/$4").replace(/([^<]|^)(\/|\.)/g,"$1<u>$2</u>"));</script></center>
+   <h1>6. Editable formulas - absolute references</h1>
+   <h2>Entering formulas into cells using absolute cell references by row id and column name</h2>
+
+   <center class="Border" id="Border">
+      <div class="Xml">Source: <a href='06-Editable_Formulas_Absolute.xml'>06-Editable_Formulas_Absolute.xml</a></div>
+      <div class="Main" style='width:100%; height:200px;'>
+         <bdo Debug='check' Data_Url='06-Editable_Formulas_Absolute.xml' Upload_Tag="Debug"></bdo>
+      </div>
+   </center>
+
+   <ul>
+      <li><h4>Definition</h4><br />
+         To permit entering formula into cell set <b>&lt;Cfg</b><h3>FormulaEditing</h3><b>='1'</b>/>.<br /> 
+         To restrict entering the formula to particular column, row or cell set its attribute <b>FormulaCanEdit</b>='<b>0</b>'.<br />
+      </li>
+      <li>The formula can be entered if started by '<h4>=</h4>'. The formula prefix character can be changed by &lt;Lang>&lt;Format <b>FormulaPrefix</b>='='/>&lt;/Lang>. </li>
+      <li><h4>Absolute references</h4><br />
+         This example uses absolute references by <b>row id</b> and <b>column name</b>. It is default behavior set by &lt;Cfg> attribute <h3>FormulaRelative</h3>='<b>0</b>'.<br />
+         In the formulas there can be addressed any the grid cell as <b>row</b> <b>Name</b> (or <b>row</b> <b>id</b>) + <b>column</b> <b>SearchNames</b> (or <b>column</b> <b>Name</b>). The order can be changed by &lt;Cfg> <b>FormulaNames</b> attribute.<br />
+         The row and columns never change their Name and id by any manipulation, so formula refers always the same row and column regardless on their position change.<br />
+         If formula is copied, it never changes and always references the original rows and columns and not their copies.<br />
+         If formula references <b>range</b>(s), only the range bounds are absolutely defined and the range always contains rows and columns actually placed between the range bounds.<br />
+      </li>
+      <li><h4>Operators</h4><br />
+         Default operators use standard C++/JavaScript syntax: <b>+</b>, <b>-</b>, <b>*</b>, <b>/</b>, <b>!</b> (not), <b>%</b> (modulo), <b>&</b> (bit AND), <b>|</b> (bit OR), <b>^</b> (bit XOR), <b>&&</b> (logical and), <b>||</b> (logical OR), <b><<</b>, <b>>></b> (bit shift), <b>==</b> (equals), <b>!=</b> (not equals), <b><=</b> (less or equal), <b>>=</b> (greater or equal), <b><</b> (less), <b>></b> (greater).<br />
+         There are added more operators: <b>=</b> (equals), <b>&lt;></b> (not equals), <b>?:</b> (condition three arguments as "condition?result_true:result_false").<br />
+         Priority of operators is the same as in JavaScript and cannot be changed. Always you can use <b>( )</b>.<br />
+         There are defined constants: <b>pi</b> (3.14), <b>ln2</b> (ln(2)), <b>ln10</b> (ln(10)), <b>log2e</b> (log2(e)), <b>log10e</b> (log10(e)), <b>sqrt2</b> (sqrt(2)), <b>sqrt1_2</b> (1/sqrt(2)).<br />
+         All the operators and constants are defined in &lt;Lang>&lt;FormulaFunctions <b>operators</b>/>&lt;Lang>, it is possible to modify, add or delete the operators and constants.<br />
+      </li>
+      <li><h4>Functions</h4><br />
+         There can be used also these aggregate functions: <h3>sum</h3>, <h3>sumsq</h3>, <h3>count</h3>, <h3>counta</h3>, <h3>countblank</h3>, <h3>max</h3>, <h3>min</h3>, <h3>product</h3>. <br />
+         The functions accept as parameters value constants (e.g. 100), single cell reference (e.g. A1) or cell range reference (e.g. A1:B4).<br />
+         In the range the bounds are separated by colon '<h4>:</h4>'. The range separator can be changed by &lt;Lang>&lt;Format <b>FormulaRangeSeparator</b>=':'/>&lt;/Lang>.<br />
+         The functions accept more parameters separated by comma '<h4>,</h4>'. The parameter separator can be changed by &lt;Lang>&lt;Format <b>FormulaValueSeparator</b>=','/>&lt;/Lang>.<br />
+         There are also defined standard JavaScript mathematical functions: <b>abs</b>(x), <b>round</b>(x), <b>ceil</b>(x), <b>floor</b>(x), <b>exp</b>(x), <b>log</b>(x), <b>pow</b>(x,y), <b>sqrt</b>(x), <b>sin</b>(x), <b>cos</b>(x), <b>tan</b>(x), <b>asin</b>(x), <b>acos</b>(x), <b>atan</b>(x,y).<br />
+         There are also defined date functions: <b>date</b>(year,month,day,hour,minute,second), <b>date</b>(date,format), <b>time</b>(hour,minute,second), <b>time</b> (time,format), <b>now</b>(), <b>today</b>(), <b>year</b>(date), <b>month</b>(date), <b>day</b>(date), <b>weekday</b>(date),<b>weeknum</b>(date), <b>hour</b>(date), <b>minute</b>(date), <b>second</b>(date).<br />
+         And one formatting function: <b>text</b>(value,format,type) to convert date or number to string.<br />
+         All the functions are defined in &lt;Lang>&lt;<b>FormulaFunctions</b>/>&lt;Lang>, it is possible to rename, add or delete the functions.<br />
+      </li>
+   </ul>
+
+   <!-- Google Analytics code run once for trial -->
+   <script>
+      var TGTrial = document.cookie.match(/TGTrialSheet\s*=\s*(\d+)/), TGIndex = 32;
+      if(!TGTrial||!(TGTrial[1]&TGIndex)) setTimeout(function(){
+         var n = "RunTrialSheet6", d = (new Date((new Date).getTime()+31536000000)).toUTCString(); document.cookie = "TGTrialSheet="+((TGTrial?TGTrial[1]:0)|TGIndex)+";expires="+d;
+         var u = document.cookie.match(/TGTrialUsed\s*=\s*(\d+)/); u = u ? u[1]-0+1 : 1; if(u<=11) document.cookie = "TGTrialUsed="+u+";path=/;expires="+d;
+         var s = "<div style='width:0px;height:0px;overflow:hidden;'><iframe src='http"+(document.location.protocol=="https"?"s":"")+"://www.treegrid.com/Stat/GA.html?productName="
+               +(u==1||u==3||u==5||u==10?"UsedTrial"+u:n)+"' onload='var T=this;setTimeout(function(){document.body.removeChild(T.parentNode.parentNode);},1000);'/></div>";
+         var F = document.createElement("div"); F.innerHTML = s; document.body.appendChild(F);
+         },100);
+   </script>
+</body>
+</html>
